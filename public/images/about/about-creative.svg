@@ -1,0 +1,16 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="1200" rx="48" fill="#09090B"/>
+<circle cx="260" cy="250" r="180" fill="#7C3AED" fill-opacity="0.45"/>
+<circle cx="930" cy="870" r="210" fill="#06B6D4" fill-opacity="0.3"/>
+<rect x="116" y="120" width="968" height="960" rx="40" fill="#111111" stroke="rgba(255,255,255,0.1)"/>
+<rect x="182" y="208" width="836" height="280" rx="28" fill="#151519"/>
+<text x="182" y="170" fill="#E4E4E7" font-size="36" font-family="Plus Jakarta Sans, sans-serif" font-weight="700">Brand Atelier</text>
+<text x="182" y="284" fill="#A1A1AA" font-size="28" font-family="Plus Jakarta Sans, sans-serif">Identity systems • Typography • Art direction</text>
+<rect x="182" y="556" width="260" height="332" rx="24" fill="#14141A" stroke="#2A2A33"/>
+<rect x="470" y="556" width="260" height="332" rx="24" fill="#14141A" stroke="#2A2A33"/>
+<rect x="758" y="556" width="260" height="332" rx="24" fill="#14141A" stroke="#2A2A33"/>
+<circle cx="312" cy="682" r="58" fill="#7C3AED"/>
+<circle cx="600" cy="682" r="58" fill="#06B6D4"/>
+<rect x="854" y="624" width="92" height="116" rx="18" fill="#7C3AED"/>
+<text x="182" y="965" fill="#71717A" font-size="24" font-family="Plus Jakarta Sans, sans-serif">Opticore Solutions Ltd.</text>
+</svg>

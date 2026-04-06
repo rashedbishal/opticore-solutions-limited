@@ -1,0 +1,13 @@
+<svg width="1400" height="1050" viewBox="0 0 1400 1050" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1400" height="1050" rx="44" fill="#09090B"/>
+<rect x="98" y="92" width="1204" height="866" rx="40" fill="#111111" stroke="rgba(255,255,255,0.1)"/>
+<text x="172" y="194" fill="#F4F4F5" font-size="42" font-family="Plus Jakarta Sans, sans-serif" font-weight="700">Web Development</text>
+<rect x="172" y="246" width="1056" height="584" rx="34" fill="#151519"/>
+<rect x="214" y="288" width="972" height="68" rx="22" fill="#18181F"/>
+<circle cx="250" cy="322" r="12" fill="#7C3AED"/>
+<circle cx="290" cy="322" r="12" fill="#06B6D4"/>
+<circle cx="330" cy="322" r="12" fill="#FFFFFF" fill-opacity="0.14"/>
+<rect x="214" y="404" width="344" height="378" rx="28" fill="#111115" stroke="#2A2A33"/>
+<rect x="596" y="404" width="590" height="176" rx="28" fill="#111115" stroke="#2A2A33"/>
+<rect x="596" y="606" width="590" height="176" rx="28" fill="#111115" stroke="#2A2A33"/>
+</svg>

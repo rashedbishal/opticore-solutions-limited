@@ -1,0 +1,13 @@
+<svg width="1400" height="1050" viewBox="0 0 1400 1050" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1400" height="1050" rx="44" fill="#09090B"/>
+<rect x="94" y="90" width="1212" height="870" rx="38" fill="#111111" stroke="rgba(255,255,255,0.1)"/>
+<circle cx="1110" cy="246" r="170" fill="#7C3AED" fill-opacity="0.28"/>
+<circle cx="308" cy="804" r="186" fill="#06B6D4" fill-opacity="0.22"/>
+<text x="172" y="194" fill="#F4F4F5" font-size="42" font-family="Plus Jakarta Sans, sans-serif" font-weight="700">Logo &amp; Identity</text>
+<rect x="172" y="262" width="460" height="520" rx="34" fill="#14141A"/>
+<circle cx="402" cy="522" r="124" stroke="#06B6D4" stroke-width="30"/>
+<circle cx="402" cy="522" r="58" fill="#7C3AED"/>
+<rect x="706" y="262" width="522" height="180" rx="28" fill="#14141A"/>
+<rect x="706" y="478" width="522" height="132" rx="28" fill="#14141A"/>
+<rect x="706" y="646" width="522" height="136" rx="28" fill="#14141A"/>
+</svg>

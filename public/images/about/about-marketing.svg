@@ -1,0 +1,15 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="1200" rx="48" fill="#09090B"/>
+<rect x="100" y="100" width="1000" height="1000" rx="44" fill="#111111" stroke="rgba(255,255,255,0.1)"/>
+<text x="170" y="188" fill="#E4E4E7" font-size="36" font-family="Plus Jakarta Sans, sans-serif" font-weight="700">Campaign Operations</text>
+<rect x="170" y="250" width="860" height="320" rx="32" fill="#13131A"/>
+<path d="M240 474C312 430 390 400 480 366C571 332 658 335 734 304C807 274 882 236 960 212" stroke="#06B6D4" stroke-width="16" stroke-linecap="round"/>
+<path d="M240 512C316 510 389 522 468 492C560 457 628 392 710 380C802 367 879 420 960 350" stroke="#7C3AED" stroke-width="16" stroke-linecap="round"/>
+<rect x="170" y="640" width="250" height="290" rx="24" fill="#151519"/>
+<rect x="450" y="640" width="250" height="290" rx="24" fill="#151519"/>
+<rect x="730" y="640" width="300" height="290" rx="24" fill="#151519"/>
+<rect x="216" y="700" width="158" height="28" rx="14" fill="#06B6D4" fill-opacity="0.35"/>
+<rect x="496" y="700" width="158" height="28" rx="14" fill="#7C3AED" fill-opacity="0.35"/>
+<circle cx="870" cy="760" r="84" fill="#06B6D4" fill-opacity="0.22"/>
+<circle cx="920" cy="810" r="44" fill="#7C3AED" fill-opacity="0.35"/>
+</svg>

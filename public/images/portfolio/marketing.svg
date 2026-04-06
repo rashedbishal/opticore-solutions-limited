@@ -1,0 +1,11 @@
+<svg width="1400" height="1050" viewBox="0 0 1400 1050" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1400" height="1050" rx="44" fill="#09090B"/>
+<rect x="98" y="92" width="1204" height="866" rx="40" fill="#111111" stroke="rgba(255,255,255,0.1)"/>
+<text x="174" y="194" fill="#F4F4F5" font-size="42" font-family="Plus Jakarta Sans, sans-serif" font-weight="700">Digital Marketing</text>
+<rect x="174" y="246" width="1052" height="300" rx="32" fill="#151519"/>
+<path d="M236 488C366 444 476 372 590 352C698 334 806 382 920 360C1014 342 1088 288 1162 232" stroke="#06B6D4" stroke-width="18" stroke-linecap="round"/>
+<path d="M236 456C338 484 452 508 556 460C650 418 742 320 858 318C982 316 1050 430 1162 398" stroke="#7C3AED" stroke-width="18" stroke-linecap="round"/>
+<rect x="174" y="610" width="286" height="240" rx="28" fill="#151519"/>
+<rect x="506" y="610" width="286" height="240" rx="28" fill="#151519"/>
+<rect x="838" y="610" width="388" height="240" rx="28" fill="#151519"/>
+</svg>
