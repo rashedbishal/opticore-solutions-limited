@@ -25,3 +25,24 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# after installing laravel boost (these are suggested by chatgpt)
+.claude/*.local.json
+.agents/
+.codex/
+.idea/
+
+# The following are suggested by laravel boost docs
+# mcp configuration file
+.mcp.json
+
+# Guideline files
+CLAUDE.md
+AGENTS.md
+junie/
+
+# configuration file
+boost.json
+
+# OS
+.DS_Store
