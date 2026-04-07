@@ -6,9 +6,7 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
-
-// import animation 
-import ScrambledText from '@/components/text-animations/scramble-text';
+import HoverScramble from '@/components/text-animations/hover-scramble';
 
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
@@ -63,7 +61,14 @@ export default function Navbar() {
                                     href={item.href}
                                     className="group relative py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
                                 >
-                                    <span>{item.label}</span>
+                                    <HoverScramble
+                                        duration={0.6}
+                                        speed={0.8}
+                                        scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                                        className="text-[13px]"
+                                    >
+                                        {item.label}
+                                    </HoverScramble>
                                     <span
                                         className={cn(
                                             'absolute -bottom-1 left-0 h-px bg-linear-to-r from-violet-500 to-cyan-400 transition-all duration-300',
