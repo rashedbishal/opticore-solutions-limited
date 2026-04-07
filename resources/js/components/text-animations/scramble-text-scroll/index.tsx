@@ -71,9 +71,9 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
   }, [text, threshold])
 
   return (
-    <p ref={textRef} className={className}>
+    <span ref={textRef} className={`inline-block ${className}`} style={{ lineHeight: '1.2', paddingBottom: '0.1em' }}>
       {text}
-    </p>
+    </span>
   )
 }
 

@@ -111,9 +111,9 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                         animate="visible"
                         className="glass-panel hero-noise relative overflow-hidden rounded-[2rem] p-8 sm:p-10 lg:p-14"
                     >
-                        <div className="relative z-10 max-w-3xl">
+                        <div className="relative z-10 max-w-3xl overflow-visible">
                             <span className="section-kicker">Premium Service</span>
-                            <h1 className="text-balance text-4xl font-extrabold text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                            <h1 className="text-balance pb-1 text-4xl font-extrabold leading-[1.2] text-white sm:text-5xl md:text-6xl lg:text-7xl">
                                 <ScrambledText
                                     text={service.name}
                                     className="gradient-text"
