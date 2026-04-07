@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Aperture, BriefcaseBusiness, Camera, Globe, Mail, MapPin, Phone, Play } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
+import { CursorSwitcher } from '@/components/UI/CursorSelector';
 import { navigationItems } from '@/lib/site';
 
 const companyLinks = [
@@ -107,6 +108,7 @@ export default function Footer() {
 
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-sm text-zinc-500 sm:flex-row sm:text-left">
                     <p>© 2026 Opticore Solutions Ltd. All rights reserved.</p>
+                    <CursorSwitcher />
                     <p>Built for brands that want sharper positioning, stronger visuals, and digital experiences with weight.</p>
                 </div>
             </div>

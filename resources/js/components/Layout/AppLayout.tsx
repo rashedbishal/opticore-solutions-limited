@@ -4,16 +4,17 @@ import type { PropsWithChildren } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
-import CursorGlow from '@/components/UI/CursorGlow';
+import CursorSelector, { useCursorPreference } from '@/components/UI/CursorSelector';
 import type { SharedPageProps } from '@/types';
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
+    const { cursorType } = useCursorPreference();
 
     return (
         <SmoothScroll>
-            <div className="app-shell">
-                <CursorGlow />
+            <div className="app-shell" data-cursor={cursorType}>
+                <CursorSelector cursorType={cursorType} />
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div className="absolute inset-x-0 top-0 h-[480px] bg-linear-to-b from-violet-500/10 via-cyan-400/5 to-transparent blur-3xl" />
                     <div className="absolute top-[18%] right-[-10rem] h-72 w-72 rounded-full bg-cyan-400/12 blur-[130px]" />

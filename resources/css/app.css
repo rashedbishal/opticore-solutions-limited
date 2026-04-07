@@ -230,8 +230,23 @@
     }
 }
 
-.has-fine-pointer,
-.has-fine-pointer body {
+.has-cyber-cursor,
+.has-cyber-cursor body,
+.has-robot-cursor,
+.has-robot-cursor body {
+    cursor: none;
+}
+
+.has-cyber-cursor a,
+.has-cyber-cursor button,
+.has-cyber-cursor input,
+.has-cyber-cursor textarea,
+.has-cyber-cursor select,
+.has-robot-cursor a,
+.has-robot-cursor button,
+.has-robot-cursor input,
+.has-robot-cursor textarea,
+.has-robot-cursor select {
     cursor: none;
 }
 
