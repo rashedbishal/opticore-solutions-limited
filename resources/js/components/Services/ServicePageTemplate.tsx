@@ -5,6 +5,7 @@ import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
 import type { ServicePageContent } from '@/types';
+import ScrambledText from '../text-animations/scramble-text-scroll';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -61,7 +62,10 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                         <div className="relative z-10 max-w-3xl">
                             <span className="section-kicker">Premium Service</span>
                             <h1 className="text-balance text-4xl font-extrabold text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                                <span className="gradient-text">{service.name}</span>
+                                <ScrambledText
+                                    text={service.name}
+                                    className="gradient-text"
+                                />
                             </h1>
                             <p className="mt-6 text-base leading-8 text-zinc-300 sm:text-lg">{service.longDescription}</p>
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row">

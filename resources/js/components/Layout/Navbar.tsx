@@ -7,6 +7,9 @@ import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
 
+// import animation 
+import ScrambledText from '@/components/text-animations/scramble-text';
+
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
