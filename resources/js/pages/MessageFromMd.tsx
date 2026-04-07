@@ -94,7 +94,7 @@ export default function MessageFromMd() {
                                 <div className="glass-panel relative aspect-[4/5] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] lg:aspect-[4/5]">
                                     <img
                                         src="/images/about/md-rashed.webp"
-                                        alt="Md. Rashed, Managing Director of Opticore Solutions Ltd."
+                                        alt="Md. MD, Managing Director of Opticore Solutions Ltd."
                                         className="h-full w-full scale-105 object-cover grayscale filter transition-all duration-700 group-hover:scale-100 group-hover:grayscale-0"
                                         onError={(e) => {
                                             const target =
@@ -117,7 +117,7 @@ export default function MessageFromMd() {
                                             transition={{ delay: 0.4 }}
                                         >
                                             <h3 className="text-2xl font-bold tracking-tight text-white">
-                                                Md. Rashed
+                                                Md. MD
                                             </h3>
                                             <p className="mt-1 text-sm font-medium tracking-[0.2em] text-primary uppercase">
                                                 Managing Director
@@ -238,7 +238,7 @@ export default function MessageFromMd() {
                                         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
                                             <div>
                                                 <p className="font-serif text-4xl leading-none text-white italic">
-                                                    Md. Rashed
+                                                    Md. MD
                                                 </p>
                                                 <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-primary to-transparent" />
                                                 <p className="mt-4 text-xs font-bold tracking-[0.3em] text-primary uppercase">
@@ -301,6 +301,7 @@ export default function MessageFromMd() {
                                     <MagneticButton
                                         href="/request-appointment"
                                         className="group/btn"
+                                        ariaLabel={''}
                                     >
                                         <span className="flex items-center gap-2">
                                             Start Conversation
