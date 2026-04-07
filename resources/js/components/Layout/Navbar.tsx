@@ -126,7 +126,13 @@ export default function Navbar() {
                                             )}
                                             onClick={() => setOpen(false)}
                                         >
-                                            {item.label}
+                                            <HoverScramble
+                                                duration={0.8}
+                                                speed={1}
+                                                scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                                            >
+                                                {item.label}
+                                            </HoverScramble>
                                             <span className="text-sm text-zinc-400">Explore</span>
                                         </Link>
                                     </motion.div>
