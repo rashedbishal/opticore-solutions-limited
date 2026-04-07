@@ -4,9 +4,14 @@ import type {Variants} from 'framer-motion';
 import {
     Box,
     Clapperboard,
+    Code2,
     CodeXml,
+    Film,
+    Globe,
+    Layers,
     Megaphone,
     Palette,
+    PenTool,
     ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,9 +20,14 @@ import type { ServiceItem } from '@/types';
 const iconMap = {
     Box,
     Clapperboard,
+    Code2,
     CodeXml,
+    Film,
+    Globe,
+    Layers,
     Megaphone,
     Palette,
+    PenTool,
 };
 
 const scaleIn: Variants = {

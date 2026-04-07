@@ -61,7 +61,7 @@ export const services: ServiceItem[] = [
         tagline: 'Identity systems with edge and clarity',
         description: 'Brand-led visuals, campaign creative, and print-ready assets that make businesses feel established from the first glance.',
         href: '/graphic-design',
-        icon: 'Palette',
+        icon: 'PenTool',
     },
     {
         key: 'digital-marketing',
@@ -69,7 +69,7 @@ export const services: ServiceItem[] = [
         tagline: 'Growth systems built for visibility and conversion',
         description: 'SEO, paid media, content direction, and channel management designed to turn attention into pipeline and revenue.',
         href: '/digital-marketing',
-        icon: 'Megaphone',
+        icon: 'Globe',
     },
     {
         key: 'video-editing',
@@ -77,7 +77,7 @@ export const services: ServiceItem[] = [
         tagline: 'Cinematic edits for modern attention spans',
         description: 'Short-form, long-form, and branded motion editing that keeps stories tight, punchy, and impossible to scroll past.',
         href: '/video-editing',
-        icon: 'Clapperboard',
+        icon: 'Film',
     },
     {
         key: '3d-production',
@@ -85,7 +85,7 @@ export const services: ServiceItem[] = [
         tagline: 'Depth, realism, and product storytelling',
         description: 'High-end 3D models, animation, and rendering for products, spaces, and brands that need premium visual presentation.',
         href: '/3d-production',
-        icon: 'Box',
+        icon: 'Layers',
     },
     {
         key: 'web-development',
@@ -93,7 +93,7 @@ export const services: ServiceItem[] = [
         tagline: 'Fast, polished digital experiences',
         description: 'Custom sites and applications engineered for performance, conversion, and a distinct brand presence on every screen.',
         href: '/web-development',
-        icon: 'CodeXml',
+        icon: 'Code2',
     },
 ];
 
@@ -160,7 +160,7 @@ export const servicePageContent: Record<string, ServicePageContent> = {
         shortDescription: 'Bold, polished brand visuals built to earn trust at first sight and stay memorable long after the scroll.',
         longDescription: 'We shape visual identities that feel premium, coherent, and commercial. From startups finding their voice to established teams refreshing their look, Opticore designs systems that hold together across print, digital, packaging, and campaigns.',
         href: '/graphic-design',
-        icon: 'Palette',
+        icon: 'PenTool',
         subServices: [
             { title: 'Logo Design', description: 'Distinctive logo systems that work from tiny social avatars to large-format applications.' },
             { title: 'Brand Identity', description: 'Typography, color, layouts, and usage systems that unify every touchpoint.' },
@@ -200,7 +200,7 @@ export const servicePageContent: Record<string, ServicePageContent> = {
         shortDescription: 'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
         longDescription: 'Opticore builds digital marketing programs that feel as refined as the brand itself. We blend paid media, SEO, content, and channel operations into a plan designed for predictable growth instead of disconnected tactics.',
         href: '/digital-marketing',
-        icon: 'Megaphone',
+        icon: 'Globe',
         subServices: [
             { title: 'SEO', description: 'Search visibility strategies that improve rankings, organic reach, and long-term demand capture.' },
             { title: 'Social Media Management', description: 'Editorial planning, publishing systems, and visual consistency across active channels.' },
@@ -237,9 +237,9 @@ export const servicePageContent: Record<string, ServicePageContent> = {
     'video-editing': {
         name: 'Video Editing',
         shortDescription: 'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
-        longDescription: 'We edit with pace, structure, and taste. Whether it is short-form social, YouTube, branded explainers, or corporate communication, Opticore shapes footage into confident, polished narratives that respect the audience’s time.',
+        longDescription: "We edit with pace, structure, and taste. Whether it is short-form social, YouTube, branded explainers, or corporate communication, Opticore shapes footage into confident, polished narratives that respect the audience's time.",
         href: '/video-editing',
-        icon: 'Clapperboard',
+        icon: 'Film',
         subServices: [
             { title: 'Reels & Shorts', description: 'Attention-first edits with pacing, captions, hooks, and punch built for social performance.' },
             { title: 'YouTube Videos', description: 'Long-form editing that improves clarity, rhythm, and viewer retention.' },
@@ -278,7 +278,7 @@ export const servicePageContent: Record<string, ServicePageContent> = {
         shortDescription: 'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
         longDescription: 'Opticore creates 3D visuals that help products, spaces, and concepts feel tangible before they ever reach the market. We focus on lighting, materials, composition, and motion so the final output feels convincing and commercially polished.',
         href: '/3d-production',
-        icon: 'Box',
+        icon: 'Layers',
         subServices: [
             { title: '3D Modeling', description: 'Clean, production-ready models for products, environments, and branded visual systems.' },
             { title: 'Arch Visualization', description: 'Atmospheric renders that help spaces communicate scale, material, and mood.' },
@@ -316,7 +316,7 @@ export const servicePageContent: Record<string, ServicePageContent> = {
         shortDescription: 'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
         longDescription: 'We build websites that feel premium in both design and engineering. From landing pages to custom web apps, Opticore pairs visual polish with strong frontend performance, structured backend logic, and a conversion-focused content flow.',
         href: '/web-development',
-        icon: 'CodeXml',
+        icon: 'Code2',
         subServices: [
             { title: 'Custom Web Apps', description: 'Tailored products with clean UX, scalable architecture, and reliable backend logic.' },
             { title: 'E-Commerce', description: 'Conversion-ready storefronts optimized for trust, speed, and high-value product storytelling.' },

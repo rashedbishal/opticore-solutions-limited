@@ -1,11 +1,61 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion  } from 'framer-motion';
 import type {Variants} from 'framer-motion';
-import { ArrowRight, Check, Sparkles } from 'lucide-react';
+import {
+    ArrowRight,
+    Check,
+    Palette,
+    Megaphone,
+    Clapperboard,
+    Box,
+    Code2,
+    PenTool,
+    Paintbrush,
+    Video,
+    Film,
+    MonitorPlay,
+    Layers,
+    BoxSelect,
+    Globe,
+    Terminal,
+    Smartphone,
+    Camera,
+    ScanLine,
+    Cpu,
+    Sparkles,
+    LucideIcon
+} from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
 import type { ServicePageContent } from '@/types';
 import ScrambledText from '../text-animations/scramble-text-scroll';
+
+// Icon mapping for service pages
+const iconMap: Record<string, LucideIcon> = {
+    // Graphic Design icons
+    Palette,
+    PenTool,
+    Paintbrush,
+    // Video Editing icons
+    Clapperboard,
+    Video,
+    Film,
+    MonitorPlay,
+    Camera,
+    ScanLine,
+    // Digital Marketing icons
+    Megaphone,
+    Globe,
+    Smartphone,
+    // 3D Production icons
+    Box,
+    Layers,
+    BoxSelect,
+    Cpu,
+    // Web Development icons
+    Code2,
+    Terminal,
+};
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -42,6 +92,8 @@ interface ServicePageTemplateProps {
 }
 
 export default function ServicePageTemplate({ service }: ServicePageTemplateProps) {
+    const ServiceIcon = iconMap[service.icon] || Sparkles;
+
     return (
         <>
             <Head>
@@ -84,7 +136,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                             </div>
                         </div>
                         <div className="absolute top-10 right-10 hidden h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/5 text-violet-300 lg:flex">
-                            <Sparkles className="h-10 w-10" />
+                            <ServiceIcon className="h-10 w-10" />
                         </div>
                     </motion.div>
                 </div>
