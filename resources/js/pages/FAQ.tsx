@@ -16,8 +16,14 @@ export default function FAQ() {
                     name="description"
                     content="Answers to common questions about Opticore Solutions Ltd. services, process, pricing, revisions, delivery, and hiring."
                 />
-                <meta property="og:title" content="FAQ — Opticore Solutions Ltd." />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    property="og:title"
+                    content="FAQ — Opticore Solutions Ltd."
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
@@ -34,23 +40,39 @@ export default function FAQ() {
                             const open = openIndex === index;
 
                             return (
-                                <div key={item.question} className="glass-panel overflow-hidden rounded-[1.75rem]">
+                                <div
+                                    key={item.question}
+                                    className="glass-panel overflow-hidden rounded-[1.75rem]"
+                                >
                                     <button
                                         type="button"
                                         aria-label={`Toggle answer for ${item.question}`}
                                         className="touch-target flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
-                                        onClick={() => setOpenIndex(open ? null : index)}
+                                        onClick={() =>
+                                            setOpenIndex(open ? null : index)
+                                        }
                                     >
-                                        <span className="text-base font-semibold text-white sm:text-lg">{item.question}</span>
-                                        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}>
+                                        <span className="text-base font-semibold text-white sm:text-lg">
+                                            {item.question}
+                                        </span>
+                                        <motion.span
+                                            animate={{ rotate: open ? 180 : 0 }}
+                                            transition={{ duration: 0.25 }}
+                                        >
                                             <ChevronDown className="h-5 w-5 text-cyan-300" />
                                         </motion.span>
                                     </button>
                                     <AnimatePresence initial={false}>
                                         {open ? (
                                             <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
+                                                initial={{
+                                                    height: 0,
+                                                    opacity: 0,
+                                                }}
+                                                animate={{
+                                                    height: 'auto',
+                                                    opacity: 1,
+                                                }}
                                                 exit={{ height: 0, opacity: 0 }}
                                                 transition={{ duration: 0.25 }}
                                                 className="overflow-hidden"

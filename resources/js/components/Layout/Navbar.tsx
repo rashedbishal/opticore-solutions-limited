@@ -28,7 +28,7 @@ export default function Navbar() {
 
     return (
         <>
-            <Head title={props.meta?.title} />
+            {props.meta?.title && <Head title={props.meta.title} />}
             <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
                 <nav
                     className={cn(
@@ -72,7 +72,9 @@ export default function Navbar() {
                                     <span
                                         className={cn(
                                             'absolute -bottom-1 left-0 h-px bg-linear-to-r from-violet-500 to-cyan-400 transition-all duration-300',
-                                            active ? 'w-full' : 'w-0 group-hover:w-full',
+                                            active
+                                                ? 'w-full'
+                                                : 'w-0 group-hover:w-full',
                                         )}
                                     />
                                 </Link>
@@ -91,11 +93,19 @@ export default function Navbar() {
 
                     <button
                         type="button"
-                        aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+                        aria-label={
+                            open
+                                ? 'Close navigation menu'
+                                : 'Open navigation menu'
+                        }
                         className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
                         onClick={() => setOpen((current) => !current)}
                     >
-                        {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                        {open ? (
+                            <X className="h-5 w-5" />
+                        ) : (
+                            <Menu className="h-5 w-5" />
+                        )}
                     </button>
                 </nav>
             </header>
@@ -106,7 +116,7 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 flex min-h-screen flex-col bg-black/95 px-4 pb-8 pt-28 backdrop-blur-2xl lg:hidden"
+                        className="fixed inset-0 z-40 flex min-h-screen flex-col bg-black/95 px-4 pt-28 pb-8 backdrop-blur-2xl lg:hidden"
                     >
                         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-between gap-8">
                             <div className="space-y-2">
@@ -116,18 +126,24 @@ export default function Navbar() {
                                         initial={{ opacity: 0, y: 24 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 16 }}
-                                        transition={{ delay: index * 0.08, duration: 0.35 }}
+                                        transition={{
+                                            delay: index * 0.08,
+                                            duration: 0.35,
+                                        }}
                                     >
                                         <Link
                                             href={item.href}
                                             className={cn(
                                                 'touch-target flex w-full items-center justify-between rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-2xl font-semibold text-white',
-                                                url === item.href && 'border-violet-400/40 bg-violet-500/10',
+                                                url === item.href &&
+                                                    'border-violet-400/40 bg-violet-500/10',
                                             )}
                                             onClick={() => setOpen(false)}
                                         >
                                             {item.label}
-                                            <span className="text-sm text-zinc-400">Explore</span>
+                                            <span className="text-sm text-zinc-400">
+                                                Explore
+                                            </span>
                                         </Link>
                                     </motion.div>
                                 ))}

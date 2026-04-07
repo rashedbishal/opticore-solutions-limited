@@ -47,6 +47,16 @@ class PageController extends Controller
         ]);
     }
 
+    public function messageFromMd(): Response
+    {
+        return Inertia::render('MessageFromMd', [
+            'meta' => [
+                'title' => 'Message from MD — Opticore Solutions Ltd.',
+                'description' => 'A message from the Managing Director of Opticore Solutions Ltd. about the company vision, standards, and client commitment.',
+            ],
+        ]);
+    }
+
     public function requestAppointment(): Response
     {
         return Inertia::render('RequestAppointment', [

@@ -16,6 +16,9 @@ import AnimatedCounter from '@/components/UI/AnimatedCounter';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
+import ScannedServiceCard, {
+    ServiceCarousel,
+} from '@/components/UI/ScannedServiceCard';
 import SectionHeader from '@/components/UI/SectionHeader';
 import ServiceCard from '@/components/UI/ServiceCard';
 import TestimonialCard from '@/components/UI/TestimonialCard';
@@ -27,9 +30,6 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
-import ScannedServiceCard, {
-    ServiceCarousel,
-} from '@/components/UI/ScannedServiceCard';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -116,7 +116,10 @@ function HeroHeadline() {
                 (await import('animejs')).default ?? (await import('animejs'));
 
             const el = headlineRef.current;
-            if (!el) return;
+
+            if (!el) {
+                return;
+            }
 
             // Build HTML: wrap each letter in a span, preserving gradient-text per word
             const words =
@@ -131,6 +134,7 @@ function HeroHeadline() {
                                 `<span class='anime-letter${isGradient ? ' gradient-text' : ''}'>${char}</span>`,
                         )
                         .join('');
+
                     return `<span class='anime-word'>${letters}</span>`;
                 })
                 .join(' ');
@@ -158,7 +162,9 @@ function HeroHeadline() {
         run();
 
         return () => {
-            if (timelineInstance?.pause) timelineInstance.pause();
+            if (timelineInstance?.pause) {
+                timelineInstance.pause();
+            }
         };
     }, []);
 
@@ -185,6 +191,8 @@ function HeroHeadline() {
 }
 
 export default function HomeIndex() {
+    const glowDelays = [0, 3, 2, 1];
+    const bentoOrder = [0, 3, 2, 1];
     const desktop = useMediaQuery('(min-width: 1024px)');
     const [isPaused, setIsPaused] = useState(false);
     const handlePointerEnter = () => setIsPaused(true);
@@ -193,8 +201,183 @@ export default function HomeIndex() {
 
     const statVariants = useMemo(() => [slideLeft, fadeUp, slideRight], []);
 
+    useEffect(() => {
+        const measure = () => {
+            const cards = document.querySelectorAll<HTMLElement>('.bento-card');
+            cards.forEach((card) => {
+                const rect = card.querySelector<SVGRectElement>('.trace-rect');
+
+                if (!rect) {
+                    return;
+                }
+
+                const w = card.offsetWidth;
+                const h = card.offsetHeight;
+                const r = 26;
+                const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
+                card.style.setProperty('--perim', `${perim}px`);
+                rect.setAttribute('width', `${w - 2.5}`);
+                rect.setAttribute('height', `${h - 2.5}`);
+            });
+        };
+
+        measure(); // run immediately
+        window.addEventListener('resize', measure); // re-run on resize
+
+        return () => window.removeEventListener('resize', measure); // cleanup
+    }, []);
+
     return (
         <>
+            <style>{`
+    .bento-card {
+        position: relative;
+    }
+    .bento-card svg.glow-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 10;
+        border-radius: inherit;
+        overflow: visible;
+    }
+    .bento-card svg.glow-svg .trace-rect {
+        fill: none;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+    }
+
+
+    @keyframes traceAnim {
+        0%   { stroke-dashoffset: var(--perim); opacity: 1; }
+        25%  { stroke-dashoffset: 0;            opacity: 1; }
+        26%  { opacity: 0; }
+        100% { stroke-dashoffset: 0;            opacity: 0; }
+    }
+
+    .bento-card[data-order="0"] .trace-rect {
+        stroke: url(#glowGrad0);
+        stroke-dasharray: var(--perim);
+        stroke-dashoffset: var(--perim);
+        opacity: 0;
+        animation: traceAnim 16s linear infinite;
+        animation-delay: 0s;
+    }
+    .bento-card[data-order="1"] .trace-rect {
+        stroke: url(#glowGrad1);
+        stroke-dasharray: var(--perim);
+        stroke-dashoffset: var(--perim);
+        opacity: 0;
+        animation: traceAnim 16s linear infinite;
+        animation-delay: 12s;
+    }
+    .bento-card[data-order="2"] .trace-rect {
+        stroke: url(#glowGrad2);
+        stroke-dasharray: var(--perim);
+        stroke-dashoffset: var(--perim);
+        opacity: 0;
+        animation: traceAnim 16s linear infinite;
+        animation-delay: 8s;
+    }
+    .bento-card[data-order="3"] .trace-rect {
+        stroke: url(#glowGrad3);
+        stroke-dasharray: var(--perim);
+        stroke-dashoffset: var(--perim);
+        opacity: 0;
+        animation: traceAnim 16s linear infinite;
+        animation-delay: 4s;
+    }
+
+    /* Hover particle glow */
+    .bento-card:hover .trace-rect {
+        animation: none !important;
+        stroke-dashoffset: 0 !important;
+        opacity: 1 !important;
+        filter: drop-shadow(0 0 6px #7c3aed) drop-shadow(0 0 12px #06b6d4);
+    }
+    .bento-card:hover .glow-particles circle {
+        opacity: 1 !important;
+        animation: particleDrift 1.5s ease-in-out infinite alternate !important;
+    }
+    @keyframes particleDrift {
+        0%   { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(var(--dx), var(--dy)) scale(1.8); }
+    }
+    .glow-particles circle {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+`}</style>
+            <svg width="0" height="0" style={{ position: 'absolute' }}>
+                <defs>
+                    <linearGradient
+                        id="glowGrad0"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                    >
+                        <stop offset="0%" stopColor="#7c3aed" stopOpacity="0" />
+                        <stop offset="40%" stopColor="#7c3aed" />
+                        <stop offset="60%" stopColor="#06b6d4" />
+                        <stop
+                            offset="100%"
+                            stopColor="#06b6d4"
+                            stopOpacity="0"
+                        />
+                    </linearGradient>
+                    <linearGradient
+                        id="glowGrad1"
+                        x1="100%"
+                        y1="0%"
+                        x2="0%"
+                        y2="100%"
+                    >
+                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0" />
+                        <stop offset="40%" stopColor="#06b6d4" />
+                        <stop offset="60%" stopColor="#7c3aed" />
+                        <stop
+                            offset="100%"
+                            stopColor="#7c3aed"
+                            stopOpacity="0"
+                        />
+                    </linearGradient>
+                    <linearGradient
+                        id="glowGrad2"
+                        x1="0%"
+                        y1="100%"
+                        x2="100%"
+                        y2="0%"
+                    >
+                        <stop offset="0%" stopColor="#a855f7" stopOpacity="0" />
+                        <stop offset="40%" stopColor="#a855f7" />
+                        <stop offset="60%" stopColor="#06b6d4" />
+                        <stop
+                            offset="100%"
+                            stopColor="#06b6d4"
+                            stopOpacity="0"
+                        />
+                    </linearGradient>
+                    <linearGradient
+                        id="glowGrad3"
+                        x1="100%"
+                        y1="100%"
+                        x2="0%"
+                        y2="0%"
+                    >
+                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0" />
+                        <stop offset="40%" stopColor="#06b6d4" />
+                        <stop offset="60%" stopColor="#a855f7" />
+                        <stop
+                            offset="100%"
+                            stopColor="#a855f7"
+                            stopOpacity="0"
+                        />
+                    </linearGradient>
+                </defs>
+            </svg>
             <Head>
                 <title>Opticore Solutions Ltd. — Premium Digital Agency</title>
                 <meta
@@ -322,7 +505,7 @@ export default function HomeIndex() {
                         description="Opticore combines premium creative direction with production discipline so every deliverable looks refined and performs with intent."
                     />
 
-                    <div className="mt-10 -mx-4 sm:-mx-6 lg:-mx-8">
+                    <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">
                         <ServiceCarousel services={duplicatedServices} />
                     </div>
                 </div>
@@ -368,8 +551,116 @@ export default function HomeIndex() {
                         {aboutBentoImages.map((image, index) => (
                             <div
                                 key={image.src}
-                                className={`glass-panel overflow-hidden rounded-[1.75rem] ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
+                                data-order={bentoOrder[index]}
+                                className={`bento-card glass-panel overflow-hidden rounded-[1.75rem] ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
                             >
+                                {/*
+                SVG overlay — stroke-dashoffset animation travels
+                along the exact rounded-rect path, hugging every corner.
+                --perim is set by the JS below via ResizeObserver.
+            */}
+                                <svg className="glow-svg" aria-hidden="true">
+                                    <rect
+                                        className="trace-rect"
+                                        x="1.25"
+                                        y="1.25"
+                                        width="calc(100% - 2.5px)"
+                                        height="calc(100% - 2.5px)"
+                                        rx="26"
+                                        ry="26"
+                                    />
+                                    {/* Hover particles scattered around the border */}
+                                    <g className="glow-particles">
+                                        {[
+                                            {
+                                                cx: '15%',
+                                                cy: '0%',
+                                                dx: '0px',
+                                                dy: '-6px',
+                                                c: '#7c3aed',
+                                            },
+                                            {
+                                                cx: '50%',
+                                                cy: '0%',
+                                                dx: '4px',
+                                                dy: '-8px',
+                                                c: '#06b6d4',
+                                            },
+                                            {
+                                                cx: '85%',
+                                                cy: '0%',
+                                                dx: '0px',
+                                                dy: '-6px',
+                                                c: '#a855f7',
+                                            },
+                                            {
+                                                cx: '100%',
+                                                cy: '30%',
+                                                dx: '6px',
+                                                dy: '0px',
+                                                c: '#06b6d4',
+                                            },
+                                            {
+                                                cx: '100%',
+                                                cy: '70%',
+                                                dx: '8px',
+                                                dy: '4px',
+                                                c: '#7c3aed',
+                                            },
+                                            {
+                                                cx: '85%',
+                                                cy: '100%',
+                                                dx: '0px',
+                                                dy: '6px',
+                                                c: '#06b6d4',
+                                            },
+                                            {
+                                                cx: '50%',
+                                                cy: '100%',
+                                                dx: '-4px',
+                                                dy: '8px',
+                                                c: '#a855f7',
+                                            },
+                                            {
+                                                cx: '15%',
+                                                cy: '100%',
+                                                dx: '0px',
+                                                dy: '6px',
+                                                c: '#7c3aed',
+                                            },
+                                            {
+                                                cx: '0%',
+                                                cy: '70%',
+                                                dx: '-6px',
+                                                dy: '0px',
+                                                c: '#06b6d4',
+                                            },
+                                            {
+                                                cx: '0%',
+                                                cy: '30%',
+                                                dx: '-8px',
+                                                dy: '-4px',
+                                                c: '#a855f7',
+                                            },
+                                        ].map((p, i) => (
+                                            <circle
+                                                key={i}
+                                                cx={p.cx}
+                                                cy={p.cy}
+                                                r="3"
+                                                fill={p.c}
+                                                style={
+                                                    {
+                                                        '--dx': p.dx,
+                                                        '--dy': p.dy,
+                                                        animationDelay: `${i * 0.15}s`,
+                                                    } as React.CSSProperties
+                                                }
+                                            />
+                                        ))}
+                                    </g>
+                                </svg>
+
                                 <img
                                     src={image.src}
                                     alt={image.alt}

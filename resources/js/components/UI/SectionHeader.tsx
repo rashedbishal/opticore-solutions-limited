@@ -29,7 +29,10 @@ function AnimatedTitle({ title }: { title: string }) {
 
     useEffect(() => {
         const el = titleRef.current;
-        if (!el) return;
+
+        if (!el) {
+return;
+}
 
         const uniqueClass = classRef.current;
         const letterClass = `${uniqueClass}-letter`;
@@ -71,7 +74,9 @@ function AnimatedTitle({ title }: { title: string }) {
         run();
 
         return () => {
-            if (timelineRef.current?.pause) timelineRef.current.pause();
+            if (timelineRef.current?.pause) {
+timelineRef.current.pause();
+}
         };
     }, [title]);
 

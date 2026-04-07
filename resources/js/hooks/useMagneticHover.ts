@@ -12,7 +12,9 @@ interface MagneticHoverResult<T extends HTMLElement> {
     enabled: boolean;
 }
 
-export function useMagneticHover<T extends HTMLElement>(): MagneticHoverResult<T> {
+export function useMagneticHover<
+    T extends HTMLElement,
+>(): MagneticHoverResult<T> {
     const ref = useRef<T | null>(null);
     const x = useSpring(0, { stiffness: 150, damping: 20 });
     const y = useSpring(0, { stiffness: 150, damping: 20 });

@@ -15,7 +15,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>Opticore Solutions Limited</title>
         </x-inertia::head>
     </head>
     <body class="overflow-x-hidden bg-dark font-sans antialiased">
