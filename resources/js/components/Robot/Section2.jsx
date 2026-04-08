@@ -10,25 +10,6 @@ import { Scan, Target, Radar } from 'lucide-react';
  * - Data analysis cards
  * - Robot rotates and scans
  */
-const LoadingDots = ({ text }) => {
-  const [dots, setDots] = React.useState('');
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Remove trailing dots from incoming text to avoid duplication
-  const baseText = text.replace(/\.{1,3}$/, '');
-  return (
-    <span>
-      {baseText}{dots}
-    </span>
-  );
-};
-
 export default function Section2() {
   const scanFeatures = [
     { icon: Target, label: 'Target Analysis', status: 'Scanning...' },
@@ -87,13 +68,7 @@ export default function Section2() {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-semibold text-white">{feature.label}</h4>
-                  <p className="text-sm text-cyan-400">
-                    {feature.status.includes('...') ? (
-                      <LoadingDots text={feature.status} />
-                    ) : (
-                      feature.status
-                    )}
-                  </p>
+                  <p className="text-sm text-cyan-400">{feature.status}</p>
                 </div>
                 <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-400" />
               </div>
