@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import CyberpunkCursor from './CyberpunkCursor';
-import RobotHandCursor from './RobotHandCursor';
-import CursorGlow from './CursorGlow';
+import RobotCursor from './RobotCursor';
 
-export type CursorType = 'cyberpunk' | 'robot' | 'glow' | 'default';
+export type CursorType = 'robot' | 'default';
 
 const STORAGE_KEY = 'preferred-cursor';
 
@@ -15,7 +13,7 @@ export function useCursorPreference() {
 
     useEffect(() => {
         const stored = localStorage.getItem(STORAGE_KEY) as CursorType;
-        if (stored && ['cyberpunk', 'robot', 'glow', 'default'].includes(stored)) {
+        if (stored && ['robot', 'default'].includes(stored)) {
             setCursorType(stored);
         }
         setIsLoaded(true);
@@ -35,12 +33,8 @@ interface CursorSelectorProps {
 
 export default function CursorSelector({ cursorType }: CursorSelectorProps) {
     switch (cursorType) {
-        case 'cyberpunk':
-            return <CyberpunkCursor />;
         case 'robot':
-            return <RobotHandCursor />;
-        case 'glow':
-            return <CursorGlow />;
+            return <RobotCursor />;
         case 'default':
         default:
             return null;
@@ -54,9 +48,7 @@ export function CursorSwitcher() {
     if (!isLoaded) return null;
 
     const options: { value: CursorType; label: string; icon: string }[] = [
-        { value: 'robot', label: 'Robot Hand', icon: '🤖' },
-        { value: 'cyberpunk', label: 'Cyberpunk Ring', icon: '⚡' },
-        { value: 'glow', label: 'Firefly Glow', icon: '✨' },
+        { value: 'robot', label: 'Robot Cursor', icon: '🤖' },
         { value: 'default', label: 'Default', icon: '🖱️' },
     ];
 
