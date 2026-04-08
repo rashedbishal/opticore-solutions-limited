@@ -23,8 +23,8 @@ export default function RobotScene3D() {
 
     // Initial values applied via JSX props on the group element.
     // These constants drive both the JSX defaults and the GSAP scroll animation.
-    const INITIAL_SCALE = 0.18;
-    const INITIAL_Y = -2.0;
+    const INITIAL_SCALE = 0.27;
+    const INITIAL_Y = -1.0;
 
     useEffect(() => {
         let raf: number;
