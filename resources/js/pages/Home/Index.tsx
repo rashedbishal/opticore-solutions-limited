@@ -398,6 +398,8 @@ export default function HomeIndex() {
                 />
             </Head>
 
+
+
             <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb
                     className="top-20 left-[-4rem] h-64 w-64 md:h-80 md:w-80"
@@ -501,12 +503,10 @@ export default function HomeIndex() {
                 </div>
             </section>
 
-            <div className="robot-3d-trigger relative">
-                <Section2 />
-                <Section3 />
-                <Section4 />
-                <Section5 />
-            </div>
+            <Section2 />
+            <Section3 />
+            <Section4 />
+            <Section5 />
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
