@@ -1,9 +1,11 @@
-import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
 import { Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import RobotModel, { RobotModelRef } from './RobotModel';
+import React, { useRef, useEffect, Suspense } from 'react';
+import * as THREE from 'three';
+import type { RobotModelRef } from './RobotModel';
+import RobotModel from './RobotModel';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,17 +21,19 @@ export default function RobotScene3D() {
     const robotModelRef = useRef<RobotModelRef>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera>(null);
 
+    // Initial values applied via JSX props on the group element.
+    // These constants drive both the JSX defaults and the GSAP scroll animation.
+    const INITIAL_SCALE = 0.18;
+    const INITIAL_Y = -2.0;
+
     useEffect(() => {
-        const ctx = gsap.context(() => {
-            if (!robotRef.current) return;
+        let raf: number;
 
-            // --- ANIMATION SEQUENCE ---
-
-            // 1. Initial State (Section 1 - Hero)
-            // Centered, smaller size
-            gsap.set(robotRef.current.position, { x: 0, y: -0.5, z: 0 });
-            gsap.set(robotRef.current.scale, { x: 0.6, y: 0.6, z: 0.6 });
-            gsap.set(robotRef.current.rotation, { y: 0 });
+        // Defer GSAP setup until after R3F has fully mounted the Three.js objects.
+        raf = requestAnimationFrame(() => {
+            if (!robotRef.current) {
+                return;
+            }
 
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -38,13 +42,10 @@ export default function RobotScene3D() {
                     end: "+=100%",
                     scrub: 1,
                     onUpdate: (self) => {
-                        // Switch animations based on scroll progress
                         if (robotModelRef.current) {
                             if (self.progress > 0.3) {
-                                // Switch to idle animation when moving to corner
                                 robotModelRef.current.playAnimation('idle');
                             } else {
-                                // Play hello animation at start
                                 robotModelRef.current.playAnimation('hello');
                             }
                         }
@@ -52,46 +53,34 @@ export default function RobotScene3D() {
                 }
             });
 
-            // 2. Section 2: Move to bottom left corner
-            // Decrease size further and move to corner
-            tl.to(robotRef.current.position, {
-                x: -3.5,
-                y: -2,
-                z: 0,
-                duration: 1,
-                ease: "power2.inOut"
-            }, 0);
+            // Section 2: scroll-driven move to bottom-left corner
+            tl.to(robotRef.current.position, { x: -3.8, y: -2.5, z: 0, duration: 1, ease: "power2.inOut" }, 0);
+            tl.to(robotRef.current.scale,    { x: 0.12, y: 0.12, z: 0.12, duration: 1, ease: "power2.inOut" }, 0);
+            tl.to(robotRef.current.rotation, { y: Math.PI / 6, duration: 1, ease: "power2.inOut" }, 0);
+        });
 
-            tl.to(robotRef.current.scale, {
-                x: 0.35,
-                y: 0.35,
-                z: 0.35,
-                duration: 1,
-                ease: "power2.inOut"
-            }, 0);
-
-            tl.to(robotRef.current.rotation, {
-                y: Math.PI / 6,
-                duration: 1,
-                ease: "power2.inOut"
-            }, 0);
-
-        }, sceneRef);
-
-        return () => ctx.revert();
+        return () => {
+            cancelAnimationFrame(raf);
+            ScrollTrigger.getAll().forEach((t) => t.kill());
+        };
     }, []);
 
     return (
         <div ref={sceneRef} className="robot-3d-container pointer-events-none fixed inset-0 z-50">
             <Canvas shadows gl={{ antialias: true, alpha: true }}>
-                <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 5]} fov={50} />
+                <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 6]} fov={45} />
 
                 <Suspense fallback={null}>
                     <Environment preset="city" />
                     <ambientLight intensity={0.5} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
 
-                    <group ref={robotRef}>
+                    <group
+                        ref={robotRef}
+                        position={[0, INITIAL_Y, 0]}
+                        scale={[INITIAL_SCALE, INITIAL_SCALE, INITIAL_SCALE]}
+                        rotation={[0, 0, 0]}
+                    >
                         <RobotModel
                             ref={robotModelRef}
                             modelPath="/models/quaternius_cc0-george-1063.glb"
