@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 export interface RobotModelRef {
-    playAnimation: (name: string) => void;
+    playAnimation: (name: string, loopOnce?: boolean) => void;
     getAvailableAnimations: () => string[];
 }
 
@@ -27,7 +27,7 @@ const RobotModel = forwardRef<RobotModelRef, RobotModelProps>(
 
         // Expose methods to parent via ref
         useImperativeHandle(ref, () => ({
-            playAnimation: (name: string) => {
+            playAnimation: (name: string, loopOnce = false) => {
                 if (!actions || Object.keys(actions).length === 0) return;
 
                 // Find animation case-insensitively
@@ -42,6 +42,15 @@ const RobotModel = forwardRef<RobotModelRef, RobotModelProps>(
                     // Stop current animation
                     if (currentActionRef.current) {
                         currentActionRef.current.fadeOut(0.5);
+                    }
+
+                    // Configure looping behavior
+                    if (loopOnce || matchedName.toLowerCase() === 'death') {
+                        newAction.setLoop(THREE.LoopOnce, 1);
+                        newAction.clampWhenFinished = true;
+                    } else {
+                        newAction.setLoop(THREE.LoopRepeat, Infinity);
+                        newAction.clampWhenFinished = false;
                     }
 
                     // Play new animation

@@ -23,6 +23,11 @@ function ResponsiveRobot() {
     const robotRef = useRef<THREE.Group>(null);
     const robotModelRef = useRef<RobotModelRef>(null);
 
+    // Track the current animation so we can return to it after the 'death' 
+    // click animation finishes.
+    const currentAnimRef = useRef<string>('idle');
+    const isDeadRef = useRef<boolean>(false);
+
     // Dynamic initial values based on viewport size.
     // A standard desktop has viewport.width ~ 10-15. Mobile is often ~ 4-6.
     const isMobile = viewport.width < 8;
@@ -64,10 +69,22 @@ function ResponsiveRobot() {
                         trigger: id,
                         start: "top 50%",    // Triggers when the top of the section hits the vertital center of the screen (50% visible)
                         end: "bottom 50%",   // Ends when the bottom of the section hits the vertical center of the screen (drops below 50% visible)
-                        onEnter: () => robotModelRef.current?.playAnimation(anim),
-                        onEnterBack: () => robotModelRef.current?.playAnimation(anim),
-                        onLeave: () => robotModelRef.current?.playAnimation('idle'),
-                        onLeaveBack: () => robotModelRef.current?.playAnimation('idle'),
+                        onEnter: () => {
+                            currentAnimRef.current = anim;
+                            if (!isDeadRef.current) robotModelRef.current?.playAnimation(anim);
+                        },
+                        onEnterBack: () => {
+                            currentAnimRef.current = anim;
+                            if (!isDeadRef.current) robotModelRef.current?.playAnimation(anim);
+                        },
+                        onLeave: () => {
+                            currentAnimRef.current = 'idle';
+                            if (!isDeadRef.current) robotModelRef.current?.playAnimation('idle');
+                        },
+                        onLeaveBack: () => {
+                            currentAnimRef.current = 'idle';
+                            if (!isDeadRef.current) robotModelRef.current?.playAnimation('idle');
+                        },
                     });
                     
                     // If the user's scroll position is already inside one of these sections
@@ -80,8 +97,11 @@ function ResponsiveRobot() {
                 });
 
                 // Default to idle if the user is on the Hero section (no active triggers)
-                if (!insideAnySection && robotModelRef.current) {
-                    robotModelRef.current.playAnimation('idle');
+                if (!insideAnySection) {
+                    currentAnimRef.current = 'idle';
+                    if (!isDeadRef.current && robotModelRef.current) {
+                        robotModelRef.current.playAnimation('idle');
+                    }
                 }
             }
         });
@@ -107,12 +127,31 @@ function ResponsiveRobot() {
         };
     }, [viewport.width, viewport.height, isMobile]);
 
+    const handleClick = (e: any) => {
+        e.stopPropagation(); // Avoid triggering underneath if possible
+        if (robotModelRef.current && !isDeadRef.current) {
+            isDeadRef.current = true;
+            robotModelRef.current.playAnimation('death');
+            
+            // Wait 6 seconds so it stays dead longer, then return to whatever animation is intended for the current scroll position
+            setTimeout(() => {
+                isDeadRef.current = false;
+                if (robotModelRef.current) {
+                    robotModelRef.current.playAnimation(currentAnimRef.current);
+                }
+            }, 6000);
+        }
+    };
+
     return (
         <group
             ref={robotRef}
             position={[0, initialY, 0]}
             scale={[initialScale, initialScale, initialScale]}
             rotation={[0, 0, 0]}
+            onClick={handleClick}
+            onPointerOver={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'pointer'; }}
+            onPointerOut={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'auto'; }}
         >
             <RobotModel
                 ref={robotModelRef}
@@ -129,7 +168,13 @@ export default function RobotScene3D() {
 
     return (
         <div ref={sceneRef} className="robot-3d-container pointer-events-none fixed inset-0 z-50">
-            <Canvas shadows gl={{ antialias: true, alpha: true }} style={{ pointerEvents: 'none' }}>
+            <Canvas 
+                shadows 
+                gl={{ antialias: true, alpha: true }} 
+                style={{ pointerEvents: 'none' }}
+                eventSource={typeof document !== 'undefined' ? document.body : undefined} 
+                eventPrefix="client"
+            >
                 <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 6]} fov={45} />
 
                 <Suspense fallback={null}>
