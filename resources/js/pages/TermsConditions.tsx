@@ -6,15 +6,26 @@ import { termsSections } from '@/lib/site';
 
 export default function TermsConditions() {
     const mobile = useMediaQuery('(max-width: 1023px)');
-    const [activeSection, setActiveSection] = useState(termsSections[0]?.id ?? 'engagement');
+    const [activeSection, setActiveSection] = useState(
+        termsSections[0]?.id ?? 'engagement',
+    );
 
     return (
         <>
             <Head>
                 <title>Terms & Conditions — Opticore Solutions Ltd.</title>
-                <meta name="description" content="Read the terms and conditions for Opticore Solutions Ltd." />
-                <meta property="og:title" content="Terms & Conditions — Opticore Solutions Ltd." />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="description"
+                    content="Read the terms and conditions for Opticore Solutions Ltd."
+                />
+                <meta
+                    property="og:title"
+                    content="Terms & Conditions — Opticore Solutions Ltd."
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
@@ -24,19 +35,27 @@ export default function TermsConditions() {
                             value={activeSection}
                             onChange={(event) => {
                                 setActiveSection(event.target.value);
-                                document.getElementById(event.target.value)?.scrollIntoView({ behavior: 'smooth' });
+                                document
+                                    .getElementById(event.target.value)
+                                    ?.scrollIntoView({ behavior: 'smooth' });
                             }}
                             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
                         >
                             {termsSections.map((section) => (
-                                <option key={section.id} value={section.id} className="bg-surface">
+                                <option
+                                    key={section.id}
+                                    value={section.id}
+                                    className="bg-surface"
+                                >
                                     {section.title}
                                 </option>
                             ))}
                         </select>
                     ) : (
                         <aside className="sticky top-28 h-fit rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-                            <p className="text-sm font-semibold tracking-[0.24em] text-zinc-400 uppercase">Contents</p>
+                            <p className="text-sm font-semibold tracking-[0.24em] text-zinc-400 uppercase">
+                                Contents
+                            </p>
                             <div className="mt-4 space-y-2">
                                 {termsSections.map((section) => (
                                     <a
@@ -52,7 +71,9 @@ export default function TermsConditions() {
                     )}
 
                     <div className="glass-panel rounded-[2rem] p-8 sm:p-10">
-                        <h1 className="text-4xl font-extrabold text-white sm:text-5xl">Terms & Conditions</h1>
+                        <h1 className="text-4xl font-extrabold text-white sm:text-5xl">
+                            Terms & Conditions
+                        </h1>
                         <div className="legal-content mt-10">
                             {termsSections.map((section) => (
                                 <motion.section

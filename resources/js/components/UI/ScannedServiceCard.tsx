@@ -345,7 +345,7 @@ function DesktopCarousel({ services }: { services: ServiceItem[] }) {
     const initialCodes = useRef(doubled.map(() => generateCode(CODE_COLS, CODE_ROWS)));
 
     const state = useRef({
-        pos: 0, vel: 80, dir: -1 as 1 | -1,
+        pos: 0, vel: 220, dir: -1 as 1 | -1,
         running: true, dragging: false,
         lastX: 0, mouseVel: 0, lastT: 0,
         trackW: (CARD_W + CARD_GAP) * doubled.length,
@@ -434,7 +434,7 @@ scannerRef.current.scanningActive = anyScanning;
         s.lastT = now;
 
         if (s.running && !s.dragging) {
-            s.vel = Math.max(30, s.vel * 0.995);
+            s.vel = Math.max(150, s.vel * 0.995);
             s.pos += s.vel * s.dir * dt;
             const rootW = rootRef.current?.offsetWidth ?? window.innerWidth;
 

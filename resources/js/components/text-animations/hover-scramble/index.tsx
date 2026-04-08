@@ -2,7 +2,7 @@
 
 import { gsap } from "gsap"
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 gsap.registerPlugin(ScrambleTextPlugin)
 
@@ -12,6 +12,8 @@ export interface HoverScrambleProps {
   scrambleChars?: string
   className?: string
   children: string
+  triggerOnMount?: boolean
+  trigger?: boolean
 }
 
 const HoverScramble: React.FC<HoverScrambleProps> = ({
@@ -20,15 +22,17 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
   scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   className = "",
   children,
+  triggerOnMount = false,
+  trigger = false,
 }) => {
   const textRef = useRef<HTMLSpanElement>(null)
-  const [isHovering, setIsHovering] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
   const tweenRef = useRef<gsap.core.Tween | null>(null)
 
-  const handleMouseEnter = () => {
-    if (!textRef.current || isHovering) return
+  const scramble = () => {
+    if (!textRef.current) return
 
-    setIsHovering(true)
+    setIsAnimating(true)
 
     tweenRef.current = gsap.to(textRef.current, {
       duration,
@@ -39,18 +43,43 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
         revealDelay: 0,
       },
       ease: "none",
+      onComplete: () => setIsAnimating(false),
     })
   }
 
-  const handleMouseLeave = () => {
-    setIsHovering(false)
-    if (tweenRef.current) {
-      tweenRef.current.kill()
-    }
-    if (textRef.current) {
-      textRef.current.textContent = children
-    }
+  const handleMouseEnter = () => {
+    if (isAnimating) return
+    scramble()
   }
+
+  const handleMouseLeave = () => {
+    // We don't necessarily want to stop the animation on leave
+    // but we can ensure the text is correct if needed.
+  }
+
+  useEffect(() => {
+    if (triggerOnMount) {
+      // Small delay to ensure the menu opening animation has started
+      const timer = setTimeout(() => {
+        scramble()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [triggerOnMount, children])
+
+  useEffect(() => {
+    if (trigger && !isAnimating) {
+      scramble()
+    }
+  }, [trigger])
+
+  useEffect(() => {
+    return () => {
+      if (tweenRef.current) {
+        tweenRef.current.kill()
+      }
+    }
+  }, [])
 
   return (
     <span

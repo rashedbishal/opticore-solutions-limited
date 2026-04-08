@@ -120,17 +120,6 @@ export default function Section3() {
         </div>
       </div>
 
-      {/* Side decorations */}
-      <div className="absolute left-8 top-1/2 hidden -translate-y-1/2 flex-col gap-4 lg:flex">
-        {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="h-12 w-1 rounded-full bg-gradient-to-b from-violet-500/0 via-violet-500/50 to-violet-500/0"
-            style={{ animationDelay: `${i * 0.2}s` }}
-          />
-        ))}
-      </div>
-
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
     </section>
   );

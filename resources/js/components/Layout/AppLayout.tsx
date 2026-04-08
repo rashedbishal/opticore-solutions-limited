@@ -19,7 +19,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                     <div className="absolute inset-x-0 top-0 h-[480px] bg-linear-to-b from-violet-500/10 via-cyan-400/5 to-transparent blur-3xl" />
                     <div className="absolute top-[18%] right-[-10rem] h-72 w-72 rounded-full bg-cyan-400/12 blur-[130px]" />
                     <div className="absolute top-[40%] left-[-8rem] h-72 w-72 rounded-full bg-violet-500/12 blur-[130px]" />
-                    <div className="absolute bottom-[10%] right-[15%] h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[140px]" />
+                    <div className="absolute right-[15%] bottom-[10%] h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[140px]" />
                 </div>
                 <Navbar />
                 <AnimatePresence mode="wait">

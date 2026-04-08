@@ -35,7 +35,9 @@ createInertiaApp({
             throw new Error(`Unknown Inertia page: ${name}`);
         }
 
-        page.default.layout ??= (pageNode: ReactNode) => <AppLayout>{pageNode}</AppLayout>;
+        page.default.layout ??= (pageNode: ReactNode) => (
+            <AppLayout>{pageNode}</AppLayout>
+        );
 
         return page;
     },

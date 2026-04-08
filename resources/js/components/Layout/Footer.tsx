@@ -1,13 +1,15 @@
 import { Link } from '@inertiajs/react';
-import { Aperture, BriefcaseBusiness, Camera, Globe, Mail, MapPin, Phone, Play } from 'lucide-react';
+import { BriefcaseBusiness, Camera, Globe, Mail, MapPin, Phone, Play } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { CursorSwitcher } from '@/components/UI/CursorSelector';
 import { navigationItems } from '@/lib/site';
 
 const companyLinks = [
     { label: 'About Us', href: '/about-us' },
+    { label: 'Message from MD', href: '/message-from-md' },
     { label: 'Career', href: '/career' },
     { label: 'FAQ', href: '/faq' },
+    { label: 'Blogs', href: '/blogs' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Terms & Conditions', href: '/terms-conditions' },
 ];
@@ -27,9 +29,7 @@ export default function Footer() {
                 <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-5">
                         <Link href="/" className="inline-flex items-center gap-3 text-white">
-                            <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                                <Aperture className="h-6 w-6 text-violet-300" />
-                            </span>
+                            <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-10 w-10 shrink-0 object-contain" />
                             <span className="text-lg font-semibold">Opticore Solutions Ltd.</span>
                         </Link>
                         <p className="max-w-sm text-sm leading-7 text-zinc-400">

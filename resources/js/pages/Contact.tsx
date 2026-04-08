@@ -17,7 +17,11 @@ import type { ContactFormData } from '@/types';
 const socialLinks = [
     { href: 'https://facebook.com', label: 'Facebook', icon: Globe },
     { href: 'https://instagram.com', label: 'Instagram', icon: Camera },
-    { href: 'https://linkedin.com', label: 'LinkedIn', icon: BriefcaseBusiness },
+    {
+        href: 'https://linkedin.com',
+        label: 'LinkedIn',
+        icon: BriefcaseBusiness,
+    },
     { href: 'https://youtube.com', label: 'YouTube', icon: Play },
 ];
 
@@ -51,8 +55,14 @@ export default function Contact() {
                     name="description"
                     content="Contact Opticore Solutions Ltd. to discuss graphic design, video editing, digital marketing, 3D production, and web development projects."
                 />
-                <meta property="og:title" content="Contact — Opticore Solutions Ltd." />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    property="og:title"
+                    content="Contact — Opticore Solutions Ltd."
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
@@ -65,17 +75,23 @@ export default function Contact() {
                         className="glass-panel rounded-[2rem] p-8 sm:p-10"
                     >
                         <span className="section-kicker">Contact</span>
-                        <h1 className="text-balance text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
                             Get In Touch
                         </h1>
                         <p className="mt-6 text-base leading-8 text-zinc-300 sm:text-lg">
-                            Tell us what you are building, launching, refreshing, or fixing. We will help shape the right next step.
+                            Tell us what you are building, launching,
+                            refreshing, or fixing. We will help shape the right
+                            next step.
                         </p>
 
                         <div className="mt-8 space-y-5 text-sm text-zinc-300 sm:text-base">
                             <p className="flex items-start gap-3">
                                 <Phone className="mt-1 h-5 w-5 text-violet-300" />
-                                <span>+1 (575) 303-6925<br />+88-01896204400</span>
+                                <span>
+                                    +1 (575) 303-6925
+                                    <br />
+                                    +88-01896204400
+                                </span>
                             </p>
                             <p className="flex items-start gap-3">
                                 <Mail className="mt-1 h-5 w-5 text-violet-300" />
@@ -83,7 +99,10 @@ export default function Contact() {
                             </p>
                             <p className="flex items-start gap-3">
                                 <MapPin className="mt-1 h-5 w-5 text-violet-300" />
-                                <span>Dhaka, Bangladesh with remote project delivery worldwide.</span>
+                                <span>
+                                    Dhaka, Bangladesh with remote project
+                                    delivery worldwide.
+                                </span>
                             </p>
                         </div>
 
@@ -123,9 +142,13 @@ export default function Contact() {
                         {submitted ? (
                             <div className="flex min-h-[28rem] flex-col items-center justify-center text-center">
                                 <CheckCircle2 className="h-16 w-16 text-cyan-300" />
-                                <h2 className="mt-6 text-2xl font-semibold text-white">We’ll be in touch soon!</h2>
+                                <h2 className="mt-6 text-2xl font-semibold text-white">
+                                    We’ll be in touch soon!
+                                </h2>
                                 <p className="mt-3 max-w-md text-sm leading-7 text-zinc-400">
-                                    Your message is in. We will review it and reply with the best next step for your project.
+                                    Your message is in. We will review it and
+                                    reply with the best next step for your
+                                    project.
                                 </p>
                             </div>
                         ) : (
@@ -137,38 +160,91 @@ export default function Contact() {
                                 }}
                             >
                                 {[
-                                    { key: 'name', label: 'Name', type: 'text' },
-                                    { key: 'email', label: 'Email', type: 'email' },
-                                    { key: 'phone', label: 'Phone', type: 'text' },
-                                    { key: 'subject', label: 'Subject', type: 'text' },
+                                    {
+                                        key: 'name',
+                                        label: 'Name',
+                                        type: 'text',
+                                    },
+                                    {
+                                        key: 'email',
+                                        label: 'Email',
+                                        type: 'email',
+                                    },
+                                    {
+                                        key: 'phone',
+                                        label: 'Phone',
+                                        type: 'text',
+                                    },
+                                    {
+                                        key: 'subject',
+                                        label: 'Subject',
+                                        type: 'text',
+                                    },
                                 ].map((field) => (
                                     <label key={field.key} className="block">
-                                        <span className="mb-2 block text-sm font-medium text-zinc-200">{field.label}</span>
+                                        <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                            {field.label}
+                                        </span>
                                         <input
                                             type={field.type}
-                                            value={form.data[field.key as keyof ContactFormData] as string}
-                                            onChange={(event) => form.setData(field.key as keyof ContactFormData, event.target.value)}
-                                            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-violet-400/50"
+                                            value={
+                                                form.data[
+                                                    field.key as keyof ContactFormData
+                                                ] as string
+                                            }
+                                            onChange={(event) =>
+                                                form.setData(
+                                                    field.key as keyof ContactFormData,
+                                                    event.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
                                         />
-                                        {form.errors[field.key as keyof ContactFormData] ? (
-                                            <p className="mt-2 text-sm text-rose-300">{form.errors[field.key as keyof ContactFormData]}</p>
+                                        {form.errors[
+                                            field.key as keyof ContactFormData
+                                        ] ? (
+                                            <p className="mt-2 text-sm text-rose-300">
+                                                {
+                                                    form.errors[
+                                                        field.key as keyof ContactFormData
+                                                    ]
+                                                }
+                                            </p>
                                         ) : null}
                                     </label>
                                 ))}
 
                                 <label className="block">
-                                    <span className="mb-2 block text-sm font-medium text-zinc-200">Message</span>
+                                    <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                        Message
+                                    </span>
                                     <textarea
                                         rows={6}
                                         value={form.data.message}
-                                        onChange={(event) => form.setData('message', event.target.value)}
-                                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-violet-400/50"
+                                        onChange={(event) =>
+                                            form.setData(
+                                                'message',
+                                                event.target.value,
+                                            )
+                                        }
+                                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
                                     />
-                                    {form.errors.message ? <p className="mt-2 text-sm text-rose-300">{form.errors.message}</p> : null}
+                                    {form.errors.message ? (
+                                        <p className="mt-2 text-sm text-rose-300">
+                                            {form.errors.message}
+                                        </p>
+                                    ) : null}
                                 </label>
 
-                                <MagneticButton type="submit" ariaLabel="Send contact form" fullWidth disabled={form.processing}>
-                                    {form.processing ? 'Sending...' : 'Send Message'}
+                                <MagneticButton
+                                    type="submit"
+                                    ariaLabel="Send contact form"
+                                    fullWidth
+                                    disabled={form.processing}
+                                >
+                                    {form.processing
+                                        ? 'Sending...'
+                                        : 'Send Message'}
                                 </MagneticButton>
                             </form>
                         )}

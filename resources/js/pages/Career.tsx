@@ -33,7 +33,13 @@ export default function Career() {
             preserveScroll: true,
             onSuccess: () => {
                 setSubmitted(true);
-                form.reset('name', 'email', 'phone', 'portfolio_url', 'message');
+                form.reset(
+                    'name',
+                    'email',
+                    'phone',
+                    'portfolio_url',
+                    'message',
+                );
             },
         });
     };
@@ -46,19 +52,27 @@ export default function Career() {
                     name="description"
                     content="Join Opticore Solutions Ltd. and work on premium creative, digital marketing, 3D production, and web projects from anywhere."
                 />
-                <meta property="og:title" content="Career — Opticore Solutions Ltd." />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    property="og:title"
+                    content="Career — Opticore Solutions Ltd."
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14">
                         <span className="section-kicker">Career</span>
-                        <h1 className="text-balance text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
                             <span className="gradient-text">Join Our Team</span>
                         </h1>
                         <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
-                            We are building a lean, high-standard team that cares about craft, momentum, and digital work that actually feels premium.
+                            We are building a lean, high-standard team that
+                            cares about craft, momentum, and digital work that
+                            actually feels premium.
                         </p>
                     </div>
                 </div>
@@ -75,7 +89,10 @@ export default function Career() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
-                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
+                        variants={{
+                            hidden: {},
+                            visible: { transition: { staggerChildren: 0.12 } },
+                        }}
                         className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:gap-8"
                     >
                         {culturePerks.map((perk) => (
@@ -86,13 +103,20 @@ export default function Career() {
                                     visible: {
                                         opacity: 1,
                                         y: 0,
-                                        transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+                                        transition: {
+                                            duration: 0.8,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        },
                                     },
                                 }}
                                 className="glass-panel rounded-[2rem] p-6"
                             >
-                                <h3 className="text-xl font-semibold text-white">{perk.title}</h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">{perk.description}</p>
+                                <h3 className="text-xl font-semibold text-white">
+                                    {perk.title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                    {perk.description}
+                                </p>
                             </motion.article>
                         ))}
                     </motion.div>
@@ -110,7 +134,10 @@ export default function Career() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
-                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
+                        variants={{
+                            hidden: {},
+                            visible: { transition: { staggerChildren: 0.12 } },
+                        }}
                         className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8"
                     >
                         {jobListings.map((job) => (
@@ -121,7 +148,10 @@ export default function Career() {
                                     visible: {
                                         opacity: 1,
                                         scale: 1,
-                                        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                                        transition: {
+                                            duration: 0.7,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        },
                                     },
                                 }}
                                 className="glass-panel rounded-[2rem] p-6"
@@ -130,10 +160,16 @@ export default function Career() {
                                     <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">
                                         {job.location}
                                     </span>
-                                    <span className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">{job.type}</span>
+                                    <span className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                        {job.type}
+                                    </span>
                                 </div>
-                                <h3 className="mt-6 text-2xl font-semibold text-white">{job.title}</h3>
-                                <p className="mt-4 text-sm leading-7 text-zinc-400">{job.description}</p>
+                                <h3 className="mt-6 text-2xl font-semibold text-white">
+                                    {job.title}
+                                </h3>
+                                <p className="mt-4 text-sm leading-7 text-zinc-400">
+                                    {job.description}
+                                </p>
                                 <button
                                     type="button"
                                     className="touch-target mt-8 inline-flex items-center rounded-full bg-linear-to-r from-violet-500 to-cyan-400 px-5 py-3 text-sm font-semibold text-white"
@@ -148,13 +184,22 @@ export default function Career() {
                 </div>
             </section>
 
-            <Modal open={open} title={form.data.role ? `Apply for ${form.data.role}` : 'Apply Now'} onClose={() => setOpen(false)}>
+            <Modal
+                open={open}
+                title={
+                    form.data.role ? `Apply for ${form.data.role}` : 'Apply Now'
+                }
+                onClose={() => setOpen(false)}
+            >
                 {submitted ? (
                     <div className="flex min-h-[18rem] flex-col items-center justify-center text-center">
                         <CheckCircle2 className="h-16 w-16 text-cyan-300" />
-                        <h3 className="mt-6 text-2xl font-semibold text-white">Application received</h3>
+                        <h3 className="mt-6 text-2xl font-semibold text-white">
+                            Application received
+                        </h3>
                         <p className="mt-3 text-sm leading-7 text-zinc-400">
-                            Thanks for applying. Our team will review your submission and follow up if there is a strong fit.
+                            Thanks for applying. Our team will review your
+                            submission and follow up if there is a strong fit.
                         </p>
                     </div>
                 ) : (
@@ -169,24 +214,49 @@ export default function Career() {
                             { key: 'name', label: 'Name', type: 'text' },
                             { key: 'email', label: 'Email', type: 'email' },
                             { key: 'phone', label: 'Phone', type: 'text' },
-                            { key: 'portfolio_url', label: 'Portfolio URL', type: 'url' },
+                            {
+                                key: 'portfolio_url',
+                                label: 'Portfolio URL',
+                                type: 'url',
+                            },
                         ].map((field) => (
                             <label key={field.key} className="block">
-                                <span className="mb-2 block text-sm font-medium text-zinc-200">{field.label}</span>
+                                <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                    {field.label}
+                                </span>
                                 <input
                                     type={field.type}
-                                    value={form.data[field.key as keyof CareerFormData] as string}
-                                    onChange={(event) => form.setData(field.key as keyof CareerFormData, event.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-violet-400/50"
+                                    value={
+                                        form.data[
+                                            field.key as keyof CareerFormData
+                                        ] as string
+                                    }
+                                    onChange={(event) =>
+                                        form.setData(
+                                            field.key as keyof CareerFormData,
+                                            event.target.value,
+                                        )
+                                    }
+                                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
                                 />
-                                {form.errors[field.key as keyof CareerFormData] ? (
-                                    <p className="mt-2 text-sm text-rose-300">{form.errors[field.key as keyof CareerFormData]}</p>
+                                {form.errors[
+                                    field.key as keyof CareerFormData
+                                ] ? (
+                                    <p className="mt-2 text-sm text-rose-300">
+                                        {
+                                            form.errors[
+                                                field.key as keyof CareerFormData
+                                            ]
+                                        }
+                                    </p>
                                 ) : null}
                             </label>
                         ))}
 
                         <label className="block">
-                            <span className="mb-2 block text-sm font-medium text-zinc-200">Role</span>
+                            <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                Role
+                            </span>
                             <input
                                 type="text"
                                 value={form.data.role}
@@ -196,18 +266,33 @@ export default function Career() {
                         </label>
 
                         <label className="block">
-                            <span className="mb-2 block text-sm font-medium text-zinc-200">Message</span>
+                            <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                Message
+                            </span>
                             <textarea
                                 rows={5}
                                 value={form.data.message}
-                                onChange={(event) => form.setData('message', event.target.value)}
-                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-violet-400/50"
+                                onChange={(event) =>
+                                    form.setData('message', event.target.value)
+                                }
+                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
                             />
-                            {form.errors.message ? <p className="mt-2 text-sm text-rose-300">{form.errors.message}</p> : null}
+                            {form.errors.message ? (
+                                <p className="mt-2 text-sm text-rose-300">
+                                    {form.errors.message}
+                                </p>
+                            ) : null}
                         </label>
 
-                        <MagneticButton type="submit" ariaLabel="Submit career application" fullWidth disabled={form.processing}>
-                            {form.processing ? 'Submitting...' : 'Submit Application'}
+                        <MagneticButton
+                            type="submit"
+                            ariaLabel="Submit career application"
+                            fullWidth
+                            disabled={form.processing}
+                        >
+                            {form.processing
+                                ? 'Submitting...'
+                                : 'Submit Application'}
                         </MagneticButton>
                     </form>
                 )}
