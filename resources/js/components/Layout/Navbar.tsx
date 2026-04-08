@@ -24,7 +24,7 @@ function NavLink({ item, url }: { item: (typeof navigationItems)[0]; url: string
                 duration={0.6}
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                className="text-[13px]"
+                className="text-[13px] font-[family-name:var(--font-geist-mono)]"
                 trigger={hovered}
             >
                 {item.label}
@@ -176,7 +176,7 @@ export default function Navbar() {
                                                 >
                                                     {item.label}
                                                 </HoverScramble>
-                                                <span className="text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
+                                                <span className="text-[10px] font-medium tracking-widest text-zinc-500 uppercase font-[family-name:var(--font-geist-mono)]">
                                                     Explore
                                                 </span>
                                             </Link>
