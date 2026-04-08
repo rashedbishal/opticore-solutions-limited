@@ -150,8 +150,6 @@ function ResponsiveRobot() {
             scale={[initialScale, initialScale, initialScale]}
             rotation={[0, 0, 0]}
             onClick={handleClick}
-            onPointerOver={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'pointer'; }}
-            onPointerOut={() => { if (typeof document !== 'undefined') document.body.style.cursor = 'auto'; }}
         >
             <RobotModel
                 ref={robotModelRef}
