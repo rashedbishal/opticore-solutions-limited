@@ -71,7 +71,7 @@ export default function RobotScene3D() {
 
     return (
         <div ref={sceneRef} className="robot-3d-container pointer-events-none fixed inset-0 z-50">
-            <Canvas shadows gl={{ antialias: true, alpha: true }}>
+            <Canvas shadows gl={{ antialias: true, alpha: true }} style={{ pointerEvents: 'none' }}>
                 <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 6]} fov={45} />
 
                 <Suspense fallback={null}>
