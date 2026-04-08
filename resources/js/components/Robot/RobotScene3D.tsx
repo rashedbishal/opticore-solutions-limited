@@ -1,13 +1,10 @@
 import { Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import React, { useRef, useEffect, Suspense } from 'react';
 import * as THREE from 'three';
 import type { RobotModelRef } from './RobotModel';
 import RobotModel from './RobotModel';
-
-gsap.registerPlugin(ScrollTrigger);
 
 /**
  * RobotScene3D - Main container for 3D robot motion graphics
@@ -15,6 +12,52 @@ gsap.registerPlugin(ScrollTrigger);
  * - Section 1: Center, plays hello animation
  * - Section 2: Moves to bottom left corner, plays idle animation, smaller size
  */
+// Extracts GSAP control into a child component that lives inside <Suspense>
+// This guarantees the effect only runs AFTER the model asset has fully loaded
+// and robotRef is populated.
+function AnimationController({ 
+    robotRef, 
+    robotModelRef 
+}: { 
+    robotRef: React.RefObject<THREE.Group | null>; 
+    robotModelRef: React.RefObject<RobotModelRef | null>;
+}) {
+    useEffect(() => {
+        if (!robotRef.current) return;
+
+        // Start with 'hello' animation
+        if (robotModelRef.current) {
+            robotModelRef.current.playAnimation('hello');
+        }
+
+        const tl = gsap.timeline({
+            delay: 3,
+            onStart: () => {
+                if (robotModelRef.current) {
+                    robotModelRef.current.playAnimation('run');
+                }
+            },
+            onComplete: () => {
+                if (robotModelRef.current) {
+                    robotModelRef.current.playAnimation('idle');
+                }
+            }
+        });
+
+        // Move to bottom-left corner over 2 seconds
+        tl.to(robotRef.current.position, { x: -3.8, y: -2.5, z: 0, duration: 2, ease: "power2.inOut" }, 0);
+        // Slightly smaller scale for the corner
+        tl.to(robotRef.current.scale,    { x: 0.16, y: 0.16, z: 0.16, duration: 2, ease: "power2.inOut" }, 0);
+        tl.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 2, ease: "power2.inOut" }, 0);
+
+        return () => {
+            tl.kill(); // clean up animation if component unmounts
+        };
+    }, [robotRef, robotModelRef]);
+
+    return null;
+}
+
 export default function RobotScene3D() {
     const sceneRef = useRef<HTMLDivElement>(null);
     const robotRef = useRef<THREE.Group>(null);
@@ -25,45 +68,6 @@ export default function RobotScene3D() {
     // These constants drive both the JSX defaults and the GSAP scroll animation.
     const INITIAL_SCALE = 0.27;
     const INITIAL_Y = -1.0;
-
-    useEffect(() => {
-        let raf: number;
-
-        // Defer GSAP setup until after R3F has fully mounted the Three.js objects.
-        raf = requestAnimationFrame(() => {
-            if (!robotRef.current) {
-                return;
-            }
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".robot-3d-trigger",
-                    start: "top top",
-                    end: "+=100%",
-                    scrub: 1,
-                    onUpdate: (self) => {
-                        if (robotModelRef.current) {
-                            if (self.progress > 0.3) {
-                                robotModelRef.current.playAnimation('idle');
-                            } else {
-                                robotModelRef.current.playAnimation('hello');
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Section 2: scroll-driven move to bottom-left corner
-            tl.to(robotRef.current.position, { x: -3.8, y: -2.5, z: 0, duration: 1, ease: "power2.inOut" }, 0);
-            tl.to(robotRef.current.scale,    { x: 0.12, y: 0.12, z: 0.12, duration: 1, ease: "power2.inOut" }, 0);
-            tl.to(robotRef.current.rotation, { y: Math.PI / 6, duration: 1, ease: "power2.inOut" }, 0);
-        });
-
-        return () => {
-            cancelAnimationFrame(raf);
-            ScrollTrigger.getAll().forEach((t) => t.kill());
-        };
-    }, []);
 
     return (
         <div ref={sceneRef} className="robot-3d-container pointer-events-none fixed inset-0 z-50">
@@ -87,6 +91,11 @@ export default function RobotScene3D() {
                             initialAnimation="hello"
                         />
                     </group>
+
+                    <AnimationController 
+                        robotRef={robotRef} 
+                        robotModelRef={robotModelRef} 
+                    />
 
                     <ContactShadows
                         position={[0, -1.5, 0]}
