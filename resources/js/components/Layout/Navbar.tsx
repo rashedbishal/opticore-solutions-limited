@@ -8,6 +8,37 @@ import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
 
+function NavLink({ item, url }: { item: (typeof navigationItems)[0]; url: string }) {
+    const [hovered, setHovered] = useState(false);
+    const active = url === item.href;
+
+    return (
+        <Link
+            key={item.href}
+            href={item.href}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="group relative py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+        >
+            <HoverScramble
+                duration={0.6}
+                speed={0.8}
+                scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                className="text-[13px]"
+                trigger={hovered}
+            >
+                {item.label}
+            </HoverScramble>
+            <span
+                className={cn(
+                    'absolute -bottom-1 left-0 h-px bg-linear-to-r from-violet-500 to-cyan-400 transition-all duration-300',
+                    active ? 'w-full' : 'w-0 group-hover:w-full',
+                )}
+            />
+        </Link>
+    );
+}
+
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
@@ -50,34 +81,9 @@ export default function Navbar() {
                     </Link>
 
                     <div className="hidden flex-1 items-center justify-center gap-6 lg:flex lg:gap-8">
-                        {navigationItems.map((item) => {
-                            const active = url === item.href;
-
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className="group relative py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
-                                >
-                                    <HoverScramble
-                                        duration={0.6}
-                                        speed={0.8}
-                                        scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                                        className="text-[13px]"
-                                    >
-                                        {item.label}
-                                    </HoverScramble>
-                                    <span
-                                        className={cn(
-                                            'absolute -bottom-1 left-0 h-px bg-linear-to-r from-violet-500 to-cyan-400 transition-all duration-300',
-                                            active
-                                                ? 'w-full'
-                                                : 'w-0 group-hover:w-full',
-                                        )}
-                                    />
-                                </Link>
-                            );
-                        })}
+                        {navigationItems.map((item) => (
+                            <NavLink key={item.href} item={item} url={url} />
+                        ))}
                     </div>
 
                     <div className="hidden lg:block">

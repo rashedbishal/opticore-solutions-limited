@@ -13,6 +13,7 @@ export interface HoverScrambleProps {
   className?: string
   children: string
   triggerOnMount?: boolean
+  trigger?: boolean
 }
 
 const HoverScramble: React.FC<HoverScrambleProps> = ({
@@ -22,6 +23,7 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
   className = "",
   children,
   triggerOnMount = false,
+  trigger = false,
 }) => {
   const textRef = useRef<HTMLSpanElement>(null)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -64,6 +66,12 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
       return () => clearTimeout(timer)
     }
   }, [triggerOnMount, children])
+
+  useEffect(() => {
+    if (trigger && !isAnimating) {
+      scramble()
+    }
+  }, [trigger])
 
   useEffect(() => {
     return () => {
