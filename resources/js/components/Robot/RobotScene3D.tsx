@@ -1,9 +1,13 @@
 import { Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import React, { useRef, useEffect, Suspense } from 'react';
 import * as THREE from 'three';
 import type { RobotModelRef } from './RobotModel';
+
+// Register ScrollTrigger to detect sections
+gsap.registerPlugin(ScrollTrigger);
 import RobotModel from './RobotModel';
 
 /**
@@ -30,6 +34,9 @@ function ResponsiveRobot() {
     useEffect(() => {
         if (!robotRef.current) return;
 
+        // Keep track of scroll triggers to clean them up
+        const triggers: ScrollTrigger[] = [];
+
         // Start with 'hello' animation
         if (robotModelRef.current) {
             robotModelRef.current.playAnimation('hello');
@@ -43,7 +50,37 @@ function ResponsiveRobot() {
                 }
             },
             onComplete: () => {
-                if (robotModelRef.current) {
+                let insideAnySection = false;
+
+                // After initial sequence, set up scroll-based triggers for the sections below
+                const sections = [
+                    { id: '#robot-section-2', anim: 'jump' },   // Phase 1
+                    { id: '#robot-section-3', anim: 'dance' },  // Phase 2
+                    { id: '#robot-section-4', anim: 'punch' },  // Phase 3
+                ];
+
+                sections.forEach(({ id, anim }) => {
+                    const st = ScrollTrigger.create({
+                        trigger: id,
+                        start: "top 60%", // Triggers when top of section reaches 60% down the screen
+                        end: "bottom 40%", 
+                        onEnter: () => robotModelRef.current?.playAnimation(anim),
+                        onEnterBack: () => robotModelRef.current?.playAnimation(anim),
+                        onLeave: () => robotModelRef.current?.playAnimation('idle'),
+                        onLeaveBack: () => robotModelRef.current?.playAnimation('idle'),
+                    });
+                    
+                    // If the user's scroll position is already inside one of these sections
+                    // when the intro finishes, st.isActive will be true.
+                    if (st.isActive) {
+                        insideAnySection = true;
+                    }
+                    
+                    triggers.push(st);
+                });
+
+                // Default to idle if the user is on the Hero section (no active triggers)
+                if (!insideAnySection && robotModelRef.current) {
                     robotModelRef.current.playAnimation('idle');
                 }
             }
@@ -65,7 +102,8 @@ function ResponsiveRobot() {
         tl.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 2, ease: "power2.inOut" }, 0);
 
         return () => {
-            tl.kill(); // clean up animation if component unmounts
+            tl.kill(); 
+            triggers.forEach(t => t.kill());
         };
     }, [viewport.width, viewport.height, isMobile]);
 
