@@ -10,6 +10,34 @@ import { Cpu, Layers, Zap, Activity } from 'lucide-react';
  * - Energy visualization
  * - Processing metrics
  */
+const AnimatedProgressBar = ({ initialValue }) => {
+  const [value, setValue] = React.useState(parseInt(initialValue));
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
+      setValue((prev) => {
+        const next = prev + change;
+        return Math.min(Math.max(next, 70), 100); // Keep between 70% and 100%
+      });
+    }, 1000 + Math.random() * 2000); // Random interval between 1-3s
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative z-10">
+      <div className="text-2xl font-bold text-white">{value}%</div>
+      <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-1000 ease-in-out"
+          style={{ width: `${value}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export default function Section3() {
   const processSteps = [
     { icon: Layers, label: 'Data Layering', value: '87%' },
@@ -23,6 +51,19 @@ export default function Section3() {
       id="robot-section-3"
       className="section-shell relative flex min-h-screen items-center overflow-hidden"
     >
+      <style>{`
+        @keyframes waveMove {
+          0% { transform: translateX(0); }
+          50% { transform: translateX(-20px); }
+          100% { transform: translateX(0); }
+        }
+        .animate-wave {
+          animation: waveMove 4s ease-in-out infinite;
+        }
+        .animate-wave-slow {
+          animation: waveMove 6s ease-in-out infinite reverse;
+        }
+      `}</style>
       {/* Background with animated gradient */}
       <div className="absolute inset-0">
         <div
@@ -69,22 +110,12 @@ export default function Section3() {
               {/* Animated background pulse */}
               <div className="absolute inset-0 animate-pulse bg-violet-500/5" />
 
-              <div className="relative z-10">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400">
-                  <step.icon className="h-7 w-7" />
-                </div>
-
-                <div className="text-2xl font-bold text-white">{step.value}</div>
-                <div className="mt-1 text-sm text-zinc-500">{step.label}</div>
-
-                {/* Progress bar */}
-                <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500"
-                    style={{ width: step.value }}
-                  />
-                </div>
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-violet-500/20 text-violet-400">
+                <step.icon className="h-7 w-7" />
               </div>
+
+              <AnimatedProgressBar initialValue={step.value} />
+              <div className="mt-1 text-sm text-zinc-500">{step.label}</div>
             </div>
           ))}
         </div>
@@ -104,12 +135,14 @@ export default function Section3() {
               </linearGradient>
             </defs>
             <path
+              className="animate-wave"
               d="M0,50 Q300,10 600,50 T1200,50"
               fill="none"
               stroke="url(#waveGradient)"
               strokeWidth="2"
             />
             <path
+              className="animate-wave-slow"
               d="M0,50 Q300,90 600,50 T1200,50"
               fill="none"
               stroke="url(#waveGradient)"

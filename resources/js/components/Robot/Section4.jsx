@@ -10,6 +10,115 @@ import { Rocket, CheckCircle2, ArrowRight, Shield } from 'lucide-react';
  * - Confidence metrics
  * - Forward momentum
  */
+const LOG_LINES = [
+  { time: '[00:00:01]', type: 'EXECUTE', text: 'Initializing deployment sequence...', color: 'text-cyan-400' },
+  { time: '[00:00:03]', type: 'SYSTEM', text: 'Resources allocated', suffix: '✓', color: 'text-violet-400' },
+  { time: '[00:00:05]', type: 'EXECUTE', text: 'Deploying to production...', color: 'text-cyan-400' },
+  { time: '[00:00:08]', type: 'SUCCESS', text: 'Deployment complete', suffix: '✓', color: 'text-green-400' },
+  { isPrompt: true, text: '_ Ready for next command', color: 'text-cyan-400' }
+];
+
+const TypingLog = () => {
+  const [visibleLines, setVisibleLines] = React.useState([]);
+  const [currentLineIndex, setCurrentLineIndex] = React.useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = React.useState(0);
+  const [isWaiting, setIsWaiting] = React.useState(false);
+  const [hasStarted, setHasStarted] = React.useState(false);
+  const containerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (isWaiting || !hasStarted) return;
+
+    if (currentLineIndex < LOG_LINES.length) {
+      const line = LOG_LINES[currentLineIndex];
+      const fullTextToType = line.isPrompt ? line.text : `${line.type} ${line.text}`;
+      
+      if (currentCharIndex < fullTextToType.length) {
+        const timeout = setTimeout(() => {
+          setCurrentCharIndex(prev => prev + 1);
+        }, 40);
+        return () => clearTimeout(timeout);
+      } else {
+        const timeout = setTimeout(() => {
+          setVisibleLines(prev => [...prev, line]);
+          setCurrentLineIndex(prev => prev + 1);
+          setCurrentCharIndex(0);
+        }, 600);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      setIsWaiting(true);
+      const timeout = setTimeout(() => {
+        setVisibleLines([]);
+        setCurrentLineIndex(0);
+        setCurrentCharIndex(0);
+        setIsWaiting(false);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentLineIndex, currentCharIndex, isWaiting, hasStarted]);
+
+  const renderTypingContent = (line, index, isCurrent) => {
+    if (line.isPrompt) {
+      const textToShow = isCurrent ? line.text.substring(0, currentCharIndex) : line.text;
+      return (
+        <div key={index} className={`${line.color} flex items-center`}>
+          <span>{textToShow}</span>
+          {isCurrent && <span className="ml-1 animate-pulse">_</span>}
+        </div>
+      );
+    }
+
+    const fullText = `${line.type} ${line.text}`;
+    const textToShow = isCurrent ? fullText.substring(0, currentCharIndex) : fullText;
+    
+    const typePart = isCurrent 
+      ? textToShow.substring(0, Math.min(currentCharIndex, line.type.length))
+      : line.type;
+    
+    const messagePart = isCurrent 
+      ? textToShow.substring(line.type.length) 
+      : ` ${line.text}`;
+
+    return (
+      <div key={index} className="flex items-start gap-4 font-mono text-zinc-500">
+        <span className="shrink-0">{line.time}</span>
+        <div className="flex flex-wrap items-center">
+          <span className={`${line.color} ${typePart.length > 0 ? 'mr-2' : ''}`}>{typePart}</span>
+          <span>{messagePart.trimStart()}</span>
+          {!isCurrent && line.suffix && <span className={`${line.color} ml-2`}>{line.suffix}</span>}
+          {isCurrent && <span className="ml-1 animate-pulse text-cyan-400">_</span>}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div ref={containerRef} className="space-y-2">
+      {visibleLines.map((line, i) => renderTypingContent(line, i, false))}
+      {currentLineIndex < LOG_LINES.length && renderTypingContent(LOG_LINES[currentLineIndex], currentLineIndex, true)}
+    </div>
+  );
+};
+
 export default function Section4() {
   const completedTasks = [
     { label: 'Strategy Defined', time: '02:34' },
@@ -41,32 +150,7 @@ export default function Section4() {
 
           {/* Terminal content */}
           <div className="glass-panel rounded-b-lg rounded-tr-lg border border-zinc-800 p-6 font-mono text-sm">
-            <div className="space-y-2">
-              <div className="flex gap-4 text-zinc-500">
-                <span>[00:00:01]</span>
-                <span className="text-cyan-400">EXECUTE</span>
-                <span>Initializing deployment sequence...</span>
-              </div>
-              <div className="flex gap-4 text-zinc-500">
-                <span>[00:00:03]</span>
-                <span className="text-violet-400">SYSTEM</span>
-                <span>Resources allocated ✓</span>
-              </div>
-              <div className="flex gap-4 text-zinc-500">
-                <span>[00:00:05]</span>
-                <span className="text-cyan-400">EXECUTE</span>
-                <span>Deploying to production...</span>
-              </div>
-              <div className="flex gap-4 text-zinc-500">
-                <span>[00:00:08]</span>
-                <span className="text-green-400">SUCCESS</span>
-                <span>Deployment complete ✓</span>
-              </div>
-              <div className="mt-4 flex items-center gap-2 text-cyan-400">
-                <span className="animate-pulse">_</span>
-                <span>Ready for next command</span>
-              </div>
-            </div>
+            <TypingLog />
           </div>
 
           {/* Status indicators */}
