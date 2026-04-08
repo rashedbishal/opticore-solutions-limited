@@ -30,6 +30,16 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
+<<<<<<< HEAD
+=======
+import ScannedServiceCard, {
+    ServiceCarousel,
+} from '@/components/UI/ScannedServiceCard';
+import Section2 from '@/components/Robot/Section2';
+import Section3 from '@/components/Robot/Section3';
+import Section4 from '@/components/Robot/Section4';
+import Section5 from '@/components/Robot/Section5';
+>>>>>>> @{-1}
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -496,6 +506,11 @@ export default function HomeIndex() {
                     </motion.div>
                 </div>
             </section>
+
+            <Section2 />
+            <Section3 />
+            <Section4 />
+            <Section5 />
 
             <section className="section-shell pt-0">
                 <div className="section-inner">

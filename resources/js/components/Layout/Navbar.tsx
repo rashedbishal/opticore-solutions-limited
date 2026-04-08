@@ -2,11 +2,11 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X, Aperture } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
-import HoverScramble from '@/components/text-animations/hover-scramble';
 
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
@@ -140,10 +140,14 @@ export default function Navbar() {
                                             )}
                                             onClick={() => setOpen(false)}
                                         >
-                                            {item.label}
-                                            <span className="text-sm text-zinc-400">
-                                                Explore
-                                            </span>
+                                            <HoverScramble
+                                                duration={0.8}
+                                                speed={1}
+                                                scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                                            >
+                                                {item.label}
+                                            </HoverScramble>
+                                            <span className="text-sm text-zinc-400">Explore</span>
                                         </Link>
                                     </motion.div>
                                 ))}
