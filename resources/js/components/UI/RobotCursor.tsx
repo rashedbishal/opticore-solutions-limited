@@ -4,6 +4,11 @@ import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
+// Assuming you have the pointer version available or will add it
+// Replace with the actual URL if you have one
+const CURSOR_DEFAULT = '/cursors/robo-cursor.cur';
+const CURSOR_POINTER = '/cursors/robo-pointer.cur'; // Ensure this file exists
+
 export default function RobotCursor() {
     const finePointer = useMediaQuery('(pointer: fine)');
     const [isHovering, setIsHovering] = useState(false);
@@ -35,10 +40,10 @@ export default function RobotCursor() {
             setIsHovering(hovering);
         };
 
-        // Ensure we catch pointer leave events to reset state
         const onPointerOut = (event: Event) => {
             const target = event.target;
             if (!(target instanceof Element)) return;
+            // Only set false if we are actually leaving an interactive element
             if (target.closest('a, button, input, textarea, select, [role="button"], [data-cursor="interactive"]')) {
                 setIsHovering(false);
             }
@@ -70,12 +75,11 @@ export default function RobotCursor() {
             }}
         >
             <motion.img
-                src="/cursors/robo-cursor.cur"
+                src={isHovering ? CURSOR_POINTER : CURSOR_DEFAULT}
                 alt=""
                 className="block"
                 animate={{
-                    // Reduced size for better usability
-                    scale: isHovering ? 0.4 : 0.3,
+                    scale: 0.35, // Consistent smaller size
                     filter: isHovering ? 'drop-shadow(0 0 6px rgba(6,182,212,0.8))' : 'none',
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
