@@ -1,5 +1,5 @@
 import { Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import React, { useRef, useEffect, Suspense } from 'react';
 import * as THREE from 'three';
@@ -12,16 +12,21 @@ import RobotModel from './RobotModel';
  * - Section 1: Center, plays hello animation
  * - Section 2: Moves to bottom left corner, plays idle animation, smaller size
  */
-// Extracts GSAP control into a child component that lives inside <Suspense>
-// This guarantees the effect only runs AFTER the model asset has fully loaded
-// and robotRef is populated.
-function AnimationController({ 
-    robotRef, 
-    robotModelRef 
-}: { 
-    robotRef: React.RefObject<THREE.Group | null>; 
-    robotModelRef: React.RefObject<RobotModelRef | null>;
-}) {
+// A fully responsive wrapper for the robot.
+// By being inside the <Canvas>, it can use useThree() to get exact viewport dimensions.
+function ResponsiveRobot() {
+    const { viewport } = useThree();
+    const robotRef = useRef<THREE.Group>(null);
+    const robotModelRef = useRef<RobotModelRef>(null);
+
+    // Dynamic initial values based on viewport size.
+    // A standard desktop has viewport.width ~ 10-15. Mobile is often ~ 4-6.
+    const isMobile = viewport.width < 8;
+    
+    // Scale down slightly on mobile so it doesn't overwhelm the screen
+    const initialScale = isMobile ? 0.16 : 0.27; 
+    const initialY = isMobile ? -0.5 : -1.0;
+
     useEffect(() => {
         if (!robotRef.current) return;
 
@@ -44,30 +49,45 @@ function AnimationController({
             }
         });
 
+        // Dynamically calculate the bottom-left corner using viewport percentages.
+        // -viewport.width / 2 is the exact left edge of the screen.
+        // We multiply by 0.85 to add a neat 15% padding from the edge.
+        const paddingX = isMobile ? 0.80 : 0.85; 
+        const paddingY = isMobile ? 0.80 : 0.85;
+        
+        const targetX = -(viewport.width / 2) * paddingX;
+        const targetY = -(viewport.height / 2) * paddingY;
+        const targetScale = isMobile ? 0.08 : 0.16;
+
         // Move to bottom-left corner over 2 seconds
-        tl.to(robotRef.current.position, { x: -3.8, y: -2.5, z: 0, duration: 2, ease: "power2.inOut" }, 0);
-        // Slightly smaller scale for the corner
-        tl.to(robotRef.current.scale,    { x: 0.16, y: 0.16, z: 0.16, duration: 2, ease: "power2.inOut" }, 0);
+        tl.to(robotRef.current.position, { x: targetX, y: targetY, z: 0, duration: 2, ease: "power2.inOut" }, 0);
+        tl.to(robotRef.current.scale,    { x: targetScale, y: targetScale, z: targetScale, duration: 2, ease: "power2.inOut" }, 0);
         tl.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 2, ease: "power2.inOut" }, 0);
 
         return () => {
             tl.kill(); // clean up animation if component unmounts
         };
-    }, [robotRef, robotModelRef]);
+    }, [viewport.width, viewport.height, isMobile]);
 
-    return null;
+    return (
+        <group
+            ref={robotRef}
+            position={[0, initialY, 0]}
+            scale={[initialScale, initialScale, initialScale]}
+            rotation={[0, 0, 0]}
+        >
+            <RobotModel
+                ref={robotModelRef}
+                modelPath="/models/quaternius_cc0-george-1063.glb"
+                initialAnimation="hello"
+            />
+        </group>
+    );
 }
 
 export default function RobotScene3D() {
     const sceneRef = useRef<HTMLDivElement>(null);
-    const robotRef = useRef<THREE.Group>(null);
-    const robotModelRef = useRef<RobotModelRef>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera>(null);
-
-    // Initial values applied via JSX props on the group element.
-    // These constants drive both the JSX defaults and the GSAP scroll animation.
-    const INITIAL_SCALE = 0.27;
-    const INITIAL_Y = -1.0;
 
     return (
         <div ref={sceneRef} className="robot-3d-container pointer-events-none fixed inset-0 z-50">
@@ -79,23 +99,7 @@ export default function RobotScene3D() {
                     <ambientLight intensity={0.5} />
                     <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
 
-                    <group
-                        ref={robotRef}
-                        position={[0, INITIAL_Y, 0]}
-                        scale={[INITIAL_SCALE, INITIAL_SCALE, INITIAL_SCALE]}
-                        rotation={[0, 0, 0]}
-                    >
-                        <RobotModel
-                            ref={robotModelRef}
-                            modelPath="/models/quaternius_cc0-george-1063.glb"
-                            initialAnimation="hello"
-                        />
-                    </group>
-
-                    <AnimationController 
-                        robotRef={robotRef} 
-                        robotModelRef={robotModelRef} 
-                    />
+                    <ResponsiveRobot />
 
                     <ContactShadows
                         position={[0, -1.5, 0]}
