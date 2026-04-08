@@ -29,9 +29,7 @@ export default function Footer() {
                 <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-5">
                         <Link href="/" className="inline-flex items-center gap-3 text-white">
-                            <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 p-2">
-                                <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-full w-full object-contain" />
-                            </span>
+                            <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-10 w-10 shrink-0 object-contain" />
                             <span className="text-lg font-semibold">Opticore Solutions Ltd.</span>
                         </Link>
                         <p className="max-w-sm text-sm leading-7 text-zinc-400">
