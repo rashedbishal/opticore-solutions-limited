@@ -23,122 +23,184 @@ function ResponsiveRobot() {
     const robotRef = useRef<THREE.Group>(null);
     const robotModelRef = useRef<RobotModelRef>(null);
 
-    // Track the current animation so we can return to it after the 'death' 
-    // click animation finishes.
+    // Track the current animation so we can return to it after the 'death'
     const currentAnimRef = useRef<string>('idle');
     const isDeadRef = useRef<boolean>(false);
 
-    // Dynamic initial values based on viewport size.
-    // A standard desktop has viewport.width ~ 10-15. Mobile is often ~ 4-6.
+    // Dynamic initial values based on viewport size
     const isMobile = viewport.width < 8;
-    
-    // Scale down slightly on mobile so it doesn't overwhelm the screen
     const initialScale = isMobile ? 0.16 : 0.27; 
     const initialY = isMobile ? -0.5 : -1.0;
+
+    // State machine trackers
+    const introFinishedRef = useRef<boolean>(false);
+    const activeSectionRef = useRef<number>(0);
+    const lastHandledSectionRef = useRef<number>(0);
+    const isMovingRef = useRef<boolean>(false);
+    const currentCornerIndexRef = useRef<number>(0); // 0 = Bottom Left
+    const checkMovementRef = useRef<() => void>(() => {});
 
     useEffect(() => {
         if (!robotRef.current) return;
 
-        // Keep track of scroll triggers to clean them up
         const triggers: ScrollTrigger[] = [];
-
-        // Start with 'hello' animation
-        if (robotModelRef.current) {
-            robotModelRef.current.playAnimation('hello');
-        }
-
-        const tl = gsap.timeline({
-            delay: 3,
-            onStart: () => {
-                if (robotModelRef.current) {
-                    robotModelRef.current.playAnimation('run');
-                }
-            },
-            onComplete: () => {
-                let insideAnySection = false;
-
-                // After initial sequence, set up scroll-based triggers for the sections below
-                const sections = [
-                    { id: '#robot-section-2', anim: 'jump' },   // Phase 1
-                    { id: '#robot-section-3', anim: 'dance' },  // Phase 2
-                    { id: '#robot-section-4', anim: 'punch' },  // Phase 3
-                ];
-
-                sections.forEach(({ id, anim }) => {
-                    const st = ScrollTrigger.create({
-                        trigger: id,
-                        start: "top 50%",    // Triggers when the top of the section hits the vertital center of the screen (50% visible)
-                        end: "bottom 50%",   // Ends when the bottom of the section hits the vertical center of the screen (drops below 50% visible)
-                        onEnter: () => {
-                            currentAnimRef.current = anim;
-                            if (!isDeadRef.current) robotModelRef.current?.playAnimation(anim);
-                        },
-                        onEnterBack: () => {
-                            currentAnimRef.current = anim;
-                            if (!isDeadRef.current) robotModelRef.current?.playAnimation(anim);
-                        },
-                        onLeave: () => {
-                            currentAnimRef.current = 'idle';
-                            if (!isDeadRef.current) robotModelRef.current?.playAnimation('idle');
-                        },
-                        onLeaveBack: () => {
-                            currentAnimRef.current = 'idle';
-                            if (!isDeadRef.current) robotModelRef.current?.playAnimation('idle');
-                        },
-                    });
-                    
-                    // If the user's scroll position is already inside one of these sections
-                    // when the intro finishes, st.isActive will be true.
-                    if (st.isActive) {
-                        insideAnySection = true;
-                    }
-                    
-                    triggers.push(st);
-                });
-
-                // Default to idle if the user is on the Hero section (no active triggers)
-                if (!insideAnySection) {
-                    currentAnimRef.current = 'idle';
-                    if (!isDeadRef.current && robotModelRef.current) {
-                        robotModelRef.current.playAnimation('idle');
-                    }
-                }
-            }
-        });
-
-        // Dynamically calculate the bottom-left corner using viewport percentages.
-        // -viewport.width / 2 is the exact left edge of the screen.
-        // We multiply by 0.85 to add a neat 15% padding from the edge.
-        const paddingX = isMobile ? 0.80 : 0.85; 
-        const paddingY = isMobile ? 0.80 : 0.85;
-        
-        const targetX = -(viewport.width / 2) * paddingX;
-        const targetY = -(viewport.height / 2) * paddingY;
+        const paddingX = isMobile ? 0.8 : 0.85; 
+        const paddingBottomY = isMobile ? 0.8 : 0.85;
+        // Apply far stricter padding on the top bound to safely avoid the navbar
+        const paddingTopY = isMobile ? 0.15 : 0.25; 
         const targetScale = isMobile ? 0.08 : 0.16;
 
-        // Move to bottom-left corner over 2 seconds
-        tl.to(robotRef.current.position, { x: targetX, y: targetY, z: 0, duration: 2, ease: "power2.inOut" }, 0);
-        tl.to(robotRef.current.scale,    { x: targetScale, y: targetScale, z: targetScale, duration: 2, ease: "power2.inOut" }, 0);
-        tl.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 2, ease: "power2.inOut" }, 0);
+        // The 4 screen corners based on viewport size
+        const corners = [
+            { id: 0, x: -(viewport.width / 2) * paddingX, y: -(viewport.height / 2) * paddingBottomY },
+            { id: 1, x: -(viewport.width / 2) * paddingX, y:  (viewport.height / 2) * paddingTopY },
+            { id: 2, x:  (viewport.width / 2) * paddingX, y:  (viewport.height / 2) * paddingTopY },
+            { id: 3, x:  (viewport.width / 2) * paddingX, y: -(viewport.height / 2) * paddingBottomY },
+        ];
+
+        const playRandomAnim = () => {
+            const anims = ['idle', 'dance', 'jump', 'punch', 'hello'];
+            const randomAnim = anims[Math.floor(Math.random() * anims.length)];
+            currentAnimRef.current = randomAnim;
+            if (!isDeadRef.current) robotModelRef.current?.playAnimation(randomAnim);
+        };
+
+        const checkAndTriggerMove = () => {
+            if (!robotRef.current) return;
+            if (isMovingRef.current || isDeadRef.current || !introFinishedRef.current) return;
+
+            if (activeSectionRef.current !== lastHandledSectionRef.current) {
+                // Determine a new random corner that is distinctly different from the current one
+                let nextIdx = currentCornerIndexRef.current;
+                while (nextIdx === currentCornerIndexRef.current) {
+                    nextIdx = Math.floor(Math.random() * 4);
+                }
+
+                isMovingRef.current = true;
+                lastHandledSectionRef.current = activeSectionRef.current;
+                currentCornerIndexRef.current = nextIdx;
+                
+                const target = corners[nextIdx];
+                const dx = target.x - robotRef.current.position.x;
+                const dy = target.y - robotRef.current.position.y;
+                
+                // Calculate robot's rotation to face the corner it's running toward!
+                // We use Math.atan2 with -dy to match screen coordinates correctly.
+                const angle = Math.atan2(dx, -dy);
+
+                if (!isDeadRef.current) robotModelRef.current?.playAnimation('run');
+
+                // Snap to angle smoothly, then run across the screen
+                gsap.to(robotRef.current.rotation, { y: angle, duration: 0.4, ease: "power2.out" });
+                gsap.to(robotRef.current.scale, { x: targetScale, y: targetScale, z: targetScale, duration: 2, ease: "power2.inOut" });
+                
+                gsap.to(robotRef.current.position, { 
+                    x: target.x, y: target.y, z: 0, 
+                    duration: 2, ease: "power2.inOut",
+                    onComplete: () => {
+                        isMovingRef.current = false;
+                        if (!robotRef.current) return;
+
+                        // Force the system to acknowledge any trailing scrolls the user did while we were running, 
+                        // ensuring we don't instantly queue a new run and "skip" anything in between!
+                        lastHandledSectionRef.current = activeSectionRef.current;
+
+                        // Arrived at destination. Rotate back to camera and play random anim!
+                        gsap.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 0.5, ease: "power2.out" });
+                        playRandomAnim();
+                    } 
+                });
+            }
+        };
+
+        // Bind check function to top-level ref so the click handler can wake it up
+        checkMovementRef.current = checkAndTriggerMove;
+
+        const setSection = (idx: number) => {
+            activeSectionRef.current = idx;
+            checkAndTriggerMove();
+        };
+
+        const setupScrollTriggers = () => {
+            const sections = Array.from(document.querySelectorAll('section'));
+            sections.forEach((sec, idx) => {
+                const st = ScrollTrigger.create({
+                    trigger: sec,
+                    start: "top 50%",
+                    end: "bottom 50%",
+                    onEnter: () => setSection(idx),
+                    onEnterBack: () => setSection(idx),
+                });
+                
+                // Keep history updated if initialized midway down page
+                if (st.isActive) {
+                    activeSectionRef.current = idx;
+                    lastHandledSectionRef.current = idx;
+                }
+                triggers.push(st);
+            });
+        };
+
+        let tl: gsap.core.Timeline | null = null;
+
+        if (!introFinishedRef.current) {
+            // Very first page load
+            if (robotModelRef.current) {
+                robotModelRef.current.playAnimation('hello');
+            }
+
+            tl = gsap.timeline({
+                delay: 3,
+                onStart: () => {
+                    if (robotModelRef.current) robotModelRef.current.playAnimation('run');
+                },
+                onComplete: () => {
+                    introFinishedRef.current = true;
+                    currentCornerIndexRef.current = 0; // Initialize at Bottom Left
+                    
+                    setupScrollTriggers();
+                    playRandomAnim();
+                    checkAndTriggerMove();
+                }
+            });
+
+            tl.to(robotRef.current.position, { x: corners[0].x, y: corners[0].y, z: 0, duration: 2, ease: "power2.inOut" }, 0);
+            tl.to(robotRef.current.scale,    { x: targetScale, y: targetScale, z: targetScale, duration: 2, ease: "power2.inOut" }, 0);
+            tl.to(robotRef.current.rotation, { y: Math.PI / 8, duration: 2, ease: "power2.inOut" }, 0);
+        } else {
+            // Component re-rendered on browser resize - skip intro and instantly place robot
+            const target = corners[currentCornerIndexRef.current];
+            gsap.set(robotRef.current.position, { x: target.x, y: target.y, z: 0 });
+            gsap.set(robotRef.current.scale, { x: targetScale, y: targetScale, z: targetScale });
+            setupScrollTriggers();
+        }
 
         return () => {
-            tl.kill(); 
+            if (tl) tl.kill(); 
             triggers.forEach(t => t.kill());
+            if (robotRef.current) {
+                gsap.killTweensOf(robotRef.current.position);
+                gsap.killTweensOf(robotRef.current.rotation);
+                gsap.killTweensOf(robotRef.current.scale);
+            }
         };
     }, [viewport.width, viewport.height, isMobile]);
 
     const handleClick = (e: any) => {
-        e.stopPropagation(); // Avoid triggering underneath if possible
+        e.stopPropagation();
         if (robotModelRef.current && !isDeadRef.current) {
             isDeadRef.current = true;
             robotModelRef.current.playAnimation('death');
             
-            // Wait 6 seconds so it stays dead longer, then return to whatever animation is intended for the current scroll position
+            // Wait 6 seconds before reviving
             setTimeout(() => {
                 isDeadRef.current = false;
                 if (robotModelRef.current) {
                     robotModelRef.current.playAnimation(currentAnimRef.current);
                 }
+                
+                // In case sections scrolled past us while we were dead, re-evaluate queue!
+                checkMovementRef.current();
             }, 6000);
         }
     };
