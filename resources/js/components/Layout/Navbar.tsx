@@ -43,9 +43,7 @@ export default function Navbar() {
                         className="touch-target inline-flex min-w-0 items-center gap-3 rounded-full px-2 text-sm font-semibold text-white"
                         aria-label="Opticore Solutions Ltd. home"
                     >
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 p-1.5">
-                            <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-full w-full object-contain" />
-                        </span>
+                        <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-9 w-9 shrink-0 object-contain" />
                         <span className="max-w-[9.5rem] text-xs leading-tight font-semibold tracking-[0.08em] text-zinc-100 sm:max-w-none sm:text-sm">
                             Opticore Solutions Ltd.
                         </span>
@@ -126,9 +124,7 @@ export default function Navbar() {
                                     className="flex items-center gap-3"
                                     onClick={() => setOpen(false)}
                                 >
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 p-1.5">
-                                        <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-full w-full object-contain" />
-                                    </span>
+                                    <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-9 w-9 shrink-0 object-contain" />
                                     <span className="text-xs font-semibold tracking-wide text-zinc-100">
                                         Opticore Solutions Ltd.
                                     </span>
