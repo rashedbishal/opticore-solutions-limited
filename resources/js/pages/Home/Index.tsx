@@ -12,7 +12,6 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useMemo, useState } from 'react';
-import RobotScene3D from '@/components/Robot/RobotScene3D';
 import Section2 from '@/components/Robot/Section2';
 import Section3 from '@/components/Robot/Section3';
 import Section4 from '@/components/Robot/Section4';
@@ -178,7 +177,7 @@ function HeroHeadline() {
             <style>{`
                 .anime-letter {
                     display: inline-block;
-                    line-height: 1em;
+                    line-height: 1.5em;
                 }
                 .anime-word {
                     display: inline-block;
@@ -399,8 +398,6 @@ export default function HomeIndex() {
                 />
             </Head>
 
-            <RobotScene3D />
-
             <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb
                     className="top-20 left-[-4rem] h-64 w-64 md:h-80 md:w-80"
@@ -489,18 +486,18 @@ export default function HomeIndex() {
                         </div>
                     ) : null}
 
-                    <motion.div
-                        variants={fadeUp}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ delay: 0.75 }}
-                        className="mt-16 flex flex-col items-center gap-2 text-zinc-400"
-                    >
-                        <span className="text-xs font-semibold tracking-[0.24em] uppercase">
-                            Scroll
-                        </span>
-                        <ArrowDown className="h-5 w-5 animate-bounce text-cyan-300" />
-                    </motion.div>
+                    {/*<motion.div*/}
+                    {/*    variants={fadeUp}*/}
+                    {/*    initial="hidden"*/}
+                    {/*    animate="visible"*/}
+                    {/*    transition={{ delay: 0.75 }}*/}
+                    {/*    className="mt-16 flex flex-col items-center gap-2 text-zinc-400"*/}
+                    {/*>*/}
+                    {/*    <span className="text-xs font-semibold tracking-[0.24em] uppercase">*/}
+                    {/*        Scroll*/}
+                    {/*    </span>*/}
+                    {/*    <ArrowDown className="h-5 w-5 animate-bounce text-cyan-300" />*/}
+                    {/*</motion.div>*/}
                 </div>
             </section>
 
