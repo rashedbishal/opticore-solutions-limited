@@ -62,8 +62,8 @@ function ResponsiveRobot() {
                 sections.forEach(({ id, anim }) => {
                     const st = ScrollTrigger.create({
                         trigger: id,
-                        start: "top 60%", // Triggers when top of section reaches 60% down the screen
-                        end: "bottom 40%", 
+                        start: "top 50%",    // Triggers when the top of the section hits the vertital center of the screen (50% visible)
+                        end: "bottom 50%",   // Ends when the bottom of the section hits the vertical center of the screen (drops below 50% visible)
                         onEnter: () => robotModelRef.current?.playAnimation(anim),
                         onEnterBack: () => robotModelRef.current?.playAnimation(anim),
                         onLeave: () => robotModelRef.current?.playAnimation('idle'),
