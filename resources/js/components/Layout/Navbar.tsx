@@ -116,58 +116,93 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 flex min-h-screen flex-col bg-black/95 px-4 pt-28 pb-8 backdrop-blur-2xl lg:hidden"
+                        className="fixed inset-0 z-60 flex flex-col bg-black/98 p-4 backdrop-blur-2xl lg:hidden"
                     >
-                        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-between gap-8">
-                            <div className="space-y-2">
-                                {navigationItems.map((item, index) => (
-                                    <motion.div
-                                        key={item.href}
-                                        initial={{ opacity: 0, y: 24 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 16 }}
-                                        transition={{
-                                            delay: index * 0.08,
-                                            duration: 0.35,
-                                        }}
-                                    >
-                                        <Link
-                                            href={item.href}
-                                            className={cn(
-                                                'touch-target flex w-full items-center justify-between rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-2xl font-semibold text-white',
-                                                url === item.href &&
-                                                    'border-violet-400/40 bg-violet-500/10',
-                                            )}
-                                            onClick={() => setOpen(false)}
-                                        >
-                                            <HoverScramble
-                                                duration={0.8}
-                                                speed={1}
-                                                scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                                            >
-                                                {item.label}
-                                            </HoverScramble>
-                                            <span className="text-sm text-zinc-400">Explore</span>
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 24 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 16 }}
-                                transition={{ delay: 0.35, duration: 0.35 }}
-                            >
-                                <MagneticButton
-                                    href="/request-appointment"
-                                    fullWidth
-                                    ariaLabel="Open project request page"
+                        <div className="flex h-full flex-col">
+                            {/* Header inside the menu for consistent top spacing and close button */}
+                            <div className="flex items-center justify-between pt-4 pb-6 sm:px-2">
+                                <Link
+                                    href="/"
+                                    className="flex items-center gap-3"
                                     onClick={() => setOpen(false)}
                                 >
-                                    Get a Quote
-                                </MagneticButton>
-                            </motion.div>
+                                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5">
+                                        <Aperture className="h-5 w-5 text-violet-300" />
+                                    </span>
+                                    <span className="text-xs font-semibold tracking-wide text-zinc-100">
+                                        Opticore Solutions Ltd.
+                                    </span>
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpen(false)}
+                                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
+
+                            {/* Scrollable links area */}
+                            <div className="flex-1 overflow-y-auto overscroll-contain py-4 hide-scrollbar">
+                                <div className="mx-auto w-full max-w-md space-y-2">
+                                    {navigationItems.map((item, index) => (
+                                        <motion.div
+                                            key={item.href}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            transition={{
+                                                delay: index * 0.05,
+                                                duration: 0.3,
+                                            }}
+                                        >
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    'flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 transition-colors active:bg-white/10',
+                                                    url === item.href &&
+                                                        'border-violet-400/40 bg-violet-500/10',
+                                                )}
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <HoverScramble
+                                                    duration={0.8}
+                                                    speed={1}
+                                                    scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                                                    triggerOnMount={true}
+                                                    className="text-lg font-semibold text-white sm:text-xl"
+                                                >
+                                                    {item.label}
+                                                </HoverScramble>
+                                                <span className="text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
+                                                    Explore
+                                                </span>
+                                            </Link>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Footer CTA */}
+                            <div className="mt-auto pt-6 pb-4">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    transition={{ delay: 0.25 }}
+                                    className="mx-auto w-full max-w-md"
+                                >
+                                    <MagneticButton
+                                        href="/request-appointment"
+                                        fullWidth
+                                        ariaLabel="Open project request page"
+                                        onClick={() => setOpen(false)}
+                                        className="py-4 text-base font-bold tracking-wide uppercase"
+                                    >
+                                        Get a Quote
+                                    </MagneticButton>
+                                </motion.div>
+                            </div>
                         </div>
                     </motion.div>
                 ) : null}
