@@ -12,6 +12,10 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useMemo, useState } from 'react';
+import Section2 from '@/components/Robot/Section2';
+import Section3 from '@/components/Robot/Section3';
+import Section4 from '@/components/Robot/Section4';
+import Section5 from '@/components/Robot/Section5';
 import AnimatedCounter from '@/components/UI/AnimatedCounter';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -30,16 +34,6 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
-<<<<<<< HEAD
-=======
-import ScannedServiceCard, {
-    ServiceCarousel,
-} from '@/components/UI/ScannedServiceCard';
-import Section2 from '@/components/Robot/Section2';
-import Section3 from '@/components/Robot/Section3';
-import Section4 from '@/components/Robot/Section4';
-import Section5 from '@/components/Robot/Section5';
->>>>>>> @{-1}
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -183,7 +177,7 @@ function HeroHeadline() {
             <style>{`
                 .anime-letter {
                     display: inline-block;
-                    line-height: 1em;
+                    line-height: 1.5em;
                 }
                 .anime-word {
                     display: inline-block;
@@ -492,18 +486,18 @@ export default function HomeIndex() {
                         </div>
                     ) : null}
 
-                    <motion.div
-                        variants={fadeUp}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ delay: 0.75 }}
-                        className="mt-16 flex flex-col items-center gap-2 text-zinc-400"
-                    >
-                        <span className="text-xs font-semibold tracking-[0.24em] uppercase">
-                            Scroll
-                        </span>
-                        <ArrowDown className="h-5 w-5 animate-bounce text-cyan-300" />
-                    </motion.div>
+                    {/*<motion.div*/}
+                    {/*    variants={fadeUp}*/}
+                    {/*    initial="hidden"*/}
+                    {/*    animate="visible"*/}
+                    {/*    transition={{ delay: 0.75 }}*/}
+                    {/*    className="mt-16 flex flex-col items-center gap-2 text-zinc-400"*/}
+                    {/*>*/}
+                    {/*    <span className="text-xs font-semibold tracking-[0.24em] uppercase">*/}
+                    {/*        Scroll*/}
+                    {/*    </span>*/}
+                    {/*    <ArrowDown className="h-5 w-5 animate-bounce text-cyan-300" />*/}
+                    {/*</motion.div>*/}
                 </div>
             </section>
 
