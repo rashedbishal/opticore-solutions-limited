@@ -10,6 +10,7 @@
     --color-dark: #0a0a0a;
     --color-surface: #111111;
     --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
     --animate-marquee: marquee 30s linear infinite;
     --animate-services-marquee: servicesMarquee 26s linear infinite;
     --animate-float: float 6s ease-in-out infinite;
