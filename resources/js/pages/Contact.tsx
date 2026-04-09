@@ -107,7 +107,7 @@ export default function Contact() {
                             Get in touch
                         </GlowingKicker>
                         <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-[1.1] tracking-tight text-balance">
-                            <HandwritingText 
+                            <HandwritingText
                                 text="Always Ready to Help"
                                 className="inline-block"
                                 delay={0.5}
@@ -115,9 +115,8 @@ export default function Contact() {
                             />
                         </h1>
                     </div>
-
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-                        
+
                         {/* Contact Form Container */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -266,7 +265,7 @@ export default function Contact() {
 
                         {/* Side Information Column */}
                         <div className="lg:col-span-5 space-y-6 md:space-y-8">
-                            
+
                             {/* Contact Details Card */}
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
