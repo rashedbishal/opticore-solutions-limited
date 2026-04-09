@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Quote, CheckCircle2, ArrowRight } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
-import mdImage from "@/images/md.jpg"
 
 const commitments = [
     {
@@ -39,13 +38,13 @@ export default function MessageFromMd() {
                 <div className="pointer-events-none absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 opacity-20 blur-3xl">
                     <GradientOrb
                         color="var(--color-primary)"
-                        className="h-150 w-150"
+                        className="h-[600px] w-[600px]"
                     />
                 </div>
                 <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 opacity-10 blur-3xl">
                     <GradientOrb
                         color="var(--color-secondary)"
-                        className="h-125 w-125"
+                        className="h-[500px] w-[500px]"
                     />
                 </div>
 
@@ -94,9 +93,17 @@ export default function MessageFromMd() {
 
                                 <div className="glass-panel relative aspect-[4/5] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] lg:aspect-[4/5]">
                                     <img
-                                        src={mdImage}
-                                        alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
-                                        className="h-full w-full scale-105 object-cover filter transition-all duration-700 group-hover:scale-100 group-hover:grayscale-0"
+                                        src="/images/about/md-rashed.webp"
+                                        alt="Md. MD, Managing Director of Opticore Solutions Ltd."
+                                        className="h-full w-full scale-105 object-cover grayscale filter transition-all duration-700 group-hover:scale-100 group-hover:grayscale-0"
+                                        onError={(e) => {
+                                            const target =
+                                                e.target as HTMLImageElement;
+                                            target.src =
+                                                'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop';
+                                            target.className =
+                                                'h-full w-full object-cover opacity-80';
+                                        }}
                                     />
 
                                     {/* Overlay Gradient */}
@@ -110,7 +117,7 @@ export default function MessageFromMd() {
                                             transition={{ delay: 0.4 }}
                                         >
                                             <h3 className="text-2xl font-bold tracking-tight text-white">
-                                                Md. Asaduzzaman
+                                                Md. MD
                                             </h3>
                                             <p className="mt-1 text-sm font-medium tracking-[0.2em] text-primary uppercase">
                                                 Managing Director
@@ -146,30 +153,6 @@ export default function MessageFromMd() {
                                     ),
                                 )}
                             </motion.div>
-
-                            {/* Commitments Grid */}
-                            <div className="hidden mt-12 lg:grid grid-cols-1 gap-6 md:grid-cols-2">
-                                {commitments.map((item, index) => (
-                                    <motion.div
-                                        key={item.title}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: 0.1 * index }}
-                                        className="glass-panel group rounded-3xl border-white/5 p-6 transition-colors hover:border-primary/30"
-                                    >
-                                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 transition-transform group-hover:scale-110">
-                                            <CheckCircle2 className="h-5 w-5 text-primary" />
-                                        </div>
-                                        <h4 className="mb-2 font-bold text-white">
-                                            {item.title}
-                                        </h4>
-                                        <p className="text-xs leading-relaxed text-zinc-400">
-                                            {item.description}
-                                        </p>
-                                    </motion.div>
-                                ))}
-                            </div>
                         </div>
 
                         {/* Content Side */}
@@ -255,7 +238,7 @@ export default function MessageFromMd() {
                                         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
                                             <div>
                                                 <p className="font-serif text-4xl leading-none text-white italic">
-                                                    Md. Asaduzzaman
+                                                    Md. MD
                                                 </p>
                                                 <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-primary to-transparent" />
                                                 <p className="mt-4 text-xs font-bold tracking-[0.3em] text-primary uppercase">
@@ -264,11 +247,9 @@ export default function MessageFromMd() {
                                             </div>
 
                                             <div className="flex items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
-                                                <span>EST. 2015</span>
+                                                <span>EST. 2024</span>
                                                 <span className="h-1 w-1 rounded-full bg-zinc-700" />
-                                                <span>
-                                                    OPTICORE SOLUTIONS LTD.
-                                                </span>
+                                                <span>OPTICORE SOLUTIONS</span>
                                             </div>
                                         </div>
                                     </div>
@@ -276,7 +257,7 @@ export default function MessageFromMd() {
                             </motion.div>
 
                             {/* Commitments Grid */}
-                            <div className="mt-12 lg:hidden grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
                                 {commitments.map((item, index) => (
                                     <motion.div
                                         key={item.title}

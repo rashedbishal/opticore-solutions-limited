@@ -12,7 +12,6 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useMemo, useState } from 'react';
-// import RobotScene3D from '@/components/Robot/RobotScene3D';
 import Section2 from '@/components/Robot/Section2';
 import Section3 from '@/components/Robot/Section3';
 import Section4 from '@/components/Robot/Section4';
@@ -111,43 +110,39 @@ const floatingIcons = [
 const duplicatedServices = [...services, ...services];
 
 function HeroHeadline() {
-    const headlineRef = useRef<HTMLHeadingElement>(null);
+    const phrases = [
+        'deliver creative <br/> graphic design solutions <br/> for businesses',
+        'drive strategic <br/> digital marketing <br/> campaigns with results',
+        'create engaging <br/> video editing content <br/> with storytelling',
+        'produce high-quality <br/> 3D production visuals <br/> for projects',
+        'design responsive <br/> websites with seamless <br/> user experience',
+    ];
+
+    const [index, setIndex] = useState(0);
+    const phraseRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
-        let timelineInstance: any;
+        let animeInstance: any;
 
         const run = async () => {
             const anime =
                 (await import('animejs')).default ?? (await import('animejs'));
-
-            const el = headlineRef.current;
-
+            const el = phraseRef.current;
             if (!el) {
                 return;
             }
 
-            // Build HTML: wrap each letter in a span, preserving gradient-text per word
-            const words =
-                'We Build Brands That Leave a Lasting Impression'.split(' ');
-            el.innerHTML = words
-                .map((word, wi) => {
-                    const isGradient = wi > 1;
-                    const letters = word
-                        .split('')
-                        .map(
-                            (char) =>
-                                `<span class='anime-letter${isGradient ? ' gradient-text' : ''}'>${char}</span>`,
-                        )
-                        .join('');
+            // Reset container opacity for new phrase
+            el.style.opacity = '1';
 
-                    return `<span class='anime-word'>${letters}</span>`;
+            animeInstance = (anime as any)
+                .timeline({
+                    complete: () => {
+                        setIndex((prev) => (prev + 1) % phrases.length);
+                    },
                 })
-                .join(' ');
-
-            timelineInstance = (anime as any)
-                .timeline({ loop: true })
                 .add({
-                    targets: '.anime-letter',
+                    targets: el.querySelectorAll('.anime-letter'),
                     scale: [4, 1],
                     opacity: [0, 1],
                     translateZ: 0,
@@ -160,40 +155,67 @@ function HeroHeadline() {
                     opacity: 0,
                     duration: 1000,
                     easing: 'easeOutExpo',
-                    delay: 1000,
+                    delay: 2000,
                 });
         };
 
         run();
 
         return () => {
-            if (timelineInstance?.pause) {
-                timelineInstance.pause();
+            if (animeInstance?.pause) {
+                animeInstance.pause();
             }
         };
-    }, []);
+    }, [index]);
+
+    const currentPhrase = phrases[index];
 
     return (
         <>
             <style>{`
                 .anime-letter {
                     display: inline-block;
-                    line-height: 1.5em;
+                    line-height: 1.1em;
                 }
                 .anime-word {
                     display: inline-block;
                     white-space: nowrap;
+                    margin-right: 0.15em;
                 }
             `}</style>
-            <h1
-                ref={headlineRef}
-                className="pb-2 text-4xl leading-[1.12] font-extrabold text-balance text-white sm:text-5xl md:text-6xl lg:text-7xl"
+            <motion.h1
+                layout
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="pb-2 text-[2rem] leading-[1.2] font-extrabold text-white sm:text-5xl sm:leading-[1.12] md:text-6xl lg:text-7xl"
             >
-                We Build Brands That Leave a Lasting Impression
-            </h1>
+                <motion.span layout className="inline-block">
+                    We
+                </motion.span>{' '}
+                <span ref={phraseRef} className="inline">
+                    {currentPhrase.split(' ').map((word, wi) => {
+                        if (word === '<br/>') {
+                            return <br key={`br-${wi}`} />;
+                        }
+                        return (
+                            <span key={`word-${wi}`} className="anime-word">
+                                {word.split('').map((char, ci) => (
+                                    <span
+                                        key={`char-${ci}`}
+                                        className="anime-letter gradient-text"
+                                        style={{ opacity: 0 }}
+                                    >
+                                        {char}
+                                    </span>
+                                ))}
+                            </span>
+                        );
+                    })}
+                </span>
+            </motion.h1>
         </>
     );
 }
+
 
 export default function HomeIndex() {
     const glowDelays = [0, 3, 2, 1];
@@ -399,7 +421,7 @@ export default function HomeIndex() {
                 />
             </Head>
 
-            {/*<RobotScene3D />*/}
+
 
             <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb
@@ -441,7 +463,7 @@ export default function HomeIndex() {
                         initial="hidden"
                         animate="visible"
                         transition={{ delay: 0.4 }}
-                        className="mx-auto mt-8 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg md:text-xl"
+                        className="mx-auto mt-12 max-w-2xl text-base leading-8 text-zinc-300 sm:mt-8 sm:text-lg md:text-xl"
                     >
                         From stunning visuals to powerful digital strategies —
                         Opticore Solutions Ltd. turns your vision into results.
@@ -474,7 +496,7 @@ export default function HomeIndex() {
                                 ({ icon: Icon, className, animation }) => (
                                     <motion.div
                                         key={className}
-                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
+                                        className={`absolute ${className} flex h-12 w-12 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
                                         animate={animation}
                                         transition={{
                                             duration: 6,
@@ -482,7 +504,7 @@ export default function HomeIndex() {
                                             ease: 'easeInOut',
                                         }}
                                     >
-                                        <Icon className="h-8 w-8" />
+                                        <Icon className="h-5 w-5" />
                                     </motion.div>
                                 ),
                             )}
@@ -504,12 +526,10 @@ export default function HomeIndex() {
                 </div>
             </section>
 
-            <div className="robot-3d-trigger relative">
-                <Section2 />
-                <Section3 />
-                <Section4 />
-                <Section5 />
-            </div>
+            <Section2 />
+            <Section3 />
+            <Section4 />
+            <Section5 />
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
