@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
@@ -33,3 +34,4 @@ Route::get('/portfolio/{type}', [PortfolioController::class, 'show'])
 Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore');
 Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore');
 Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply');
+Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat');
