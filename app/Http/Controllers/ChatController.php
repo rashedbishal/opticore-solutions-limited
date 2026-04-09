@@ -246,7 +246,10 @@ class ChatController extends Controller
 
         while ($attempts < $maxAttempts) {
             try {
-                $client = Gemini::client(config('services.gemini.key'));
+                $client = Gemini::factory()
+                    ->withHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+                    ->withApiKey(config('services.gemini.key'))
+                    ->make();
 
                 // Prepare a system-like prompt with knowledge base
                 $prompt = "You are an AI assistant for Opticore Solutions Ltd., a digital agency.
@@ -267,7 +270,7 @@ Instructions:
 
 User Message: {$message}";
 
-                $result = $client->generativeModel('gemini-flash-lite-latest')->generateContent($prompt);
+                $result = $client->generativeModel('gemini-3.1-flash-lite-preview')->generateContent($prompt);
 
                 return $result->text();
             } catch (\Exception $e) {

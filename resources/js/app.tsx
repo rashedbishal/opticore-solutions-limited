@@ -42,6 +42,10 @@ createInertiaApp({
         return page;
     },
     setup({ el, App, props }) {
+        if (import.meta.env.SSR) {
+            return;
+        }
+
         createRoot(el).render(
             <StrictMode>
                 <App {...props} />
