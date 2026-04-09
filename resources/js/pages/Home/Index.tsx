@@ -12,7 +12,7 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useMemo, useState } from 'react';
-import RobotScene3D from '@/components/Robot/RobotScene3D';
+// import RobotScene3D from '@/components/Robot/RobotScene3D';
 import Section2 from '@/components/Robot/Section2';
 import Section3 from '@/components/Robot/Section3';
 import Section4 from '@/components/Robot/Section4';
@@ -399,7 +399,7 @@ export default function HomeIndex() {
                 />
             </Head>
 
-            <RobotScene3D />
+            {/*<RobotScene3D />*/}
 
             <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb

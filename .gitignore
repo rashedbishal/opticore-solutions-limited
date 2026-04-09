@@ -46,3 +46,4 @@ boost.json
 
 # OS
 .DS_Store
+.aider*
