@@ -24,7 +24,7 @@ export default function MagneticButton({
     const magnetic = useMagneticHover<HTMLAnchorElement | HTMLButtonElement>();
 
     const content = (
-        <motion.span className="relative z-10" style={{ x: magnetic.x, y: magnetic.y }}>
+        <motion.span className="flex relative z-10" style={{ x: magnetic.x, y: magnetic.y }}>
             {children}
         </motion.span>
     );
