@@ -132,123 +132,131 @@ export default function Contact() {
                         </div>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 80 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: '-80px' }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                        className="glass-panel rounded-[2rem] p-8 sm:p-10"
-                    >
-                        {submitted ? (
-                            <div className="flex min-h-[28rem] flex-col items-center justify-center text-center">
-                                <CheckCircle2 className="h-16 w-16 text-cyan-300" />
-                                <h2 className="mt-6 text-2xl font-semibold text-white">
-                                    We’ll be in touch soon!
-                                </h2>
-                                <p className="mt-3 max-w-md text-sm leading-7 text-zinc-400">
-                                    Your message is in. We will review it and
-                                    reply with the best next step for your
-                                    project.
-                                </p>
-                            </div>
-                        ) : (
-                            <form
-                                className="space-y-4"
-                                onSubmit={(event) => {
-                                    event.preventDefault();
-                                    submit();
-                                }}
-                            >
-                                {[
-                                    {
-                                        key: 'name',
-                                        label: 'Name',
-                                        type: 'text',
-                                    },
-                                    {
-                                        key: 'email',
-                                        label: 'Email',
-                                        type: 'email',
-                                    },
-                                    {
-                                        key: 'phone',
-                                        label: 'Phone',
-                                        type: 'text',
-                                    },
-                                    {
-                                        key: 'subject',
-                                        label: 'Subject',
-                                        type: 'text',
-                                    },
-                                ].map((field) => (
-                                    <label key={field.key} className="block">
+                    <div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 80 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{
+                                duration: 0.8,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="glass-panel rounded-[2rem] p-8 sm:p-10"
+                        >
+                            {submitted ? (
+                                <div className="flex min-h-40 flex-col items-center justify-center text-center">
+                                    <CheckCircle2 className="h-16 w-16 text-cyan-300" />
+                                    <h2 className="mt-6 text-2xl font-semibold text-white">
+                                        We’ll be in touch soon!
+                                    </h2>
+                                    <p className="mt-3 max-w-md text-sm leading-7 text-zinc-400">
+                                        Your message is in. We will review it
+                                        and reply with the best next step for
+                                        your project.
+                                    </p>
+                                </div>
+                            ) : (
+                                <form
+                                    className="space-y-4"
+                                    onSubmit={(event) => {
+                                        event.preventDefault();
+                                        submit();
+                                    }}
+                                >
+                                    {[
+                                        {
+                                            key: 'name',
+                                            label: 'Name',
+                                            type: 'text',
+                                        },
+                                        {
+                                            key: 'email',
+                                            label: 'Email',
+                                            type: 'email',
+                                        },
+                                        {
+                                            key: 'phone',
+                                            label: 'Phone',
+                                            type: 'text',
+                                        },
+                                        {
+                                            key: 'subject',
+                                            label: 'Subject',
+                                            type: 'text',
+                                        },
+                                    ].map((field) => (
+                                        <label
+                                            key={field.key}
+                                            className="block"
+                                        >
+                                            <span className="mb-2 block text-sm font-medium text-zinc-200">
+                                                {field.label}
+                                            </span>
+                                            <input
+                                                type={field.type}
+                                                value={
+                                                    form.data[
+                                                        field.key as keyof ContactFormData
+                                                    ] as string
+                                                }
+                                                onChange={(event) =>
+                                                    form.setData(
+                                                        field.key as keyof ContactFormData,
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
+                                            />
+                                            {form.errors[
+                                                field.key as keyof ContactFormData
+                                            ] ? (
+                                                <p className="mt-2 text-sm text-rose-300">
+                                                    {
+                                                        form.errors[
+                                                            field.key as keyof ContactFormData
+                                                        ]
+                                                    }
+                                                </p>
+                                            ) : null}
+                                        </label>
+                                    ))}
+
+                                    <label className="block">
                                         <span className="mb-2 block text-sm font-medium text-zinc-200">
-                                            {field.label}
+                                            Message
                                         </span>
-                                        <input
-                                            type={field.type}
-                                            value={
-                                                form.data[
-                                                    field.key as keyof ContactFormData
-                                                ] as string
-                                            }
+                                        <textarea
+                                            rows={6}
+                                            value={form.data.message}
                                             onChange={(event) =>
                                                 form.setData(
-                                                    field.key as keyof ContactFormData,
+                                                    'message',
                                                     event.target.value,
                                                 )
                                             }
                                             className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
                                         />
-                                        {form.errors[
-                                            field.key as keyof ContactFormData
-                                        ] ? (
+                                        {form.errors.message ? (
                                             <p className="mt-2 text-sm text-rose-300">
-                                                {
-                                                    form.errors[
-                                                        field.key as keyof ContactFormData
-                                                    ]
-                                                }
+                                                {form.errors.message}
                                             </p>
                                         ) : null}
                                     </label>
-                                ))}
 
-                                <label className="block">
-                                    <span className="mb-2 block text-sm font-medium text-zinc-200">
-                                        Message
-                                    </span>
-                                    <textarea
-                                        rows={6}
-                                        value={form.data.message}
-                                        onChange={(event) =>
-                                            form.setData(
-                                                'message',
-                                                event.target.value,
-                                            )
-                                        }
-                                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition outline-none focus:border-violet-400/50"
-                                    />
-                                    {form.errors.message ? (
-                                        <p className="mt-2 text-sm text-rose-300">
-                                            {form.errors.message}
-                                        </p>
-                                    ) : null}
-                                </label>
-
-                                <MagneticButton
-                                    type="submit"
-                                    ariaLabel="Send contact form"
-                                    fullWidth
-                                    disabled={form.processing}
-                                >
-                                    {form.processing
-                                        ? 'Sending...'
-                                        : 'Send Message'}
-                                </MagneticButton>
-                            </form>
-                        )}
-                    </motion.div>
+                                    <MagneticButton
+                                        type="submit"
+                                        ariaLabel="Send contact form"
+                                        fullWidth
+                                        disabled={form.processing}
+                                    >
+                                        {form.processing
+                                            ? 'Sending...'
+                                            : 'Send Message'}
+                                    </MagneticButton>
+                                </form>
+                            )}
+                        </motion.div>
+                    </div>
                 </div>
             </section>
         </>
