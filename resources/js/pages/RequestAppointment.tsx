@@ -68,7 +68,7 @@ export default function RequestAppointment() {
                 <div className="section-inner relative z-10">
                     <div className="glass-panel mx-auto w-full max-w-lg rounded-[2rem] p-6 sm:p-8">
                         {submitted ? (
-                            <div className="flex min-h-[30rem] flex-col items-center justify-center text-center">
+                            <div className="flex min-h-40 flex-col items-center justify-center text-center">
                                 <CheckCircle2 className="h-16 w-16 text-cyan-300" />
                                 <h1 className="mt-6 text-3xl font-extrabold text-white">
                                     Appointment requested
