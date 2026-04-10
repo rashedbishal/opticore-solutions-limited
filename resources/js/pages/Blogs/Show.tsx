@@ -2,14 +2,14 @@ import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
-import { mockBlogs } from '@/lib/mock-blogs';
 
 interface BlogShowProps {
     slug: string;
+    dbBlog?: any;
 }
 
-export default function BlogShow({ slug }: BlogShowProps) {
-    const post = mockBlogs.find((b) => b.slug === slug);
+export default function BlogShow({ slug, dbBlog }: BlogShowProps) {
+    const post = dbBlog;
 
     if (!post) {
         return (
@@ -86,7 +86,7 @@ export default function BlogShow({ slug }: BlogShowProps) {
                                 </div>
                                 <div className="flex items-center gap-1.5 md:gap-2">
                                     <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                                    <span>{post.date}</span>
+                                    <span>{post.publishedAt}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 md:gap-2">
                                     <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
@@ -119,16 +119,10 @@ export default function BlogShow({ slug }: BlogShowProps) {
                                     className="prose prose-invert prose-sm sm:prose-base md:prose-lg prose-headings:font-extrabold prose-headings:tracking-tight prose-p:text-zinc-400 prose-p:leading-relaxed prose-strong:text-white max-w-none"
                                 >
                                     <p className="mb-8 text-lg leading-relaxed font-light text-white md:mb-12 md:text-xl">
-                                        {post.description}
+                                        {post.excerpt}
                                     </p>
 
-                                    {typeof post.content === 'string' ? (
-                                        <div className="whitespace-pre-wrap">
-                                            {post.content}
-                                        </div>
-                                    ) : (
-                                        post.content
-                                    )}
+                                    <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: post.content }} />
 
                                     {/* Generic Rich Content Example */}
                                     <div className="mt-8 space-y-6 md:mt-12 md:space-y-8">

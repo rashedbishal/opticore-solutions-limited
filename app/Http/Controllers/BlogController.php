@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,7 +13,23 @@ class BlogController extends Controller
      */
     public function index(): Response
     {
+        $dbBlogs = Blog::latest()->get()->map(function($blog) {
+            return [
+                'id' => (string) $blog->id,
+                'title' => $blog->title,
+                'slug' => $blog->slug,
+                'excerpt' => $blog->excerpt ?? substr($blog->content, 0, 120) . '...',
+                'content' => $blog->content,
+                'category' => $blog->category,
+                'author' => $blog->author ?? 'Opticore Team',
+                'readTime' => $blog->read_time ?? '5 min read',
+                'publishedAt' => $blog->created_at->format('M j, Y'),
+                'image' => $blog->image ?? 'https://placehold.co/800x600/111111/7C3AED?text=Opticore',
+            ];
+        });
+
         return Inertia::render('Blogs/Index', [
+            'dbBlogs' => $dbBlogs,
             'meta' => [
                 'title' => 'Blog — Opticore Solutions Ltd.',
                 'description' => 'Read the latest insights on design, tech, and marketing from the Opticore team.',
@@ -25,13 +42,27 @@ class BlogController extends Controller
      */
     public function show(string $slug): Response
     {
-        // Meta will be handled by the component for dynamic titles,
-        // but we provide a default meta to avoid null issues in layout.
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+
+        $formattedBlog = [
+            'id' => (string) $blog->id,
+            'title' => $blog->title,
+            'slug' => $blog->slug,
+            'excerpt' => $blog->excerpt,
+            'content' => $blog->content,
+            'category' => $blog->category,
+            'author' => $blog->author ?? 'Opticore Team',
+            'readTime' => $blog->read_time ?? '5 min read',
+            'publishedAt' => $blog->created_at->format('M j, Y'),
+            'image' => $blog->image ?? 'https://placehold.co/800x600/111111/7C3AED?text=Opticore',
+        ];
+
         return Inertia::render('Blogs/Show', [
             'slug' => $slug,
+            'dbBlog' => $formattedBlog,
             'meta' => [
-                'title' => 'Blog Post — Opticore Solutions Ltd.',
-                'description' => 'Read a detailed blog post from the Opticore team.',
+                'title' => $blog->title . ' — Opticore Solutions Ltd.',
+                'description' => text_truncate(strip_tags($blog->content), 150),
             ],
         ]);
     }

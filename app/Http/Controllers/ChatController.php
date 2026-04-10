@@ -13,15 +13,31 @@ class ChatController extends Controller
     public function handleChat(Request $request)
     {
         $message = $request->input('message');
+        $sessionId = $request->input('session_id') ?: (string) Str::uuid();
 
         if (empty($message)) {
             return response()->json(['reply' => 'Please provide a message.']);
         }
 
+        $session = \App\Models\ChatSession::firstOrCreate(
+            ['session_id' => $sessionId],
+            ['title' => substr($message, 0, 50)]
+        );
+
+        $session->messages()->create([
+            'sender' => 'user',
+            'content' => $message
+        ]);
+
         $knowledgeBase = $this->getWebsiteKnowledge();
         $reply = $this->getGroundedReply($message, $knowledgeBase);
 
-        return response()->json(['reply' => $reply]);
+        $session->messages()->create([
+            'sender' => 'ai',
+            'content' => $reply
+        ]);
+
+        return response()->json(['reply' => $reply, 'session_id' => $sessionId]);
     }
 
     private function getWebsiteKnowledge(): array

@@ -4,8 +4,7 @@ import { useState } from 'react';
 import BlogCard from '@/components/Blogs/BlogCard';
 import FilterBar from '@/components/Blogs/FilterBar';
 import GradientOrb from '@/components/UI/GradientOrb';
-import { mockBlogs } from '@/lib/mock-blogs';
-import type { BlogCategory } from '@/types/blog';
+import type { BlogCategory, BlogPost } from '@/types/blog';
 
 const categories: BlogCategory[] = [
     'All',
@@ -16,13 +15,14 @@ const categories: BlogCategory[] = [
     'Web Development',
 ];
 
-export default function BlogIndex() {
+export default function BlogIndex({ dbBlogs }: { dbBlogs?: BlogPost[] }) {
+    const blogs = dbBlogs || [];
     const [activeCategory, setActiveCategory] = useState<BlogCategory>('All');
 
     const filteredBlogs =
         activeCategory === 'All'
-            ? mockBlogs
-            : mockBlogs.filter((blog) => blog.category === activeCategory);
+            ? blogs
+            : blogs.filter((blog) => blog.category === activeCategory);
 
     const glitchText = 'The Opticore Blog';
 

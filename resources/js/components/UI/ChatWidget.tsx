@@ -17,6 +17,7 @@ export default function ChatWidget() {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sessionId, setSessionId] = useState<string>('');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -40,12 +41,13 @@ export default function ChatWidget() {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
                 },
-                body: JSON.stringify({ message: userMessage }),
+                body: JSON.stringify({ message: userMessage, session_id: sessionId }),
             });
 
             if (!response.ok) throw new Error('Failed to send message');
 
             const data = await response.json();
+            if (data.session_id) setSessionId(data.session_id);
             setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
         } catch (error) {
             console.error('Chat Error:', error);

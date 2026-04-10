@@ -1,0 +1,90 @@
+import AdminLayout from '@/components/Layout/AdminLayout';
+import adminRoutes from '@/routes/admin';
+import { Link, useForm } from '@inertiajs/react';
+import { Plus, Trash2, Edit } from 'lucide-react';
+import type { ReactNode } from 'react';
+
+interface Portfolio {
+    id: number;
+    title: string;
+    category: string;
+    image: string | null;
+}
+
+interface Props {
+    portfolios: {
+        data: Portfolio[];
+        links: any[];
+    };
+}
+
+export default function PortfolioIndex({ portfolios }: Props) {
+    const { delete: destroy } = useForm();
+
+    const handleDelete = (id: number) => {
+        if (confirm('Are you sure you want to delete this portfolio?')) {
+            destroy(adminRoutes.portfolios.destroy.url(id));
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-white">Portfolios</h1>
+                <Link
+                    href={adminRoutes.portfolios.create.url()}
+                    className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 transition-colors"
+                >
+                    <Plus className="w-4 h-4" /> Add Portfolio
+                </Link>
+            </div>
+
+            <div className="rounded-xl border border-white/10 bg-zinc-900/50 overflow-hidden">
+                <table className="min-w-full divide-y divide-white/10">
+                    <thead className="bg-zinc-800/50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Image</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Title</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Category</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                        {portfolios.data.map((portfolio) => (
+                            <tr key={portfolio.id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {portfolio.image ? (
+                                        <img src={portfolio.image} alt={portfolio.title} className="w-12 h-12 rounded object-cover" />
+                                    ) : (
+                                        <div className="w-12 h-12 rounded bg-zinc-800 flex items-center justify-center text-xs text-zinc-500">No Img</div>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{portfolio.title}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400">{portfolio.category}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                    <Link
+                                        href={adminRoutes.portfolios.edit.url(portfolio.id)}
+                                        className="text-blue-400 hover:text-blue-300 mr-4 inline-flex items-center gap-1.5"
+                                    >
+                                        <Edit className="w-4 h-4" /> Edit
+                                    </Link>
+                                    <button
+                                        onClick={() => handleDelete(portfolio.id)}
+                                        className="text-red-400 hover:text-red-300 inline-flex items-center gap-1.5"
+                                    >
+                                        <Trash2 className="w-4 h-4" /> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        {portfolios.data.length === 0 && (
+                            <tr><td colSpan={4} className="px-6 py-8 text-center text-zinc-500 text-sm">No portfolios found.</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+PortfolioIndex.layout = (page: ReactNode) => <AdminLayout title="Manage Portfolios">{page}</AdminLayout>;

@@ -5,8 +5,22 @@ import { ArrowRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Lightbox from '@/components/UI/Lightbox';
 import MagneticButton from '@/components/UI/MagneticButton';
-import { portfolioCategories } from '@/lib/site';
 import type { SharedPageProps } from '@/types';
+
+// The dbPortfolioCategories will be passed as a prop from the PortfolioController
+interface PortfolioItem {
+    title: string;
+    category: string;
+    image: string;
+    alt: string;
+}
+
+interface PortfolioCategory {
+    title: string;
+    description: string;
+    type: string;
+    items: PortfolioItem[];
+}
 
 const scaleIn: Variants = {
     hidden: { opacity: 0, scale: 0.85 },
@@ -22,10 +36,12 @@ const staggerContainer: Variants = {
     visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
-export default function PortfolioShow() {
+export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCategories?: PortfolioCategory[] }) {
+    const portfolioCategories = dbPortfolioCategories || [];
+    
     const { props } = usePage<SharedPageProps & { portfolioType?: string }>();
     const [activeTab, setActiveTab] = useState(
-        props.portfolioType ?? portfolioCategories[0].type,
+        props.portfolioType ?? portfolioCategories[0]?.type
     );
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -34,8 +50,10 @@ export default function PortfolioShow() {
             portfolioCategories.find(
                 (category) => category.type === activeTab,
             ) ?? portfolioCategories[0],
-        [activeTab],
+        [activeTab, portfolioCategories],
     );
+
+    if (!activeCategory) return null;
 
     return (
         <>

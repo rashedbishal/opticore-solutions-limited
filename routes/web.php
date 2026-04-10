@@ -35,3 +35,28 @@ Route::post('/api/contact', [ContactController::class, 'store'])->name('contactS
 Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore');
 Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply');
 Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat');
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\ChatSessionController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\UserController;
+
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+});
+Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
+
+// CMS Admin Routes
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('portfolios', AdminPortfolioController::class);
+    Route::resource('blogs', AdminBlogController::class);
+    Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
+    Route::resource('users', UserController::class);
+});
