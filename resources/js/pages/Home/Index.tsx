@@ -11,6 +11,7 @@ import {
     Megaphone,
     Palette,
     Sparkles,
+    Star,
 } from 'lucide-react';
 import { useEffect, useRef, useMemo, useState } from 'react';
 import Section2 from '@/components/Robot/Section2';
@@ -220,6 +221,66 @@ function HeroHeadline() {
     );
 }
 
+function CharmingStar() {
+    return (
+        <div className="relative mr-2.5 flex items-center justify-center">
+            {/* The "Shell" star - reduced opacity to be almost invisible guidewires */}
+            <Star strokeWidth={1} className="h-4 w-4 text-white/5" />
+
+            {/* The "Filling" star with Idle Dance & Spin */}
+            <motion.div
+                initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
+                whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
+                animate={{ 
+                    rotate: [0, 0, 360, 360, 10, -10, 10, 0, 0],
+                    scale: [1, 1.1, 1, 1.2, 1, 1],
+                }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ 
+                    clipPath: { duration: 1.2, delay: 0.6, ease: "easeInOut" },
+                    // The Idle Loop (Syncs with the keyframes above)
+                    rotate: { 
+                        duration: 8, 
+                        repeat: Infinity, 
+                        ease: "easeInOut",
+                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1] 
+                    },
+                    scale: { 
+                        duration: 8, 
+                        repeat: Infinity, 
+                        ease: "easeInOut",
+                        times: [0, 0.2, 0.4, 0.6, 0.8, 1]
+                    }
+                }}
+                className="absolute inset-0 flex items-center justify-center text-amber-400"
+            >
+                {/* strokeWidth={0} removes the unnatural outline */}
+                <Star strokeWidth={0} className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+            </motion.div>
+
+            {/* The Recurring Sparkle */}
+            <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ 
+                    scale: [0, 1.8, 0, 0, 0], 
+                    opacity: [0, 1, 0, 0, 0], 
+                    rotate: [0, 45, 90, 90, 90] 
+                }}
+                transition={{ 
+                    duration: 4, 
+                    repeat: Infinity, 
+                    repeatDelay: 1,
+                    ease: "circOut",
+                    times: [0, 0.15, 0.3, 0.6, 1]
+                }}
+                className="absolute -top-1 -right-1 pointer-events-none"
+            >
+                {/* strokeWidth={0} and fill-current makes it a clean solid shine */}
+                <Sparkles strokeWidth={0} className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]" />
+            </motion.div>
+        </div>
+    );
+}
 
 export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: Record<string, PortfolioItem | null> }) {
     const categoriesMapped = [
@@ -734,7 +795,8 @@ export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: 
                         align="center"
                     />
                     <div className="mt-6 flex justify-center">
-                        <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200">
+                        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200">
+                            <CharmingStar />
                             4.9-star client satisfaction
                         </span>
                     </div>
