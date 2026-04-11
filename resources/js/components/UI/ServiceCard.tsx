@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import { motion  } from 'framer-motion';
-import type {Variants} from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
     Box,
     Clapperboard,
@@ -112,7 +112,7 @@ export default function ServiceCard({
                     </div>
 
                     {portfolios.length > 0 ? (
-                        <div className="relative h-full w-full p-4 flex items-center justify-center">
+                        <div className="relative h-full w-full p-4 flex items-center justify-center [perspective:1200px]">
                             {portfolios.slice(0, 3).map((item, idx) => (
                                 <motion.div
                                     key={item.id}
@@ -123,13 +123,22 @@ export default function ServiceCard({
                                         delay: idx * 0.1,
                                         duration: 0.5,
                                     }}
-                                    style={{
-                                        zIndex: 3 - idx,
-                                        transform: `translateX(${idx * 12}px) rotate(${idx * 4 - 2}deg)`,
-                                    }}
+
                                     className={cn(
-                                        'absolute w-[70%] aspect-video rounded-lg overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:shadow-violet-500/20',
-                                        // Stagger position on hover
+                                        'absolute w-[65%] aspect-video rounded-lg overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:shadow-violet-500/20',
+
+                                        // DEFAULT (non-hover) spread
+                                        idx === 0
+                                            ? 'translate-x-[-16%] rotate-[0deg]'
+                                            : '',
+                                        idx === 1
+                                            ? 'translate-y-[6%] rotate-[0deg]'
+                                            : '',
+                                        idx === 2
+                                            ? 'translate-x-[16%] rotate-[0deg]'
+                                            : '',
+
+                                        // HOVER (fan out more)
                                         idx === 0
                                             ? 'group-hover:-translate-x-12 group-hover:-rotate-6'
                                             : '',
