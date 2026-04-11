@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import type { ServiceItem } from '@/types';
+import type { ServiceItem, PortfolioItem } from '@/types';
 import ServiceCard from './ServiceCard';
 
 // ─── ASCII code-text generator ───────────────────────────────────────────────
@@ -348,10 +348,12 @@ function ScannedCarousel({
 
     // bar X in CANVAS pixels = rootRef.offsetWidth / 2
     // (canvas left edge == root left edge, so same coordinate system)
-    const getBarX = useCallback(
-        () => (rootRef.current?.offsetWidth ?? window.innerWidth) / 2,
-        [],
-    );
+    const getBarX = useCallback(() => {
+        const w = rootRef.current?.offsetWidth ?? window.innerWidth;
+        const isMobile = w < 1024;
+
+        return isMobile ? w * 0.75 : w / 2;
+    }, []);
 
     // scanner X in ABSOLUTE page coords (for getBoundingClientRect)
     const getScanPageX = useCallback(() => {
@@ -360,8 +362,9 @@ function ScannedCarousel({
         }
 
         const r = rootRef.current.getBoundingClientRect();
+        const isMobile = r.width < 1024;
 
-        return r.left + r.width / 2;
+        return isMobile ? r.left + r.width * 0.75 : r.left + r.width / 2;
     }, []);
 
     // ── clip loop ─────────────────────────────────────────────────────────────
