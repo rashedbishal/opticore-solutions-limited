@@ -616,6 +616,7 @@ export default function HomeIndex({
                         eyebrow="Services"
                         title="What We Do Best"
                         description="Opticore combines premium creative direction with production discipline so every deliverable looks refined and performs with intent."
+                        variant="scanned"
                     />
 
                     <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">

@@ -8,6 +8,7 @@ interface SectionHeaderProps {
     titles?: string[];
     description?: string;
     align?: 'left' | 'center';
+    variant?: 'default' | 'scanned';
 }
 
 const blurReveal: Variants = {
@@ -120,12 +121,15 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
     );
 }
 
+import ScannedTitle from '@/components/text-animations/scanned-title';
+
 export default function SectionHeader({
     eyebrow,
     title,
     titles,
     description,
     align = 'left',
+    variant = 'default',
 }: SectionHeaderProps) {
     return (
         <motion.div
@@ -139,7 +143,11 @@ export default function SectionHeader({
         >
             {eyebrow ? <span className="section-kicker">{eyebrow}</span> : null}
             <h2 className="text-balance text-3xl font-extrabold text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                <AnimatedTitle title={title} titles={titles} />
+                {variant === 'scanned' ? (
+                    <ScannedTitle text={title} />
+                ) : (
+                    <AnimatedTitle title={title} titles={titles} />
+                )}
             </h2>
             {description ? (
                 <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
