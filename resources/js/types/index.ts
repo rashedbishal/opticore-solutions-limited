@@ -55,11 +55,13 @@ export interface HighlightItem {
 }
 
 export interface PortfolioItem {
+    id: number;
     title: string;
     category: string;
-    image: string;
+    media_path: string | null;
+    media_type: 'image' | 'video';
     alt: string;
-    description: string;
+    description?: string;
 }
 
 export interface PortfolioCategory {

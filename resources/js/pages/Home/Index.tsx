@@ -35,6 +35,7 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
+import type { PortfolioItem } from '@/types';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -220,7 +221,13 @@ function HeroHeadline() {
 }
 
 
-export default function HomeIndex() {
+export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: Record<string, PortfolioItem | null> }) {
+    const categoriesMapped = [
+        'graphic-design',
+        'digital-marketing',
+        '3d-production',
+        'web-development',
+    ];
     const glowDelays = [0, 3, 2, 1];
     const bentoOrder = [0, 3, 2, 1];
     const desktop = useMediaQuery('(min-width: 1024px)');
@@ -232,29 +239,33 @@ export default function HomeIndex() {
     const statVariants = useMemo(() => [slideLeft, fadeUp, slideRight], []);
 
     useEffect(() => {
-        const measure = () => {
-            const cards = document.querySelectorAll<HTMLElement>('.bento-card');
-            cards.forEach((card) => {
+        const observer = new ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+                const card = entry.target as HTMLElement;
                 const rect = card.querySelector<SVGRectElement>('.trace-rect');
 
                 if (!rect) {
                     return;
                 }
 
-                const w = card.offsetWidth;
-                const h = card.offsetHeight;
-                const r = 26;
+                // Use getBoundingClientRect for accurate inclusive dimensions
+                const box = card.getBoundingClientRect();
+                const w = box.width;
+                const h = box.height;
+
+                const r = 26; // Match rx/ry in JSX
                 const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
+
                 card.style.setProperty('--perim', `${perim}px`);
                 rect.setAttribute('width', `${w - 2.5}`);
                 rect.setAttribute('height', `${h - 2.5}`);
             });
-        };
+        });
 
-        measure(); // run immediately
-        window.addEventListener('resize', measure); // re-run on resize
+        const cards = document.querySelectorAll('.bento-card');
+        cards.forEach((card) => observer.observe(card));
 
-        return () => window.removeEventListener('resize', measure); // cleanup
+        return () => observer.disconnect();
     }, []);
 
     return (
@@ -585,131 +596,124 @@ export default function HomeIndex() {
                         variants={desktop ? slideRight : fadeUp}
                         className="grid grid-cols-2 gap-3 md:gap-4"
                     >
-                        {aboutBentoImages.map((image, index) => (
-                            <div
-                                key={image.src}
-                                data-order={bentoOrder[index]}
-                                className={`bento-card glass-panel overflow-hidden rounded-[1.75rem] ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
-                            >
-                                {/*
-                SVG overlay — stroke-dashoffset animation travels
-                along the exact rounded-rect path, hugging every corner.
-                --perim is set by the JS below via ResizeObserver.
-            */}
-                                <svg className="glow-svg" aria-hidden="true">
-                                    <rect
-                                        className="trace-rect"
-                                        x="1.25"
-                                        y="1.25"
-                                        width="calc(100% - 2.5px)"
-                                        height="calc(100% - 2.5px)"
-                                        rx="26"
-                                        ry="26"
-                                    />
-                                    {/* Hover particles scattered around the border */}
-                                    <g className="glow-particles">
-                                        {[
-                                            {
-                                                cx: '15%',
-                                                cy: '0%',
-                                                dx: '0px',
-                                                dy: '-6px',
-                                                c: '#7c3aed',
-                                            },
-                                            {
-                                                cx: '50%',
-                                                cy: '0%',
-                                                dx: '4px',
-                                                dy: '-8px',
-                                                c: '#06b6d4',
-                                            },
-                                            {
-                                                cx: '85%',
-                                                cy: '0%',
-                                                dx: '0px',
-                                                dy: '-6px',
-                                                c: '#a855f7',
-                                            },
-                                            {
-                                                cx: '100%',
-                                                cy: '30%',
-                                                dx: '6px',
-                                                dy: '0px',
-                                                c: '#06b6d4',
-                                            },
-                                            {
-                                                cx: '100%',
-                                                cy: '70%',
-                                                dx: '8px',
-                                                dy: '4px',
-                                                c: '#7c3aed',
-                                            },
-                                            {
-                                                cx: '85%',
-                                                cy: '100%',
-                                                dx: '0px',
-                                                dy: '6px',
-                                                c: '#06b6d4',
-                                            },
-                                            {
-                                                cx: '50%',
-                                                cy: '100%',
-                                                dx: '-4px',
-                                                dy: '8px',
-                                                c: '#a855f7',
-                                            },
-                                            {
-                                                cx: '15%',
-                                                cy: '100%',
-                                                dx: '0px',
-                                                dy: '6px',
-                                                c: '#7c3aed',
-                                            },
-                                            {
-                                                cx: '0%',
-                                                cy: '70%',
-                                                dx: '-6px',
-                                                dy: '0px',
-                                                c: '#06b6d4',
-                                            },
-                                            {
-                                                cx: '0%',
-                                                cy: '30%',
-                                                dx: '-8px',
-                                                dy: '-4px',
-                                                c: '#a855f7',
-                                            },
-                                        ].map((p, i) => (
-                                            <circle
-                                                key={i}
-                                                cx={p.cx}
-                                                cy={p.cy}
-                                                r="3"
-                                                fill={p.c}
-                                                style={
-                                                    {
+                        {aboutBentoImages.map((image, index) => {
+                            const categorySlug = categoriesMapped[index];
+                            const portfolio = featuredPortfolios?.[categorySlug];
+                            const service = services.find((s) => s.key === categorySlug);
+
+                            const categoryHighlights: Record<string, string[]> = {
+                                'graphic-design': ['Pixel Perfect', 'Brand Ready', 'High Contrast'],
+                                'digital-marketing': ['ROI Focused', 'Growth Tracked', 'Data Driven'],
+                                '3d-production': ['Ultra-Realistic', 'Sim-Optimized', '4K Render'],
+                                'web-development': ['Core Vitals', 'UX Polished', 'Responsive'],
+                            };
+
+                            const highlights = categoryHighlights[categorySlug] || [];
+
+                            return (
+                                <div
+                                    key={image.src}
+                                    data-order={bentoOrder[index]}
+                                    className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] p-5 transition-all duration-500 md:p-6 lg:p-7 ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
+                                >
+                                    {/* SVG Trace Layer */}
+                                    <svg className="glow-svg pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+                                        <rect
+                                            className="trace-rect"
+                                            x="1.25"
+                                            y="1.25"
+                                            width="calc(100% - 2.5px)"
+                                            height="calc(100% - 2.5px)"
+                                            rx="26"
+                                            ry="26"
+                                        />
+                                        <g className="glow-particles">
+                                            {[
+                                                { cx: '15%', cy: '0%', dx: '0px', dy: '-6px', c: '#7c3aed' },
+                                                { cx: '50%', cy: '0%', dx: '4px', dy: '-8px', c: '#06b6d4' },
+                                                { cx: '85%', cy: '0%', dx: '0px', dy: '-6px', c: '#a855f7' },
+                                            ].map((p, i) => (
+                                                <circle
+                                                    key={i}
+                                                    cx={p.cx}
+                                                    cy={p.cy}
+                                                    r="2.5"
+                                                    fill={p.c}
+                                                    style={{
                                                         '--dx': p.dx,
                                                         '--dy': p.dy,
                                                         animationDelay: `${i * 0.15}s`,
-                                                    } as React.CSSProperties
-                                                }
-                                            />
-                                        ))}
-                                    </g>
-                                </svg>
+                                                    } as React.CSSProperties}
+                                                />
+                                            ))}
+                                        </g>
+                                    </svg>
 
-                                <img
-                                    src={image.src}
-                                    alt={image.alt}
-                                    loading="lazy"
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
-                                    }}
-                                    className="aspect-square w-full object-cover"
-                                />
-                            </div>
-                        ))}
+                                    {/* Dashboard Content */}
+                                    <div className="relative z-10 flex h-full flex-col">
+                                        {/* Header */}
+                                        <div className="mb-4">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-sm font-bold tracking-[0.2em] text-cyan-400 uppercase">
+                                                    {service?.name || categorySlug.replace(/-/g, ' ')}
+                                                </h3>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                            </div>
+                                            <p className="mt-1 text-[11px] font-medium text-zinc-400 line-clamp-1">
+                                                {service?.tagline || 'Premium digital solutions'}
+                                            </p>
+                                        </div>
+
+                                        {/* Main Demo Frame */}
+                                        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-950/50 ring-1 ring-white/10 group-hover:ring-cyan-500/30 transition-all duration-500">
+                                            {portfolio ? (
+                                                <>
+                                                    {portfolio.media_type === 'video' ? (
+                                                        <video
+                                                            src={portfolio.media_path ?? undefined}
+                                                            muted autoPlay loop playsInline
+                                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={portfolio.media_path ?? 'https://placehold.co/600x400/111111/7C3AED?text=Opticore'}
+                                                            alt={portfolio.alt}
+                                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        />
+                                                    )}
+                                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
+                                                    <div className="absolute inset-x-0 bottom-0 p-3 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-500">
+                                                        <p className="text-[10px] font-bold text-white line-clamp-1">{portfolio.title}</p>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <img
+                                                    src={image.src}
+                                                    alt={image.alt}
+                                                    className="h-full w-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110 grayscale"
+                                                />
+                                            )}
+                                        </div>
+
+                                        {/* Info Grid / Stats */}
+                                        <div className="mt-auto pt-4">
+                                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                                {highlights.map((h, i) => (
+                                                    <div key={i} className={`flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-1.5 transition-colors group-hover:bg-white/[0.05] ${i === 2 ? 'sm:col-span-2' : ''}`}>
+                                                        <div className="h-1 w-1 rounded-full bg-violet-400" />
+                                                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">{h}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">System Active</span>
+                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">Opticore v3.0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </motion.div>
                 </div>
             </section>
