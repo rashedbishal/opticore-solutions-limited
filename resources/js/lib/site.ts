@@ -1,4 +1,5 @@
 import type {
+    ClientLogo,
     FaqItem,
     HighlightItem,
     JobListing,
@@ -136,15 +137,15 @@ export const testimonials: Testimonial[] = [
     },
 ];
 
-export const clientLogos: string[] = [
-    'North Peak',
-    'Velocity',
-    'Aurelia',
-    'Nova',
-    'Arbor',
-    'Luma',
-    'Kinetic',
-    'Summit',
+export const clientLogos: ClientLogo[] = [
+    { name: 'North Peak', icon: 'Mountain' },
+    { name: 'Velocity', icon: 'Zap' },
+    { name: 'Aurelia', icon: 'Sparkles' },
+    { name: 'Nova', icon: 'Orbit' },
+    { name: 'Arbor', icon: 'Trees' },
+    { name: 'Luma', icon: 'Sun' },
+    { name: 'Kinetic', icon: 'Activity' },
+    { name: 'Summit', icon: 'Pyramid' },
 ];
 
 export const aboutBentoImages = [
