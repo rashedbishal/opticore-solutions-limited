@@ -195,7 +195,9 @@ export default function Footer() {
                                             BD Office
                                         </p>
                                         <p className="mt-1 text-[11px] text-zinc-500">
-                                            Dhaka, Bangladesh
+                                            House # 1178, (1st Floor) Apt.- 2E
+                                            <br />
+                                            East Monipur, Mirpur, Dhaka-1216
                                         </p>
                                         <a
                                             href="https://maps.app.goo.gl/7zvqD4Lemwst7bEQ8"
