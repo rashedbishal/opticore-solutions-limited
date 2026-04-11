@@ -27,9 +27,16 @@ Route::get('/message-from-md', [PageController::class, 'messageFromMd'])->name('
 Route::get('/request-appointment', [PageController::class, 'requestAppointment'])->name('requestAppointment');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
-Route::get('/portfolio/{type}', [PortfolioController::class, 'show'])
-    ->where('type', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
-    ->name('portfolioShow');
+
+// Portfolio public routes
+Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
+    ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+    ->name('portfolioCategory');
+
+Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
+    ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+    ->name('portfolioSubCategory');
+
 Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
 Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore');
@@ -43,6 +50,7 @@ use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
+use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 
@@ -57,6 +65,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->mid
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
+    Route::resource('portfolio-sub-categories', PortfolioSubCategoryController::class);
     Route::resource('blogs', AdminBlogController::class);
     Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);

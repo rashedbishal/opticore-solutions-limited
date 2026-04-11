@@ -78,7 +78,7 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{portfolio.title}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400 capitalize">
-                                    {portfolio.category.replace(/-/g, ' ')}
+                                    {portfolio.sub_category ? portfolio.sub_category.name : portfolio.category.replace(/-/g, ' ')}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${

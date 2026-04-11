@@ -10,7 +10,8 @@ import {
     X,
     Mail,
     Bell,
-    Briefcase
+    Briefcase,
+    Layers,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import type { SharedPageProps } from '@/types';
@@ -37,6 +38,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const navigation = [
         { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
         { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
+        { name: 'Sub-Categories', href: '/admin/portfolio-sub-categories', icon: Layers },
         { name: 'Blogs', href: '/admin/blogs', icon: FileText },
         { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
         { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
@@ -66,12 +68,28 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             <h4 className="text-emerald-400 font-semibold text-sm">Success</h4>
                             <p className="text-zinc-200 text-sm mt-0.5">{flash.success}</p>
                         </div>
-                        <button 
-                            onClick={() => setShowToast(false)} 
+                        <button
+                            onClick={() => setShowToast(false)}
                             className="ml-4 text-emerald-400/60 hover:text-emerald-400 transition-colors p-1"
                         >
                             <X className="w-5 h-5" />
                         </button>
+                    </motion.div>
+                )}
+                {flash?.error && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                        className="fixed top-6 right-6 z-[100] flex items-center shadow-2xl backdrop-blur-xl border border-red-500/30 bg-red-500/10 rounded-2xl p-4 min-w-[300px]"
+                    >
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/20 mr-4 shrink-0">
+                            <X className="w-5 h-5 text-red-400" />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-red-400 font-semibold text-sm">Error</h4>
+                            <p className="text-zinc-200 text-sm mt-0.5">{flash.error}</p>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Portfolio;
+use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -13,6 +14,30 @@ use Inertia\Response;
 
 class PortfolioController extends Controller
 {
+    /**
+     * Build a grouped array of sub-categories keyed by category slug.
+     *
+     * @return array<string, array<int, array{id: int, name: string, slug: string}>>
+     */
+    private function subCategoryOptionsByCategory(): array
+    {
+        $result = [];
+
+        PortfolioSubCategory::orderBy('category_slug')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get()
+            ->each(function (PortfolioSubCategory $s) use (&$result) {
+                $result[$s->category_slug][] = [
+                    'id' => $s->id,
+                    'name' => $s->name,
+                    'slug' => $s->slug,
+                ];
+            });
+
+        return $result;
+    }
+
     /** @return array<string, string> */
     private function categoryOptions(): array
     {
@@ -25,13 +50,19 @@ class PortfolioController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Portfolio/Index', [
-            'portfolios' => Portfolio::latest()->paginate(10)->through(fn (Portfolio $p) => [
-                'id' => $p->id,
-                'title' => $p->title,
-                'category' => $p->category,
-                'media_path' => $p->media_path ? asset('storage/'.$p->media_path) : null,
-                'media_type' => $p->media_type ?? 'image',
-            ]),
+            'portfolios' => Portfolio::with('subCategory')
+                ->latest()
+                ->paginate(10)
+                ->through(fn (Portfolio $p) => [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'category' => $p->category,
+                    'sub_category' => $p->subCategory
+                        ? ['id' => $p->subCategory->id, 'name' => $p->subCategory->name]
+                        : null,
+                    'media_path' => $p->media_path ? asset('storage/'.$p->media_path) : null,
+                    'media_type' => $p->media_type ?? 'image',
+                ]),
         ]);
     }
 
@@ -39,17 +70,16 @@ class PortfolioController extends Controller
     {
         return Inertia::render('Admin/Portfolio/Create', [
             'categories' => $this->categoryOptions(),
+            'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $categoryKeys = array_keys(config('portfolio.categories', []));
-
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => ['required', 'string', 'in:'.implode(',', $categoryKeys)],
-            'alt' => 'nullable|string|max:255',
+            'title' => ['required', 'string', 'max:255'],
+            'sub_category_id' => ['nullable', 'integer', 'exists:portfolio_sub_categories,id'],
+            'alt' => ['nullable', 'string', 'max:255'],
             'media' => [
                 'required',
                 'file',
@@ -61,9 +91,17 @@ class PortfolioController extends Controller
         $mediaType = $this->detectMediaType($request->file('media'));
         $path = $request->file('media')->store('portfolios', 'public');
 
+        // Derive category_slug for backward compatibility
+        $categorySlug = null;
+        if ($validated['sub_category_id']) {
+            $sub = PortfolioSubCategory::find($validated['sub_category_id']);
+            $categorySlug = $sub?->category_slug;
+        }
+
         Portfolio::create([
             'title' => $validated['title'],
-            'category' => $validated['category'],
+            'category' => $categorySlug,
+            'sub_category_id' => $validated['sub_category_id'] ?? null,
             'alt' => $validated['alt'] ?? null,
             'media_path' => $path,
             'media_type' => $mediaType,
@@ -79,22 +117,22 @@ class PortfolioController extends Controller
                 'id' => $portfolio->id,
                 'title' => $portfolio->title,
                 'category' => $portfolio->category,
+                'sub_category_id' => $portfolio->sub_category_id,
                 'alt' => $portfolio->alt,
                 'media_path' => $portfolio->media_path ? asset('storage/'.$portfolio->media_path) : null,
                 'media_type' => $portfolio->media_type ?? 'image',
             ],
             'categories' => $this->categoryOptions(),
+            'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
         ]);
     }
 
     public function update(Request $request, Portfolio $portfolio): RedirectResponse
     {
-        $categoryKeys = array_keys(config('portfolio.categories', []));
-
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => ['required', 'string', 'in:'.implode(',', $categoryKeys)],
-            'alt' => 'nullable|string|max:255',
+            'title' => ['required', 'string', 'max:255'],
+            'sub_category_id' => ['nullable', 'integer', 'exists:portfolio_sub_categories,id'],
+            'alt' => ['nullable', 'string', 'max:255'],
             'media' => [
                 'nullable',
                 'file',
@@ -103,17 +141,23 @@ class PortfolioController extends Controller
             ],
         ]);
 
+        // Derive category_slug for backward compatibility
+        $categorySlug = null;
+        if ($validated['sub_category_id']) {
+            $sub = PortfolioSubCategory::find($validated['sub_category_id']);
+            $categorySlug = $sub?->category_slug;
+        }
+
         $updateData = [
             'title' => $validated['title'],
-            'category' => $validated['category'],
+            'category' => $categorySlug,
+            'sub_category_id' => $validated['sub_category_id'] ?? null,
             'alt' => $validated['alt'] ?? null,
         ];
 
         if ($request->hasFile('media')) {
-            // Delete old file if exists
             if ($portfolio->media_path) {
-                $cleanedPath = preg_replace('/^.*\/storage\//', '', $portfolio->media_path);
-                Storage::disk('public')->delete($cleanedPath);
+                Storage::disk('public')->delete($portfolio->media_path);
             }
 
             $mediaType = $this->detectMediaType($request->file('media'));
@@ -131,8 +175,7 @@ class PortfolioController extends Controller
     public function destroy(Portfolio $portfolio): RedirectResponse
     {
         if ($portfolio->media_path) {
-            $cleanedPath = preg_replace('/^.*\/storage\//', '', $portfolio->media_path);
-            Storage::disk('public')->delete($cleanedPath);
+            Storage::disk('public')->delete($portfolio->media_path);
         }
 
         $portfolio->delete();
@@ -142,7 +185,6 @@ class PortfolioController extends Controller
 
     /**
      * Detect whether uploaded file is an image or video.
-     * Uses both MIME type and extension fallback.
      */
     private function detectMediaType(UploadedFile $file): string
     {

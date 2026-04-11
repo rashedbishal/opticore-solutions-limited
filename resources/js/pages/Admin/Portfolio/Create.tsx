@@ -1,21 +1,45 @@
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
-import { Link, useForm, Head } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 import type { FormEventHandler, ReactNode } from 'react';
+
+interface SubCategory {
+    id: number;
+    name: string;
+    slug: string;
+}
 
 interface Props {
     categories: Record<string, string>;
+    subCategoriesByCategory: Record<string, SubCategory[]>;
 }
 
-export default function PortfolioCreate({ categories }: Props) {
+export default function PortfolioCreate({ categories, subCategoriesByCategory }: Props) {
     const categoryKeys = Object.keys(categories);
-
+    const [selectedCategory, setSelectedCategory] = useState(categoryKeys[0] ?? '');
+    
     const { data, setData, post, processing, errors } = useForm({
         title: '',
-        category: categoryKeys[0] ?? 'graphic-design',
+        sub_category_id: '' as string | number,
         alt: '',
         media: null as File | null,
     });
+
+    const currentSubCategories = subCategoriesByCategory[selectedCategory] || [];
+
+    // Reset sub_category_id when category changes if the current one is not in the new category
+    useEffect(() => {
+        if (currentSubCategories.length > 0) {
+            // Pick first sub-category by default if none selected or if switching categories
+            const exists = currentSubCategories.some(s => s.id === data.sub_category_id);
+            if (!exists) {
+                setData('sub_category_id', currentSubCategories[0].id);
+            }
+        } else {
+            setData('sub_category_id', '');
+        }
+    }, [selectedCategory]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -40,19 +64,40 @@ export default function PortfolioCreate({ categories }: Props) {
                         {errors.title && <p className="mt-1 text-sm text-red-400">{errors.title}</p>}
                     </div>
 
-                    {/* Category */}
+                    {/* Category Selection (UI only, to filter sub-categories) */}
                     <div>
                         <label className="block text-sm font-medium text-zinc-300">Category</label>
                         <select
-                            value={data.category}
-                            onChange={e => setData('category', e.target.value)}
+                            value={selectedCategory}
+                            onChange={e => setSelectedCategory(e.target.value)}
                             className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
                         >
                             {Object.entries(categories).map(([slug, label]) => (
                                 <option key={slug} value={slug}>{label}</option>
                             ))}
                         </select>
-                        {errors.category && <p className="mt-1 text-sm text-red-400">{errors.category}</p>}
+                    </div>
+
+                    {/* Sub-Category Selection (Actual field sent to server) */}
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-300">Sub-Category</label>
+                        <select
+                            value={data.sub_category_id}
+                            onChange={e => setData('sub_category_id', e.target.value)}
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
+                            required
+                        >
+                            <option value="">Select a sub-category</option>
+                            {currentSubCategories.map((sub) => (
+                                <option key={sub.id} value={sub.id}>{sub.name}</option>
+                            ))}
+                        </select>
+                        {currentSubCategories.length === 0 && (
+                            <p className="mt-1 text-xs text-amber-400">
+                                No sub-categories found for this category. Please <Link href={adminRoutes.portfolioSubCategories.create.url()} className="underline">create one first</Link>.
+                            </p>
+                        )}
+                        {errors.sub_category_id && <p className="mt-1 text-sm text-red-400">{errors.sub_category_id}</p>}
                     </div>
 
                     {/* Alt / Description */}

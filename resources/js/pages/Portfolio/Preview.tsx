@@ -6,7 +6,8 @@ import type { ReactNode } from 'react';
 interface PortfolioItem {
     id: number;
     title: string;
-    category: string;
+    category_slug: string;
+    subcategory_slug?: string;
     media_path: string | null;
     media_type: 'image' | 'video';
     alt: string;
@@ -18,16 +19,18 @@ interface Props {
 
 const PLACEHOLDER = 'https://placehold.co/1200x800/111111/7C3AED?text=Opticore';
 
-function goBack() {
+function goBack(item: PortfolioItem) {
     if (window.history.length > 1) {
         window.history.back();
+    } else if (item.subcategory_slug) {
+        router.visit(`/portfolio/${item.category_slug}/${item.subcategory_slug}`);
     } else {
-        router.visit('/portfolio/graphic-design');
+        router.visit(`/portfolio/${item.category_slug}`);
     }
 }
 
 export default function PortfolioPreview({ item }: Props) {
-    const categoryLabel = item.category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const categoryLabel = (item.subcategory_slug || item.category_slug).replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
     return (
         <>
@@ -46,7 +49,7 @@ export default function PortfolioPreview({ item }: Props) {
                 <div className="flex items-center justify-between px-5 py-4 sm:px-8">
                     <button
                         type="button"
-                        onClick={goBack}
+                        onClick={() => goBack(item)}
                         aria-label="Go back to portfolio"
                         className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
@@ -61,7 +64,7 @@ export default function PortfolioPreview({ item }: Props) {
 
                     <button
                         type="button"
-                        onClick={goBack}
+                        onClick={() => goBack(item)}
                         aria-label="Close preview"
                         className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:bg-white/10"
                     >

@@ -14,6 +14,7 @@ class HomeController extends Controller
         $categories = [
             'graphic-design',
             'digital-marketing',
+            'video-editing',
             '3d-production',
             'web-development',
         ];
