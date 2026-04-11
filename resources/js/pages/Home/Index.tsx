@@ -497,7 +497,7 @@ export default function HomeIndex() {
                                 ({ icon: Icon, className, animation }) => (
                                     <motion.div
                                         key={className}
-                                        className={`absolute ${className} flex h-12 w-12 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
+                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
                                         animate={animation}
                                         transition={{
                                             duration: 6,
@@ -505,7 +505,7 @@ export default function HomeIndex() {
                                             ease: 'easeInOut',
                                         }}
                                     >
-                                        <Icon className="h-5 w-5" />
+                                        <Icon className="h-8 w-8" />
                                     </motion.div>
                                 ),
                             )}
