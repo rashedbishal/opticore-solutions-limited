@@ -155,7 +155,7 @@ export default function ChatWidget() {
                 <ImmersiveChatTrigger
                     onClick={() => setIsOpen(!isOpen)}
                     isOpen={isOpen}
-                    className={cn(isDancing && !isOpen && "animate-bounce")}
+                    isDancing={isDancing}
                 />
             </div>
 
@@ -212,7 +212,10 @@ export default function ChatWidget() {
                         </div>
 
                         {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto bg-black/20 p-4 space-y-4 scroll-smooth">
+                        <div 
+                            data-lenis-prevent
+                            className="flex-1 overflow-y-auto bg-black/20 p-4 space-y-4 scroll-smooth"
+                        >
                             {messages.length === 1 && (
                                 <div className="mb-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-sm">
                                     <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">
