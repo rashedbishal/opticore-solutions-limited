@@ -12,7 +12,8 @@ class Portfolio extends Model
     protected $fillable = [
         'title',
         'category',
-        'image',
+        'media_path',
+        'media_type',
         'alt',
     ];
 }

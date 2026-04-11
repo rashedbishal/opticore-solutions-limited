@@ -10,34 +10,32 @@ class PortfolioController extends Controller
 {
     public function show(string $type): Response
     {
-        $portfolios = Portfolio::all();
+        /** @var array<string, array{label: string, description: string}> $configCategories */
+        $configCategories = config('portfolio.categories', []);
 
-        // Reconstruct the exact shape expected by the frontend
-        $categoriesMap = [
-            'logo-identity' => ['title' => 'Logo & Identity', 'description' => 'Brand marks and identity systems that command attention and communicate core values instantly.'],
-            'packaging-design' => ['title' => 'Packaging Design', 'description' => 'Tactile, premium packaging structures and graphics that elevate product value on the shelf.'],
-            'social-media-graphics' => ['title' => 'Social Media Graphics', 'description' => 'High-conversion thumb-stopping visual assets engineered for modern feeds and algorithms.'],
-            'print-design' => ['title' => 'Print Design', 'description' => 'Editorial layouts, corporate collateral, and large-format graphics constructed with typographical rigor.'],
-            'photoshop-editing' => ['title' => 'Photoshop Editing', 'description' => 'Advanced compositing, high-end retouching, and hyper-realistic manipulation for commercial use.']
-        ];
+        $portfolios = Portfolio::all();
 
         $dbPortfolioCategories = [];
 
-        foreach ($categoriesMap as $catType => $data) {
-            $items = $portfolios->where('category', $catType)->map(function($p) {
+        foreach ($configCategories as $slug => $data) {
+            $items = $portfolios->where('category', $slug)->map(function (Portfolio $p) {
                 return [
+                    'id' => $p->id,
                     'title' => $p->title,
                     'category' => $p->category,
-                    'image' => $p->image ?? 'https://placehold.co/600x400/111111/7C3AED?text=Opticore',
-                    'alt' => $p->alt ?? $p->title
+                    'media_path' => $p->media_path
+                        ? asset('storage/'.$p->media_path)
+                        : null,
+                    'media_type' => $p->media_type ?? 'image',
+                    'alt' => $p->alt ?? $p->title,
                 ];
             })->values()->toArray();
 
             $dbPortfolioCategories[] = [
-                'title' => $data['title'],
+                'title' => $data['label'],
                 'description' => $data['description'],
-                'type' => $catType,
-                'items' => $items
+                'type' => $slug,
+                'items' => $items,
             ];
         }
 
@@ -46,7 +44,23 @@ class PortfolioController extends Controller
             'dbPortfolioCategories' => $dbPortfolioCategories,
             'meta' => [
                 'title' => 'Portfolio — Opticore Solutions Ltd.',
-                'description' => 'Selected portfolio work from Opticore Solutions Ltd. across identity, packaging, print, social, and editing.',
+                'description' => 'Selected portfolio work from Opticore Solutions Ltd. across graphic design, digital marketing, video editing, 3D production, and web development.',
+            ],
+        ]);
+    }
+
+    public function preview(Portfolio $portfolio): Response
+    {
+        return Inertia::render('Portfolio/Preview', [
+            'item' => [
+                'id' => $portfolio->id,
+                'title' => $portfolio->title,
+                'category' => $portfolio->category,
+                'media_path' => $portfolio->media_path
+                    ? asset('storage/'.$portfolio->media_path)
+                    : null,
+                'media_type' => $portfolio->media_type ?? 'image',
+                'alt' => $portfolio->alt ?? $portfolio->title,
             ],
         ]);
     }

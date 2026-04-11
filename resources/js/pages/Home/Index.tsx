@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { portfolioShow } from '@/routes';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import {
@@ -483,7 +484,7 @@ export default function HomeIndex() {
                             Start a Project
                         </MagneticButton>
                         <Link
-                            href="/portfolio/logo-identity"
+                            href={portfolioShow.url({ type: 'graphic-design' })}
                             className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                         >
                             See Our Work

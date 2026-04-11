@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Head, useForm as useInertiaForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -62,13 +63,16 @@ const initialValues: ContactFormData = {
 
 export default function Contact() {
     const form = useInertiaForm<ContactFormData>(initialValues);
-    const submitted = form.wasSuccessful;
+    const [submitted, setSubmitted] = React.useState(false);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         form.post('/api/contact', {
             preserveScroll: true,
-            onSuccess: () => form.reset(),
+            onSuccess: () => {
+                form.reset();
+                setSubmitted(true);
+            },
         });
     };
 
@@ -154,7 +158,7 @@ export default function Contact() {
                                                 </p>
                                             </div>
                                             <button
-                                                onClick={() => form.reset()}
+                                                onClick={() => setSubmitted(false)}
                                                 className="text-sm font-semibold text-violet-400 hover:text-violet-300 transition-colors underline underline-offset-4"
                                             >
                                                 Send another message

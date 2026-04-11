@@ -1,20 +1,21 @@
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
-import { Plus, Trash2, Edit } from 'lucide-react';
+import { Edit, Film, Image, Plus, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface Portfolio {
     id: number;
     title: string;
     category: string;
-    image: string | null;
+    media_path: string | null;
+    media_type: 'image' | 'video';
 }
 
 interface Props {
     portfolios: {
         data: Portfolio[];
-        links: any[];
+        links: unknown[];
     };
 }
 
@@ -43,9 +44,10 @@ export default function PortfolioIndex({ portfolios }: Props) {
                 <table className="min-w-full divide-y divide-white/10">
                     <thead className="bg-zinc-800/50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Image</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Preview</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Title</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Category</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Type</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -53,14 +55,43 @@ export default function PortfolioIndex({ portfolios }: Props) {
                         {portfolios.data.map((portfolio) => (
                             <tr key={portfolio.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    {portfolio.image ? (
-                                        <img src={portfolio.image} alt={portfolio.title} className="w-12 h-12 rounded object-cover" />
+                                    {portfolio.media_path ? (
+                                        portfolio.media_type === 'video' ? (
+                                            <video
+                                                src={portfolio.media_path}
+                                                muted
+                                                preload="metadata"
+                                                className="w-14 h-14 rounded object-cover border border-white/10"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={portfolio.media_path}
+                                                alt={portfolio.title}
+                                                className="w-14 h-14 rounded object-cover border border-white/10"
+                                            />
+                                        )
                                     ) : (
-                                        <div className="w-12 h-12 rounded bg-zinc-800 flex items-center justify-center text-xs text-zinc-500">No Img</div>
+                                        <div className="w-14 h-14 rounded bg-zinc-800 flex items-center justify-center text-zinc-600">
+                                            <Image className="w-5 h-5" />
+                                        </div>
                                     )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{portfolio.title}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400">{portfolio.category}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400 capitalize">
+                                    {portfolio.category.replace(/-/g, ' ')}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                        portfolio.media_type === 'video'
+                                            ? 'bg-cyan-500/10 text-cyan-400'
+                                            : 'bg-violet-500/10 text-violet-400'
+                                    }`}>
+                                        {portfolio.media_type === 'video'
+                                            ? <><Film className="w-3 h-3" /> Video</>
+                                            : <><Image className="w-3 h-3" /> Image</>
+                                        }
+                                    </span>
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                     <Link
                                         href={adminRoutes.portfolios.edit.url(portfolio.id)}
@@ -78,7 +109,11 @@ export default function PortfolioIndex({ portfolios }: Props) {
                             </tr>
                         ))}
                         {portfolios.data.length === 0 && (
-                            <tr><td colSpan={4} className="px-6 py-8 text-center text-zinc-500 text-sm">No portfolios found.</td></tr>
+                            <tr>
+                                <td colSpan={5} className="px-6 py-8 text-center text-zinc-500 text-sm">
+                                    No portfolios found.
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>

@@ -28,21 +28,22 @@ Route::get('/request-appointment', [PageController::class, 'requestAppointment']
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 Route::get('/portfolio/{type}', [PortfolioController::class, 'show'])
-    ->where('type', 'logo-identity|packaging-design|social-media-graphics|print-design|photoshop-editing')
+    ->where('type', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
     ->name('portfolioShow');
+Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
 Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore');
 Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore');
 Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply');
 Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat');
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {

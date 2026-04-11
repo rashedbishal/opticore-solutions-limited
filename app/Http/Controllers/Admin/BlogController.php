@@ -4,18 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
     public function index(): Response
     {
         return Inertia::render('Admin/Blog/Index', [
-            'blogs' => Blog::latest()->paginate(10)
+            'blogs' => Blog::latest()->paginate(10),
         ]);
     }
 
@@ -36,11 +37,11 @@ class BlogController extends Controller
             'image' => 'nullable|image|max:10240',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();
+        $validated['slug'] = Str::slug($validated['title']).'-'.uniqid();
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('blogs', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = Storage::url($path);
         }
 
         Blog::create($validated);
@@ -51,7 +52,7 @@ class BlogController extends Controller
     public function edit(Blog $blog): Response
     {
         return Inertia::render('Admin/Blog/Edit', [
-            'blog' => $blog
+            'blog' => $blog,
         ]);
     }
 
@@ -69,7 +70,7 @@ class BlogController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('blogs', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = Storage::url($path);
         }
 
         $blog->update($validated);
@@ -80,6 +81,7 @@ class BlogController extends Controller
     public function destroy(Blog $blog): RedirectResponse
     {
         $blog->delete();
+
         return back()->with('success', 'Blog deleted.');
     }
 }

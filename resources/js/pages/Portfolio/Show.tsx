@@ -1,17 +1,17 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Film, Image } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import Lightbox from '@/components/UI/Lightbox';
 import MagneticButton from '@/components/UI/MagneticButton';
 import type { SharedPageProps } from '@/types';
 
-// The dbPortfolioCategories will be passed as a prop from the PortfolioController
 interface PortfolioItem {
+    id: number;
     title: string;
     category: string;
-    image: string;
+    media_path: string | null;
+    media_type: 'image' | 'video';
     alt: string;
 }
 
@@ -36,20 +36,20 @@ const staggerContainer: Variants = {
     visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
+const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
+
 export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCategories?: PortfolioCategory[] }) {
     const portfolioCategories = dbPortfolioCategories || [];
-    
+
     const { props } = usePage<SharedPageProps & { portfolioType?: string }>();
     const [activeTab, setActiveTab] = useState(
         props.portfolioType ?? portfolioCategories[0]?.type
     );
-    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
     const activeCategory = useMemo(
         () =>
-            portfolioCategories.find(
-                (category) => category.type === activeTab,
-            ) ?? portfolioCategories[0],
+            portfolioCategories.find((category) => category.type === activeTab) ??
+            portfolioCategories[0],
         [activeTab, portfolioCategories],
     );
 
@@ -60,16 +60,11 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
             <Head>
                 <title>{`${activeCategory.title} — Opticore Solutions Ltd.`}</title>
                 <meta name="description" content={activeCategory.description} />
-                <meta
-                    property="og:title"
-                    content={`${activeCategory.title} — Opticore Solutions Ltd.`}
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
+                <meta property="og:title" content={`${activeCategory.title} — Opticore Solutions Ltd.`} />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
 
+            {/* Hero section */}
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
                     <motion.div
@@ -80,9 +75,7 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                     >
                         <span className="section-kicker">Portfolio</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
-                            <span className="gradient-text">
-                                {activeCategory.title}
-                            </span>
+                            <span className="gradient-text">{activeCategory.title}</span>
                         </h1>
                         <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
                             {activeCategory.description}
@@ -91,6 +84,7 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                 </div>
             </section>
 
+            {/* Category tabs */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
@@ -111,6 +105,7 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                         ))}
                     </div>
 
+                    {/* Portfolio grid */}
                     <motion.div
                         key={activeCategory.type}
                         initial="hidden"
@@ -118,46 +113,64 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                         variants={staggerContainer}
                         className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3"
                     >
-                        {activeCategory.items.map((item, index) => (
-                            <motion.button
-                                key={item.title}
-                                type="button"
+                        {activeCategory.items.map((item) => (
+                            <motion.div
+                                key={item.id}
                                 variants={scaleIn}
-                                aria-label={`View ${item.title}`}
-                                className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem] text-left"
-                                onClick={() => setLightboxIndex(index)}
+                                className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem]"
                             >
-                                <img
-                                    src={item.image}
-                                    alt={item.alt}
-                                    loading="lazy"
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
-                                    }}
-                                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
+                                {/* Media thumbnail */}
+                                {item.media_type === 'video' ? (
+                                    <video
+                                        src={item.media_path ?? undefined}
+                                        muted
+                                        preload="metadata"
+                                        className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <img
+                                        src={item.media_path ?? PLACEHOLDER}
+                                        alt={item.alt}
+                                        loading="lazy"
+                                        onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                        className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                )}
+
+                                {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
                                 <div className="absolute inset-x-0 bottom-0 p-5">
                                     <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
-                                        {item.category}
+                                        {item.category.replace(/-/g, ' ')}
                                     </p>
                                     <div className="mt-2 flex items-center justify-between gap-4">
-                                        <h3 className="text-lg font-semibold text-white">
-                                            {item.title}
-                                        </h3>
-                                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100">
-                                            View{' '}
-                                            <ArrowRight className="h-4 w-4" />
-                                        </span>
+                                        <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                        <Link
+                                            href={`/portfolio-item/${item.id}`}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
+                                            aria-label={`View ${item.title} full screen`}
+                                        >
+                                            {item.media_type === 'video'
+                                                ? <><Film className="h-4 w-4" /> Watch</>
+                                                : <><ArrowRight className="h-4 w-4" /> View</>
+                                            }
+                                        </Link>
                                     </div>
                                 </div>
-                            </motion.button>
+                            </motion.div>
                         ))}
+
+                        {activeCategory.items.length === 0 && (
+                            <p className="col-span-3 py-16 text-center text-zinc-500">
+                                No portfolio items in this category yet.
+                            </p>
+                        )}
                     </motion.div>
                 </div>
             </section>
 
+            {/* CTA */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">
@@ -165,15 +178,10 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                             Want work like this for your brand?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            We create premium identities, campaign systems, and
-                            presentation-ready visual assets designed to move
-                            perception and performance.
+                            We create premium identities, campaign systems, and presentation-ready visual assets designed to move perception and performance.
                         </p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                            <MagneticButton
-                                href="/request-appointment"
-                                ariaLabel="Request a project appointment"
-                            >
+                            <MagneticButton href="/request-appointment" ariaLabel="Request a project appointment">
                                 Start a Project
                             </MagneticButton>
                             <Link
@@ -186,12 +194,6 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                     </div>
                 </div>
             </section>
-
-            <Lightbox
-                items={activeCategory.items}
-                activeIndex={lightboxIndex}
-                onClose={() => setLightboxIndex(null)}
-            />
         </>
     );
 }

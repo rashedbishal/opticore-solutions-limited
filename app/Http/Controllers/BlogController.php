@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,12 +14,12 @@ class BlogController extends Controller
      */
     public function index(): Response
     {
-        $dbBlogs = Blog::latest()->get()->map(function($blog) {
+        $dbBlogs = Blog::latest()->get()->map(function ($blog) {
             return [
                 'id' => (string) $blog->id,
                 'title' => $blog->title,
                 'slug' => $blog->slug,
-                'excerpt' => $blog->excerpt ?? substr($blog->content, 0, 120) . '...',
+                'excerpt' => $blog->excerpt ?? substr($blog->content, 0, 120).'...',
                 'content' => $blog->content,
                 'category' => $blog->category,
                 'author' => $blog->author ?? 'Opticore Team',
@@ -61,8 +62,8 @@ class BlogController extends Controller
             'slug' => $slug,
             'dbBlog' => $formattedBlog,
             'meta' => [
-                'title' => $blog->title . ' — Opticore Solutions Ltd.',
-                'description' => text_truncate(strip_tags($blog->content), 150),
+                'title' => $blog->title.' — Opticore Solutions Ltd.',
+                'description' => Str::limit(strip_tags($blog->content), 150),
             ],
         ]);
     }

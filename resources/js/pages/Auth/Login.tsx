@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Lock } from 'lucide-react';
-import type { FormEventHandler } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({
@@ -105,3 +105,5 @@ export default function Login() {
         </>
     );
 }
+
+Login.layout = (page: ReactNode) => <>{page}</>;
