@@ -9,7 +9,8 @@ import {
     Menu,
     X,
     Mail,
-    Bell
+    Bell,
+    Briefcase
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import type { SharedPageProps } from '@/types';
@@ -39,6 +40,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         { name: 'Blogs', href: '/admin/blogs', icon: FileText },
         { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
         { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
+        { name: 'Brands', href: '/admin/brands', icon: Briefcase },
         { name: 'Users', href: '/admin/users', icon: Users },
     ];
 

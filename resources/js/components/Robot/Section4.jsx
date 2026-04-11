@@ -11,11 +11,11 @@ import { Rocket, CheckCircle2, ArrowRight, Shield } from 'lucide-react';
  * - Forward momentum
  */
 const LOG_LINES = [
-  { time: '[00:00:01]', type: 'EXECUTE', text: 'Initializing deployment sequence...', color: 'text-cyan-400' },
-  { time: '[00:00:03]', type: 'SYSTEM', text: 'Resources allocated', suffix: '✓', color: 'text-violet-400' },
-  { time: '[00:00:05]', type: 'EXECUTE', text: 'Deploying to production...', color: 'text-cyan-400' },
-  { time: '[00:00:08]', type: 'SUCCESS', text: 'Deployment complete', suffix: '✓', color: 'text-green-400' },
-  { isPrompt: true, text: '_ Ready for next command', color: 'text-cyan-400' }
+  { time: '[00:00:01]', type: 'START', text: 'Project onboarding initiated', color: 'text-cyan-400' },
+  { time: '[00:00:03]', type: 'PLAN', text: 'Strategy finalized', suffix: '✓', color: 'text-violet-400' },
+  { time: '[00:00:05]', type: 'BUILD', text: 'Assets in production...', color: 'text-cyan-400' },
+  { time: '[00:00:08]', type: 'SUCCESS', text: 'Campaign launched', suffix: '✓', color: 'text-green-400' },
+  { isPrompt: true, text: '– Ready to scale your brand', color: 'text-cyan-400' }
 ];
 
 const TypingLog = () => {
@@ -121,10 +121,10 @@ const TypingLog = () => {
 
 export default function Section4() {
   const completedTasks = [
-    { label: 'Strategy Defined', time: '02:34' },
-    { label: 'Assets Generated', time: '04:12' },
-    { label: 'Quality Verified', time: '01:58' },
-    { label: 'Deploy Ready', time: '00:45' },
+    { label: 'Strategy Completed', time: '02:34' },
+    { label: 'Assets Delivered', time: '04:12' },
+    { label: 'Quality Approved', time: '01:58' },
+    { label: 'Launch Ready', time: '00:45' },
   ];
 
   return (
@@ -174,45 +174,44 @@ export default function Section4() {
         <div className="flex flex-col justify-center">
           <span className="section-kicker mb-4 inline-flex items-center gap-2">
             <Rocket className="h-4 w-4" />
-            Phase 03: Execution
+            PHASE 03 : EXECUTION
           </span>
 
           <h2 className="mb-6 text-balance text-3xl font-bold text-white sm:text-4xl md:text-5xl">
-            Precision
+            Launch, Optimize
             <br />
-            <span className="text-cyan-400">Execution</span>
+            <span className="text-cyan-400">& Grow</span>
           </h2>
 
           <p className="mb-8 text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Systems locked and loaded. Every component optimized, every detail verified.
-            Your project is now executing with maximum efficiency and reliability.
+            We execute, monitor, and continuously improve your digital presence to ensure long-term growth and measurable results.
           </p>
 
           {/* Confidence metrics */}
           <div className="mb-8 grid grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-3xl font-bold text-white">99.9%</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Uptime</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Client Satisfaction</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-cyan-400">2.3s</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Response</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Fast Response</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-violet-400">A+</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Security</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Service Quality</div>
             </div>
           </div>
 
           {/* CTA */}
           <div className="flex flex-wrap gap-4">
             <button className="inline-flex items-center gap-2 rounded-full bg-cyan-500 px-6 py-3 font-semibold text-black transition-all hover:bg-cyan-400">
-              View Live Project
+              Start Your Project
               <ArrowRight className="h-4 w-4" />
             </button>
             <button className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-all hover:bg-white/10">
               <Shield className="h-4 w-4" />
-              Security Report
+              View Portfolio
             </button>
           </div>
         </div>

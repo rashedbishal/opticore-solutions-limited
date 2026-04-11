@@ -1,5 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import { portfolioShow } from '@/routes';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import {
@@ -36,6 +35,7 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
+import { portfolioShow } from '@/routes';
 import type { PortfolioItem } from '@/types';
 
 const easing = [0.22, 1, 0.36, 1] as const;
@@ -238,7 +238,6 @@ function CharmingStar() {
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ 
                     clipPath: { duration: 1.2, delay: 0.6, ease: "easeInOut" },
-                    // The Idle Loop (Syncs with the keyframes above)
                     rotate: { 
                         duration: 8, 
                         repeat: Infinity, 
@@ -254,7 +253,6 @@ function CharmingStar() {
                 }}
                 className="absolute inset-0 flex items-center justify-center text-amber-400"
             >
-                {/* strokeWidth={0} removes the unnatural outline */}
                 <Star strokeWidth={0} className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
             </motion.div>
 
@@ -275,25 +273,24 @@ function CharmingStar() {
                 }}
                 className="absolute -top-1 -right-1 pointer-events-none"
             >
-                {/* strokeWidth={0} and fill-current makes it a clean solid shine */}
                 <Sparkles strokeWidth={0} className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]" />
             </motion.div>
         </div>
     );
 }
 
-export default function HomeIndex({ 
-    featuredPortfolios 
-}: { 
-    featuredPortfolios: Record<string, PortfolioItem[]> 
-}) {
+interface HomeIndexProps {
+    featuredPortfolios: Record<string, PortfolioItem[]>;
+    brands?: string[];
+}
+
+export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps) {
     const categoriesMapped = [
         'graphic-design',
         'digital-marketing',
         '3d-production',
         'web-development',
     ];
-    const glowDelays = [0, 3, 2, 1];
     const bentoOrder = [0, 3, 2, 1];
     const desktop = useMediaQuery('(min-width: 1024px)');
     const [isPaused, setIsPaused] = useState(false);
@@ -313,12 +310,11 @@ export default function HomeIndex({
                     return;
                 }
 
-                // Use getBoundingClientRect for accurate inclusive dimensions
                 const box = card.getBoundingClientRect();
                 const w = box.width;
                 const h = box.height;
 
-                const r = 26; // Match rx/ry in JSX
+                const r = 26;
                 const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
 
                 card.style.setProperty('--perim', `${perim}px`);
@@ -336,154 +332,35 @@ export default function HomeIndex({
     return (
         <>
             <style>{`
-    .bento-card {
-        position: relative;
-    }
-    .bento-card svg.glow-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 10;
-        border-radius: inherit;
-        overflow: visible;
-    }
-    .bento-card svg.glow-svg .trace-rect {
-        fill: none;
-        stroke-width: 2.5;
-        stroke-linecap: round;
-    }
+                @keyframes particleShoot {
+                    0% { transform: translate(0, 0) scale(1.5); opacity: 0; }
+                    15% { opacity: 1; }
+                    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+                }
 
+                @keyframes pulsateGlow {
+                    0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)); }
+                    50% { opacity: 1; filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.8)); }
+                }
 
-    @keyframes traceAnim {
-        0%   { stroke-dashoffset: var(--perim); opacity: 1; }
-        25%  { stroke-dashoffset: 0;            opacity: 1; }
-        26%  { opacity: 0; }
-        100% { stroke-dashoffset: 0;            opacity: 0; }
-    }
+                .border-glow-hover {
+                    opacity: 0;
+                    transition: opacity 0.5s ease;
+                }
+                
+                .group:hover .border-glow-hover {
+                    animation: spin 2.5s linear infinite;
+                    opacity: 1 !important;
+                }
 
-    .bento-card[data-order="0"] .trace-rect {
-        stroke: url(#glowGrad0);
-        stroke-dasharray: var(--perim);
-        stroke-dashoffset: var(--perim);
-        opacity: 0;
-        animation: traceAnim 16s linear infinite;
-        animation-delay: 0s;
-    }
-    .bento-card[data-order="1"] .trace-rect {
-        stroke: url(#glowGrad1);
-        stroke-dasharray: var(--perim);
-        stroke-dashoffset: var(--perim);
-        opacity: 0;
-        animation: traceAnim 16s linear infinite;
-        animation-delay: 12s;
-    }
-    .bento-card[data-order="2"] .trace-rect {
-        stroke: url(#glowGrad2);
-        stroke-dasharray: var(--perim);
-        stroke-dashoffset: var(--perim);
-        opacity: 0;
-        animation: traceAnim 16s linear infinite;
-        animation-delay: 8s;
-    }
-    .bento-card[data-order="3"] .trace-rect {
-        stroke: url(#glowGrad3);
-        stroke-dasharray: var(--perim);
-        stroke-dashoffset: var(--perim);
-        opacity: 0;
-        animation: traceAnim 16s linear infinite;
-        animation-delay: 4s;
-    }
-
-    /* Hover particle glow */
-    .bento-card:hover .trace-rect {
-        animation: none !important;
-        stroke-dashoffset: 0 !important;
-        opacity: 1 !important;
-        filter: drop-shadow(0 0 6px #7c3aed) drop-shadow(0 0 12px #06b6d4);
-    }
-    .bento-card:hover .glow-particles circle {
-        opacity: 1 !important;
-        animation: particleDrift 1.5s ease-in-out infinite alternate !important;
-    }
-    @keyframes particleDrift {
-        0%   { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(var(--dx), var(--dy)) scale(1.8); }
-    }
-    .glow-particles circle {
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-`}</style>
-            <svg width="0" height="0" style={{ position: 'absolute' }}>
-                <defs>
-                    <linearGradient
-                        id="glowGrad0"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="100%"
-                    >
-                        <stop offset="0%" stopColor="#7c3aed" stopOpacity="0" />
-                        <stop offset="40%" stopColor="#7c3aed" />
-                        <stop offset="60%" stopColor="#06b6d4" />
-                        <stop
-                            offset="100%"
-                            stopColor="#06b6d4"
-                            stopOpacity="0"
-                        />
-                    </linearGradient>
-                    <linearGradient
-                        id="glowGrad1"
-                        x1="100%"
-                        y1="0%"
-                        x2="0%"
-                        y2="100%"
-                    >
-                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0" />
-                        <stop offset="40%" stopColor="#06b6d4" />
-                        <stop offset="60%" stopColor="#7c3aed" />
-                        <stop
-                            offset="100%"
-                            stopColor="#7c3aed"
-                            stopOpacity="0"
-                        />
-                    </linearGradient>
-                    <linearGradient
-                        id="glowGrad2"
-                        x1="0%"
-                        y1="100%"
-                        x2="100%"
-                        y2="0%"
-                    >
-                        <stop offset="0%" stopColor="#a855f7" stopOpacity="0" />
-                        <stop offset="40%" stopColor="#a855f7" />
-                        <stop offset="60%" stopColor="#06b6d4" />
-                        <stop
-                            offset="100%"
-                            stopColor="#06b6d4"
-                            stopOpacity="0"
-                        />
-                    </linearGradient>
-                    <linearGradient
-                        id="glowGrad3"
-                        x1="100%"
-                        y1="100%"
-                        x2="0%"
-                        y2="0%"
-                    >
-                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0" />
-                        <stop offset="40%" stopColor="#06b6d4" />
-                        <stop offset="60%" stopColor="#a855f7" />
-                        <stop
-                            offset="100%"
-                            stopColor="#a855f7"
-                            stopOpacity="0"
-                        />
-                    </linearGradient>
-                </defs>
-            </svg>
+                .group:hover .particle-dot {
+                    animation: particleShoot 1.3s ease-out infinite;
+                }
+                
+                .group:hover .aura-glow {
+                    animation: pulsateGlow 2.5s ease-in-out infinite;
+                }
+            `}</style>
             <Head>
                 <title>Opticore Solutions Ltd. — Premium Digital Agency</title>
                 <meta
@@ -679,6 +556,40 @@ export default function HomeIndex({
 
                             const highlights = categoryHighlights[categorySlug] || [];
 
+                            const denseParticles = Array.from({ length: 240 }).map((_, i) => {
+                                const side = Math.floor(i / 60);
+                                const offset = (i % 60) / 59;
+
+                                let top, left, tx, ty;
+                                const spread = Math.sin(i * 123.45) * 60;
+                                const dist = 20 + Math.abs(Math.cos(i * 321.45) * 70);
+
+                                if (side === 0) {
+                                    top = '-1%'; left = `${offset * 100}%`;
+                                    ty = -dist; tx = spread;
+                                } else if (side === 2) {
+                                    top = '101%'; left = `${offset * 100}%`;
+                                    ty = dist; tx = spread;
+                                } else if (side === 1) {
+                                    left = '101%'; top = `${offset * 100}%`;
+                                    tx = dist; ty = spread;
+                                } else {
+                                    left = '-1%'; top = `${offset * 100}%`;
+                                    tx = -dist; ty = spread;
+                                }
+
+                                const isCyan = i % 2 === 0;
+
+                                return {
+                                    top, left, tx, ty,
+                                    size: 'h-[1px] w-[1px]',
+                                    color: isCyan ? 'bg-cyan-400' : 'bg-violet-400',
+                                    shadow: '',
+                                    delay: Math.abs(Math.sin(i * 555)) * 0.6,
+                                    duration: 0.5 + Math.abs(Math.cos(i * 777)) * 1.5,
+                                };
+                            });
+
                             return (
                                 <div
                                     key={image.src}
@@ -779,6 +690,24 @@ export default function HomeIndex({
                                                 <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">Opticore v3.0</span>
                                             </div>
                                         </div>
+
+                                    {/* Spreading Particles on hover */}
+                                    <div className="pointer-events-none absolute inset-0 z-20">
+                                        {denseParticles.map((p, i) => (
+                                            <div
+                                                key={i}
+                                                className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
+                                                style={{
+                                                    '--tx': `${p.tx}px`,
+                                                    '--ty': `${p.ty}px`,
+                                                    top: p.top,
+                                                    left: p.left,
+                                                    animationDelay: `${p.delay}s`,
+                                                    animationDuration: `${p.duration}s`,
+                                                } as React.CSSProperties}
+                                            />
+                                        ))}
+                                    </div>
                                     </div>
                                 </div>
                             );
@@ -827,7 +756,7 @@ export default function HomeIndex({
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <Marquee items={clientLogos} />
+                    <Marquee items={(brands && brands.length > 0) ? brands : clientLogos} />
                 </div>
             </section>
 

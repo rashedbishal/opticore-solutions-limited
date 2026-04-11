@@ -31,9 +31,9 @@ const LoadingDots = ({ text }) => {
 
 export default function Section2() {
   const scanFeatures = [
-    { icon: Target, label: 'Target Analysis', status: 'Scanning...' },
-    { icon: Radar, label: 'Environment Map', status: 'Processing...' },
-    { icon: Scan, label: 'Data Collection', status: 'Active' },
+    { icon: Target, label: 'Audience Research', status: 'Identifying your ideal customers' },
+    { icon: Radar, label: 'Market Analysis', status: 'Understanding trends & competitors' },
+    { icon: Scan, label: 'Data Collection', status: 'Gathering actionable insights' },
   ];
 
   return (
@@ -61,18 +61,17 @@ export default function Section2() {
         <div className="flex flex-col justify-center">
           <span className="section-kicker mb-4">
             <Scan className="h-4 w-4" />
-            Phase 01: Analysis
+            PHASE 01 : DISCOVERY
           </span>
 
           <h2 className="mb-6 text-balance text-3xl font-bold text-white sm:text-4xl md:text-5xl">
-            Deep Scanning
+            Deep Market Insight
             <br />
-            <span className="text-cyan-400">& Analysis</span>
+            <span className="text-cyan-400">& Strategic Planning</span>
           </h2>
 
           <p className="mb-8 text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Our systems scan your project requirements with precision. Every detail is captured,
-            analyzed, and mapped to ensure the perfect execution strategy.
+            We analyze your brand, target audience, and competitors to uncover real opportunities. Every insight is structured to build a strategy that drives measurable growth.
           </p>
 
           {/* Scan status cards */}
@@ -120,16 +119,19 @@ export default function Section2() {
             {/* Inner content */}
             <div className="absolute inset-4 flex flex-col items-center justify-center rounded-full border border-violet-500/20 bg-black/50">
               <span className="text-4xl font-bold text-cyan-400">98%</span>
-              <span className="mt-2 text-sm text-zinc-500">Accuracy</span>
+              <span className="mt-2 text-sm text-zinc-500 text-center">Insight<br/>Accuracy</span>
             </div>
           </div>
 
           {/* Floating data points */}
           <div className="absolute right-0 top-0 rounded-lg border border-cyan-500/30 bg-black/60 p-3 text-xs text-cyan-400">
-            DATA_ACQUIRED
+            DATA ANALYZED
           </div>
           <div className="absolute bottom-20 left-0 rounded-lg border border-violet-500/30 bg-black/60 p-3 text-xs text-violet-400">
-            PATTERN_DETECTED
+            INSIGHTS GENERATED
+          </div>
+          <div className="absolute top-20 -left-10 rounded-lg border border-cyan-500/30 bg-black/60 p-3 text-xs text-cyan-400 hidden xl:block">
+            STRATEGY READY
           </div>
         </div>
       </div>

@@ -40,10 +40,10 @@ const AnimatedProgressBar = ({ initialValue }) => {
 
 export default function Section3() {
   const processSteps = [
-    { icon: Layers, label: 'Data Layering', value: '87%' },
-    { icon: Cpu, label: 'Core Processing', value: '94%' },
-    { icon: Zap, label: 'Optimization', value: '92%' },
-    { icon: Activity, label: 'Performance', value: '96%' },
+    { icon: Layers, label: 'Design Development', value: '87%' },
+    { icon: Cpu, label: 'Content Creation', value: '94%' },
+    { icon: Zap, label: 'Campaign Optimization', value: '92%' },
+    { icon: Activity, label: 'Performance Scaling', value: '96%' },
   ];
 
   return (
@@ -85,18 +85,17 @@ export default function Section3() {
         <div className="mb-16 text-center">
           <span className="section-kicker mb-4 inline-flex items-center gap-2">
             <Cpu className="h-4 w-4" />
-            Phase 02: Processing
+            PHASE 02 : DEVELOPMENT
           </span>
 
           <h2 className="mb-6 text-balance text-3xl font-bold text-white sm:text-4xl md:text-5xl">
-            High-Intensity
+            Creative Development
             <br />
-            <span className="text-violet-400">Processing</span>
+            <span className="text-violet-400">& Smart Execution</span>
           </h2>
 
           <p className="mx-auto max-w-2xl text-base text-zinc-400 sm:text-lg">
-            Maximum computational power engaged. Multi-layered processing with
-            real-time optimization and parallel execution.
+            We turn strategy into impactful visuals and campaigns through design, content, and performance-driven execution.
           </p>
         </div>
 

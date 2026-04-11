@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Portfolio;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,8 +39,11 @@ class HomeController extends Controller
             }
         }
 
+        $brands = Brand::orderBy('created_at', 'asc')->pluck('name');
+
         return Inertia::render('Home/Index', [
             'featuredPortfolios' => $featuredPortfolios,
+            'brands' => $brands,
             'meta' => [
                 'title' => 'Opticore Solutions Ltd. — Premium Digital Agency',
                 'description' => 'We build brands that leave a lasting impression.',

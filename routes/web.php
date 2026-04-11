@@ -38,6 +38,7 @@ Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('care
 Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat');
 
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -57,6 +58,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
     Route::resource('blogs', AdminBlogController::class);
+    Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class);
