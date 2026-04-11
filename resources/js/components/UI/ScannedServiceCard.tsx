@@ -77,8 +77,8 @@ class ParticleScanner {
     private particles: Record<number, Particle> = {};
     private count = 0;
 
-    private readonly baseI = 0.08; private readonly scanI = 0.35;
-    private readonly baseP = 300;  private readonly scanP = 1200;
+    private readonly baseI: number; private readonly scanI: number;
+    private readonly baseP: number; private readonly scanP: number;
     private readonly baseF = 40;   private readonly scanF = 20;
     private readonly spd = 0.04;
 
@@ -89,9 +89,16 @@ class ParticleScanner {
     private gradCanvas: HTMLCanvasElement;
     private rafId = 0;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, isMobile = false) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d')!;
+
+        // Adjust density based on device
+        this.baseI = isMobile ? 0.02 : 0.08;
+        this.scanI = isMobile ? 0.05 : 0.35;
+        this.baseP = isMobile ? 100  : 300;
+        this.scanP = isMobile ? 200  : 1200;
+
         this.curI = this.intensity = this.baseI;
         this.curP = this.maxP = this.baseP;
         this.curF = this.fadeZ = this.baseF;
@@ -305,61 +312,17 @@ export function ServiceCarousel({
     services: ServiceItem[],
     featuredPortfolios: Record<string, PortfolioItem[]>
 }) {
-    const [isMobile, setIsMobile] = useState(
-        () => typeof window !== 'undefined' && window.innerWidth < 1024,
-    );
-    useEffect(() => {
-        const check = () => setIsMobile(window.innerWidth < 1024);
-        window.addEventListener('resize', check);
-
-        return () => window.removeEventListener('resize', check);
-    }, []);
-
-    if (isMobile) {
-        return (
-            <MobileCarousel 
-                services={services} 
-                featuredPortfolios={featuredPortfolios} 
-            />
-        );
-    }
-
+    // We now always return the scanned carousel for that premium feel
     return (
-        <DesktopCarousel 
+        <ScannedCarousel 
             services={services} 
             featuredPortfolios={featuredPortfolios} 
         />
     );
 }
 
-// ── Mobile ────────────────────────────────────────────────────────────────────
-function MobileCarousel({ 
-    services, 
-    featuredPortfolios 
-}: { 
-    services: ServiceItem[], 
-    featuredPortfolios: Record<string, PortfolioItem[]>
-}) {
-    const doubled = [...services, ...services];
-
-    return (
-        <div className="relative overflow-hidden">
-            <div className="flex gap-4 w-max animate-[servicesMarquee_26s_linear_infinite]">
-                {doubled.map((s, i) => (
-                    <div key={`${s.key}-${i}`} className="w-[240px] shrink-0">
-                        <ServiceCard 
-                            service={s} 
-                            portfolios={featuredPortfolios[s.key]} 
-                        />
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-// ── Desktop ───────────────────────────────────────────────────────────────────
-function DesktopCarousel({ 
+// ── Scanned Carousel ─────────────────────────────────────────────────────────
+function ScannedCarousel({ 
     services, 
     featuredPortfolios 
 }: { 
@@ -537,7 +500,8 @@ function DesktopCarousel({
             // Explicit CSS size first so offsetWidth/Height are readable
             cv.style.width  = rootRef.current.offsetWidth + 'px';
             cv.style.height = CANVAS_H + 'px';
-            const ps = new ParticleScanner(cv);
+            const isMobile = window.innerWidth < 1024;
+            const ps = new ParticleScanner(cv, isMobile);
             ps.sync(getBarX());   // barX = center of root container in canvas coords
             scannerRef.current = ps;
             ps.animate();
