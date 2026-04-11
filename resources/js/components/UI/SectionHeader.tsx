@@ -31,6 +31,7 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
 
     const titleList = titles && titles.length > 0 ? titles : [title];
     const currentTitle = titleList[index];
+    const isPool = titleList.length > 1;
 
     useEffect(() => {
         const el = titleRef.current;
@@ -61,8 +62,17 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
             const anime =
                 (await import('animejs')).default ?? (await import('animejs'));
 
+            // If it's a pool, we handle looping manually through state
+            // If it's a single title, we use native animejs looping for maximum stability
             timelineRef.current = (anime as any)
-                .timeline({ loop: false })
+                .timeline({
+                    loop: !isPool,
+                    complete: () => {
+                        if (isPool) {
+                            setIndex((prev) => (prev + 1) % titleList.length);
+                        }
+                    },
+                })
                 .add({
                     targets: `.${letterClass}`,
                     translateX: [40, 0],
@@ -78,15 +88,9 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
                     opacity: [1, 0],
                     easing: 'easeInExpo',
                     duration: 1100,
-                    delay: (_el: Element, i: number) => 3000 + 30 * i,
-                    complete: () => {
-                        if (titleList.length > 1) {
-                            setIndex((prev) => (prev + 1) % titleList.length);
-                        } else {
-                            // If only one title, restart to maintain loop effect
-                            timelineRef.current.restart();
-                        }
-                    },
+                    // Pool uses a longer individual sentence dwell time
+                    delay: (_el: Element, i: number) =>
+                        (isPool ? 3000 : 100) + 30 * i,
                 });
         };
 
@@ -97,7 +101,7 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
                 timelineRef.current.pause();
             }
         };
-    }, [currentTitle, titleList.length]);
+    }, [currentTitle, isPool, titleList.length]);
 
     return (
         <>
