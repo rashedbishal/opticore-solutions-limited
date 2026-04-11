@@ -17,9 +17,9 @@ export default function Marquee({ items }: MarqueeProps) {
                     return (
                         <div
                             key={`${item.name}-${index}`}
-                            className="mx-6 flex items-center gap-3 text-sm font-semibold tracking-[0.24em] text-zinc-500 uppercase grayscale transition-all duration-500 hover:scale-110 hover:text-white hover:grayscale-0 sm:mx-10"
+                            className="mx-6 flex flex-col items-center gap-3 text-sm font-semibold tracking-[0.24em] text-zinc-500 uppercase grayscale transition-all duration-500 hover:scale-110 hover:text-white hover:grayscale-0 sm:mx-10"
                         >
-                            <LucideIcon size={18} className="text-zinc-400 transition-colors group-hover:text-cyan-400" />
+                            <LucideIcon size={96} className="text-zinc-400 transition-colors group-hover:text-cyan-400" />
                             <span>{item.name}</span>
                         </div>
                     );
