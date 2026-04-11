@@ -34,10 +34,10 @@ export default function ImmersiveChatTrigger({ onClick, isOpen, className }: Imm
                 whileHover={{ scale: 1.1, rotate: isOpen ? 90 : 0 }}
                 whileTap={{ scale: 0.9 }}
                 className={cn(
-                    "relative h-14 w-14 sm:h-16 sm:w-16 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden",
+                    "relative h-14 w-14 sm:h-16 sm:w-16 rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(124,58,237,0.3)] transition-all duration-500 overflow-hidden",
                     isOpen
-                        ? "bg-zinc-900 border border-white/10"
-                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 border border-white/20"
+                        ? "bg-zinc-900 border border-white/5"
+                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 border border-violet-400/30 ring-1 ring-white/10 ring-inset"
                 )}
             >
                 {/* Rotating Shine Effect (only when closed) */}
@@ -50,7 +50,7 @@ export default function ImmersiveChatTrigger({ onClick, isOpen, className }: Imm
                 )}
 
                 {/* Button Content */}
-                <div className="relative z-10 flex items-center justify-center">
+                <div className="relative z-10 flex items-center justify-center ">
                     {isOpen ? (
                         <X className="h-6 w-6 sm:h-7 sm:w-7 text-zinc-400" />
                     ) : (
