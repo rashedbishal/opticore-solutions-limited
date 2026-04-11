@@ -176,18 +176,20 @@ function HeroHeadline() {
             <style>{`
                 .anime-letter {
                     display: inline-block;
-                    line-height: 1.1em;
+                    line-height: 1.2;
+                    vertical-align: top;
+                    padding-bottom: 0.1em;
                 }
                 .anime-word {
                     display: inline-block;
                     white-space: nowrap;
-                    margin-right: 0.15em;
+                    margin-right: 0.25em;
                 }
             `}</style>
             <motion.h1
                 layout
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="pb-2 text-[2rem] leading-[1.2] font-extrabold text-white sm:text-5xl sm:leading-[1.12] md:text-6xl lg:text-7xl"
+                className="pb-4 text-[2rem] leading-[1.3] font-extrabold text-white sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
                 <motion.span layout className="inline-block">
                     We
