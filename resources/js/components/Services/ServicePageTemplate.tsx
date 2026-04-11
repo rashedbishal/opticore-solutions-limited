@@ -259,7 +259,7 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                                 className="group glass-panel overflow-hidden rounded-[2rem]"
                             >
                                 <img
-                                    src={item.image}
+                                    src={item.media_path ?? ''}
                                     alt={item.alt}
                                     loading="lazy"
                                     onError={(e) => {
