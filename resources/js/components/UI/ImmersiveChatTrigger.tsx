@@ -7,22 +7,44 @@ import { cn } from "@/lib/utils";
 interface ImmersiveChatTriggerProps {
     onClick: () => void;
     isOpen: boolean;
+    isDancing?: boolean;
     className?: string;
 }
 
-export default function ImmersiveChatTrigger({ onClick, isOpen, className }: ImmersiveChatTriggerProps) {
+export default function ImmersiveChatTrigger({ 
+    onClick, 
+    isOpen, 
+    isDancing = false,
+    className 
+}: ImmersiveChatTriggerProps) {
+
+    // Natural "Squash and Stretch" animation variants
+    const danceVariants = {
+        idle: { y: 0, scaleX: 1, scaleY: 1, rotate: 0 },
+        dancing: {
+            y: [0, 30, -420, 0],
+            scaleX: [1, 1.3, 0.75, 1.1, 1],
+            scaleY: [1, 0.7, 1.4, 0.85, 1],
+            transition: {
+                duration: 1.5,
+                times: [0, 0.15, 0.4, 1],
+                ease: [0.22, 1, 0.36, 1],
+            }
+        }
+    };
+
     return (
         <div className={cn("relative group", className)}>
             {/* AI Pulse Glow */}
             {!isOpen && (
                 <motion.div
-                    animate={{
+                    animate={isDancing ? { scale: [1, 1.4, 1.1], opacity: [0.3, 0.8, 0.4] } : {
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.6, 0.3],
                     }}
                     transition={{
-                        duration: 4,
-                        repeat: Infinity,
+                        duration: isDancing ? 1.2 : 4,
+                        repeat: isDancing ? 0 : Infinity,
                         ease: "easeInOut",
                     }}
                     className="absolute inset-0 rounded-full bg-linear-to-tr from-violet-600 to-cyan-500 blur-xl"
@@ -31,13 +53,15 @@ export default function ImmersiveChatTrigger({ onClick, isOpen, className }: Imm
 
             <motion.button
                 onClick={onClick}
+                variants={danceVariants}
+                animate={isDancing && !isOpen ? "dancing" : "idle"}
                 whileHover={{ scale: 1.1, rotate: isOpen ? 90 : 0 }}
                 whileTap={{ scale: 0.9 }}
                 className={cn(
                     "relative h-14 w-14 sm:h-16 sm:w-16 rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(124,58,237,0.3)] transition-all duration-500 overflow-hidden",
                     isOpen
                         ? "bg-zinc-900 border border-white/5"
-                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 border border-violet-400/30 ring-1 ring-white/10 ring-inset"
+                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 border border-violet-400/30 ring-1 ring-white/10"
                 )}
             >
                 {/* Rotating Shine Effect (only when closed) */}

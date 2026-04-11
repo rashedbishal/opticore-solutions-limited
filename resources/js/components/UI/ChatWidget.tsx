@@ -155,7 +155,7 @@ export default function ChatWidget() {
                 <ImmersiveChatTrigger
                     onClick={() => setIsOpen(!isOpen)}
                     isOpen={isOpen}
-                    className={cn(isDancing && !isOpen && "animate-bounce")}
+                    isDancing={isDancing}
                 />
             </div>
 
