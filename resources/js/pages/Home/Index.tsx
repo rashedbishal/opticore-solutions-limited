@@ -282,7 +282,11 @@ function CharmingStar() {
     );
 }
 
-export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: Record<string, PortfolioItem | null> }) {
+export default function HomeIndex({ 
+    featuredPortfolios 
+}: { 
+    featuredPortfolios: Record<string, PortfolioItem[]> 
+}) {
     const categoriesMapped = [
         'graphic-design',
         'digital-marketing',
@@ -615,7 +619,10 @@ export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: 
                     />
 
                     <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">
-                        <ServiceCarousel services={duplicatedServices} />
+                        <ServiceCarousel 
+                            services={duplicatedServices} 
+                            featuredPortfolios={featuredPortfolios}
+                        />
                     </div>
                 </div>
             </section>
@@ -659,7 +666,8 @@ export default function HomeIndex({ featuredPortfolios }: { featuredPortfolios: 
                     >
                         {aboutBentoImages.map((image, index) => {
                             const categorySlug = categoriesMapped[index];
-                            const portfolio = featuredPortfolios?.[categorySlug];
+                            const portfolios = featuredPortfolios?.[categorySlug] || [];
+                            const portfolio = portfolios[0] || null;
                             const service = services.find((s) => s.key === categorySlug);
 
                             const categoryHighlights: Record<string, string[]> = {

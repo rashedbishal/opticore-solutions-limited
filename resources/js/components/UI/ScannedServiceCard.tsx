@@ -298,7 +298,13 @@ const CODE_ROWS = Math.floor(CARD_H / LINE_H);
 const CANVAS_H  = 380;
 
 // ─── Public export ────────────────────────────────────────────────────────────
-export function ServiceCarousel({ services }: { services: ServiceItem[] }) {
+export function ServiceCarousel({ 
+    services, 
+    featuredPortfolios 
+}: { 
+    services: ServiceItem[],
+    featuredPortfolios: Record<string, PortfolioItem[]>
+}) {
     const [isMobile, setIsMobile] = useState(
         () => typeof window !== 'undefined' && window.innerWidth < 1024,
     );
@@ -310,14 +316,30 @@ export function ServiceCarousel({ services }: { services: ServiceItem[] }) {
     }, []);
 
     if (isMobile) {
-return <MobileCarousel services={services} />;
-}
+        return (
+            <MobileCarousel 
+                services={services} 
+                featuredPortfolios={featuredPortfolios} 
+            />
+        );
+    }
 
-    return <DesktopCarousel services={services} />;
+    return (
+        <DesktopCarousel 
+            services={services} 
+            featuredPortfolios={featuredPortfolios} 
+        />
+    );
 }
 
 // ── Mobile ────────────────────────────────────────────────────────────────────
-function MobileCarousel({ services }: { services: ServiceItem[] }) {
+function MobileCarousel({ 
+    services, 
+    featuredPortfolios 
+}: { 
+    services: ServiceItem[], 
+    featuredPortfolios: Record<string, PortfolioItem[]>
+}) {
     const doubled = [...services, ...services];
 
     return (
@@ -325,7 +347,10 @@ function MobileCarousel({ services }: { services: ServiceItem[] }) {
             <div className="flex gap-4 w-max animate-[servicesMarquee_26s_linear_infinite]">
                 {doubled.map((s, i) => (
                     <div key={`${s.key}-${i}`} className="w-[240px] shrink-0">
-                        <ServiceCard service={s} />
+                        <ServiceCard 
+                            service={s} 
+                            portfolios={featuredPortfolios[s.key]} 
+                        />
                     </div>
                 ))}
             </div>
@@ -334,7 +359,13 @@ function MobileCarousel({ services }: { services: ServiceItem[] }) {
 }
 
 // ── Desktop ───────────────────────────────────────────────────────────────────
-function DesktopCarousel({ services }: { services: ServiceItem[] }) {
+function DesktopCarousel({ 
+    services, 
+    featuredPortfolios 
+}: { 
+    services: ServiceItem[], 
+    featuredPortfolios: Record<string, PortfolioItem[]>
+}) {
     const doubled = [...services, ...services];
 
     const rootRef    = useRef<HTMLDivElement>(null);
@@ -362,8 +393,8 @@ function DesktopCarousel({ services }: { services: ServiceItem[] }) {
     // scanner X in ABSOLUTE page coords (for getBoundingClientRect)
     const getScanPageX = useCallback(() => {
         if (!rootRef.current) {
-return window.innerWidth / 2;
-}
+            return window.innerWidth / 2;
+        }
 
         const r = rootRef.current.getBoundingClientRect();
 
@@ -373,8 +404,8 @@ return window.innerWidth / 2;
     // ── clip loop ─────────────────────────────────────────────────────────────
     const updateClip = useCallback(() => {
         if (!trackRef.current) {
-return;
-}
+            return;
+        }
 
         const scanX = getScanPageX();
         const hw = 4;
@@ -389,8 +420,8 @@ return;
             const ascii  = w.querySelector<HTMLElement>('.ssc-ascii');
 
             if (!normal || !ascii) {
-return;
-}
+                return;
+            }
 
             if (rect.left < scanR && rect.right > scanL) {
                 anyScanning = true;
@@ -420,8 +451,8 @@ return;
         });
 
         if (scannerRef.current) {
-scannerRef.current.scanningActive = anyScanning;
-}
+            scannerRef.current.scanningActive = anyScanning;
+        }
 
         state.current.clipId = requestAnimationFrame(updateClip);
     }, [getScanPageX]);
@@ -439,14 +470,14 @@ scannerRef.current.scanningActive = anyScanning;
             const rootW = rootRef.current?.offsetWidth ?? window.innerWidth;
 
             if (s.pos < -s.trackW) {
-s.pos = rootW;
-} else if (s.pos > rootW) {
-s.pos = -s.trackW;
-}
+                s.pos = rootW;
+            } else if (s.pos > rootW) {
+                s.pos = -s.trackW;
+            }
 
             if (trackRef.current) {
-trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
-}
+                trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
+            }
         }
 
         s.animId = requestAnimationFrame(animateTrack);
@@ -469,23 +500,23 @@ trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
         const s = state.current;
 
         if (!s.dragging) {
-return;
-}
+            return;
+        }
 
         const dx = clientX - s.lastX;
         s.pos += dx; s.mouseVel = dx * 60; s.lastX = clientX;
 
         if (trackRef.current) {
-trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
-}
+            trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
+        }
     }, []);
 
     const endDrag = useCallback(() => {
         const s = state.current;
 
         if (!s.dragging) {
-return;
-}
+            return;
+        }
 
         s.dragging = false;
         s.vel = Math.abs(s.mouseVel) > 30 ? Math.abs(s.mouseVel) : 80;
@@ -518,8 +549,8 @@ return;
         const asciiTimer = setInterval(() => {
             asciiRefs.current.forEach((el) => {
                 if (el && Math.random() < 0.15) {
-el.textContent = generateCode(CODE_COLS, CODE_ROWS);
-}
+                    el.textContent = generateCode(CODE_COLS, CODE_ROWS);
+                }
             });
         }, 200);
 
@@ -535,8 +566,8 @@ el.textContent = generateCode(CODE_COLS, CODE_ROWS);
 
         const mm = (e: MouseEvent)  => onDrag(e.clientX);
         const tm = (e: TouchEvent) => {
- e.preventDefault(); onDrag(e.touches[0].clientX); 
-};
+            e.preventDefault(); onDrag(e.touches[0].clientX); 
+        };
         document.addEventListener('mousemove', mm);
         document.addEventListener('mouseup', endDrag);
         document.addEventListener('touchmove', tm, { passive: false });
@@ -598,11 +629,11 @@ el.textContent = generateCode(CODE_COLS, CODE_ROWS);
                     ref={trackRef}
                     onMouseDown={(e) => startDrag(e.clientX)}
                     onTouchStart={(e) => {
- e.preventDefault(); startDrag(e.touches[0].clientX); 
-}}
+                        e.preventDefault(); startDrag(e.touches[0].clientX); 
+                    }}
                     onWheel={(e) => {
- e.preventDefault(); state.current.pos += e.deltaY > 0 ? 20 : -20; 
-}}
+                        e.preventDefault(); state.current.pos += e.deltaY > 0 ? 20 : -20; 
+                    }}
                     style={{
                         display:'flex', alignItems:'center', gap:CARD_GAP,
                         position:'absolute', top:'50%', left:0,
@@ -628,7 +659,11 @@ el.textContent = generateCode(CODE_COLS, CODE_ROWS);
                                     borderRadius:'inherit', overflow:'hidden',
                                 }}
                             >
-                                <ServiceCard service={service} className="h-full w-full rounded-[1.5rem]" />
+                                <ServiceCard 
+                                    service={service} 
+                                    portfolios={featuredPortfolios[service.key]}
+                                    className="h-full w-full rounded-[1.5rem]" 
+                                />
                             </div>
 
                             {/* ASCII card — shown to the RIGHT of the scanner */}
@@ -643,8 +678,8 @@ el.textContent = generateCode(CODE_COLS, CODE_ROWS);
                             >
                                 <pre
                                     ref={(el) => {
- asciiRefs.current[i] = el; 
-}}
+                                        asciiRefs.current[i] = el; 
+                                    }}
                                     className="ssc-ascii-pre"
                                     style={{
                                         position:'absolute', inset:0, margin:0, padding:4,
