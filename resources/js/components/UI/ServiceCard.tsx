@@ -15,7 +15,7 @@ import {
     ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ServiceItem } from '@/types';
+import type { ServiceItem, PortfolioItem } from '@/types';
 
 const iconMap = {
     Box,
