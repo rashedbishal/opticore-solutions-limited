@@ -112,7 +112,8 @@ class PortfolioController extends Controller
         if ($request->hasFile('media')) {
             // Delete old file if exists
             if ($portfolio->media_path) {
-                Storage::disk('public')->delete($portfolio->media_path);
+                $cleanedPath = preg_replace('/^.*\/storage\//', '', $portfolio->media_path);
+                Storage::disk('public')->delete($cleanedPath);
             }
 
             $mediaType = $this->detectMediaType($request->file('media'));
@@ -130,7 +131,8 @@ class PortfolioController extends Controller
     public function destroy(Portfolio $portfolio): RedirectResponse
     {
         if ($portfolio->media_path) {
-            Storage::disk('public')->delete($portfolio->media_path);
+            $cleanedPath = preg_replace('/^.*\/storage\//', '', $portfolio->media_path);
+            Storage::disk('public')->delete($cleanedPath);
         }
 
         $portfolio->delete();

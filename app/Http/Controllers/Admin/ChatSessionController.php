@@ -13,7 +13,12 @@ class ChatSessionController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Chat/Index', [
-            'sessions' => ChatSession::withCount('messages')->latest()->paginate(20)
+            'sessions' => ChatSession::withCount('messages')
+                ->with(['messages' => function ($query) {
+                    $query->orderBy('created_at', 'asc');
+                }])
+                ->latest()
+                ->paginate(20)
         ]);
     }
 

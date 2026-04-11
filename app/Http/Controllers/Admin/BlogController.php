@@ -13,6 +13,17 @@ use Inertia\Response;
 
 class BlogController extends Controller
 {
+    private function deleteImage(?string $path): void
+    {
+        if (!$path) {
+            return;
+        }
+
+        // Clean any full URL or '/storage/' prefix to get the relative public disk path
+        $cleanedPath = preg_replace('/^.*\/storage\//', '', $path);
+        Storage::disk('public')->delete($cleanedPath);
+    }
+
     public function index(): Response
     {
         return Inertia::render('Admin/Blog/Index', [
@@ -69,6 +80,9 @@ class BlogController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
+            // Delete old image
+            $this->deleteImage($blog->image);
+
             $path = $request->file('image')->store('blogs', 'public');
             $validated['image'] = Storage::url($path);
         }
@@ -80,6 +94,9 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog): RedirectResponse
     {
+        // Delete associated image
+        $this->deleteImage($blog->image);
+
         $blog->delete();
 
         return back()->with('success', 'Blog deleted.');
