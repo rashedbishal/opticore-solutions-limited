@@ -29,11 +29,11 @@ export default function ChatWidget() {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const teasers = [
-        "Need help with your project?",
-        "Want a quick quote?",
-        "Ask me about our services!",
-        "Let's build something amazing.",
-        "I can help you navigate.",
+        "Expert guidance for your next project.",
+        "Inquiry? I'm here to assist you.",
+        "Explore our precision 3D solutions.",
+        "Tailored support for your vision.",
+        "Let's architect something amazing.",
     ];
 
     const suggestedQuestions = [
@@ -133,14 +133,18 @@ export default function ChatWidget() {
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="absolute bottom-20 sm:bottom-24 right-4 sm:right-8 mb-4 w-48 p-3 rounded-2xl bg-zinc-950/90 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-none"
+                        className="absolute bottom-20 sm:bottom-24 right-4 sm:right-8 mb-4 w-52 p-4 rounded-2xl bg-zinc-950/90 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-none"
                     >
                         <div className="relative">
-                            <p className="text-xs font-medium text-zinc-100 leading-tight">
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <Bot size={10} className="text-violet-400" />
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Opticore Assistant</span>
+                            </div>
+                            <p className="text-xs font-medium text-white/90 leading-relaxed">
                                 {teaserText}
                             </p>
                             {/* Arrow */}
-                            <div className="absolute top-full right-6 w-2 h-2 bg-zinc-950 border-r border-b border-white/10 rotate-45 -translate-y-1" />
+                            <div className="absolute top-full right-6 w-2 h-2 bg-zinc-950/90 border-r border-b border-white/10 rotate-45 -translate-y-1" />
                         </div>
                     </motion.div>
                 )}
