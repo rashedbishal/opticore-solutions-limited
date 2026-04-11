@@ -93,6 +93,11 @@ export interface JobListing {
     description: string;
 }
 
+export interface ClientLogo {
+    name: string;
+    icon: string;
+}
+
 export interface ContactFormData {
     name: string;
     email: string;
