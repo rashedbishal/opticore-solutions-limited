@@ -28,7 +28,7 @@ const blurReveal: Variants = {
 function CapabilitiesTitle({ text }: { text: string }) {
     const words = text.split(' ');
     return (
-        <span className="inline-flex flex-wrap items-center leading-[1.1] py-4">
+        <span className="inline-flex flex-wrap items-center leading-[1.15] py-2">
             {words.map((word, wordIndex) => (
                 <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.22em]">
                     {word.split('').map((char, charIndex) => (
@@ -48,7 +48,7 @@ function CapabilitiesTitle({ text }: { text: string }) {
                                 damping: 20, 
                                 delay: (wordIndex * 5 + charIndex) * 0.02 
                             }}
-                            className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-2"
+                            className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-1.5"
                         >
                             {char}
                         </motion.span>
@@ -62,7 +62,7 @@ function CapabilitiesTitle({ text }: { text: string }) {
 /** Type B: Why Opticore - High-Tech Wipe with Premium Gradient */
 function WhyOpticoreTitle({ text }: { text: string }) {
     return (
-        <span className="block overflow-visible py-4 leading-[1.1]">
+        <span className="block overflow-visible py-2 leading-[1.15]">
             <motion.span
                 variants={{
                     hidden: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
@@ -72,7 +72,7 @@ function WhyOpticoreTitle({ text }: { text: string }) {
                     },
                 }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="inline-block bg-linear-to-r from-violet-400 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent"
+                className="inline-block bg-linear-to-r from-violet-400 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent py-1"
             >
                 {text}
             </motion.span>
@@ -83,9 +83,9 @@ function WhyOpticoreTitle({ text }: { text: string }) {
 /** Type C: Process - Staggered Word Slide-Up with Flow Gradient */
 function ProcessTitle({ text }: { text: string }) {
     return (
-        <span className="inline-flex flex-wrap overflow-visible py-4 leading-[1.1]">
+        <span className="inline-flex flex-wrap overflow-visible py-2 leading-[1.15]">
             {text.split(' ').map((word, i) => (
-                <span key={i} className="mr-[0.25em] overflow-hidden py-2">
+                <span key={i} className="mr-[0.25em] overflow-hidden py-1">
                     <motion.span
                         variants={{
                             hidden: { y: '120%', rotate: 8, opacity: 0 },
@@ -96,7 +96,7 @@ function ProcessTitle({ text }: { text: string }) {
                             delay: i * 0.08, 
                             ease: [0.22, 1, 0.36, 1] 
                         }}
-                        className="inline-block origin-bottom-left bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 bg-clip-text text-transparent"
+                        className="inline-block origin-bottom-left bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 bg-clip-text text-transparent py-1"
                     >
                         {word}
                     </motion.span>
@@ -109,7 +109,7 @@ function ProcessTitle({ text }: { text: string }) {
 /** Type D: Selected Work - Elastic Blur Stretch with Impact Gradient */
 function SelectedWorkTitle({ text }: { text: string }) {
     return (
-        <span className="block overflow-visible py-4 leading-[1.1]">
+        <span className="block overflow-visible py-2 leading-[1.15]">
             <motion.span
                 variants={{
                     hidden: { opacity: 0, filter: 'blur(20px)', scaleX: 0.6 },
@@ -124,7 +124,7 @@ function SelectedWorkTitle({ text }: { text: string }) {
                     type: 'spring', 
                     bounce: 0.5 
                 }}
-                className="inline-block origin-left bg-linear-to-r from-orange-400 via-rose-500 to-pink-600 bg-clip-text text-transparent"
+                className="inline-block origin-left bg-linear-to-r from-orange-400 via-rose-500 to-pink-600 bg-clip-text text-transparent py-1"
             >
                 {text}
             </motion.span>
@@ -166,7 +166,7 @@ function AnimatedTitle({
         el.innerHTML = words
             .map(
                 (word) =>
-                    `<span class="sh-word">${word
+                    `<span class="sh-word text-transparent">${word
                         .split('')
                         .map(
                             (char) =>
@@ -227,10 +227,11 @@ function AnimatedTitle({
                 .sh-word {
                     display: inline-block;
                     white-space: nowrap;
+                    padding: 0.2em 0;
                 }
                 [class$="-letter"] {
                     display: inline-block;
-                    line-height: 1em;
+                    line-height: 1.25em;
                 }
             `}</style>
             <span ref={titleRef}>{title}</span>
