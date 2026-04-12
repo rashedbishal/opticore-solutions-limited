@@ -18,17 +18,15 @@ export default function ImmersiveChatTrigger({
     className 
 }: ImmersiveChatTriggerProps) {
 
-    // Natural "Squash and Stretch" animation variants
-    const danceVariants = {
-        idle: { y: 0, scaleX: 1, scaleY: 1, rotate: 0 },
-        dancing: {
-            y: [0, 30, -420, 0],
-            scaleX: [1, 1.3, 0.75, 1.1, 1],
-            scaleY: [1, 0.7, 1.4, 0.85, 1],
+    // Subtle scaling pulse animation variants
+    const attentionVariants = {
+        idle: { scale: 1, y: 0, rotate: 0 },
+        attention: {
+            scale: [1, 1.18, 1],
             transition: {
-                duration: 1.5,
-                times: [0, 0.15, 0.4, 1],
-                ease: [0.22, 1, 0.36, 1],
+                duration: 1.2,
+                repeat: Infinity,
+                ease: "easeInOut",
             }
         }
     };
@@ -38,13 +36,13 @@ export default function ImmersiveChatTrigger({
             {/* AI Pulse Glow */}
             {!isOpen && (
                 <motion.div
-                    animate={isDancing ? { scale: [1, 1.4, 1.1], opacity: [0.3, 0.8, 0.4] } : {
+                    animate={isDancing ? { scale: [1, 1.4, 1], opacity: [0.4, 0.8, 0.4] } : {
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.6, 0.3],
                     }}
                     transition={{
                         duration: isDancing ? 1.2 : 4,
-                        repeat: isDancing ? 0 : Infinity,
+                        repeat: Infinity,
                         ease: "easeInOut",
                     }}
                     className="absolute inset-0 rounded-full bg-linear-to-tr from-violet-600 to-cyan-500 blur-xl"
@@ -53,8 +51,8 @@ export default function ImmersiveChatTrigger({
 
             <motion.button
                 onClick={onClick}
-                variants={danceVariants}
-                animate={isDancing && !isOpen ? "dancing" : "idle"}
+                variants={attentionVariants}
+                animate={isDancing && !isOpen ? "attention" : "idle"}
                 whileHover={{ scale: 1.1, rotate: isOpen ? 90 : 0 }}
                 whileTap={{ scale: 0.9 }}
                 className={cn(
