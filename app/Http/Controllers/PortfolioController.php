@@ -4,129 +4,85 @@ namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
-use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PortfolioController extends Controller
 {
     /**
-     * Show sub-categories for the given portfolio category.
-     * Route: GET /portfolio/{category}
+     * Show the portfolio landing page with category cards.
      */
-    public function showCategory(string $category): Response|HttpResponse
+    public function index(): Response
     {
-        /** @var array<string, array{label: string, description: string}> $configCategories */
-        $configCategories = config('portfolio.categories', []);
+        $configCategories = $this->portfolioCategories();
 
-        if (! array_key_exists($category, $configCategories)) {
-            abort(404);
-        }
+        $subCategoryCounts = PortfolioSubCategory::query()
+            ->selectRaw('category_slug, COUNT(*) as aggregate')
+            ->groupBy('category_slug')
+            ->pluck('aggregate', 'category_slug');
 
-        $categoryData = $configCategories[$category];
+        $portfolioCounts = Portfolio::query()
+            ->selectRaw('category, COUNT(*) as aggregate')
+            ->groupBy('category')
+            ->pluck('aggregate', 'category');
 
-        $subCategories = PortfolioSubCategory::where('category_slug', $category)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->withCount('portfolios')
-            ->get()
-            ->map(fn (PortfolioSubCategory $s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'slug' => $s->slug,
-                'description' => $s->description,
-                'portfolios_count' => $s->portfolios_count,
+        $categories = collect($configCategories)
+            ->map(fn (array $data, string $slug) => [
+                'slug' => $slug,
+                'label' => $data['label'],
+                'description' => $data['description'],
+                'sub_categories_count' => (int) ($subCategoryCounts[$slug] ?? 0),
+                'portfolios_count' => (int) ($portfolioCounts[$slug] ?? 0),
             ])
             ->values()
             ->toArray();
 
-        $allCategories = collect($configCategories)->map(fn (array $data, string $slug) => [
-            'slug' => $slug,
-            'label' => $data['label'],
-        ])->values()->toArray();
-
-        return Inertia::render('Portfolio/CategoryShow', [
-            'category' => [
-                'slug' => $category,
-                'label' => $categoryData['label'],
-                'description' => $categoryData['description'],
-            ],
-            'subCategories' => $subCategories,
-            'allCategories' => $allCategories,
+        return Inertia::render('Portfolio/Show', [
+            'categories' => $categories,
             'meta' => [
-                'title' => $categoryData['label'].' — Opticore Solutions Ltd.',
-                'description' => $categoryData['description'],
+                'title' => 'Portfolio — Opticore Solutions Ltd.',
+                'description' => 'Browse our creative categories and explore sub-category specific work across branding, digital, video, 3D, and web.',
             ],
         ]);
     }
 
     /**
-     * Show portfolios for the given sub-category.
-     * Route: GET /portfolio/{category}/{subcategory}
+     * Show a category page with sub-category tabs and portfolio items.
+     */
+    public function showCategory(string $category): Response
+    {
+        $configCategories = $this->portfolioCategories();
+        $categoryData = $configCategories[$category] ?? null;
+
+        abort_unless($categoryData !== null, 404);
+
+        $subCategories = $this->subCategoriesFor($category);
+        $selectedSubCategory = $subCategories[0] ?? null;
+
+        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory);
+    }
+
+    /**
+     * Show a category page with the requested sub-category selected.
      */
     public function showSubCategory(string $category, PortfolioSubCategory $subcategory): Response
     {
-        /** @var array<string, array{label: string, description: string}> $configCategories */
-        $configCategories = config('portfolio.categories', []);
+        $configCategories = $this->portfolioCategories();
+        $categoryData = $configCategories[$category] ?? null;
 
-        if (! array_key_exists($category, $configCategories) || $subcategory->category_slug !== $category) {
-            abort(404);
-        }
+        abort_unless($categoryData !== null && $subcategory->category_slug === $category, 404);
 
-        $categoryData = $configCategories[$category];
+        $subCategories = $this->subCategoriesFor($category);
+        $selectedSubCategory = collect($subCategories)
+            ->firstWhere('slug', $subcategory->slug);
 
-        $portfolios = $subcategory->portfolios()
-            ->latest()
-            ->get()
-            ->map(fn (Portfolio $p) => [
-                'id' => $p->id,
-                'title' => $p->title,
-                'media_path' => $p->media_path ? asset('storage/'.$p->media_path) : null,
-                'media_type' => $p->media_type ?? 'image',
-                'alt' => $p->alt ?? $p->title,
-            ])
-            ->values()
-            ->toArray();
+        abort_unless($selectedSubCategory !== null, 404);
 
-        $allCategories = collect($configCategories)->map(fn (array $data, string $slug) => [
-            'slug' => $slug,
-            'label' => $data['label'],
-        ])->values()->toArray();
-
-        $siblingSubCategories = PortfolioSubCategory::where('category_slug', $category)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get()
-            ->map(fn (PortfolioSubCategory $s) => [
-                'name' => $s->name,
-                'slug' => $s->slug,
-            ])
-            ->values()
-            ->toArray();
-
-        return Inertia::render('Portfolio/SubCategoryShow', [
-            'category' => [
-                'slug' => $category,
-                'label' => $categoryData['label'],
-            ],
-            'subCategory' => [
-                'slug' => $subcategory->slug,
-                'name' => $subcategory->name,
-                'description' => $subcategory->description,
-            ],
-            'portfolios' => $portfolios,
-            'allCategories' => $allCategories,
-            'siblingSubCategories' => $siblingSubCategories,
-            'meta' => [
-                'title' => $subcategory->name.' — '.$categoryData['label'].' — Opticore Solutions Ltd.',
-                'description' => $subcategory->description ?? $categoryData['description'],
-            ],
-        ]);
+        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory);
     }
 
     /**
      * Full-screen preview for a single portfolio item.
-     * Route: GET /portfolio-item/{portfolio}
      */
     public function preview(Portfolio $portfolio): Response
     {
@@ -145,6 +101,84 @@ class PortfolioController extends Controller
                     : null,
                 'media_type' => $portfolio->media_type ?? 'image',
                 'alt' => $portfolio->alt ?? $portfolio->title,
+            ],
+        ]);
+    }
+
+    /**
+     * @return array<string, array{label: string, description: string}>
+     */
+    private function portfolioCategories(): array
+    {
+        /** @var array<string, array{label: string, description: string}> $categories */
+        $categories = config('portfolio.categories', []);
+
+        return $categories;
+    }
+
+    /**
+     * @return array<int, array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}>
+     */
+    private function subCategoriesFor(string $category): array
+    {
+        return PortfolioSubCategory::query()
+            ->where('category_slug', $category)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->withCount('portfolios')
+            ->get()
+            ->map(fn (PortfolioSubCategory $subCategory) => [
+                'id' => $subCategory->id,
+                'name' => $subCategory->name,
+                'slug' => $subCategory->slug,
+                'description' => $subCategory->description,
+                'portfolios_count' => $subCategory->portfolios_count,
+            ])
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * @param  array{label: string, description: string}  $categoryData
+     * @param  array<int, array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}>  $subCategories
+     * @param  array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}|null  $selectedSubCategory
+     */
+    private function renderCategoryPage(
+        string $category,
+        array $categoryData,
+        array $subCategories,
+        ?array $selectedSubCategory,
+    ): Response {
+        $portfolios = collect();
+
+        if ($selectedSubCategory !== null) {
+            $portfolios = Portfolio::query()
+                ->where('sub_category_id', $selectedSubCategory['id'])
+                ->latest()
+                ->get()
+                ->map(fn (Portfolio $portfolio) => [
+                    'id' => $portfolio->id,
+                    'title' => $portfolio->title,
+                    'media_path' => $portfolio->media_path ? asset('storage/'.$portfolio->media_path) : null,
+                    'media_type' => $portfolio->media_type ?? 'image',
+                    'alt' => $portfolio->alt ?? $portfolio->title,
+                ]);
+        }
+
+        return Inertia::render('Portfolio/CategoryShow', [
+            'category' => [
+                'slug' => $category,
+                'label' => $categoryData['label'],
+                'description' => $categoryData['description'],
+            ],
+            'subCategories' => $subCategories,
+            'selectedSubCategory' => $selectedSubCategory,
+            'portfolios' => $portfolios->values()->toArray(),
+            'meta' => [
+                'title' => $selectedSubCategory !== null
+                    ? $selectedSubCategory['name'].' — '.$categoryData['label'].' — Opticore Solutions Ltd.'
+                    : $categoryData['label'].' — Opticore Solutions Ltd.',
+                'description' => $selectedSubCategory['description'] ?? $categoryData['description'],
             ],
         ]);
     }

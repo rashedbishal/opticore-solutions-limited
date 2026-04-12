@@ -1,8 +1,9 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { ArrowRight, FolderOpen } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
+import { portfolio, portfolioCategory, portfolioPreview, portfolioSubCategory } from '@/routes';
 
 interface Category {
     slug: string;
@@ -18,33 +19,45 @@ interface SubCategory {
     portfolios_count: number;
 }
 
+interface PortfolioItem {
+    id: number;
+    title: string;
+    media_path: string | null;
+    media_type: 'image' | 'video';
+    alt: string;
+}
+
 interface Props {
     category: Category;
     subCategories: SubCategory[];
-    allCategories: { slug: string; label: string }[];
+    selectedSubCategory: SubCategory | null;
+    portfolios: PortfolioItem[];
     meta: { title: string; description: string };
 }
 
-const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 32 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+const scaleIn: Variants = {
+    hidden: { opacity: 0, scale: 0.85 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+    },
 };
 
-const staggerGrid: Variants = {
+const staggerContainer: Variants = {
     hidden: {},
-    visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+    visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
-const cardVariant: Variants = {
-    hidden: { opacity: 0, y: 28, scale: 0.96 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-};
+const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
 
-export default function PortfolioCategoryShow({ category, subCategories, allCategories, meta }: Props) {
-    function handleCategoryClick(slug: string) {
-        router.visit(`/portfolio/${slug}`, { preserveScroll: false });
-    }
-
+export default function PortfolioCategoryShow({
+    category,
+    subCategories,
+    selectedSubCategory,
+    portfolios,
+    meta,
+}: Props) {
     return (
         <>
             <Head>
@@ -54,7 +67,6 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
 
-            {/* Hero */}
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
                     <motion.div
@@ -63,99 +75,161 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                         transition={{ duration: 0.7 }}
                         className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14"
                     >
-                        <span className="section-kicker">Portfolio</span>
+                        <nav className="mb-5 flex items-center gap-2 text-sm text-zinc-500" aria-label="Breadcrumb">
+                            <Link href={portfolio.url()} className="hover:text-zinc-300 transition-colors">
+                                Portfolio
+                            </Link>
+                            <span>/</span>
+                            <span className="text-zinc-300">{category.label}</span>
+                        </nav>
+
+                        <span className="section-kicker">Portfolio Category</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
                             <span className="gradient-text">{category.label}</span>
                         </h1>
-                        <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
+                        <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
                             {category.description}
                         </p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* Category tabs */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
-                        {allCategories.map((cat) => (
-                            <button
-                                key={cat.slug}
-                                type="button"
-                                aria-label={`View ${cat.label} portfolio`}
-                                className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
-                                    cat.slug === category.slug
-                                        ? 'border-violet-400/50 bg-violet-500/15 text-white'
-                                        : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
-                                }`}
-                                onClick={() => handleCategoryClick(cat.slug)}
-                            >
-                                {cat.label}
-                            </button>
-                        ))}
+                    <div className="mb-4">
+                        <Link
+                            href={portfolio.url()}
+                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/10"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            All categories
+                        </Link>
                     </div>
 
-                    {/* Sub-category grid */}
                     {subCategories.length > 0 ? (
-                        <motion.div
-                            key={category.slug}
-                            initial="hidden"
-                            animate="visible"
-                            variants={staggerGrid}
-                            className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-                        >
-                            {subCategories.map((sub) => (
-                                <motion.div key={sub.id} variants={cardVariant}>
-                                    <Link
-                                        href={`/portfolio/${category.slug}/${sub.slug}`}
-                                        className="group glass-panel flex h-full flex-col rounded-[1.5rem] p-7 transition-all hover:border-violet-400/40 hover:bg-violet-500/5"
-                                        aria-label={`Browse ${sub.name} portfolios`}
-                                    >
-                                        <div className="mb-4 flex items-center gap-3">
-                                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/15 text-violet-400 ring-1 ring-violet-400/20 transition-colors group-hover:bg-violet-500/25">
-                                                <FolderOpen className="h-5 w-5" />
-                                            </div>
-                                            <span className="text-xs font-semibold tracking-[0.2em] text-cyan-400 uppercase">
-                                                {sub.portfolios_count} {sub.portfolios_count === 1 ? 'work' : 'works'}
-                                            </span>
-                                        </div>
+                        <>
+                            <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
+                                {subCategories.map((subCategory) => {
+                                    const href = subCategory.slug === selectedSubCategory?.slug
+                                        ? portfolioCategory.url(category.slug)
+                                        : portfolioSubCategory.url([category.slug, subCategory.slug]);
 
-                                        <h2 className="text-xl font-bold text-white transition-colors group-hover:text-violet-200">
-                                            {sub.name}
-                                        </h2>
+                                    const isActive = subCategory.slug === selectedSubCategory?.slug;
 
-                                        {sub.description && (
-                                            <p className="mt-2 flex-1 text-sm leading-7 text-zinc-400">
-                                                {sub.description}
+                                    return (
+                                        <Link
+                                            key={subCategory.id}
+                                            href={href}
+                                            className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
+                                                isActive
+                                                    ? 'border-violet-400/50 bg-violet-500/15 text-white'
+                                                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
+                                            }`}
+                                        >
+                                            {subCategory.name}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+
+                            {selectedSubCategory && (
+                                <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
+                                    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                                                Selected sub-category
                                             </p>
+                                            <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl">
+                                                {selectedSubCategory.name}
+                                            </h2>
+                                            {selectedSubCategory.description && (
+                                                <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+                                                    {selectedSubCategory.description}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="shrink-0 text-sm font-medium text-zinc-400">
+                                            {selectedSubCategory.portfolios_count} {selectedSubCategory.portfolios_count === 1 ? 'work' : 'works'}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <motion.div
+                                key={selectedSubCategory?.slug ?? category.slug}
+                                initial="hidden"
+                                animate="visible"
+                                variants={staggerContainer}
+                                className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3"
+                            >
+                                {portfolios.map((item) => (
+                                    <motion.div
+                                        key={item.id}
+                                        variants={scaleIn}
+                                        className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem]"
+                                    >
+                                        {item.media_type === 'video' ? (
+                                            <video
+                                                src={item.media_path ?? undefined}
+                                                muted
+                                                preload="metadata"
+                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={item.media_path ?? PLACEHOLDER}
+                                                alt={item.alt}
+                                                loading="lazy"
+                                                onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
                                         )}
 
-                                        <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-violet-400 transition-colors group-hover:text-violet-300">
-                                            View Works
-                                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
+                                        <div className="absolute inset-x-0 bottom-0 p-5">
+                                            <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                                {selectedSubCategory?.name ?? category.label}
+                                            </p>
+                                            <div className="mt-2 flex items-center justify-between gap-4">
+                                                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                                <Link
+                                                    href={portfolioPreview.url(item.id)}
+                                                    className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
+                                                    aria-label={`View ${item.title} full screen`}
+                                                >
+                                                    {item.media_type === 'video'
+                                                        ? <><Film className="h-4 w-4" /> Watch</>
+                                                        : <><ArrowRight className="h-4 w-4" /> View</>
+                                                    }
+                                                </Link>
+                                            </div>
                                         </div>
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </motion.div>
+                                    </motion.div>
+                                ))}
+
+                                {portfolios.length === 0 && (
+                                    <div className="glass-panel flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
+                                        <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
+                                        <p className="text-lg font-medium text-zinc-300">No portfolio items in this sub-category yet.</p>
+                                        <p className="mt-2 text-sm text-zinc-500">
+                                            Add items from the CMS and they will appear here automatically.
+                                        </p>
+                                    </div>
+                                )}
+                            </motion.div>
+                        </>
                     ) : (
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeUp}
-                            className="mt-10 glass-panel rounded-[1.5rem] py-20 text-center"
-                        >
+                        <div className="glass-panel rounded-[1.5rem] py-20 text-center">
                             <FolderOpen className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
                             <p className="text-lg font-medium text-zinc-400">No sub-categories yet.</p>
                             <p className="mt-1 text-sm text-zinc-600">
                                 Sub-categories will appear here once added via the CMS.
                             </p>
-                        </motion.div>
+                        </div>
                     )}
                 </div>
             </section>
 
-            {/* CTA */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">

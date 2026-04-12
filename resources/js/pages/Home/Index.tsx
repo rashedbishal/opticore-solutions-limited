@@ -35,7 +35,7 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
-import { portfolioCategory } from '@/routes';
+import { portfolio } from '@/routes';
 import type { PortfolioItem } from '@/types';
 
 const easing = [0.22, 1, 0.36, 1] as const;
@@ -439,7 +439,7 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                             Start a Project
                         </MagneticButton>
                         <Link
-                            href={portfolioCategory.url('graphic-design')}
+                            href={portfolio.url()}
                             className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                         >
                             See Our Work

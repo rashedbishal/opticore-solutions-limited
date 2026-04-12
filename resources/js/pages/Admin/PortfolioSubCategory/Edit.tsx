@@ -29,7 +29,7 @@ export default function PortfolioSubCategoryEdit({ subCategory, categories }: Pr
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.portfolioSubCategories.update.url(subCategory.id));
+        post(adminRoutes.portfolioSubCategories.update.url(subCategory.slug));
     };
 
     return (

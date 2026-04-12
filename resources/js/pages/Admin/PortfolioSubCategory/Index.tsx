@@ -22,9 +22,9 @@ interface Props {
 export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
     const { delete: destroy } = useForm();
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (slug: string) => {
         if (confirm('Are you sure you want to delete this sub-category? This will only work if no portfolios are assigned to it.')) {
-            destroy(adminRoutes.portfolioSubCategories.destroy.url(id));
+            destroy(adminRoutes.portfolioSubCategories.destroy.url(slug));
         }
     };
 
@@ -68,13 +68,13 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                     <Link
-                                        href={adminRoutes.portfolioSubCategories.edit.url(sub.id)}
+                                        href={adminRoutes.portfolioSubCategories.edit.url(sub.slug)}
                                         className="text-blue-400 hover:text-blue-300 mr-4 inline-flex items-center gap-1.5"
                                     >
                                         <Edit className="w-4 h-4" /> Edit
                                     </Link>
                                     <button
-                                        onClick={() => handleDelete(sub.id)}
+                                        onClick={() => handleDelete(sub.slug)}
                                         className="text-red-400 hover:text-red-300 inline-flex items-center gap-1.5 disabled:opacity-50"
                                         disabled={sub.portfolios_count > 0}
                                         title={sub.portfolios_count > 0 ? "Cannot delete while portfolios are assigned" : ""}

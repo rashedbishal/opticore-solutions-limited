@@ -29,6 +29,8 @@ Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('p
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
 // Portfolio public routes
+Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
+
 Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
     ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
     ->name('portfolioCategory');
