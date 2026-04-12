@@ -72,6 +72,11 @@ export interface PortfolioCategory {
     items: PortfolioItem[];
 }
 
+export interface SectionHeading {
+    eyebrow: string;
+    title: string;
+}
+
 export interface ServicePageContent {
     name: string;
     shortDescription: string;
@@ -79,6 +84,12 @@ export interface ServicePageContent {
     href: string;
     icon: string;
     subServices: HighlightItem[];
+    headings?: {
+        capabilities?: SectionHeading;
+        whyOpticore?: SectionHeading;
+        process?: SectionHeading;
+        selectedWork?: SectionHeading;
+    };
     reasons: HighlightItem[];
     process: ProcessStep[];
     portfolio: PortfolioItem[];

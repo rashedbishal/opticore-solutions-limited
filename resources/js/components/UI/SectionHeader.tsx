@@ -9,6 +9,7 @@ interface SectionHeaderProps {
     description?: string;
     align?: 'left' | 'center';
     variant?: 'default' | 'scanned';
+    animationType?: 'capabilities' | 'why-opticore' | 'process' | 'selected-work';
 }
 
 const blurReveal: Variants = {
@@ -21,10 +22,126 @@ const blurReveal: Variants = {
     },
 };
 
+// --- UNIQUE ANIMATION COMPONENTS ---
+
+/** Type A: Capabilities - Character Bounce-In with Tech Gradient */
+function CapabilitiesTitle({ text }: { text: string }) {
+    const words = text.split(' ');
+    return (
+        <span className="inline-flex flex-wrap items-center leading-[1.1] py-4">
+            {words.map((word, wordIndex) => (
+                <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.22em]">
+                    {word.split('').map((char, charIndex) => (
+                        <motion.span
+                            key={charIndex}
+                            variants={{
+                                hidden: { scale: 0, opacity: 0, y: 20 },
+                                visible: { 
+                                    scale: [0, 1.25, 1], 
+                                    opacity: 1, 
+                                    y: 0 
+                                },
+                            }}
+                            transition={{ 
+                                type: 'spring', 
+                                stiffness: 260, 
+                                damping: 20, 
+                                delay: (wordIndex * 5 + charIndex) * 0.02 
+                            }}
+                            className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-2"
+                        >
+                            {char}
+                        </motion.span>
+                    ))}
+                </span>
+            ))}
+        </span>
+    );
+}
+
+/** Type B: Why Opticore - High-Tech Wipe with Premium Gradient */
+function WhyOpticoreTitle({ text }: { text: string }) {
+    return (
+        <span className="block overflow-visible py-4 leading-[1.1]">
+            <motion.span
+                variants={{
+                    hidden: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
+                    visible: { 
+                        clipPath: 'inset(0 0% 0 0)', 
+                        opacity: 1 
+                    },
+                }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-block bg-linear-to-r from-violet-400 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent"
+            >
+                {text}
+            </motion.span>
+        </span>
+    );
+}
+
+/** Type C: Process - Staggered Word Slide-Up with Flow Gradient */
+function ProcessTitle({ text }: { text: string }) {
+    return (
+        <span className="inline-flex flex-wrap overflow-visible py-4 leading-[1.1]">
+            {text.split(' ').map((word, i) => (
+                <span key={i} className="mr-[0.25em] overflow-hidden py-2">
+                    <motion.span
+                        variants={{
+                            hidden: { y: '120%', rotate: 8, opacity: 0 },
+                            visible: { y: 0, rotate: 0, opacity: 1 },
+                        }}
+                        transition={{ 
+                            duration: 0.8, 
+                            delay: i * 0.08, 
+                            ease: [0.22, 1, 0.36, 1] 
+                        }}
+                        className="inline-block origin-bottom-left bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 bg-clip-text text-transparent"
+                    >
+                        {word}
+                    </motion.span>
+                </span>
+            ))}
+        </span>
+    );
+}
+
+/** Type D: Selected Work - Elastic Blur Stretch with Impact Gradient */
+function SelectedWorkTitle({ text }: { text: string }) {
+    return (
+        <span className="block overflow-visible py-4 leading-[1.1]">
+            <motion.span
+                variants={{
+                    hidden: { opacity: 0, filter: 'blur(20px)', scaleX: 0.6 },
+                    visible: { 
+                        opacity: 1, 
+                        filter: 'blur(0px)', 
+                        scaleX: 1 
+                    },
+                }}
+                transition={{ 
+                    duration: 1.4, 
+                    type: 'spring', 
+                    bounce: 0.5 
+                }}
+                className="inline-block origin-left bg-linear-to-r from-orange-400 via-rose-500 to-pink-600 bg-clip-text text-transparent"
+            >
+                {text}
+            </motion.span>
+        </span>
+    );
+}
+
 // Unique class per mount to avoid selector collisions with other SectionHeaders
 let instanceCounter = 0;
 
-function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) {
+function AnimatedTitle({
+    title,
+    titles,
+}: {
+    title: string;
+    titles?: string[];
+}) {
     const titleRef = useRef<HTMLSpanElement>(null);
     const classRef = useRef(`sh-title-${++instanceCounter}`);
     const timelineRef = useRef<any>(null);
@@ -67,7 +184,7 @@ function AnimatedTitle({ title, titles }: { title: string; titles?: string[] }) 
             // If it's a single title, we use native animejs looping for maximum stability
             timelineRef.current = (anime as any)
                 .timeline({
-                    loop: !isPool,
+                    loop: isPool,
                     complete: () => {
                         if (isPool) {
                             setIndex((prev) => (prev + 1) % titleList.length);
@@ -130,7 +247,31 @@ export default function SectionHeader({
     description,
     align = 'left',
     variant = 'default',
+    animationType,
 }: SectionHeaderProps) {
+    const renderTitle = () => {
+        if (variant === 'scanned') {
+            return <ScannedTitle text={title} />;
+        }
+
+        switch (animationType) {
+            case 'capabilities':
+                return <CapabilitiesTitle text={title} />;
+            case 'why-opticore':
+                return <WhyOpticoreTitle text={title} />;
+            case 'process':
+                return <ProcessTitle text={title} />;
+            case 'selected-work':
+                return <SelectedWorkTitle text={title} />;
+            default:
+                return (
+                    <span className="text-white">
+                        <AnimatedTitle title={title} titles={titles} />
+                    </span>
+                );
+        }
+    };
+
     return (
         <motion.div
             initial="hidden"
@@ -138,16 +279,14 @@ export default function SectionHeader({
             viewport={{ once: true, margin: '-80px' }}
             variants={blurReveal}
             className={
-                align === 'center' ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl'
+                align === 'center'
+                    ? 'mx-auto max-w-3xl text-center'
+                    : 'max-w-3xl'
             }
         >
             {eyebrow ? <span className="section-kicker">{eyebrow}</span> : null}
-            <h2 className="text-balance text-3xl font-extrabold text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                {variant === 'scanned' ? (
-                    <ScannedTitle text={title} />
-                ) : (
-                    <AnimatedTitle title={title} titles={titles} />
-                )}
+            <h2 className="text-balance text-3xl font-extrabold sm:text-4xl md:text-5xl lg:text-6xl">
+                {renderTitle()}
             </h2>
             {description ? (
                 <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
