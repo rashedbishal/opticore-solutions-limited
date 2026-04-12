@@ -25,16 +25,22 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
     return (
         <div className="max-w-2xl">
-            <h1 className="text-2xl font-bold text-white mb-6">Create Sub-Category</h1>
+            <h1 className="mb-6 text-2xl font-bold text-white">
+                Create Sub-Category
+            </h1>
             <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
                 <form onSubmit={submit} className="space-y-6">
                     {/* Category */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">Parent Category</label>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Parent Category
+                        </label>
                         <select
                             value={data.category_slug}
-                            onChange={(e) => setData('category_slug', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
+                            onChange={(e) =>
+                                setData('category_slug', e.target.value)
+                            }
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
                             required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
@@ -43,63 +49,99 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 </option>
                             ))}
                         </select>
-                        {errors.category_slug && <p className="mt-1 text-sm text-red-400">{errors.category_slug}</p>}
+                        {errors.category_slug && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.category_slug}
+                            </p>
+                        )}
                     </div>
 
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">Name</label>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Name
+                        </label>
                         <input
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="e.g. Logo & Identity"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
                             required
                         />
-                        {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
+                        {errors.name && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.name}
+                            </p>
+                        )}
                     </div>
 
                     {/* Slug */}
                     <div>
                         <label className="block text-sm font-medium text-zinc-300">
-                            Slug <span className="text-zinc-500 font-normal">(Leave empty to auto-generate)</span>
+                            Slug{' '}
+                            <span className="font-normal text-zinc-500">
+                                (Leave empty to auto-generate)
+                            </span>
                         </label>
                         <input
                             type="text"
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
                             placeholder="e.g. logo-identity"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm font-mono text-xs"
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 font-mono text-xs text-white focus:border-violet-500 focus:outline-none sm:text-sm"
                         />
-                        {errors.slug && <p className="mt-1 text-sm text-red-400">{errors.slug}</p>}
+                        {errors.slug && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.slug}
+                            </p>
+                        )}
                     </div>
 
                     {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">Description</label>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Description
+                        </label>
                         <textarea
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             rows={3}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
                         />
-                        {errors.description && <p className="mt-1 text-sm text-red-400">{errors.description}</p>}
+                        {errors.description && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.description}
+                            </p>
+                        )}
                     </div>
 
                     {/* Sort Order */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">Sort Order</label>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Sort Order
+                        </label>
                         <input
                             type="number"
                             value={data.sort_order}
-                            onChange={(e) => setData('sort_order', Number.parseInt(e.target.value) || 0)}
-                            className="mt-1 block w-64 rounded-md border border-white/10 bg-zinc-800 text-white px-3 py-2 focus:border-violet-500 focus:outline-none sm:text-sm"
+                            onChange={(e) =>
+                                setData(
+                                    'sort_order',
+                                    Number.parseInt(e.target.value) || 0,
+                                )
+                            }
+                            className="mt-1 block w-64 rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
                         />
-                        {errors.sort_order && <p className="mt-1 text-sm text-red-400">{errors.sort_order}</p>}
+                        {errors.sort_order && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.sort_order}
+                            </p>
+                        )}
                     </div>
 
-                    <div className="flex gap-4 pt-4 border-t border-white/10">
+                    <div className="flex gap-4 border-t border-white/10 pt-4">
                         <button
                             disabled={processing}
                             type="submit"
@@ -120,4 +162,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
     );
 }
 
-PortfolioSubCategoryCreate.layout = (page: ReactNode) => <AdminLayout title="Add Sub-Category">{page}</AdminLayout>;
+PortfolioSubCategoryCreate.layout = (page: ReactNode) => (
+    <AdminLayout title="Add Sub-Category">{page}</AdminLayout>
+);

@@ -15,8 +15,6 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
         lenisRef.current = lenis;
 
-
-
         function raf(time: number) {
             lenis.raf(time);
             requestAnimationFrame(raf);

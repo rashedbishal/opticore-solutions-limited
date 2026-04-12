@@ -38,18 +38,23 @@ const staggerContainer: Variants = {
 
 const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
 
-export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCategories?: PortfolioCategory[] }) {
+export default function PortfolioShow({
+    dbPortfolioCategories,
+}: {
+    dbPortfolioCategories?: PortfolioCategory[];
+}) {
     const portfolioCategories = dbPortfolioCategories || [];
 
     const { props } = usePage<SharedPageProps & { portfolioType?: string }>();
     const [activeTab, setActiveTab] = useState(
-        props.portfolioType ?? portfolioCategories[0]?.type
+        props.portfolioType ?? portfolioCategories[0]?.type,
     );
 
     const activeCategory = useMemo(
         () =>
-            portfolioCategories.find((category) => category.type === activeTab) ??
-            portfolioCategories[0],
+            portfolioCategories.find(
+                (category) => category.type === activeTab,
+            ) ?? portfolioCategories[0],
         [activeTab, portfolioCategories],
     );
 
@@ -60,8 +65,14 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
             <Head>
                 <title>{`${activeCategory.title} — Opticore Solutions Ltd.`}</title>
                 <meta name="description" content={activeCategory.description} />
-                <meta property="og:title" content={`${activeCategory.title} — Opticore Solutions Ltd.`} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    property="og:title"
+                    content={`${activeCategory.title} — Opticore Solutions Ltd.`}
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             {/* Hero section */}
@@ -75,7 +86,9 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                     >
                         <span className="section-kicker">Portfolio</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
-                            <span className="gradient-text">{activeCategory.title}</span>
+                            <span className="gradient-text">
+                                {activeCategory.title}
+                            </span>
                         </h1>
                         <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
                             {activeCategory.description}
@@ -132,7 +145,9 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                                         src={item.media_path ?? PLACEHOLDER}
                                         alt={item.alt}
                                         loading="lazy"
-                                        onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                        onError={(e) => {
+                                            e.currentTarget.src = PLACEHOLDER;
+                                        }}
                                         className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                 )}
@@ -144,17 +159,26 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                                         {item.category.replace(/-/g, ' ')}
                                     </p>
                                     <div className="mt-2 flex items-center justify-between gap-4">
-                                        <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                        <h3 className="text-lg font-semibold text-white">
+                                            {item.title}
+                                        </h3>
                                         <Link
                                             href={`/portfolio-item/${item.id}`}
                                             onClick={(e) => e.stopPropagation()}
                                             className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
                                             aria-label={`View ${item.title} full screen`}
                                         >
-                                            {item.media_type === 'video'
-                                                ? <><Film className="h-4 w-4" /> Watch</>
-                                                : <><ArrowRight className="h-4 w-4" /> View</>
-                                            }
+                                            {item.media_type === 'video' ? (
+                                                <>
+                                                    <Film className="h-4 w-4" />{' '}
+                                                    Watch
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ArrowRight className="h-4 w-4" />{' '}
+                                                    View
+                                                </>
+                                            )}
                                         </Link>
                                     </div>
                                 </div>
@@ -178,10 +202,15 @@ export default function PortfolioShow({ dbPortfolioCategories }: { dbPortfolioCa
                             Want work like this for your brand?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            We create premium identities, campaign systems, and presentation-ready visual assets designed to move perception and performance.
+                            We create premium identities, campaign systems, and
+                            presentation-ready visual assets designed to move
+                            perception and performance.
                         </p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                            <MagneticButton href="/request-appointment" ariaLabel="Request a project appointment">
+                            <MagneticButton
+                                href="/request-appointment"
+                                ariaLabel="Request a project appointment"
+                            >
                                 Start a Project
                             </MagneticButton>
                             <Link

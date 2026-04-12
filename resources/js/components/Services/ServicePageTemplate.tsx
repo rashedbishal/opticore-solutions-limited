@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { motion  } from 'framer-motion';
-import type {Variants} from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
     ArrowRight,
     Check,
@@ -23,7 +23,7 @@ import {
     ScanLine,
     Cpu,
     Sparkles,
-    LucideIcon
+    LucideIcon,
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
@@ -91,7 +91,9 @@ interface ServicePageTemplateProps {
     service: ServicePageContent;
 }
 
-export default function ServicePageTemplate({ service }: ServicePageTemplateProps) {
+export default function ServicePageTemplate({
+    service,
+}: ServicePageTemplateProps) {
     const ServiceIcon = iconMap[service.icon] || Sparkles;
 
     return (
@@ -99,8 +101,14 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
             <Head>
                 <title>{`${service.name} — Opticore Solutions Ltd.`}</title>
                 <meta name="description" content={service.shortDescription} />
-                <meta property="og:title" content={`${service.name} — Opticore Solutions Ltd.`} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    property="og:title"
+                    content={`${service.name} — Opticore Solutions Ltd.`}
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
@@ -112,14 +120,15 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                         className="glass-panel hero-noise relative overflow-hidden rounded-[2rem] p-8 sm:p-10 lg:p-14"
                     >
                         <div className="relative z-10 max-w-3xl overflow-visible">
-                            <span className="section-kicker">Premium Service</span>
-                            <h1 className="text-balance pb-1 text-4xl font-extrabold leading-[1.2] text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                                <GradientText
-                                    text={service.name}
-                                    neon={true}
-                                />
+                            <span className="section-kicker">
+                                Premium Service
+                            </span>
+                            <h1 className="pb-1 text-4xl leading-[1.2] font-extrabold text-balance text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                                <GradientText text={service.name} neon={true} />
                             </h1>
-                            <p className="mt-6 text-base leading-8 text-zinc-300 sm:text-lg">{service.longDescription}</p>
+                            <p className="mt-6 text-base leading-8 text-zinc-300 sm:text-lg">
+                                {service.longDescription}
+                            </p>
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                                 <MagneticButton
                                     href="/request-appointment"
@@ -153,13 +162,29 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
-                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }}
+                        variants={{
+                            hidden: {},
+                            visible: {
+                                transition: {
+                                    staggerChildren: 0.12,
+                                    delayChildren: 0.1,
+                                },
+                            },
+                        }}
                         className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8"
                     >
                         {service.subServices.map((item) => (
-                            <motion.article key={item.title} variants={scaleIn} className="glass-panel rounded-[2rem] p-6">
-                                <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">{item.description}</p>
+                            <motion.article
+                                key={item.title}
+                                variants={scaleIn}
+                                className="glass-panel rounded-[2rem] p-6"
+                            >
+                                <h3 className="text-xl font-semibold text-white">
+                                    {item.title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                    {item.description}
+                                </p>
                             </motion.article>
                         ))}
                     </motion.div>
@@ -184,8 +209,12 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                                 className="glass-panel rounded-[2rem] p-6"
                             >
                                 <Check className="h-10 w-10 text-cyan-300" />
-                                <h3 className="mt-6 text-xl font-semibold text-white">{reason.title}</h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">{reason.description}</p>
+                                <h3 className="mt-6 text-xl font-semibold text-white">
+                                    {reason.title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                    {reason.description}
+                                </p>
                             </motion.article>
                         ))}
                     </div>
@@ -213,8 +242,12 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                                     <span className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
                                         0{index + 1}
                                     </span>
-                                    <h3 className="mt-4 text-xl font-semibold text-white">{step.title}</h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">{step.description}</p>
+                                    <h3 className="mt-4 text-xl font-semibold text-white">
+                                        {step.title}
+                                    </h3>
+                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                        {step.description}
+                                    </p>
                                 </motion.div>
                             ))}
                         </div>
@@ -232,8 +265,12 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                                     <span className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
                                         0{index + 1}
                                     </span>
-                                    <h3 className="mt-3 text-xl font-semibold text-white">{step.title}</h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">{step.description}</p>
+                                    <h3 className="mt-3 text-xl font-semibold text-white">
+                                        {step.title}
+                                    </h3>
+                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                        {step.description}
+                                    </p>
                                 </motion.div>
                             ))}
                         </div>
@@ -263,14 +300,21 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                                     alt={item.alt}
                                     loading="lazy"
                                     onError={(e) => {
-                                        e.currentTarget.src = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
+                                        e.currentTarget.src =
+                                            'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
                                     }}
                                     className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                                 <div className="p-5">
-                                    <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">{item.category}</p>
-                                    <h3 className="mt-2 text-xl font-semibold text-white">{item.title}</h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">{item.description}</p>
+                                    <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                        {item.category}
+                                    </p>
+                                    <h3 className="mt-2 text-xl font-semibold text-white">
+                                        {item.title}
+                                    </h3>
+                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                        {item.description}
+                                    </p>
                                 </div>
                             </motion.article>
                         ))}
@@ -282,18 +326,21 @@ export default function ServicePageTemplate({ service }: ServicePageTemplateProp
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-8 text-center sm:p-10 lg:p-14">
                         <p className="section-kicker">Next Step</p>
-                        <h2 className="text-balance text-3xl font-extrabold text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
                             Ready to Build Something Amazing?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            Bring us your brief, rough idea, launch target, or full roadmap. We will turn it into a premium deliverable with speed and intent.
+                            Bring us your brief, rough idea, launch target, or
+                            full roadmap. We will turn it into a premium
+                            deliverable with speed and intent.
                         </p>
                         <div className="mt-8 flex justify-center">
                             <MagneticButton
                                 href="/request-appointment"
                                 ariaLabel="Request an appointment"
                             >
-                                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
+                                Start Your Project{' '}
+                                <ArrowRight className="ml-2 h-4 w-4" />
                             </MagneticButton>
                         </div>
                     </div>

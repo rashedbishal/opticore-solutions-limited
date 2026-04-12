@@ -27,7 +27,11 @@ interface Props {
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 32 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    },
 };
 
 const staggerGrid: Variants = {
@@ -37,10 +41,20 @@ const staggerGrid: Variants = {
 
 const cardVariant: Variants = {
     hidden: { opacity: 0, y: 28, scale: 0.96 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    },
 };
 
-export default function PortfolioCategoryShow({ category, subCategories, allCategories, meta }: Props) {
+export default function PortfolioCategoryShow({
+    category,
+    subCategories,
+    allCategories,
+    meta,
+}: Props) {
     function handleCategoryClick(slug: string) {
         router.visit(`/portfolio/${slug}`, { preserveScroll: false });
     }
@@ -51,7 +65,10 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                 <title>{meta.title}</title>
                 <meta name="description" content={meta.description} />
                 <meta property="og:title" content={meta.title} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             {/* Hero */}
@@ -65,7 +82,9 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                     >
                         <span className="section-kicker">Portfolio</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
-                            <span className="gradient-text">{category.label}</span>
+                            <span className="gradient-text">
+                                {category.label}
+                            </span>
                         </h1>
                         <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
                             {category.description}
@@ -116,7 +135,10 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                                                 <FolderOpen className="h-5 w-5" />
                                             </div>
                                             <span className="text-xs font-semibold tracking-[0.2em] text-cyan-400 uppercase">
-                                                {sub.portfolios_count} {sub.portfolios_count === 1 ? 'work' : 'works'}
+                                                {sub.portfolios_count}{' '}
+                                                {sub.portfolios_count === 1
+                                                    ? 'work'
+                                                    : 'works'}
                                             </span>
                                         </div>
 
@@ -143,12 +165,15 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                             initial="hidden"
                             animate="visible"
                             variants={fadeUp}
-                            className="mt-10 glass-panel rounded-[1.5rem] py-20 text-center"
+                            className="glass-panel mt-10 rounded-[1.5rem] py-20 text-center"
                         >
                             <FolderOpen className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-                            <p className="text-lg font-medium text-zinc-400">No sub-categories yet.</p>
+                            <p className="text-lg font-medium text-zinc-400">
+                                No sub-categories yet.
+                            </p>
                             <p className="mt-1 text-sm text-zinc-600">
-                                Sub-categories will appear here once added via the CMS.
+                                Sub-categories will appear here once added via
+                                the CMS.
                             </p>
                         </motion.div>
                     )}
@@ -163,10 +188,15 @@ export default function PortfolioCategoryShow({ category, subCategories, allCate
                             Want work like this for your brand?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            We create premium identities, campaign systems, and presentation-ready visual assets designed to move perception and performance.
+                            We create premium identities, campaign systems, and
+                            presentation-ready visual assets designed to move
+                            perception and performance.
                         </p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                            <MagneticButton href="/request-appointment" ariaLabel="Request a project appointment">
+                            <MagneticButton
+                                href="/request-appointment"
+                                ariaLabel="Request a project appointment"
+                            >
                                 Start a Project
                             </MagneticButton>
                             <Link

@@ -50,7 +50,9 @@ export default function PortfolioSubCategoryShow({
     }
 
     function handleSubCategoryClick(slug: string) {
-        router.visit(`/portfolio/${category.slug}/${slug}`, { preserveScroll: false });
+        router.visit(`/portfolio/${category.slug}/${slug}`, {
+            preserveScroll: false,
+        });
     }
 
     return (
@@ -59,7 +61,10 @@ export default function PortfolioSubCategoryShow({
                 <title>{meta.title}</title>
                 <meta name="description" content={meta.description} />
                 <meta property="og:title" content={meta.title} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             {/* Hero */}
@@ -72,24 +77,34 @@ export default function PortfolioSubCategoryShow({
                         className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14"
                     >
                         {/* Breadcrumb */}
-                        <nav className="mb-5 flex items-center gap-2 text-sm text-zinc-500" aria-label="Breadcrumb">
-                            <Link href="/portfolio/graphic-design" className="hover:text-zinc-300 transition-colors">
+                        <nav
+                            className="mb-5 flex items-center gap-2 text-sm text-zinc-500"
+                            aria-label="Breadcrumb"
+                        >
+                            <Link
+                                href="/portfolio/graphic-design"
+                                className="transition-colors hover:text-zinc-300"
+                            >
                                 Portfolio
                             </Link>
                             <span>/</span>
                             <Link
                                 href={`/portfolio/${category.slug}`}
-                                className="hover:text-zinc-300 transition-colors"
+                                className="transition-colors hover:text-zinc-300"
                             >
                                 {category.label}
                             </Link>
                             <span>/</span>
-                            <span className="text-zinc-300">{subCategory.name}</span>
+                            <span className="text-zinc-300">
+                                {subCategory.name}
+                            </span>
                         </nav>
 
                         <span className="section-kicker">{category.label}</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
-                            <span className="gradient-text">{subCategory.name}</span>
+                            <span className="gradient-text">
+                                {subCategory.name}
+                            </span>
                         </h1>
                         {subCategory.description && (
                             <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
@@ -129,7 +144,7 @@ export default function PortfolioSubCategoryShow({
                                 className="touch-target shrink-0 rounded-full border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-500 transition-all hover:text-zinc-300"
                                 aria-label={`Back to ${category.label} sub-categories`}
                             >
-                                <ArrowLeft className="inline h-3 w-3 mr-1" />
+                                <ArrowLeft className="mr-1 inline h-3 w-3" />
                                 All
                             </Link>
                             {siblingSubCategories.map((s) => (
@@ -142,7 +157,9 @@ export default function PortfolioSubCategoryShow({
                                             ? 'border-cyan-400/40 bg-cyan-500/10 text-cyan-300'
                                             : 'border-white/5 bg-white/5 text-zinc-500 hover:text-zinc-300'
                                     }`}
-                                    onClick={() => handleSubCategoryClick(s.slug)}
+                                    onClick={() =>
+                                        handleSubCategoryClick(s.slug)
+                                    }
                                 >
                                     {s.name}
                                 </button>
@@ -177,7 +194,9 @@ export default function PortfolioSubCategoryShow({
                                         src={item.media_path ?? PLACEHOLDER}
                                         alt={item.alt}
                                         loading="lazy"
-                                        onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                        onError={(e) => {
+                                            e.currentTarget.src = PLACEHOLDER;
+                                        }}
                                         className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                 )}
@@ -189,17 +208,26 @@ export default function PortfolioSubCategoryShow({
                                         {subCategory.name}
                                     </p>
                                     <div className="mt-2 flex items-center justify-between gap-4">
-                                        <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                        <h3 className="text-lg font-semibold text-white">
+                                            {item.title}
+                                        </h3>
                                         <Link
                                             href={`/portfolio-item/${item.id}`}
                                             onClick={(e) => e.stopPropagation()}
                                             className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
                                             aria-label={`View ${item.title} full screen`}
                                         >
-                                            {item.media_type === 'video'
-                                                ? <><Film className="h-4 w-4" /> Watch</>
-                                                : <><ArrowRight className="h-4 w-4" /> View</>
-                                            }
+                                            {item.media_type === 'video' ? (
+                                                <>
+                                                    <Film className="h-4 w-4" />{' '}
+                                                    Watch
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ArrowRight className="h-4 w-4" />{' '}
+                                                    View
+                                                </>
+                                            )}
                                         </Link>
                                     </div>
                                 </div>
@@ -223,10 +251,15 @@ export default function PortfolioSubCategoryShow({
                             Want work like this for your brand?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            We create premium identities, campaign systems, and presentation-ready visual assets designed to move perception and performance.
+                            We create premium identities, campaign systems, and
+                            presentation-ready visual assets designed to move
+                            perception and performance.
                         </p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                            <MagneticButton href="/request-appointment" ariaLabel="Request a project appointment">
+                            <MagneticButton
+                                href="/request-appointment"
+                                ariaLabel="Request a project appointment"
+                            >
                                 Start a Project
                             </MagneticButton>
                             <Link

@@ -17,7 +17,7 @@ export default function Login() {
     return (
         <>
             <Head title="Log In" />
-            
+
             <div className="flex min-h-screen items-center justify-center bg-black p-4 text-white">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -50,11 +50,13 @@ export default function Login() {
                                     type="email"
                                     name="email"
                                     value={data.email}
-                                    className="block w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                    className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                                     placeholder="admin@opticore.com"
                                     autoComplete="email"
                                     autoFocus
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                 />
                                 {errors.email && (
                                     <p className="mt-2 text-sm text-red-400">
@@ -77,9 +79,11 @@ export default function Login() {
                                     type="password"
                                     name="password"
                                     value={data.password}
-                                    className="block w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                    className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                                     autoComplete="current-password"
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                 />
                                 {errors.password && (
                                     <p className="mt-2 text-sm text-red-400">

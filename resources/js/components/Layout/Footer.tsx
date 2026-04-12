@@ -148,7 +148,7 @@ export default function Footer() {
                                     <Mail className="h-4 w-4 text-violet-300" />
                                     <a
                                         href="mailto:osl@opticoresolutionsltd.com"
-                                        className="hover:text-white transition-colors"
+                                        className="transition-colors hover:text-white"
                                     >
                                         osl@opticoresolutionsltd.com
                                     </a>
@@ -165,7 +165,7 @@ export default function Footer() {
 
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-start gap-3">
-                                    <MapPin className="mt-1 h-4 w-4 text-violet-300 shrink-0" />
+                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-300" />
                                     <div>
                                         <p className="font-bold text-zinc-200">
                                             USA Office
@@ -181,7 +181,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/Ghn2hcVHHid6FQwv6"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold text-cyan-400 uppercase tracking-widest hover:text-cyan-300 transition-colors"
+                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-400 uppercase transition-colors hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>
@@ -189,7 +189,7 @@ export default function Footer() {
                                 </div>
 
                                 <div className="flex items-start gap-3 pt-2">
-                                    <MapPin className="mt-1 h-4 w-4 text-violet-300 shrink-0" />
+                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-300" />
                                     <div>
                                         <p className="font-bold text-zinc-200">
                                             BD Office
@@ -203,7 +203,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/7zvqD4Lemwst7bEQ8"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold text-cyan-400 uppercase tracking-widest hover:text-cyan-300 transition-colors"
+                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-400 uppercase transition-colors hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>
@@ -232,7 +232,10 @@ export default function Footer() {
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-sm text-zinc-500 sm:flex-row sm:text-left">
                     <p>© 2026 Opticore Solutions Ltd. All rights reserved.</p>
                     <CursorSwitcher />
-                    <p>Built for brands that want sharper positioning, stronger visuals, and digital experiences with weight.</p>
+                    <p>
+                        Built for brands that want sharper positioning, stronger
+                        visuals, and digital experiences with weight.
+                    </p>
                 </div>
             </div>
         </footer>

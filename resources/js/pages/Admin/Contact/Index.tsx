@@ -31,44 +31,76 @@ export default function ContactIndex({ contacts }: Props) {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-white mb-6">Contact & Feedback</h1>
+            <h1 className="mb-6 text-2xl font-bold text-white">
+                Contact & Feedback
+            </h1>
 
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 overflow-hidden">
+            <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50">
                 <table className="min-w-full divide-y divide-white/10">
                     <thead className="bg-zinc-800/50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">From</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 tracking-wider">Subject & Message</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                                Date
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                                From
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                                Subject & Message
+                            </th>
+                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/10">
                         {contacts.data.map((contact) => (
-                            <tr key={contact.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400">
-                                    {new Date(contact.created_at).toLocaleDateString()}
+                            <tr
+                                key={contact.id}
+                                className="transition-colors hover:bg-white/5"
+                            >
+                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
+                                    {new Date(
+                                        contact.created_at,
+                                    ).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4 text-sm">
-                                    <p className="font-medium text-white">{contact.name}</p>
-                                    <p className="text-zinc-500">{contact.email}</p>
+                                    <p className="font-medium text-white">
+                                        {contact.name}
+                                    </p>
+                                    <p className="text-zinc-500">
+                                        {contact.email}
+                                    </p>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-zinc-300 max-w-sm xl:max-w-md">
-                                    {contact.subject && <p className="font-semibold text-white mb-1">{contact.subject}</p>}
-                                    <p className="truncate">{contact.message}</p>
+                                <td className="max-w-sm px-6 py-4 text-sm text-zinc-300 xl:max-w-md">
+                                    {contact.subject && (
+                                        <p className="mb-1 font-semibold text-white">
+                                            {contact.subject}
+                                        </p>
+                                    )}
+                                    <p className="truncate">
+                                        {contact.message}
+                                    </p>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <button
                                         onClick={() => handleDelete(contact.id)}
-                                        className="text-red-400 hover:text-red-300 inline-flex items-center gap-1.5"
+                                        className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300"
                                     >
-                                        <Trash2 className="w-4 h-4" /> Delete
+                                        <Trash2 className="h-4 w-4" /> Delete
                                     </button>
                                 </td>
                             </tr>
                         ))}
                         {contacts.data.length === 0 && (
-                            <tr><td colSpan={4} className="px-6 py-8 text-center text-zinc-500 text-sm">No contact messages found.</td></tr>
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    className="px-6 py-8 text-center text-sm text-zinc-500"
+                                >
+                                    No contact messages found.
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -77,4 +109,6 @@ export default function ContactIndex({ contacts }: Props) {
     );
 }
 
-ContactIndex.layout = (page: ReactNode) => <AdminLayout title="Manage Contacts">{page}</AdminLayout>;
+ContactIndex.layout = (page: ReactNode) => (
+    <AdminLayout title="Manage Contacts">{page}</AdminLayout>
+);

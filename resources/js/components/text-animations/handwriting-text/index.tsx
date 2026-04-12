@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion";
-import React from "react";
+import { motion } from 'framer-motion';
+import React from 'react';
 
 export interface HandwritingTextProps {
     text: string;
@@ -13,20 +13,20 @@ export interface HandwritingTextProps {
 
 const HandwritingText: React.FC<HandwritingTextProps> = ({
     text,
-    className = "",
+    className = '',
     delay = 0.5,
     stagger = 0.08,
     duration = 0.3,
 }) => {
     // Split text into characters including spaces
-    const characters = text.split("");
+    const characters = text.split('');
 
     const container = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: { 
-                staggerChildren: stagger, 
+            transition: {
+                staggerChildren: stagger,
                 delayChildren: delay,
             },
         },
@@ -38,7 +38,7 @@ const HandwritingText: React.FC<HandwritingTextProps> = ({
             y: 0,
             transition: {
                 duration: duration,
-                ease: "easeOut",
+                ease: 'easeOut',
             },
         },
         hidden: {
@@ -49,7 +49,7 @@ const HandwritingText: React.FC<HandwritingTextProps> = ({
 
     return (
         <motion.span
-            style={{ display: "inline-flex", flexWrap: "wrap" }}
+            style={{ display: 'inline-flex', flexWrap: 'wrap' }}
             variants={container}
             initial="hidden"
             animate="visible"
@@ -59,10 +59,10 @@ const HandwritingText: React.FC<HandwritingTextProps> = ({
                 <motion.span
                     key={index}
                     variants={child}
-                    style={{ 
-                        display: "inline-block", 
-                        whiteSpace: char === " " ? "pre" : "normal",
-                        position: "relative"
+                    style={{
+                        display: 'inline-block',
+                        whiteSpace: char === ' ' ? 'pre' : 'normal',
+                        position: 'relative',
                     }}
                 >
                     {char}

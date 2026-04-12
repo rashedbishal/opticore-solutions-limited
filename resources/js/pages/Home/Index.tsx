@@ -231,49 +231,55 @@ function CharmingStar() {
             <motion.div
                 initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
                 whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
-                animate={{ 
+                animate={{
                     rotate: [0, 0, 360, 360, 10, -10, 10, 0, 0],
                     scale: [1, 1.1, 1, 1.2, 1, 1],
                 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ 
-                    clipPath: { duration: 1.2, delay: 0.6, ease: "easeInOut" },
-                    rotate: { 
-                        duration: 8, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1] 
+                transition={{
+                    clipPath: { duration: 1.2, delay: 0.6, ease: 'easeInOut' },
+                    rotate: {
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
                     },
-                    scale: { 
-                        duration: 8, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        times: [0, 0.2, 0.4, 0.6, 0.8, 1]
-                    }
+                    scale: {
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                        times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                    },
                 }}
                 className="absolute inset-0 flex items-center justify-center text-amber-400"
             >
-                <Star strokeWidth={0} className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+                <Star
+                    strokeWidth={0}
+                    className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"
+                />
             </motion.div>
 
             {/* The Recurring Sparkle */}
             <motion.div
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                    scale: [0, 1.8, 0, 0, 0], 
-                    opacity: [0, 1, 0, 0, 0], 
-                    rotate: [0, 45, 90, 90, 90] 
+                animate={{
+                    scale: [0, 1.8, 0, 0, 0],
+                    opacity: [0, 1, 0, 0, 0],
+                    rotate: [0, 45, 90, 90, 90],
                 }}
-                transition={{ 
-                    duration: 4, 
-                    repeat: Infinity, 
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
                     repeatDelay: 1,
-                    ease: "circOut",
-                    times: [0, 0.15, 0.3, 0.6, 1]
+                    ease: 'circOut',
+                    times: [0, 0.15, 0.3, 0.6, 1],
                 }}
-                className="absolute -top-1 -right-1 pointer-events-none"
+                className="pointer-events-none absolute -top-1 -right-1"
             >
-                <Sparkles strokeWidth={0} className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]" />
+                <Sparkles
+                    strokeWidth={0}
+                    className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]"
+                />
             </motion.div>
         </div>
     );
@@ -284,7 +290,10 @@ interface HomeIndexProps {
     brands?: string[];
 }
 
-export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps) {
+export default function HomeIndex({
+    featuredPortfolios,
+    brands,
+}: HomeIndexProps) {
     const categoriesMapped = [
         'graphic-design',
         'digital-marketing',
@@ -305,6 +314,7 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
             entries.forEach((entry) => {
                 const card = entry.target as HTMLElement;
                 const rect = card.querySelector<SVGRectElement>('.trace-rect');
+                const beam = card.querySelector<SVGRectElement>('.beam-rect');
 
                 if (!rect) {
                     return;
@@ -320,6 +330,10 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                 card.style.setProperty('--perim', `${perim}px`);
                 rect.setAttribute('width', `${w - 2.5}`);
                 rect.setAttribute('height', `${h - 2.5}`);
+                if (beam) {
+                    beam.setAttribute('width', `${w - 2.5}`);
+                    beam.setAttribute('height', `${h - 2.5}`);
+                }
             });
         });
 
@@ -333,32 +347,74 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
         <>
             <style>{`
                 @keyframes particleShoot {
-                    0% { transform: translate(0, 0) scale(1.5); opacity: 0; }
-                    15% { opacity: 1; }
+                    0% { transform: translate(0, 0) scale(0); opacity: 0; }
+                    15% { opacity: 1; scale: 1.8; }
                     100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
                 }
 
                 @keyframes pulsateGlow {
-                    0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)); }
-                    50% { opacity: 1; filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.8)); }
+                    0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
+                    50% { opacity: 0.7; filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.6)); }
                 }
 
-                .border-glow-hover {
-                    opacity: 0;
-                    transition: opacity 0.5s ease;
+                @keyframes borderTrace {
+                    0% { stroke-dashoffset: var(--perim); }
+                    100% { stroke-dashoffset: 0; }
                 }
-                
-                .group:hover .border-glow-hover {
-                    animation: spin 2.5s linear infinite;
-                    opacity: 1 !important;
+
+                @keyframes beamRun {
+                    0% { stroke-dashoffset: var(--perim); }
+                    100% { stroke-dashoffset: calc(var(--perim) * -1); }
+                }
+
+                .trace-rect {
+                    fill: none;
+                    stroke-width: 2;
+                    stroke-dasharray: var(--perim);
+                    stroke-dashoffset: var(--perim);
+                    opacity: 0;
+                    transition: opacity 0.4s ease, stroke-dashoffset 0.8s ease;
+                }
+
+                .beam-rect {
+                    fill: none;
+                    stroke: white;
+                    stroke-width: 3;
+                    stroke-dasharray: 100 calc(var(--perim) - 100);
+                    stroke-dashoffset: var(--perim);
+                    filter: blur(2px);
+                    opacity: 0;
+                    mix-blend-mode: overlay;
+                }
+
+                .group:hover .trace-rect {
+                    opacity: 1;
+                    stroke-dashoffset: 0;
+                }
+
+                .group:hover .beam-rect {
+                    opacity: 0.6;
+                    animation: beamRun 3s linear infinite;
                 }
 
                 .group:hover .particle-dot {
-                    animation: particleShoot 1.3s ease-out infinite;
+                    animation: particleShoot 1.5s ease-out infinite;
                 }
                 
+                .aura-glow {
+                    position: absolute;
+                    inset: -10px;
+                    border-radius: 2rem;
+                    background: radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+                    opacity: 0;
+                    transition: opacity 0.6s ease;
+                    pointer-events: none;
+                    z-index: 0;
+                }
+
                 .group:hover .aura-glow {
-                    animation: pulsateGlow 2.5s ease-in-out infinite;
+                    opacity: 1;
+                    animation: pulsateGlow 3s ease-in-out infinite;
                 }
             `}</style>
             <Head>
@@ -376,8 +432,6 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                     content="width=device-width, initial-scale=1"
                 />
             </Head>
-
-
 
             <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb
@@ -497,8 +551,8 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                     />
 
                     <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">
-                        <ServiceCarousel 
-                            services={duplicatedServices} 
+                        <ServiceCarousel
+                            services={duplicatedServices}
                             featuredPortfolios={featuredPortfolios}
                         />
                     </div>
@@ -544,50 +598,88 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                     >
                         {aboutBentoImages.map((image, index) => {
                             const categorySlug = categoriesMapped[index];
-                            const portfolios = featuredPortfolios?.[categorySlug] || [];
+                            const portfolios =
+                                featuredPortfolios?.[categorySlug] || [];
                             const portfolio = portfolios[0] || null;
-                            const service = services.find((s) => s.key === categorySlug);
+                            const service = services.find(
+                                (s) => s.key === categorySlug,
+                            );
 
-                            const categoryHighlights: Record<string, string[]> = {
-                                'graphic-design': ['Pixel Perfect', 'Brand Ready', 'High Contrast'],
-                                'digital-marketing': ['ROI Focused', 'Growth Tracked', 'Data Driven'],
-                                '3d-production': ['Ultra-Realistic', 'Sim-Optimized', '4K Render'],
-                                'web-development': ['Core Vitals', 'UX Polished', 'Responsive'],
-                            };
+                            const categoryHighlights: Record<string, string[]> =
+                                {
+                                    'graphic-design': [
+                                        'Pixel Perfect',
+                                        'Brand Ready',
+                                        'High Contrast',
+                                    ],
+                                    'digital-marketing': [
+                                        'ROI Focused',
+                                        'Growth Tracked',
+                                        'Data Driven',
+                                    ],
+                                    '3d-production': [
+                                        'Ultra-Realistic',
+                                        'Sim-Optimized',
+                                        '4K Render',
+                                    ],
+                                    'web-development': [
+                                        'Core Vitals',
+                                        'UX Polished',
+                                        'Responsive',
+                                    ],
+                                };
 
-                            const highlights = categoryHighlights[categorySlug] || [];
+                            const highlights =
+                                categoryHighlights[categorySlug] || [];
 
-                            const denseParticles = Array.from({ length: 240 }).map((_, i) => {
+                            const denseParticles = Array.from({
+                                length: 240,
+                            }).map((_, i) => {
                                 const side = Math.floor(i / 60);
                                 const offset = (i % 60) / 59;
 
                                 let top, left, tx, ty;
                                 const spread = Math.sin(i * 123.45) * 60;
-                                const dist = 20 + Math.abs(Math.cos(i * 321.45) * 70);
+                                const dist =
+                                    20 + Math.abs(Math.cos(i * 321.45) * 70);
 
                                 if (side === 0) {
-                                    top = '-1%'; left = `${offset * 100}%`;
-                                    ty = -dist; tx = spread;
+                                    top = '-1%';
+                                    left = `${offset * 100}%`;
+                                    ty = -dist;
+                                    tx = spread;
                                 } else if (side === 2) {
-                                    top = '101%'; left = `${offset * 100}%`;
-                                    ty = dist; tx = spread;
+                                    top = '101%';
+                                    left = `${offset * 100}%`;
+                                    ty = dist;
+                                    tx = spread;
                                 } else if (side === 1) {
-                                    left = '101%'; top = `${offset * 100}%`;
-                                    tx = dist; ty = spread;
+                                    left = '101%';
+                                    top = `${offset * 100}%`;
+                                    tx = dist;
+                                    ty = spread;
                                 } else {
-                                    left = '-1%'; top = `${offset * 100}%`;
-                                    tx = -dist; ty = spread;
+                                    left = '-1%';
+                                    top = `${offset * 100}%`;
+                                    tx = -dist;
+                                    ty = spread;
                                 }
 
                                 const isCyan = i % 2 === 0;
 
                                 return {
-                                    top, left, tx, ty,
+                                    top,
+                                    left,
+                                    tx,
+                                    ty,
                                     size: 'h-[1px] w-[1px]',
-                                    color: isCyan ? 'bg-cyan-400' : 'bg-violet-400',
+                                    color: isCyan
+                                        ? 'bg-cyan-400'
+                                        : 'bg-violet-400',
                                     shadow: '',
                                     delay: Math.abs(Math.sin(i * 555)) * 0.6,
-                                    duration: 0.5 + Math.abs(Math.cos(i * 777)) * 1.5,
+                                    duration:
+                                        0.5 + Math.abs(Math.cos(i * 777)) * 1.5,
                                 };
                             });
 
@@ -595,12 +687,53 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                 <div
                                     key={image.src}
                                     data-order={bentoOrder[index]}
-                                    className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] p-5 transition-all duration-500 md:p-6 lg:p-7 ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
+                                    className={`bento-card glass-panel group relative flex flex-col rounded-[1.75rem] p-5 transition-all duration-500 md:p-6 lg:p-7 ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
                                 >
+                                    {/* Background Aura Glow */}
+                                    <div className="aura-glow" />
+
                                     {/* SVG Trace Layer */}
-                                    <svg className="glow-svg pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+                                    <svg
+                                        className="glow-svg pointer-events-none absolute inset-0 h-full w-full"
+                                        aria-hidden="true"
+                                        style={{ overflow: 'visible' }}
+                                    >
+                                        <defs>
+                                            <linearGradient
+                                                id={`card-gradient-${index}`}
+                                                x1="0%"
+                                                y1="0%"
+                                                x2="100%"
+                                                y2="100%"
+                                            >
+                                                <stop
+                                                    offset="0%"
+                                                    stopColor="#06b6d4"
+                                                />
+                                                <stop
+                                                    offset="50%"
+                                                    stopColor="#7c3aed"
+                                                />
+                                                <stop
+                                                    offset="100%"
+                                                    stopColor="#a855f7"
+                                                />
+                                            </linearGradient>
+                                        </defs>
                                         <rect
                                             className="trace-rect"
+                                            x="1.25"
+                                            y="1.25"
+                                            width="calc(100% - 2.5px)"
+                                            height="calc(100% - 2.5px)"
+                                            rx="26"
+                                            ry="26"
+                                            style={{
+                                                stroke: `url(#card-gradient-${index})`,
+                                            }}
+                                        />
+                                        <rect
+                                            className="beam-rect"
                                             x="1.25"
                                             y="1.25"
                                             width="calc(100% - 2.5px)"
@@ -610,9 +743,27 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                         />
                                         <g className="glow-particles">
                                             {[
-                                                { cx: '15%', cy: '0%', dx: '0px', dy: '-6px', c: '#7c3aed' },
-                                                { cx: '50%', cy: '0%', dx: '4px', dy: '-8px', c: '#06b6d4' },
-                                                { cx: '85%', cy: '0%', dx: '0px', dy: '-6px', c: '#a855f7' },
+                                                {
+                                                    cx: '15%',
+                                                    cy: '0%',
+                                                    dx: '0px',
+                                                    dy: '-6px',
+                                                    c: '#7c3aed',
+                                                },
+                                                {
+                                                    cx: '50%',
+                                                    cy: '0%',
+                                                    dx: '4px',
+                                                    dy: '-8px',
+                                                    c: '#06b6d4',
+                                                },
+                                                {
+                                                    cx: '85%',
+                                                    cy: '0%',
+                                                    dx: '0px',
+                                                    dy: '-6px',
+                                                    c: '#a855f7',
+                                                },
                                             ].map((p, i) => (
                                                 <circle
                                                     key={i}
@@ -620,11 +771,13 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                                     cy={p.cy}
                                                     r="2.5"
                                                     fill={p.c}
-                                                    style={{
-                                                        '--dx': p.dx,
-                                                        '--dy': p.dy,
-                                                        animationDelay: `${i * 0.15}s`,
-                                                    } as React.CSSProperties}
+                                                    style={
+                                                        {
+                                                            '--dx': p.dx,
+                                                            '--dy': p.dy,
+                                                            animationDelay: `${i * 0.15}s`,
+                                                        } as React.CSSProperties
+                                                    }
                                                 />
                                             ))}
                                         </g>
@@ -636,42 +789,59 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                         <div className="mb-4">
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-sm font-bold tracking-[0.2em] text-cyan-400 uppercase">
-                                                    {service?.name || categorySlug.replace(/-/g, ' ')}
+                                                    {service?.name ||
+                                                        categorySlug.replace(
+                                                            /-/g,
+                                                            ' ',
+                                                        )}
                                                 </h3>
-                                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400" />
                                             </div>
-                                            <p className="mt-1 text-[11px] font-medium text-zinc-400 line-clamp-1">
-                                                {service?.tagline || 'Premium digital solutions'}
+                                            <p className="mt-1 line-clamp-1 text-[11px] font-medium text-zinc-400">
+                                                {service?.tagline ||
+                                                    'Premium digital solutions'}
                                             </p>
                                         </div>
 
                                         {/* Main Demo Frame */}
-                                        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-950/50 ring-1 ring-white/10 group-hover:ring-cyan-500/30 transition-all duration-500">
+                                        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-950/50 ring-1 ring-white/10 transition-all duration-500 group-hover:ring-cyan-500/30">
                                             {portfolio ? (
                                                 <>
-                                                    {portfolio.media_type === 'video' ? (
+                                                    {portfolio.media_type ===
+                                                    'video' ? (
                                                         <video
-                                                            src={portfolio.media_path ?? undefined}
-                                                            muted autoPlay loop playsInline
+                                                            src={
+                                                                portfolio.media_path ??
+                                                                undefined
+                                                            }
+                                                            muted
+                                                            autoPlay
+                                                            loop
+                                                            playsInline
                                                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                         />
                                                     ) : (
                                                         <img
-                                                            src={portfolio.media_path ?? 'https://placehold.co/600x400/111111/7C3AED?text=Opticore'}
+                                                            src={
+                                                                portfolio.media_path ??
+                                                                'https://placehold.co/600x400/111111/7C3AED?text=Opticore'
+                                                            }
                                                             alt={portfolio.alt}
                                                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                         />
                                                     )}
-                                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="absolute inset-x-0 bottom-0 p-3 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-500">
-                                                        <p className="text-[10px] font-bold text-white line-clamp-1">{portfolio.title}</p>
+                                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent transition-opacity duration-500 sm:opacity-0 sm:group-hover:opacity-100" />
+                                                    <div className="absolute inset-x-0 bottom-0 p-3 transition-all duration-500 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
+                                                        <p className="line-clamp-1 text-[10px] font-bold text-white">
+                                                            {portfolio.title}
+                                                        </p>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <img
                                                     src={image.src}
                                                     alt={image.alt}
-                                                    className="h-full w-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110 grayscale"
+                                                    className="h-full w-full object-cover opacity-50 grayscale transition-transform duration-700 group-hover:scale-110"
                                                 />
                                             )}
                                         </div>
@@ -680,35 +850,46 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                         <div className="mt-auto pt-4">
                                             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                                 {highlights.map((h, i) => (
-                                                    <div key={i} className={`flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-1.5 transition-colors group-hover:bg-white/[0.05] ${i === 2 ? 'sm:col-span-2' : ''}`}>
+                                                    <div
+                                                        key={i}
+                                                        className={`flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-1.5 transition-colors group-hover:bg-white/[0.05] ${i === 2 ? 'sm:col-span-2' : ''}`}
+                                                    >
                                                         <div className="h-1 w-1 rounded-full bg-violet-400" />
-                                                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">{h}</span>
+                                                        <span className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
+                                                            {h}
+                                                        </span>
                                                     </div>
                                                 ))}
                                             </div>
                                             <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
-                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">System Active</span>
-                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">Opticore v3.0</span>
+                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">
+                                                    System Active
+                                                </span>
+                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">
+                                                    Opticore v3.0
+                                                </span>
                                             </div>
                                         </div>
 
-                                    {/* Spreading Particles on hover */}
-                                    <div className="pointer-events-none absolute inset-0 z-20">
-                                        {denseParticles.map((p, i) => (
-                                            <div
-                                                key={i}
-                                                className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
-                                                style={{
-                                                    '--tx': `${p.tx}px`,
-                                                    '--ty': `${p.ty}px`,
-                                                    top: p.top,
-                                                    left: p.left,
-                                                    animationDelay: `${p.delay}s`,
-                                                    animationDuration: `${p.duration}s`,
-                                                } as React.CSSProperties}
-                                            />
-                                        ))}
-                                    </div>
+                                        {/* Spreading Particles on hover */}
+                                        <div className="pointer-events-none absolute inset-0 z-20">
+                                            {denseParticles.map((p, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
+                                                    style={
+                                                        {
+                                                            '--tx': `${p.tx}px`,
+                                                            '--ty': `${p.ty}px`,
+                                                            top: p.top,
+                                                            left: p.left,
+                                                            animationDelay: `${p.delay}s`,
+                                                            animationDuration: `${p.duration}s`,
+                                                        } as React.CSSProperties
+                                                    }
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -757,7 +938,11 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <Marquee items={(brands && brands.length > 0) ? brands : clientLogos} />
+                    <Marquee
+                        items={
+                            brands && brands.length > 0 ? brands : clientLogos
+                        }
+                    />
                 </div>
             </section>
 
