@@ -58,12 +58,12 @@ export default function ImmersiveChatTrigger({
                 className={cn(
                     "relative h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center text-white shadow-[0_0_30px_rgba(124,58,237,0.3)] transition-all duration-500",
                     isOpen
-                        ? "bg-zinc-900 border border-white/5 rounded-full"
-                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 border border-violet-400/30 ring-1 ring-white/10 rounded-full"
+                        ? "bg-zinc-900 ring-1 ring-inset ring-white/5 rounded-full"
+                        : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 ring-1 ring-inset ring-violet-400/30 rounded-full"
                 )}
             >
                 {/* Background effects (Clipped) */}
-                <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+                <div className="absolute -inset-px rounded-full overflow-hidden pointer-events-none">
                     {!isOpen && (
                         <>
                             <motion.div
