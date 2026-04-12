@@ -77,17 +77,14 @@ export default function Navbar() {
                 >
                     <Link
                         href="/"
-                        className="touch-target inline-flex min-w-0 items-center gap-3 rounded-full px-2 text-sm font-semibold text-white"
-                        aria-label="Opticore Solutions Ltd. home"
+                        className="touch-target inline-flex items-center rounded-full px-2"
+                        aria-label="Opticore Solutions home"
                     >
                         <img
-                            src="/images/logo/logo.svg"
-                            alt="Opticore Solutions Logo"
-                            className="h-9 w-9 shrink-0 object-contain"
+                            src="/images/logo/opticore.png"
+                            alt="Opticore Solutions"
+                            className="h-10 w-auto shrink-0 object-contain"
                         />
-                        <span className="whitespace-nowrap text-xs leading-tight font-semibold tracking-[0.08em] text-zinc-100 sm:text-sm">
-                            Opticore Solutions Ltd.
-                        </span>
                     </Link>
 
                     <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-8">
@@ -137,17 +134,14 @@ export default function Navbar() {
                             <div className="flex items-center justify-between pt-4 pb-6 sm:px-2">
                                 <Link
                                     href="/"
-                                    className="flex items-center gap-3"
+                                    className="flex items-center"
                                     onClick={() => setOpen(false)}
                                 >
                                     <img
-                                        src="/images/logo/logo.svg"
-                                        alt="Opticore Solutions Logo"
-                                        className="h-9 w-9 shrink-0 object-contain"
+                                        src="/images/logo/opticore.png"
+                                        alt="Opticore Solutions"
+                                        className="h-10 w-auto shrink-0 object-contain"
                                     />
-                                    <span className="whitespace-nowrap text-xs font-semibold tracking-wide text-zinc-100">
-                                        Opticore Solutions Ltd.
-                                    </span>
                                 </Link>
                                 <button
                                     type="button"
