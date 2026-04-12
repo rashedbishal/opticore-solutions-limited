@@ -154,9 +154,10 @@ export default function ServicePageTemplate({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <SectionHeader
-                        eyebrow="Capabilities"
-                        title={`What’s Included in ${service.name}`}
+                        eyebrow={service.headings?.capabilities?.eyebrow || 'Capabilities'}
+                        title={service.headings?.capabilities?.title || `What’s Included in ${service.name}`}
                         description="Each engagement is structured to give you premium execution, clear communication, and assets ready to perform in the real world."
+                        animationType="capabilities"
                     />
                     <motion.div
                         initial="hidden"
@@ -194,9 +195,10 @@ export default function ServicePageTemplate({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <SectionHeader
-                        eyebrow="Why Opticore"
-                        title="Built for Ambitious Teams"
+                        eyebrow={service.headings?.whyOpticore?.eyebrow || 'Why Opticore'}
+                        title={service.headings?.whyOpticore?.title || 'Our Strategic Advantage'}
                         description="We combine strategic thinking with refined execution so your output looks strong and works harder."
+                        animationType="why-opticore"
                     />
                     <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 lg:gap-8">
                         {service.reasons.map((reason) => (
@@ -224,9 +226,10 @@ export default function ServicePageTemplate({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <SectionHeader
-                        eyebrow="Process"
-                        title="A Clear Delivery Rhythm"
+                        eyebrow={service.headings?.process?.eyebrow || 'Process'}
+                        title={service.headings?.process?.title || 'Our Delivery Workflow'}
                         description="Our workflow stays structured from first call to final handoff so progress remains fast and visible."
+                        animationType="process"
                     />
                     <div className="mt-10">
                         <div className="hidden gap-6 md:grid md:grid-cols-4">
@@ -281,9 +284,10 @@ export default function ServicePageTemplate({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <SectionHeader
-                        eyebrow="Selected Work"
-                        title="Proof in the Execution"
+                        eyebrow={service.headings?.selectedWork?.eyebrow || 'Selected Work'}
+                        title={service.headings?.selectedWork?.title || 'Case Studies & Production'}
                         description="A quick look at the kind of premium craft Opticore delivers across identity, motion, digital, and product storytelling."
+                        animationType="selected-work"
                     />
                     <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 lg:gap-8">
                         {service.portfolio.map((item) => (

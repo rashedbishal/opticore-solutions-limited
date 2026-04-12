@@ -220,6 +220,12 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                     'High-end retouching, compositing, and visual cleanup for commercial-grade presentation.',
             },
         ],
+        headings: {
+            capabilities: { eyebrow: 'Visual Scope', title: 'Defining Your Brand Edge' },
+            whyOpticore: { eyebrow: 'The Standard', title: 'Why Brands Trust Our Eye' },
+            process: { eyebrow: 'The Journey', title: 'From Sketch to Final Asset' },
+            selectedWork: { eyebrow: 'The Proof', title: 'Identity Systems in the Wild' },
+        },
         reasons: defaultReasons,
         process: defaultProcess,
         portfolio: [
@@ -284,6 +290,12 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                     'Lifecycle and promotional sequences that nurture audiences without sounding generic.',
             },
         ],
+        headings: {
+            capabilities: { eyebrow: 'Growth Toolkit', title: 'Systems for Global Visibility' },
+            whyOpticore: { eyebrow: 'The Advantage', title: 'Why Partners Scale With Us' },
+            process: { eyebrow: 'The Roadmap', title: 'Strategy to Conversion Pipeline' },
+            selectedWork: { eyebrow: 'The Results', title: "Growth Engines We've Engineered" },
+        },
         reasons: defaultReasons,
         process: defaultProcess,
         portfolio: [
@@ -348,6 +360,12 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                     'Balanced, cinematic finishing that gives each piece a more refined visual identity.',
             },
         ],
+        headings: {
+            capabilities: { eyebrow: 'Motion Craft', title: 'Precision Cinematic Retention' },
+            whyOpticore: { eyebrow: 'The Rhythm', title: 'Why Creators Trust Our Cut' },
+            process: { eyebrow: 'The Sequence', title: 'From Raw Dailies to Master Export' },
+            selectedWork: { eyebrow: 'The Reel', title: 'Visual Stories That Stick' },
+        },
         reasons: defaultReasons,
         process: defaultProcess,
         portfolio: [
@@ -407,6 +425,12 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                     'Motion-led sequences that bring features, assemblies, and environments to life.',
             },
         ],
+        headings: {
+            capabilities: { eyebrow: 'Spatial Fidelity', title: 'Building Immersive Worlds' },
+            whyOpticore: { eyebrow: 'The Precision', title: 'Why Detail is Everything to Us' },
+            process: { eyebrow: 'The Forge', title: 'Modeling to Immersive Reveal' },
+            selectedWork: { eyebrow: 'The Render', title: 'Tangible Ideas Rendered Pure' },
+        },
         reasons: defaultReasons,
         process: defaultProcess,
         portfolio: [
@@ -471,6 +495,12 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                     'Ongoing support, updates, optimization, and refinement after launch.',
             },
         ],
+        headings: {
+            capabilities: { eyebrow: 'Stack Setup', title: 'Polished Brand Experience' },
+            whyOpticore: { eyebrow: 'The Engine', title: 'Why Performance is Non-Negotiable' },
+            process: { eyebrow: 'The Build', title: 'Logic to Production-Ready Launch' },
+            selectedWork: { eyebrow: 'The Ship', title: 'Digital Products Living Online' },
+        },
         reasons: defaultReasons,
         process: defaultProcess,
         portfolio: [
