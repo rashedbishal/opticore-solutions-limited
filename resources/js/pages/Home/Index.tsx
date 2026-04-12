@@ -5,10 +5,10 @@ import {
     ArrowDown,
     ArrowRight,
     Box,
-    Clapperboard,
-    CodeXml,
-    Megaphone,
-    Palette,
+    Film,
+    Code2,
+    Globe,
+    PenTool,
     Sparkles,
     Star,
 } from 'lucide-react';
@@ -84,17 +84,17 @@ const staggerContainer: Variants = {
 
 const floatingIcons = [
     {
-        icon: Palette,
+        icon: PenTool,
         className: 'top-[10%] left-[4%]',
         animation: { x: [0, 8, 0], y: [0, -12, 0], rotate: [0, 4, 0] },
     },
     {
-        icon: Megaphone,
+        icon: Globe,
         className: 'top-[14%] right-[5%]',
         animation: { x: [0, -10, 0], y: [0, 10, 0], rotate: [0, -4, 0] },
     },
     {
-        icon: Clapperboard,
+        icon: Film,
         className: 'bottom-[24%] left-[6%]',
         animation: { x: [0, 12, 0], y: [0, -8, 0], rotate: [0, 5, 0] },
     },
@@ -104,7 +104,7 @@ const floatingIcons = [
         animation: { x: [0, -12, 0], y: [0, 8, 0], rotate: [0, -5, 0] },
     },
     {
-        icon: CodeXml,
+        icon: Code2,
         className: 'bottom-[8%] left-[14%]',
         animation: { x: [0, 10, 0], y: [0, -6, 0], rotate: [0, 3, 0] },
     },
