@@ -49,7 +49,6 @@ function CapabilitiesTitle({ text }: { text: string }) {
                                 delay: (wordIndex * 5 + charIndex) * 0.02 
                             }}
                             className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-2"
-                            style={{ backgroundAttachment: 'fixed' }}
                         >
                             {char}
                         </motion.span>
@@ -74,7 +73,6 @@ function WhyOpticoreTitle({ text }: { text: string }) {
                 }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 className="inline-block bg-linear-to-r from-violet-400 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent"
-                style={{ backgroundAttachment: 'fixed' }}
             >
                 {text}
             </motion.span>
@@ -99,7 +97,6 @@ function ProcessTitle({ text }: { text: string }) {
                             ease: [0.22, 1, 0.36, 1] 
                         }}
                         className="inline-block origin-bottom-left bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 bg-clip-text text-transparent"
-                        style={{ backgroundAttachment: 'fixed' }}
                     >
                         {word}
                     </motion.span>
@@ -128,7 +125,6 @@ function SelectedWorkTitle({ text }: { text: string }) {
                     bounce: 0.5 
                 }}
                 className="inline-block origin-left bg-linear-to-r from-orange-400 via-rose-500 to-pink-600 bg-clip-text text-transparent"
-                style={{ backgroundAttachment: 'fixed' }}
             >
                 {text}
             </motion.span>
@@ -218,16 +214,6 @@ function AnimatedTitle({
 
         run();
 
-        // Align gradients across letters
-        const containerWidth = el.offsetWidth;
-        const letters = el.querySelectorAll<HTMLElement>(`.${letterClass}`);
-
-        letters.forEach((letter) => {
-            el.classList.add('relative');
-            letter.style.backgroundSize = `${containerWidth}px 100%`;
-            letter.style.backgroundPosition = `-${letter.offsetLeft}px 0`;
-        });
-
         return () => {
             if (timelineRef.current?.pause) {
                 timelineRef.current.pause();
@@ -273,16 +259,26 @@ export default function SectionHeader({
             return;
         }
 
-        const containerWidth = container.offsetWidth;
-        // Find all span elements that carry a gradient (those with bg-clip-text or .gradient-text)
-        const gradientElements = container.querySelectorAll<HTMLElement>('[class*="bg-clip-text"], .gradient-text');
+        // We use a small timeout to ensure the DOM has finished 
+        // processing the title change before measuring.
+        const frame = requestAnimationFrame(() => {
+            const containerWidth = container.offsetWidth;
+            const containerRect = container.getBoundingClientRect();
+            
+            // Find all span elements that carry a gradient
+            const gradientElements = container.querySelectorAll<HTMLElement>('[class*="bg-clip-text"], .gradient-text');
 
-        gradientElements.forEach((el) => {
-            // We use offsetLeft because it's relative to the nearest positioned parent (h2)
-            // and is invariant to CSS transforms like scale or translate.
-            el.style.backgroundSize = `${containerWidth}px 100%`;
-            el.style.backgroundPosition = `-${el.offsetLeft}px 0`;
+            gradientElements.forEach((el) => {
+                const elRect = el.getBoundingClientRect();
+                // We use relative viewport offsets to ensure nesting doesn't break alignment
+                const offsetLeft = elRect.left - containerRect.left;
+                
+                el.style.backgroundSize = `${containerWidth}px 100%`;
+                el.style.backgroundPosition = `-${offsetLeft}px 0`;
+            });
         });
+
+        return () => cancelAnimationFrame(frame);
     }, [title, titles, animationType, variant]);
 
     const renderTitle = () => {
