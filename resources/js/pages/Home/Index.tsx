@@ -786,46 +786,6 @@ export default function HomeIndex({
                                             rx="26"
                                             ry="26"
                                         />
-                                        <g className="glow-particles">
-                                            {[
-                                                {
-                                                    cx: '15%',
-                                                    cy: '0%',
-                                                    dx: '0px',
-                                                    dy: '-6px',
-                                                    c: '#7c3aed',
-                                                },
-                                                {
-                                                    cx: '50%',
-                                                    cy: '0%',
-                                                    dx: '4px',
-                                                    dy: '-8px',
-                                                    c: '#06b6d4',
-                                                },
-                                                {
-                                                    cx: '85%',
-                                                    cy: '0%',
-                                                    dx: '0px',
-                                                    dy: '-6px',
-                                                    c: '#a855f7',
-                                                },
-                                            ].map((p, i) => (
-                                                <circle
-                                                    key={i}
-                                                    cx={p.cx}
-                                                    cy={p.cy}
-                                                    r="2.5"
-                                                    fill={p.c}
-                                                    style={
-                                                        {
-                                                            '--dx': p.dx,
-                                                            '--dy': p.dy,
-                                                            animationDelay: `${i * 0.15}s`,
-                                                        } as React.CSSProperties
-                                                    }
-                                                />
-                                            ))}
-                                        </g>
                                     </svg>
 
                                     {/* Dashboard Content */}
