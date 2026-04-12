@@ -231,22 +231,22 @@ function CharmingStar() {
             <motion.div
                 initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
                 whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
-                animate={{ 
+                animate={{
                     rotate: [0, 0, 360, 360, 10, -10, 10, 0, 0],
                     scale: [1, 1.1, 1, 1.2, 1, 1],
                 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ 
+                transition={{
                     clipPath: { duration: 1.2, delay: 0.6, ease: "easeInOut" },
-                    rotate: { 
-                        duration: 8, 
-                        repeat: Infinity, 
+                    rotate: {
+                        duration: 8,
+                        repeat: Infinity,
                         ease: "easeInOut",
-                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1] 
+                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1]
                     },
-                    scale: { 
-                        duration: 8, 
-                        repeat: Infinity, 
+                    scale: {
+                        duration: 8,
+                        repeat: Infinity,
                         ease: "easeInOut",
                         times: [0, 0.2, 0.4, 0.6, 0.8, 1]
                     }
@@ -259,14 +259,14 @@ function CharmingStar() {
             {/* The Recurring Sparkle */}
             <motion.div
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                    scale: [0, 1.8, 0, 0, 0], 
-                    opacity: [0, 1, 0, 0, 0], 
-                    rotate: [0, 45, 90, 90, 90] 
+                animate={{
+                    scale: [0, 1.8, 0, 0, 0],
+                    opacity: [0, 1, 0, 0, 0],
+                    rotate: [0, 45, 90, 90, 90]
                 }}
-                transition={{ 
-                    duration: 4, 
-                    repeat: Infinity, 
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
                     repeatDelay: 1,
                     ease: "circOut",
                     times: [0, 0.15, 0.3, 0.6, 1]
@@ -285,13 +285,6 @@ interface HomeIndexProps {
 }
 
 export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps) {
-    const categoriesMapped = [
-        'graphic-design',
-        'digital-marketing',
-        '3d-production',
-        'web-development',
-    ];
-    const bentoOrder = [0, 3, 2, 1];
     const desktop = useMediaQuery('(min-width: 1024px)');
     const [isPaused, setIsPaused] = useState(false);
     const handlePointerEnter = () => setIsPaused(true);
@@ -497,8 +490,8 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                     />
 
                     <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">
-                        <ServiceCarousel 
-                            services={duplicatedServices} 
+                        <ServiceCarousel
+                            services={duplicatedServices}
                             featuredPortfolios={featuredPortfolios}
                         />
                     </div>
@@ -514,7 +507,7 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                         variants={desktop ? slideLeft : fadeUp}
                     >
                         <span className="section-kicker">About Opticore</span>
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="max-w-xl text-3xl font-extrabold text-balance text-white sm:text-4xl lg:text-[2.45rem] xl:text-[2.2rem]">
                             We blend bold creative thinking with polished
                             execution to help modern brands grow, earn trust,
                             and stand apart.
@@ -540,17 +533,49 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
                         variants={desktop ? slideRight : fadeUp}
-                        className="grid grid-cols-2 gap-3 md:gap-4"
+                        className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 xl:grid-rows-3 xl:gap-5"
                     >
-                        {aboutBentoImages.map((image, index) => {
-                            const categorySlug = categoriesMapped[index];
+                        {services.map((service, index) => {
+                            const categorySlug = service.key;
                             const portfolios = featuredPortfolios?.[categorySlug] || [];
                             const portfolio = portfolios[0] || null;
-                            const service = services.find((s) => s.key === categorySlug);
+                            const fallbackImages: Record<string, { src: string; alt: string }> = {
+                                'graphic-design': {
+                                    src: '/images/portfolio/identity.svg',
+                                    alt: 'Graphic design showcase',
+                                },
+                                'digital-marketing': {
+                                    src: '/images/portfolio/marketing.svg',
+                                    alt: 'Digital marketing showcase',
+                                },
+                                'video-editing': {
+                                    src: '/images/portfolio/video.svg',
+                                    alt: 'Video editing showcase',
+                                },
+                                '3d-production': {
+                                    src: '/images/portfolio/three-d.svg',
+                                    alt: '3D production showcase',
+                                },
+                                'web-development': {
+                                    src: '/images/portfolio/web.svg',
+                                    alt: 'Web development showcase',
+                                },
+                            };
+
+                            const desktopLayoutByService: Record<string, string> = {
+                                'graphic-design': 'xl:col-start-1 xl:row-start-1 xl:-translate-x-10 xl:translate-y-54',
+                                'digital-marketing': 'xl:col-start-3 xl:row-start-1 xl:translate-x-10 xl:translate-y-54',
+                                'video-editing': 'xl:col-start-2 xl:row-start-2',
+                                '3d-production': 'xl:col-start-1 xl:row-start-3 xl:-translate-x-10 xl:-translate-y-54',
+                                'web-development': 'xl:col-start-3 xl:row-start-3 xl:translate-x-10 xl:-translate-y-54',
+                            };
+
+                            const fallbackImage = fallbackImages[categorySlug];
 
                             const categoryHighlights: Record<string, string[]> = {
                                 'graphic-design': ['Pixel Perfect', 'Brand Ready', 'High Contrast'],
                                 'digital-marketing': ['ROI Focused', 'Growth Tracked', 'Data Driven'],
+                                'video-editing': ['Narrative Tight', 'Motion Polished', 'Retention Ready'],
                                 '3d-production': ['Ultra-Realistic', 'Sim-Optimized', '4K Render'],
                                 'web-development': ['Core Vitals', 'UX Polished', 'Responsive'],
                             };
@@ -593,9 +618,8 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
 
                             return (
                                 <div
-                                    key={image.src}
-                                    data-order={bentoOrder[index]}
-                                    className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] p-5 transition-all duration-500 md:p-6 lg:p-7 ${index === 0 || index === 3 ? 'translate-y-0 md:translate-y-6' : ''}`}
+                                    key={service.key}
+                                    className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] p-4 transition-all duration-500 sm:p-5 lg:p-6 xl:min-h-[21rem] xl:scale-x-[1.22] ${desktopLayoutByService[service.key] ?? ''} ${service.key === 'video-editing' ? 'xl:px-7 xl:py-6 xl:shadow-[0_0_45px_rgba(34,211,238,0.12)]' : ''}`}
                                 >
                                     {/* SVG Trace Layer */}
                                     <svg className="glow-svg pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
@@ -631,84 +655,86 @@ export default function HomeIndex({ featuredPortfolios, brands }: HomeIndexProps
                                     </svg>
 
                                     {/* Dashboard Content */}
-                                    <div className="relative z-10 flex h-full flex-col">
-                                        {/* Header */}
-                                        <div className="mb-4">
+                                    <div className="relative z-10 flex h-full flex-col gap-4">
+                                        {/* 1. Header: Title & Description */}
+                                        <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center justify-between">
-                                                <h3 className="text-sm font-bold tracking-[0.2em] text-cyan-400 uppercase">
-                                                    {service?.name || categorySlug.replace(/-/g, ' ')}
+                                                <h3 className="text-[13px] font-extrabold tracking-[0.15em] text-cyan-400 uppercase drop-shadow-sm">
+                                                    {service.name}
                                                 </h3>
-                                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 border border-cyan-400/20">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,1)]" />
+                                                </div>
                                             </div>
-                                            <p className="mt-1 text-[11px] font-medium text-zinc-400 line-clamp-1">
-                                                {service?.tagline || 'Premium digital solutions'}
+                                            <p className="text-[11px] font-medium leading-relaxed text-zinc-400 line-clamp-2">
+                                                {service.tagline}
                                             </p>
                                         </div>
 
-                                        {/* Main Demo Frame */}
-                                        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-950/50 ring-1 ring-white/10 group-hover:ring-cyan-500/30 transition-all duration-500">
+                                        {/* 2. Visual / Image */}
+                                        <div className="relative w-full flex-1 min-h-[7rem] overflow-hidden rounded-xl bg-zinc-950/60 ring-1 ring-white/10 transition-all duration-500 group-hover:ring-cyan-500/20 shadow-inner">
                                             {portfolio ? (
                                                 <>
                                                     {portfolio.media_type === 'video' ? (
                                                         <video
                                                             src={portfolio.media_path ?? undefined}
                                                             muted autoPlay loop playsInline
-                                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                                                         />
                                                     ) : (
                                                         <img
                                                             src={portfolio.media_path ?? 'https://placehold.co/600x400/111111/7C3AED?text=Opticore'}
                                                             alt={portfolio.alt}
-                                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                                                         />
                                                     )}
-                                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
-                                                    <div className="absolute inset-x-0 bottom-0 p-3 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-500">
-                                                        <p className="text-[10px] font-bold text-white line-clamp-1">{portfolio.title}</p>
+                                                    <div className="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                                                    <div className="absolute inset-x-0 bottom-0 p-3 pt-6 translate-y-2 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                                                        <p className="text-[10px] font-bold tracking-wider text-white line-clamp-1 drop-shadow-md">{portfolio.title}</p>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <img
-                                                    src={image.src}
-                                                    alt={image.alt}
-                                                    className="h-full w-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110 grayscale"
+                                                    src={fallbackImage?.src ?? aboutBentoImages[index % aboutBentoImages.length].src}
+                                                    alt={fallbackImage?.alt ?? aboutBentoImages[index % aboutBentoImages.length].alt}
+                                                    className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 group-hover:opacity-60 saturate-50"
                                                 />
                                             )}
                                         </div>
 
-                                        {/* Info Grid / Stats */}
-                                        <div className="mt-auto pt-4">
-                                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                                {highlights.map((h, i) => (
-                                                    <div key={i} className={`flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-1.5 transition-colors group-hover:bg-white/[0.05] ${i === 2 ? 'sm:col-span-2' : ''}`}>
-                                                        <div className="h-1 w-1 rounded-full bg-violet-400" />
-                                                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">{h}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
-                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">System Active</span>
-                                                <span className="text-[9px] font-bold tracking-widest text-zinc-600 uppercase">Opticore v3.0</span>
-                                            </div>
+                                        {/* 3. Feature Tags */}
+                                        <div className="flex flex-wrap items-center gap-1.5">
+                                            {highlights.map((h, i) => (
+                                                <div key={i} className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/[0.02] px-2.5 py-1.5 transition-colors group-hover:bg-white/[0.05] group-hover:border-white/10">
+                                                    <div className="h-1 w-1 rounded-full bg-violet-400 shadow-[0_0_5px_rgba(167,139,250,0.8)]" />
+                                                    <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest leading-none">{h}</span>
+                                                </div>
+                                            ))}
                                         </div>
 
-                                    {/* Spreading Particles on hover */}
-                                    <div className="pointer-events-none absolute inset-0 z-20">
-                                        {denseParticles.map((p, i) => (
-                                            <div
-                                                key={i}
-                                                className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
-                                                style={{
-                                                    '--tx': `${p.tx}px`,
-                                                    '--ty': `${p.ty}px`,
-                                                    top: p.top,
-                                                    left: p.left,
-                                                    animationDelay: `${p.delay}s`,
-                                                    animationDuration: `${p.duration}s`,
-                                                } as React.CSSProperties}
-                                            />
-                                        ))}
-                                    </div>
+                                        {/* 4. Footer / Meta Info */}
+                                        <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-3">
+                                            <span className="text-[8.5px] font-bold tracking-[0.15em] text-zinc-600 uppercase transition-colors group-hover:text-zinc-500">System Active</span>
+                                            <span className="text-[8.5px] font-bold tracking-[0.15em] text-zinc-600 uppercase transition-colors group-hover:text-zinc-500">Opticore v3.0</span>
+                                        </div>
+
+                                        {/* Spreading Particles on hover */}
+                                        <div className="pointer-events-none absolute inset-0 z-20">
+                                            {denseParticles.map((p, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
+                                                    style={{
+                                                        '--tx': `${p.tx}px`,
+                                                        '--ty': `${p.ty}px`,
+                                                        top: p.top,
+                                                        left: p.left,
+                                                        animationDelay: `${p.delay}s`,
+                                                        animationDuration: `${p.duration}s`,
+                                                    } as React.CSSProperties}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             );

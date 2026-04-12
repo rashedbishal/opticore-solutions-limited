@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
-import { navigationItems } from '@/lib/site';
+import { bangladeshPhoneLink, navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
 
@@ -88,10 +88,10 @@ export default function Navbar() {
 
                     <div className="hidden lg:block">
                         <MagneticButton
-                            href="/request-appointment"
-                            ariaLabel="Get a quote from Opticore Solutions Ltd."
+                            href={bangladeshPhoneLink}
+                            ariaLabel="Call Opticore Solutions Ltd. now"
                         >
-                            Get a Quote
+                            Call now
                         </MagneticButton>
                     </div>
 
@@ -195,13 +195,13 @@ export default function Navbar() {
                                     className="mx-auto w-full max-w-md"
                                 >
                                     <MagneticButton
-                                        href="/request-appointment"
+                                        href={bangladeshPhoneLink}
                                         fullWidth
-                                        ariaLabel="Open project request page"
+                                        ariaLabel="Call Opticore Solutions Ltd. now"
                                         onClick={() => setOpen(false)}
                                         className="py-4 text-base font-bold tracking-wide uppercase"
                                     >
-                                        Get a Quote
+                                        Call now
                                     </MagneticButton>
                                 </motion.div>
                             </div>

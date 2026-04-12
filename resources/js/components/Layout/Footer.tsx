@@ -20,7 +20,7 @@ import {
 // Facebook -> Globe, X/Twitter -> Send, etc.
 import MagneticButton from '@/components/UI/MagneticButton';
 import { CursorSwitcher } from '@/components/UI/CursorSelector';
-import { navigationItems } from '@/lib/site';
+import { bangladeshPhoneLink, bangladeshPhoneNumber, navigationItems } from '@/lib/site';
 
 const companyLinks = [
     { label: 'About Us', href: '/about-us' },
@@ -97,10 +97,10 @@ export default function Footer() {
                             experiences.
                         </p>
                         <MagneticButton
-                            href="/request-appointment"
-                            ariaLabel="Start a project with Opticore Solutions Ltd."
+                            href={bangladeshPhoneLink}
+                            ariaLabel="Call Opticore Solutions Ltd. now"
                         >
-                            Start a Project
+                            Call now
                         </MagneticButton>
                     </div>
 
@@ -158,7 +158,7 @@ export default function Footer() {
                                     <span>
                                         +1 (575) 303-6925
                                         <br />
-                                        +88-01896204400
+                                        {bangladeshPhoneNumber}
                                     </span>
                                 </p>
                             </div>
