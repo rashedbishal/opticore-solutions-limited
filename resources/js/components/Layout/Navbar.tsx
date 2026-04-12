@@ -66,10 +66,10 @@ export default function Navbar() {
     return (
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
-            <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
+            <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 lg:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 xl:px-6',
                         scrolled
                             ? 'border-white/10 bg-black/60 shadow-2xl shadow-black/30 backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
@@ -85,18 +85,18 @@ export default function Navbar() {
                             alt="Opticore Solutions Logo"
                             className="h-9 w-9 shrink-0 object-contain"
                         />
-                        <span className="max-w-[9.5rem] text-xs leading-tight font-semibold tracking-[0.08em] text-zinc-100 sm:max-w-none sm:text-sm">
+                        <span className="whitespace-nowrap text-xs leading-tight font-semibold tracking-[0.08em] text-zinc-100 sm:text-sm">
                             Opticore Solutions Ltd.
                         </span>
                     </Link>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 lg:flex lg:gap-8">
+                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-8">
                         {navigationItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
                     </div>
 
-                    <div className="hidden lg:block">
+                    <div className="hidden xl:block">
                         <MagneticButton
                             href={bangladeshPhoneLink}
                             ariaLabel="Call Opticore Solutions Ltd. now"
@@ -112,7 +112,7 @@ export default function Navbar() {
                                 ? 'Close navigation menu'
                                 : 'Open navigation menu'
                         }
-                        className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
+                        className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white xl:hidden"
                         onClick={() => setOpen((current) => !current)}
                     >
                         {open ? (
@@ -130,7 +130,7 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-60 flex flex-col bg-black/98 p-4 backdrop-blur-2xl lg:hidden"
+                        className="fixed inset-0 z-60 flex flex-col bg-black/98 p-4 backdrop-blur-2xl xl:hidden"
                     >
                         <div className="flex h-full flex-col">
                             {/* Header inside the menu for consistent top spacing and close button */}
@@ -145,7 +145,7 @@ export default function Navbar() {
                                         alt="Opticore Solutions Logo"
                                         className="h-9 w-9 shrink-0 object-contain"
                                     />
-                                    <span className="text-xs font-semibold tracking-wide text-zinc-100">
+                                    <span className="whitespace-nowrap text-xs font-semibold tracking-wide text-zinc-100">
                                         Opticore Solutions Ltd.
                                     </span>
                                 </Link>
