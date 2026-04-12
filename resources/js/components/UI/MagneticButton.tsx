@@ -11,7 +11,7 @@ interface MagneticButtonProps extends PropsWithChildren, ButtonHTMLAttributes<HT
 }
 
 const classes =
-    'touch-target inline-flex items-center justify-center rounded-full bg-linear-to-r from-violet-500 to-cyan-400 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(124,58,237,0.35)] transition-shadow duration-300 hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]';
+    'touch-target inline-flex items-center justify-center whitespace-nowrap rounded-full bg-linear-to-r from-violet-500 to-cyan-400 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(124,58,237,0.35)] transition-shadow duration-300 hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]';
 
 export default function MagneticButton({
     children,
