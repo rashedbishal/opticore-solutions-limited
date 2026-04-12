@@ -80,16 +80,13 @@ export default function Footer() {
                     <div className="space-y-5">
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-3 text-white"
+                            className="inline-flex items-center text-white"
                         >
                             <img
-                                src="/images/logo/logo.svg"
-                                alt="Opticore Solutions Logo"
-                                className="h-10 w-10 shrink-0 object-contain"
+                                src="/images/logo/opticore.png"
+                                alt="Opticore Solutions"
+                                className="h-11 w-auto shrink-0 object-contain"
                             />
-                            <span className="text-lg font-semibold">
-                                Opticore Solutions Ltd.
-                            </span>
                         </Link>
                         <p className="max-w-sm text-sm leading-7 text-zinc-400">
                             Premium digital agency services spanning strategy,
