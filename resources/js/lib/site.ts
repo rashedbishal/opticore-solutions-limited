@@ -54,12 +54,12 @@ const defaultReasons: HighlightItem[] = [
 ];
 
 export const navigationItems: NavItem[] = [
-    { label: 'Graphic Design', href: '/graphic-design' },
-    { label: 'Digital Marketing', href: '/digital-marketing' },
-    { label: 'Video Editing', href: '/video-editing' },
-    { label: '3D Production', href: '/3d-production' },
-    { label: 'Web Development', href: '/web-development' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Graphic Design', href: '/graphic-design', icon: 'PenTool' },
+    { label: 'Digital Marketing', href: '/digital-marketing', icon: 'Globe' },
+    { label: 'Video Editing', href: '/video-editing', icon: 'Film' },
+    { label: '3D Production', href: '/3d-production', icon: 'Box' },
+    { label: 'Web Development', href: '/web-development', icon: 'Code2' },
+    { label: 'Contact', href: '/contact', icon: 'Mail' },
 ];
 
 export const services: ServiceItem[] = [
@@ -97,7 +97,7 @@ export const services: ServiceItem[] = [
         description:
             'High-end 3D models, animation, and rendering for products, spaces, and brands that need premium visual presentation.',
         href: '/3d-production',
-        icon: 'Layers',
+        icon: 'Box',
     },
     {
         key: 'web-development',
@@ -402,7 +402,7 @@ export const servicePageContent: Record<string, ServicePageContent> = {
         longDescription:
             'Opticore creates 3D visuals that help products, spaces, and concepts feel tangible before they ever reach the market. We focus on lighting, materials, composition, and motion so the final output feels convincing and commercially polished.',
         href: '/3d-production',
-        icon: 'Layers',
+        icon: 'Box',
         subServices: [
             {
                 title: '3D Modeling',

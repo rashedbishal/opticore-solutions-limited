@@ -1,12 +1,30 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import {
+    Menu,
+    X,
+    PenTool,
+    Globe,
+    Film,
+    Box,
+    Code2,
+    Mail,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
+
+const IconMap: Record<string, typeof Globe> = {
+    PenTool,
+    Globe,
+    Film,
+    Box,
+    Code2,
+    Mail,
+};
 
 function NavLink({
     item,
@@ -17,6 +35,7 @@ function NavLink({
 }) {
     const [hovered, setHovered] = useState(false);
     const active = url === item.href;
+    const Icon = item.icon ? IconMap[item.icon] : null;
 
     return (
         <Link
@@ -24,13 +43,21 @@ function NavLink({
             href={item.href}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className="group relative py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+            className="group relative flex items-center gap-2.5 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
         >
+            {Icon && (
+                <Icon
+                    className={cn(
+                        'h-3.5 w-3.5 transition-colors duration-300',
+                        active ? 'text-cyan-400' : 'text-zinc-500 group-hover:text-violet-400',
+                    )}
+                />
+            )}
             <HoverScramble
                 duration={0.6}
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                className="font-[family-name:var(--font-geist-mono)] text-[13px]"
+                className="font-[family-name:var(--font-geist-mono)] text-[12px] tracking-normal xl:text-[12.5px] xl:tracking-wide 2xl:text-[13px]"
                 trigger={hovered}
             >
                 {item.label}
@@ -66,10 +93,10 @@ export default function Navbar() {
     return (
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
-            <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-8">
+            <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 xl:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 xl:px-5 2xl:px-6',
                         scrolled
                             ? 'border-white/10 bg-black/60 shadow-2xl shadow-black/30 backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
@@ -87,7 +114,7 @@ export default function Navbar() {
                         />
                     </Link>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-8">
+                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-5 2xl:gap-8">
                         {navigationItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
@@ -169,24 +196,37 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 transition-colors active:bg-white/10',
+                                                    'flex w-full items-center justify-start rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 transition-colors active:bg-white/10',
                                                     url === item.href &&
                                                         'border-violet-400/40 bg-violet-500/10',
                                                 )}
                                                 onClick={() => setOpen(false)}
                                             >
-                                                <HoverScramble
-                                                    duration={0.8}
-                                                    speed={1}
-                                                    scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                                                    triggerOnMount={true}
-                                                    className="text-lg font-semibold text-white sm:text-xl"
-                                                >
-                                                    {item.label}
-                                                </HoverScramble>
-                                                <span className="font-[family-name:var(--font-geist-mono)] text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
-                                                    Explore
-                                                </span>
+                                                <div className="flex items-center gap-4">
+                                                    {item.icon && IconMap[item.icon] && (
+                                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-violet-400">
+                                                            {(() => {
+                                                                const Icon =
+                                                                    IconMap[
+                                                                        item
+                                                                            .icon
+                                                                    ];
+                                                                return (
+                                                                    <Icon className="h-5 w-5" />
+                                                                );
+                                                            })()}
+                                                        </div>
+                                                    )}
+                                                    <HoverScramble
+                                                        duration={0.8}
+                                                        speed={1}
+                                                        scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                                                        triggerOnMount={true}
+                                                        className="text-lg font-semibold text-white sm:text-xl"
+                                                    >
+                                                        {item.label}
+                                                    </HoverScramble>
+                                                </div>
                                             </Link>
                                         </motion.div>
                                     ))}
