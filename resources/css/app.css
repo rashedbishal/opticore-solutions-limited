@@ -306,7 +306,6 @@
 
     .gradient-text {
         @apply bg-linear-to-r from-violet-500 via-cyan-400 to-violet-400 bg-clip-text text-transparent;
-        background-attachment: fixed;
     }
 
     .section-kicker {

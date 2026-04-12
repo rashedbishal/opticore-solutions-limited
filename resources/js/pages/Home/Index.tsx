@@ -139,14 +139,17 @@ function HeroHeadline() {
             el.style.opacity = '1';
 
             // Align gradients across letters
-            const containerWidth = el.offsetWidth;
-            const letters = el.querySelectorAll<HTMLElement>('.anime-letter');
-            
-            letters.forEach((letter) => {
-                // offsetLeft is relative to the nearest positioned parent
-                el.classList.add('relative'); 
-                letter.style.backgroundSize = `${containerWidth}px 100%`;
-                letter.style.backgroundPosition = `-${letter.offsetLeft}px 0`;
+            const frame = requestAnimationFrame(() => {
+                const containerWidth = el.offsetWidth;
+                const containerRect = el.getBoundingClientRect();
+                const letters = el.querySelectorAll<HTMLElement>('.anime-letter');
+                
+                letters.forEach((letter) => {
+                    const letterRect = letter.getBoundingClientRect();
+                    const offsetLeft = letterRect.left - containerRect.left;
+                    letter.style.backgroundSize = `${containerWidth}px 100%`;
+                    letter.style.backgroundPosition = `-${offsetLeft}px 0`;
+                });
             });
 
             animeInstance = (anime as any)
