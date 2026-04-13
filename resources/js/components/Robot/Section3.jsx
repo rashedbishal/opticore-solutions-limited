@@ -14,16 +14,13 @@ const AnimatedProgressBar = ({ initialValue }) => {
     const [value, setValue] = React.useState(parseInt(initialValue));
 
     React.useEffect(() => {
-        const interval = setInterval(
-            () => {
-                const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
-                setValue((prev) => {
-                    const next = prev + change;
-                    return Math.min(Math.max(next, 70), 100); // Keep between 70% and 100%
-                });
-            },
-            1000 + Math.random() * 2000,
-        ); // Random interval between 1-3s
+        const interval = setInterval(() => {
+            const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
+            setValue((prev) => {
+                const next = prev + change;
+                return Math.min(Math.max(next, 70), 100); // Keep between 70% and 100%
+            });
+        }, 1000 + Math.random() * 2000); // Random interval between 1-3s
 
         return () => clearInterval(interval);
     }, []);
@@ -110,18 +107,17 @@ export default function Section3() {
             </div>
 
             <div className="section-inner relative z-10">
+                {/* Header */}
                 <div className="mb-16 text-center">
-                    <span className="section-kicker mb-4">
-                        <Zap className="h-4 w-4" />
-                        PHASE 02 : EXECUTION
+                    <span className="section-kicker mb-4 inline-flex items-center gap-2">
+                        <Cpu className="h-4 w-4" />
+                        PHASE 02 : DEVELOPMENT
                     </span>
 
-                    <h2 className="mb-6 text-3xl font-bold text-balance text-white sm:text-4xl md:text-5xl">
+                    <h2 className="mb-6 text-balance text-3xl font-bold text-white sm:text-4xl md:text-5xl">
                         Creative Development
                         <br />
-                        <span className="text-violet-400">
-                            & Smart Execution
-                        </span>
+                        <span className="text-violet-400">& Smart Execution</span>
                     </h2>
 
                     <p className="mx-auto max-w-2xl text-base text-zinc-400 sm:text-lg">
@@ -129,153 +125,6 @@ export default function Section3() {
                         through design, content, and performance-driven
                         execution.
                     </p>
-
-                    {/* Animated wave visualization */}
-                    <div className="relative mt-16 h-36 w-full overflow-visible">
-                        <svg
-                            className="absolute inset-0 h-full w-full"
-                            preserveAspectRatio="none"
-                            viewBox="0 0 1200 100"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <defs>
-                                <linearGradient
-                                    id="waveGrad1"
-                                    x1="0%"
-                                    y1="0%"
-                                    x2="100%"
-                                    y2="0%"
-                                >
-                                    <stop
-                                        offset="0%"
-                                        stopColor="rgba(124,58,237,0)"
-                                    />
-                                    <stop
-                                        offset="30%"
-                                        stopColor="rgba(124,58,237,0.8)"
-                                    />
-                                    <stop
-                                        offset="60%"
-                                        stopColor="rgba(6,182,212,0.8)"
-                                    />
-                                    <stop
-                                        offset="100%"
-                                        stopColor="rgba(124,58,237,0)"
-                                    />
-                                </linearGradient>
-                                <linearGradient
-                                    id="waveGrad2"
-                                    x1="0%"
-                                    y1="0%"
-                                    x2="100%"
-                                    y2="0%"
-                                >
-                                    <stop
-                                        offset="0%"
-                                        stopColor="rgba(6,182,212,0)"
-                                    />
-                                    <stop
-                                        offset="40%"
-                                        stopColor="rgba(139,92,246,0.5)"
-                                    />
-                                    <stop
-                                        offset="70%"
-                                        stopColor="rgba(34,211,238,0.6)"
-                                    />
-                                    <stop
-                                        offset="100%"
-                                        stopColor="rgba(6,182,212,0)"
-                                    />
-                                </linearGradient>
-                                <linearGradient
-                                    id="waveGrad3"
-                                    x1="0%"
-                                    y1="0%"
-                                    x2="100%"
-                                    y2="0%"
-                                >
-                                    <stop
-                                        offset="0%"
-                                        stopColor="rgba(168,85,247,0)"
-                                    />
-                                    <stop
-                                        offset="50%"
-                                        stopColor="rgba(168,85,247,0.9)"
-                                    />
-                                    <stop
-                                        offset="100%"
-                                        stopColor="rgba(168,85,247,0)"
-                                    />
-                                </linearGradient>
-                                <filter id="waveBlur">
-                                    <feGaussianBlur
-                                        in="SourceGraphic"
-                                        stdDeviation="2"
-                                    />
-                                </filter>
-                            </defs>
-
-                            {/* Glow layer (blurred copy behind) */}
-                            <path
-                                className="wave-1 wave-glow"
-                                d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
-                                fill="none"
-                                stroke="url(#waveGrad1)"
-                                strokeWidth="8"
-                                filter="url(#waveBlur)"
-                            />
-                            <path
-                                className="wave-2 wave-glow"
-                                d="M0,50 Q200,85 400,50 T800,50 T1200,50"
-                                fill="none"
-                                stroke="url(#waveGrad2)"
-                                strokeWidth="6"
-                                filter="url(#waveBlur)"
-                            />
-
-                            {/* Crisp main waves */}
-                            <path
-                                className="wave-1"
-                                d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
-                                fill="none"
-                                stroke="url(#waveGrad1)"
-                                strokeWidth="2"
-                            />
-                            <path
-                                className="wave-2"
-                                d="M0,50 Q200,85 400,50 T800,50 T1200,50"
-                                fill="none"
-                                stroke="url(#waveGrad2)"
-                                strokeWidth="1.5"
-                                opacity="0.8"
-                            />
-                            <path
-                                className="wave-3"
-                                d="M0,60 Q100,30 250,60 T500,60 T750,60 T1000,60 T1200,60"
-                                fill="none"
-                                stroke="url(#waveGrad3)"
-                                strokeWidth="1"
-                                opacity="0.6"
-                            />
-
-                            {/* Shimmer highlight streaks */}
-                            <path
-                                className="wave-1 wave-shimmer"
-                                d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
-                                fill="none"
-                                stroke="rgba(255,255,255,0.7)"
-                                strokeWidth="1.5"
-                            />
-                            <path
-                                className="wave-2 wave-shimmer"
-                                d="M0,50 Q200,85 400,50 T800,50 T1200,50"
-                                fill="none"
-                                stroke="rgba(34,211,238,0.6)"
-                                strokeWidth="1"
-                                style={{ animationDelay: '1.5s' }}
-                            />
-                        </svg>
-                    </div>
                 </div>
 
                 {/* Processing grid */}
@@ -300,16 +149,17 @@ export default function Section3() {
                     ))}
                 </div>
 
-                {/* Energy wave visualization */}
-                <div className="relative mt-16 hidden h-24 md:block">
+                {/* Animated wave visualization */}
+                <div className="relative mt-16 h-36 w-full overflow-visible">
                     <svg
                         className="absolute inset-0 h-full w-full"
                         preserveAspectRatio="none"
                         viewBox="0 0 1200 100"
+                        xmlns="http://www.w3.org/2000/svg"
                     >
                         <defs>
                             <linearGradient
-                                id="waveGradient"
+                                id="waveGrad1"
                                 x1="0%"
                                 y1="0%"
                                 x2="100%"
@@ -317,32 +167,131 @@ export default function Section3() {
                             >
                                 <stop
                                     offset="0%"
-                                    stopColor="rgba(139, 92, 246, 0.5)"
+                                    stopColor="rgba(124,58,237,0)"
                                 />
                                 <stop
-                                    offset="50%"
-                                    stopColor="rgba(6, 182, 212, 0.5)"
+                                    offset="30%"
+                                    stopColor="rgba(124,58,237,0.8)"
+                                />
+                                <stop
+                                    offset="60%"
+                                    stopColor="rgba(6,182,212,0.8)"
                                 />
                                 <stop
                                     offset="100%"
-                                    stopColor="rgba(139, 92, 246, 0.5)"
+                                    stopColor="rgba(124,58,237,0)"
                                 />
                             </linearGradient>
+                            <linearGradient
+                                id="waveGrad2"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stopColor="rgba(6,182,212,0)"
+                                />
+                                <stop
+                                    offset="40%"
+                                    stopColor="rgba(139,92,246,0.5)"
+                                />
+                                <stop
+                                    offset="70%"
+                                    stopColor="rgba(34,211,238,0.6)"
+                                />
+                                <stop
+                                    offset="100%"
+                                    stopColor="rgba(6,182,212,0)"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="waveGrad3"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stopColor="rgba(168,85,247,0)"
+                                />
+                                <stop
+                                    offset="50%"
+                                    stopColor="rgba(168,85,247,0.9)"
+                                />
+                                <stop
+                                    offset="100%"
+                                    stopColor="rgba(168,85,247,0)"
+                                />
+                            </linearGradient>
+                            <filter id="waveBlur">
+                                <feGaussianBlur
+                                    in="SourceGraphic"
+                                    stdDeviation="2"
+                                />
+                            </filter>
                         </defs>
+
+                        {/* Glow layer (blurred copy behind) */}
                         <path
-                            className="animate-wave"
-                            d="M0,50 Q300,10 600,50 T1200,50"
+                            className="wave-1 wave-glow"
+                            d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
                             fill="none"
-                            stroke="url(#waveGradient)"
+                            stroke="url(#waveGrad1)"
+                            strokeWidth="8"
+                            filter="url(#waveBlur)"
+                        />
+                        <path
+                            className="wave-2 wave-glow"
+                            d="M0,50 Q200,85 400,50 T800,50 T1200,50"
+                            fill="none"
+                            stroke="url(#waveGrad2)"
+                            strokeWidth="6"
+                            filter="url(#waveBlur)"
+                        />
+
+                        {/* Crisp main waves */}
+                        <path
+                            className="wave-1"
+                            d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
+                            fill="none"
+                            stroke="url(#waveGrad1)"
                             strokeWidth="2"
                         />
                         <path
-                            className="animate-wave-slow"
-                            d="M0,50 Q300,90 600,50 T1200,50"
+                            className="wave-2"
+                            d="M0,50 Q200,85 400,50 T800,50 T1200,50"
                             fill="none"
-                            stroke="url(#waveGradient)"
-                            strokeWidth="2"
-                            opacity="0.5"
+                            stroke="url(#waveGrad2)"
+                            strokeWidth="1.5"
+                            opacity="0.8"
+                        />
+                        <path
+                            className="wave-3"
+                            d="M0,60 Q100,30 250,60 T500,60 T750,60 T1000,60 T1200,60"
+                            fill="none"
+                            stroke="url(#waveGrad3)"
+                            strokeWidth="1"
+                            opacity="0.6"
+                        />
+
+                        {/* Shimmer highlight streaks */}
+                        <path
+                            className="wave-1 wave-shimmer"
+                            d="M0,55 Q150,20 300,55 T600,55 T900,55 T1200,55"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.7)"
+                            strokeWidth="1.5"
+                        />
+                        <path
+                            className="wave-2 wave-shimmer"
+                            d="M0,50 Q200,85 400,50 T800,50 T1200,50"
+                            fill="none"
+                            stroke="rgba(34,211,238,0.6)"
+                            strokeWidth="1"
+                            style={{ animationDelay: '1.5s' }}
                         />
                     </svg>
                 </div>
