@@ -8,7 +8,13 @@ import { bangladeshPhoneLink, navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import type { SharedPageProps } from '@/types';
 
-function NavLink({ item, url }: { item: (typeof navigationItems)[0]; url: string }) {
+function NavLink({
+    item,
+    url,
+}: {
+    item: (typeof navigationItems)[0];
+    url: string;
+}) {
     const [hovered, setHovered] = useState(false);
     const active = url === item.href;
 
@@ -24,7 +30,7 @@ function NavLink({ item, url }: { item: (typeof navigationItems)[0]; url: string
                 duration={0.6}
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                className="text-[13px] font-[family-name:var(--font-geist-mono)]"
+                className="font-[family-name:var(--font-geist-mono)] text-[13px]"
                 trigger={hovered}
             >
                 {item.label}
@@ -74,7 +80,11 @@ export default function Navbar() {
                         className="touch-target inline-flex min-w-0 items-center gap-3 rounded-full px-2 text-sm font-semibold text-white"
                         aria-label="Opticore Solutions Ltd. home"
                     >
-                        <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-9 w-9 shrink-0 object-contain" />
+                        <img
+                            src="/images/logo/logo.svg"
+                            alt="Opticore Solutions Logo"
+                            className="h-9 w-9 shrink-0 object-contain"
+                        />
                         <span className="max-w-[9.5rem] text-xs leading-tight font-semibold tracking-[0.08em] text-zinc-100 sm:max-w-none sm:text-sm">
                             Opticore Solutions Ltd.
                         </span>
@@ -130,7 +140,11 @@ export default function Navbar() {
                                     className="flex items-center gap-3"
                                     onClick={() => setOpen(false)}
                                 >
-                                    <img src="/images/logo/logo.svg" alt="Opticore Solutions Logo" className="h-9 w-9 shrink-0 object-contain" />
+                                    <img
+                                        src="/images/logo/logo.svg"
+                                        alt="Opticore Solutions Logo"
+                                        className="h-9 w-9 shrink-0 object-contain"
+                                    />
                                     <span className="text-xs font-semibold tracking-wide text-zinc-100">
                                         Opticore Solutions Ltd.
                                     </span>
@@ -145,7 +159,7 @@ export default function Navbar() {
                             </div>
 
                             {/* Scrollable links area */}
-                            <div className="flex-1 overflow-y-auto overscroll-contain py-4 hide-scrollbar">
+                            <div className="hide-scrollbar flex-1 overflow-y-auto overscroll-contain py-4">
                                 <div className="mx-auto w-full max-w-md space-y-2">
                                     {navigationItems.map((item, index) => (
                                         <motion.div
@@ -176,7 +190,7 @@ export default function Navbar() {
                                                 >
                                                     {item.label}
                                                 </HoverScramble>
-                                                <span className="text-[10px] font-medium tracking-widest text-zinc-500 uppercase font-[family-name:var(--font-geist-mono)]">
+                                                <span className="font-[family-name:var(--font-geist-mono)] text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
                                                     Explore
                                                 </span>
                                             </Link>

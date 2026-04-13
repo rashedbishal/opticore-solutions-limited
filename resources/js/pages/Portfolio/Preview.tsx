@@ -23,14 +23,18 @@ function goBack(item: PortfolioItem) {
     if (window.history.length > 1) {
         window.history.back();
     } else if (item.subcategory_slug) {
-        router.visit(`/portfolio/${item.category_slug}/${item.subcategory_slug}`);
+        router.visit(
+            `/portfolio/${item.category_slug}/${item.subcategory_slug}`,
+        );
     } else {
         router.visit(`/portfolio/${item.category_slug}`);
     }
 }
 
 export default function PortfolioPreview({ item }: Props) {
-    const categoryLabel = (item.subcategory_slug || item.category_slug).replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const categoryLabel = (item.subcategory_slug || item.category_slug)
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
 
     return (
         <>
@@ -58,8 +62,12 @@ export default function PortfolioPreview({ item }: Props) {
                     </button>
 
                     <div className="flex flex-col items-end gap-0.5 text-right">
-                        <h1 className="text-sm font-semibold text-white sm:text-base">{item.title}</h1>
-                        <p className="text-xs font-medium tracking-widest text-cyan-400 uppercase">{categoryLabel}</p>
+                        <h1 className="text-sm font-semibold text-white sm:text-base">
+                            {item.title}
+                        </h1>
+                        <p className="text-xs font-medium tracking-widest text-cyan-400 uppercase">
+                            {categoryLabel}
+                        </p>
                     </div>
 
                     <button
@@ -77,7 +85,11 @@ export default function PortfolioPreview({ item }: Props) {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                            duration: 0.5,
+                            delay: 0.1,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="relative flex items-center justify-center"
                         style={{ maxWidth: '90vw', maxHeight: '90vh' }}
                     >
@@ -95,7 +107,9 @@ export default function PortfolioPreview({ item }: Props) {
                             <img
                                 src={item.media_path ?? PLACEHOLDER}
                                 alt={item.alt}
-                                onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                onError={(e) => {
+                                    e.currentTarget.src = PLACEHOLDER;
+                                }}
                                 className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
                             />
                         )}

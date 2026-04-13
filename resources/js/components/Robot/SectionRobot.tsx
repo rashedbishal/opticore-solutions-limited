@@ -1,6 +1,10 @@
 import React, { useRef, useEffect, useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
+import {
+    Environment,
+    PerspectiveCamera,
+    ContactShadows,
+} from '@react-three/drei';
 import RobotModel, { RobotModelRef } from './RobotModel';
 import { gsap } from 'gsap';
 import * as THREE from 'three';
@@ -11,10 +15,10 @@ interface SectionRobotProps {
     className?: string;
 }
 
-export default function SectionRobot({ 
-    position = 'bottom-right', 
+export default function SectionRobot({
+    position = 'bottom-right',
     animation,
-    className = "" 
+    className = '',
 }: SectionRobotProps) {
     const robotModelRef = useRef<RobotModelRef>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -22,14 +26,15 @@ export default function SectionRobot({
 
     // Random animations if none provided
     const animations = ['idle', 'dance', 'punch', 'jump'];
-    const selectedAnimation = animation || animations[Math.floor(Math.random() * animations.length)];
+    const selectedAnimation =
+        animation || animations[Math.floor(Math.random() * animations.length)];
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 setIsVisible(entry.isIntersecting);
             },
-            { threshold: 0.1 }
+            { threshold: 0.1 },
         );
 
         if (containerRef.current) {
@@ -41,34 +46,45 @@ export default function SectionRobot({
 
     const getPositionClasses = () => {
         switch (position) {
-            case 'top-left': return 'top-4 left-4';
-            case 'top-right': return 'top-4 right-4';
-            case 'bottom-left': return 'bottom-4 left-4';
-            case 'bottom-right': return 'bottom-4 right-4';
-            default: return 'bottom-4 right-4';
+            case 'top-left':
+                return 'top-4 left-4';
+            case 'top-right':
+                return 'top-4 right-4';
+            case 'bottom-left':
+                return 'bottom-4 left-4';
+            case 'bottom-right':
+                return 'bottom-4 right-4';
+            default:
+                return 'bottom-4 right-4';
         }
     };
 
     return (
-        <div 
+        <div
             ref={containerRef}
-            className={`absolute ${getPositionClasses()} h-48 w-48 pointer-events-none z-20 ${className}`}
+            className={`absolute ${getPositionClasses()} pointer-events-none z-20 h-48 w-48 ${className}`}
             style={{ minHeight: '150px' }}
         >
             {isVisible && (
-                <Canvas 
-                    shadows 
+                <Canvas
+                    shadows
                     gl={{ antialias: true, alpha: true }}
                     camera={{ position: [0, 0, 5], fov: 45 }}
                 >
                     <Suspense fallback={null}>
                         <Environment preset="city" />
                         <ambientLight intensity={0.5} />
-                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-                        
-                        <RobotInScene 
-                            animation={selectedAnimation} 
-                            ref={robotModelRef} 
+                        <spotLight
+                            position={[10, 10, 10]}
+                            angle={0.15}
+                            penumbra={1}
+                            intensity={1}
+                            castShadow
+                        />
+
+                        <RobotInScene
+                            animation={selectedAnimation}
+                            ref={robotModelRef}
                         />
 
                         <ContactShadows
@@ -85,44 +101,75 @@ export default function SectionRobot({
     );
 }
 
-const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(({ animation }, ref) => {
-    const groupRef = useRef<THREE.Group>(null);
+const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
+    ({ animation }, ref) => {
+        const groupRef = useRef<THREE.Group>(null);
 
-    useEffect(() => {
-        if (!groupRef.current) return;
+        useEffect(() => {
+            if (!groupRef.current) return;
 
-        // Add some random subtle movement or spinning if requested
-        if (animation === 'spin') {
-            gsap.to(groupRef.current.rotation, {
-                y: Math.PI * 2,
-                duration: 4,
-                repeat: -1,
-                ease: "none"
-            });
-        } else if (animation === 'circle') {
-             // Simple "walking in circles" motion via position animation
-             const tl = gsap.timeline({ repeat: -1 });
-             tl.to(groupRef.current.position, { x: 0.5, z: 0.5, duration: 2, ease: "sine.inOut" })
-               .to(groupRef.current.position, { x: 0, z: 1, duration: 2, ease: "sine.inOut" })
-               .to(groupRef.current.position, { x: -0.5, z: 0.5, duration: 2, ease: "sine.inOut" })
-               .to(groupRef.current.position, { x: 0, z: 0, duration: 2, ease: "sine.inOut" });
-             
-             gsap.to(groupRef.current.rotation, {
-                 y: Math.PI * 2,
-                 duration: 8,
-                 repeat: -1,
-                 ease: "none"
-             });
-        }
-    }, [animation]);
+            // Add some random subtle movement or spinning if requested
+            if (animation === 'spin') {
+                gsap.to(groupRef.current.rotation, {
+                    y: Math.PI * 2,
+                    duration: 4,
+                    repeat: -1,
+                    ease: 'none',
+                });
+            } else if (animation === 'circle') {
+                // Simple "walking in circles" motion via position animation
+                const tl = gsap.timeline({ repeat: -1 });
+                tl.to(groupRef.current.position, {
+                    x: 0.5,
+                    z: 0.5,
+                    duration: 2,
+                    ease: 'sine.inOut',
+                })
+                    .to(groupRef.current.position, {
+                        x: 0,
+                        z: 1,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    })
+                    .to(groupRef.current.position, {
+                        x: -0.5,
+                        z: 0.5,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    })
+                    .to(groupRef.current.position, {
+                        x: 0,
+                        z: 0,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    });
 
-    return (
-        <group ref={groupRef} position={[0, -1, 0]} scale={[0.12, 0.12, 0.12]} rotation={[0, Math.PI / 8, 0]}>
-            <RobotModel
-                ref={ref}
-                modelPath="/models/quaternius_cc0-george-1063.glb"
-                initialAnimation={animation === 'spin' || animation === 'circle' ? 'idle' : animation}
-            />
-        </group>
-    );
-});
+                gsap.to(groupRef.current.rotation, {
+                    y: Math.PI * 2,
+                    duration: 8,
+                    repeat: -1,
+                    ease: 'none',
+                });
+            }
+        }, [animation]);
+
+        return (
+            <group
+                ref={groupRef}
+                position={[0, -1, 0]}
+                scale={[0.12, 0.12, 0.12]}
+                rotation={[0, Math.PI / 8, 0]}
+            >
+                <RobotModel
+                    ref={ref}
+                    modelPath="/models/quaternius_cc0-george-1063.glb"
+                    initialAnimation={
+                        animation === 'spin' || animation === 'circle'
+                            ? 'idle'
+                            : animation
+                    }
+                />
+            </group>
+        );
+    },
+);

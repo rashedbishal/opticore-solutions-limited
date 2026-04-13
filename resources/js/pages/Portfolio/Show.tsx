@@ -25,7 +25,12 @@ const staggerGrid: Variants = {
 
 const cardVariant: Variants = {
     hidden: { opacity: 0, y: 28, scale: 0.96 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    },
 };
 
 export default function PortfolioShow({ categories, meta }: Props) {
@@ -35,7 +40,10 @@ export default function PortfolioShow({ categories, meta }: Props) {
                 <title>{meta.title}</title>
                 <meta name="description" content={meta.description} />
                 <meta property="og:title" content={meta.title} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
@@ -48,10 +56,14 @@ export default function PortfolioShow({ categories, meta }: Props) {
                     >
                         <span className="section-kicker">Portfolio</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
-                            <span className="gradient-text">Explore Work By Category</span>
+                            <span className="gradient-text">
+                                Explore Work By Category
+                            </span>
                         </h1>
                         <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
-                            Start with the discipline you need. Each category opens into its own sub-category tabs so you can drill straight into relevant work.
+                            Start with the discipline you need. Each category
+                            opens into its own sub-category tabs so you can
+                            drill straight into relevant work.
                         </p>
                     </motion.div>
                 </div>
@@ -66,7 +78,10 @@ export default function PortfolioShow({ categories, meta }: Props) {
                         className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
                     >
                         {categories.map((category) => (
-                            <motion.div key={category.slug} variants={cardVariant}>
+                            <motion.div
+                                key={category.slug}
+                                variants={cardVariant}
+                            >
                                 <Link
                                     href={portfolioCategory.url(category.slug)}
                                     className="group glass-panel flex h-full flex-col rounded-[1.75rem] p-7 transition-all hover:border-violet-400/40 hover:bg-violet-500/5"
@@ -75,10 +90,18 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20">
                                             <FolderKanban className="h-5 w-5" />
                                         </div>
-                                        <div className="flex gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                                            <span>{category.sub_categories_count} tabs</span>
-                                            <span className="text-zinc-600">/</span>
-                                            <span>{category.portfolios_count} works</span>
+                                        <div className="flex gap-2 text-[11px] font-semibold tracking-[0.2em] text-cyan-300 uppercase">
+                                            <span>
+                                                {category.sub_categories_count}{' '}
+                                                tabs
+                                            </span>
+                                            <span className="text-zinc-600">
+                                                /
+                                            </span>
+                                            <span>
+                                                {category.portfolios_count}{' '}
+                                                works
+                                            </span>
                                         </div>
                                     </div>
 
@@ -114,10 +137,15 @@ export default function PortfolioShow({ categories, meta }: Props) {
                             Want work like this for your brand?
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-                            We create premium identities, campaign systems, and presentation-ready visual assets designed to move perception and performance.
+                            We create premium identities, campaign systems, and
+                            presentation-ready visual assets designed to move
+                            perception and performance.
                         </p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                            <MagneticButton href="/request-appointment" ariaLabel="Request a project appointment">
+                            <MagneticButton
+                                href="/request-appointment"
+                                ariaLabel="Request a project appointment"
+                            >
                                 Start a Project
                             </MagneticButton>
                             <Link

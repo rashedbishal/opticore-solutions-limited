@@ -15,34 +15,41 @@ import type {
 const defaultProcess: ProcessStep[] = [
     {
         title: 'Brief',
-        description: 'We align on business goals, audience, deliverables, and the visual or technical direction required to move fast without guesswork.',
+        description:
+            'We align on business goals, audience, deliverables, and the visual or technical direction required to move fast without guesswork.',
     },
     {
         title: 'Concept',
-        description: 'Our team translates the brief into moodboards, wireframes, story beats, or campaign ideas that sharpen the creative point of view.',
+        description:
+            'Our team translates the brief into moodboards, wireframes, story beats, or campaign ideas that sharpen the creative point of view.',
     },
     {
         title: 'Execution',
-        description: 'Design, editing, production, and development happen with constant quality control, clear milestones, and focused iteration cycles.',
+        description:
+            'Design, editing, production, and development happen with constant quality control, clear milestones, and focused iteration cycles.',
     },
     {
         title: 'Delivery',
-        description: 'We hand over polished assets, launch-ready experiences, and support materials built for real-world performance across channels.',
+        description:
+            'We hand over polished assets, launch-ready experiences, and support materials built for real-world performance across channels.',
     },
 ];
 
 const defaultReasons: HighlightItem[] = [
     {
         title: 'Strategy-Led Creative',
-        description: 'Every output is anchored in positioning, audience intent, and measurable business goals instead of surface-level aesthetics alone.',
+        description:
+            'Every output is anchored in positioning, audience intent, and measurable business goals instead of surface-level aesthetics alone.',
     },
     {
         title: 'Fast Communication',
-        description: 'You get clear checkpoints, tight feedback loops, and a team that knows how to keep complex creative work moving without friction.',
+        description:
+            'You get clear checkpoints, tight feedback loops, and a team that knows how to keep complex creative work moving without friction.',
     },
     {
         title: 'Premium Craft',
-        description: 'From motion polish to production detail, we build work that looks refined, feels cohesive, and stands up in competitive markets.',
+        description:
+            'From motion polish to production detail, we build work that looks refined, feels cohesive, and stands up in competitive markets.',
     },
 ];
 
@@ -63,7 +70,8 @@ export const services: ServiceItem[] = [
         key: 'graphic-design',
         name: 'Graphic Design',
         tagline: 'Identity systems with edge and clarity',
-        description: 'Brand-led visuals, campaign creative, and print-ready assets that make businesses feel established from the first glance.',
+        description:
+            'Brand-led visuals, campaign creative, and print-ready assets that make businesses feel established from the first glance.',
         href: '/graphic-design',
         icon: 'PenTool',
     },
@@ -71,7 +79,8 @@ export const services: ServiceItem[] = [
         key: 'digital-marketing',
         name: 'Digital Marketing',
         tagline: 'Growth systems built for visibility and conversion',
-        description: 'SEO, paid media, content direction, and channel management designed to turn attention into pipeline and revenue.',
+        description:
+            'SEO, paid media, content direction, and channel management designed to turn attention into pipeline and revenue.',
         href: '/digital-marketing',
         icon: 'Globe',
     },
@@ -79,7 +88,8 @@ export const services: ServiceItem[] = [
         key: 'video-editing',
         name: 'Video Editing',
         tagline: 'Cinematic edits for modern attention spans',
-        description: 'Short-form, long-form, and branded motion editing that keeps stories tight, punchy, and impossible to scroll past.',
+        description:
+            'Short-form, long-form, and branded motion editing that keeps stories tight, punchy, and impossible to scroll past.',
         href: '/video-editing',
         icon: 'Film',
     },
@@ -87,7 +97,8 @@ export const services: ServiceItem[] = [
         key: '3d-production',
         name: '3D Production',
         tagline: 'Depth, realism, and product storytelling',
-        description: 'High-end 3D models, animation, and rendering for products, spaces, and brands that need premium visual presentation.',
+        description:
+            'High-end 3D models, animation, and rendering for products, spaces, and brands that need premium visual presentation.',
         href: '/3d-production',
         icon: 'Layers',
     },
@@ -95,7 +106,8 @@ export const services: ServiceItem[] = [
         key: 'web-development',
         name: 'Web Development',
         tagline: 'Fast, polished digital experiences',
-        description: 'Custom sites and applications engineered for performance, conversion, and a distinct brand presence on every screen.',
+        description:
+            'Custom sites and applications engineered for performance, conversion, and a distinct brand presence on every screen.',
         href: '/web-development',
         icon: 'Code2',
     },
@@ -152,26 +164,64 @@ export const clientLogos: ClientLogo[] = [
 ];
 
 export const aboutBentoImages = [
-    { src: '/images/about/about-creative.svg', alt: 'Opticore creative team workshop' },
-    { src: '/images/about/about-marketing.svg', alt: 'Opticore campaign strategy dashboard' },
-    { src: '/images/about/about-3d.svg', alt: 'Opticore motion and 3D production scene' },
-    { src: '/images/about/about-web.svg', alt: 'Opticore web interface design system' },
+    {
+        src: '/images/about/about-creative.svg',
+        alt: 'Opticore creative team workshop',
+    },
+    {
+        src: '/images/about/about-marketing.svg',
+        alt: 'Opticore campaign strategy dashboard',
+    },
+    {
+        src: '/images/about/about-3d.svg',
+        alt: 'Opticore motion and 3D production scene',
+    },
+    {
+        src: '/images/about/about-web.svg',
+        alt: 'Opticore web interface design system',
+    },
 ];
 
 export const servicePageContent: Record<string, ServicePageContent> = {
     'graphic-design': {
         name: 'Graphic Design',
-        shortDescription: 'Bold, polished brand visuals built to earn trust at first sight and stay memorable long after the scroll.',
-        longDescription: 'We shape visual identities that feel premium, coherent, and commercial. From startups finding their voice to established teams refreshing their look, Opticore designs systems that hold together across print, digital, packaging, and campaigns.',
+        shortDescription:
+            'Bold, polished brand visuals built to earn trust at first sight and stay memorable long after the scroll.',
+        longDescription:
+            'We shape visual identities that feel premium, coherent, and commercial. From startups finding their voice to established teams refreshing their look, Opticore designs systems that hold together across print, digital, packaging, and campaigns.',
         href: '/graphic-design',
         icon: 'PenTool',
         subServices: [
-            { title: 'Logo Design', description: 'Distinctive logo systems that work from tiny social avatars to large-format applications.' },
-            { title: 'Brand Identity', description: 'Typography, color, layouts, and usage systems that unify every touchpoint.' },
-            { title: 'Packaging Design', description: 'Shelf-ready packaging concepts built to communicate value, quality, and differentiation.' },
-            { title: 'Social Media Graphics', description: 'Campaign visuals and post systems tuned for clarity, consistency, and velocity.' },
-            { title: 'Print Design', description: 'Brochures, flyers, signage, and collateral designed with strong hierarchy and finish.' },
-            { title: 'Photoshop Editing', description: 'High-end retouching, compositing, and visual cleanup for commercial-grade presentation.' },
+            {
+                title: 'Logo Design',
+                description:
+                    'Distinctive logo systems that work from tiny social avatars to large-format applications.',
+            },
+            {
+                title: 'Brand Identity',
+                description:
+                    'Typography, color, layouts, and usage systems that unify every touchpoint.',
+            },
+            {
+                title: 'Packaging Design',
+                description:
+                    'Shelf-ready packaging concepts built to communicate value, quality, and differentiation.',
+            },
+            {
+                title: 'Social Media Graphics',
+                description:
+                    'Campaign visuals and post systems tuned for clarity, consistency, and velocity.',
+            },
+            {
+                title: 'Print Design',
+                description:
+                    'Brochures, flyers, signage, and collateral designed with strong hierarchy and finish.',
+            },
+            {
+                title: 'Photoshop Editing',
+                description:
+                    'High-end retouching, compositing, and visual cleanup for commercial-grade presentation.',
+            },
         ],
         reasons: defaultReasons,
         process: defaultProcess,
@@ -181,36 +231,61 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                 category: 'Logo & Identity',
                 image: '/images/portfolio/identity.svg',
                 alt: 'Lumina logo identity presentation',
-                description: 'A sleek monogram and typography system built for a premium wellness brand.',
+                description:
+                    'A sleek monogram and typography system built for a premium wellness brand.',
             },
             {
                 title: 'Arbor Packaging Refresh',
                 category: 'Packaging',
                 image: '/images/portfolio/packaging.svg',
                 alt: 'Arbor packaging system',
-                description: 'Natural, shelf-focused packaging with strong contrast and an elevated product story.',
+                description:
+                    'Natural, shelf-focused packaging with strong contrast and an elevated product story.',
             },
             {
                 title: 'Flux Campaign Graphics',
                 category: 'Social Media',
                 image: '/images/portfolio/social.svg',
                 alt: 'Flux social campaign graphics',
-                description: 'A high-energy social toolkit for rapid campaign deployment across multiple channels.',
+                description:
+                    'A high-energy social toolkit for rapid campaign deployment across multiple channels.',
             },
         ],
     },
     'digital-marketing': {
         name: 'Digital Marketing',
-        shortDescription: 'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
-        longDescription: 'Opticore builds digital marketing programs that feel as refined as the brand itself. We blend paid media, SEO, content, and channel operations into a plan designed for predictable growth instead of disconnected tactics.',
+        shortDescription:
+            'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
+        longDescription:
+            'Opticore builds digital marketing programs that feel as refined as the brand itself. We blend paid media, SEO, content, and channel operations into a plan designed for predictable growth instead of disconnected tactics.',
         href: '/digital-marketing',
         icon: 'Globe',
         subServices: [
-            { title: 'SEO', description: 'Search visibility strategies that improve rankings, organic reach, and long-term demand capture.' },
-            { title: 'Social Media Management', description: 'Editorial planning, publishing systems, and visual consistency across active channels.' },
-            { title: 'Paid Ads', description: 'Conversion-focused campaigns across search and social with clean creative-testing workflows.' },
-            { title: 'Content Marketing', description: 'Story-led content that supports positioning, lead generation, and trust-building.' },
-            { title: 'Email Marketing', description: 'Lifecycle and promotional sequences that nurture audiences without sounding generic.' },
+            {
+                title: 'SEO',
+                description:
+                    'Search visibility strategies that improve rankings, organic reach, and long-term demand capture.',
+            },
+            {
+                title: 'Social Media Management',
+                description:
+                    'Editorial planning, publishing systems, and visual consistency across active channels.',
+            },
+            {
+                title: 'Paid Ads',
+                description:
+                    'Conversion-focused campaigns across search and social with clean creative-testing workflows.',
+            },
+            {
+                title: 'Content Marketing',
+                description:
+                    'Story-led content that supports positioning, lead generation, and trust-building.',
+            },
+            {
+                title: 'Email Marketing',
+                description:
+                    'Lifecycle and promotional sequences that nurture audiences without sounding generic.',
+            },
         ],
         reasons: defaultReasons,
         process: defaultProcess,
@@ -220,36 +295,61 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                 category: 'Paid Growth',
                 image: '/images/portfolio/marketing.svg',
                 alt: 'Velocity campaign dashboard',
-                description: 'A full-funnel paid strategy paired with landing page refinement and reporting clarity.',
+                description:
+                    'A full-funnel paid strategy paired with landing page refinement and reporting clarity.',
             },
             {
                 title: 'North Peak Search Lift',
                 category: 'SEO',
                 image: '/images/portfolio/marketing.svg',
                 alt: 'Search performance visual',
-                description: 'Content architecture and SEO direction that expanded category visibility for a creative studio.',
+                description:
+                    'Content architecture and SEO direction that expanded category visibility for a creative studio.',
             },
             {
                 title: 'Luma Retention Flow',
                 category: 'Email',
                 image: '/images/portfolio/marketing.svg',
                 alt: 'Email marketing lifecycle campaign',
-                description: 'A cleaner lifecycle sequence that improved activation and repeat customer engagement.',
+                description:
+                    'A cleaner lifecycle sequence that improved activation and repeat customer engagement.',
             },
         ],
     },
     'video-editing': {
         name: 'Video Editing',
-        shortDescription: 'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
-        longDescription: "We edit with pace, structure, and taste. Whether it is short-form social, YouTube, branded explainers, or corporate communication, Opticore shapes footage into confident, polished narratives that respect the audience's time.",
+        shortDescription:
+            'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
+        longDescription:
+            "We edit with pace, structure, and taste. Whether it is short-form social, YouTube, branded explainers, or corporate communication, Opticore shapes footage into confident, polished narratives that respect the audience's time.",
         href: '/video-editing',
         icon: 'Film',
         subServices: [
-            { title: 'Reels & Shorts', description: 'Attention-first edits with pacing, captions, hooks, and punch built for social performance.' },
-            { title: 'YouTube Videos', description: 'Long-form editing that improves clarity, rhythm, and viewer retention.' },
-            { title: 'Corporate Videos', description: 'Professional edits for internal communications, launches, and brand storytelling.' },
-            { title: 'Motion Graphics', description: 'Dynamic titles, transitions, and animated scenes that elevate the final cut.' },
-            { title: 'Color Grading', description: 'Balanced, cinematic finishing that gives each piece a more refined visual identity.' },
+            {
+                title: 'Reels & Shorts',
+                description:
+                    'Attention-first edits with pacing, captions, hooks, and punch built for social performance.',
+            },
+            {
+                title: 'YouTube Videos',
+                description:
+                    'Long-form editing that improves clarity, rhythm, and viewer retention.',
+            },
+            {
+                title: 'Corporate Videos',
+                description:
+                    'Professional edits for internal communications, launches, and brand storytelling.',
+            },
+            {
+                title: 'Motion Graphics',
+                description:
+                    'Dynamic titles, transitions, and animated scenes that elevate the final cut.',
+            },
+            {
+                title: 'Color Grading',
+                description:
+                    'Balanced, cinematic finishing that gives each piece a more refined visual identity.',
+            },
         ],
         reasons: defaultReasons,
         process: defaultProcess,
@@ -259,35 +359,56 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                 category: 'Brand Video',
                 image: '/images/portfolio/video.svg',
                 alt: 'Aurelia launch film scene',
-                description: 'A cinematic product intro shaped for both hero placement and cutdown formats.',
+                description:
+                    'A cinematic product intro shaped for both hero placement and cutdown formats.',
             },
             {
                 title: 'Creator Sprint Pack',
                 category: 'Short-Form',
                 image: '/images/portfolio/video.svg',
                 alt: 'Short form editing showcase',
-                description: 'Fast-moving vertical edits with strong hooks and clean subtitle systems.',
+                description:
+                    'Fast-moving vertical edits with strong hooks and clean subtitle systems.',
             },
             {
                 title: 'Executive Storyline',
                 category: 'Corporate',
                 image: '/images/portfolio/video.svg',
                 alt: 'Corporate video storyboard scene',
-                description: 'Interview and b-roll editing structured for clarity, authority, and internal alignment.',
+                description:
+                    'Interview and b-roll editing structured for clarity, authority, and internal alignment.',
             },
         ],
     },
     '3d-production': {
         name: '3D Production',
-        shortDescription: 'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
-        longDescription: 'Opticore creates 3D visuals that help products, spaces, and concepts feel tangible before they ever reach the market. We focus on lighting, materials, composition, and motion so the final output feels convincing and commercially polished.',
+        shortDescription:
+            'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
+        longDescription:
+            'Opticore creates 3D visuals that help products, spaces, and concepts feel tangible before they ever reach the market. We focus on lighting, materials, composition, and motion so the final output feels convincing and commercially polished.',
         href: '/3d-production',
         icon: 'Layers',
         subServices: [
-            { title: '3D Modeling', description: 'Clean, production-ready models for products, environments, and branded visual systems.' },
-            { title: 'Arch Visualization', description: 'Atmospheric renders that help spaces communicate scale, material, and mood.' },
-            { title: 'Product Rendering', description: 'High-resolution product imagery designed for launches, ads, and presentations.' },
-            { title: 'Animation', description: 'Motion-led sequences that bring features, assemblies, and environments to life.' },
+            {
+                title: '3D Modeling',
+                description:
+                    'Clean, production-ready models for products, environments, and branded visual systems.',
+            },
+            {
+                title: 'Arch Visualization',
+                description:
+                    'Atmospheric renders that help spaces communicate scale, material, and mood.',
+            },
+            {
+                title: 'Product Rendering',
+                description:
+                    'High-resolution product imagery designed for launches, ads, and presentations.',
+            },
+            {
+                title: 'Animation',
+                description:
+                    'Motion-led sequences that bring features, assemblies, and environments to life.',
+            },
         ],
         reasons: defaultReasons,
         process: defaultProcess,
@@ -297,36 +418,61 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                 category: 'Product Render',
                 image: '/images/portfolio/three-d.svg',
                 alt: 'Nova device 3D product render',
-                description: 'Premium lighting and material direction for a product reveal sequence and sales assets.',
+                description:
+                    'Premium lighting and material direction for a product reveal sequence and sales assets.',
             },
             {
                 title: 'Harbor Residence',
                 category: 'Arch Viz',
                 image: '/images/portfolio/three-d.svg',
                 alt: 'Architectural visualization scene',
-                description: 'Exterior and interior visualization designed to sell mood, scale, and finish quality.',
+                description:
+                    'Exterior and interior visualization designed to sell mood, scale, and finish quality.',
             },
             {
                 title: 'Kinetic Motion System',
                 category: 'Animation',
                 image: '/images/portfolio/three-d.svg',
                 alt: '3D motion graphics concept',
-                description: 'A clean mechanical animation built to explain product movement and design intelligence.',
+                description:
+                    'A clean mechanical animation built to explain product movement and design intelligence.',
             },
         ],
     },
     'web-development': {
         name: 'Web Development',
-        shortDescription: 'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
-        longDescription: 'We build websites that feel premium in both design and engineering. From landing pages to custom web apps, Opticore pairs visual polish with strong frontend performance, structured backend logic, and a conversion-focused content flow.',
+        shortDescription:
+            'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
+        longDescription:
+            'We build websites that feel premium in both design and engineering. From landing pages to custom web apps, Opticore pairs visual polish with strong frontend performance, structured backend logic, and a conversion-focused content flow.',
         href: '/web-development',
         icon: 'Code2',
         subServices: [
-            { title: 'Custom Web Apps', description: 'Tailored products with clean UX, scalable architecture, and reliable backend logic.' },
-            { title: 'E-Commerce', description: 'Conversion-ready storefronts optimized for trust, speed, and high-value product storytelling.' },
-            { title: 'CMS', description: 'Flexible content-managed builds that help teams move without developer dependency.' },
-            { title: 'Landing Pages', description: 'Focused pages for campaigns, offers, and lead generation with strong narrative structure.' },
-            { title: 'Maintenance', description: 'Ongoing support, updates, optimization, and refinement after launch.' },
+            {
+                title: 'Custom Web Apps',
+                description:
+                    'Tailored products with clean UX, scalable architecture, and reliable backend logic.',
+            },
+            {
+                title: 'E-Commerce',
+                description:
+                    'Conversion-ready storefronts optimized for trust, speed, and high-value product storytelling.',
+            },
+            {
+                title: 'CMS',
+                description:
+                    'Flexible content-managed builds that help teams move without developer dependency.',
+            },
+            {
+                title: 'Landing Pages',
+                description:
+                    'Focused pages for campaigns, offers, and lead generation with strong narrative structure.',
+            },
+            {
+                title: 'Maintenance',
+                description:
+                    'Ongoing support, updates, optimization, and refinement after launch.',
+            },
         ],
         reasons: defaultReasons,
         process: defaultProcess,
@@ -336,21 +482,24 @@ export const servicePageContent: Record<string, ServicePageContent> = {
                 category: 'Custom App',
                 image: '/images/portfolio/web.svg',
                 alt: 'Web platform dashboard interface',
-                description: 'A data-rich client portal with sharp hierarchy and a refined premium interface.',
+                description:
+                    'A data-rich client portal with sharp hierarchy and a refined premium interface.',
             },
             {
                 title: 'Summit Commerce',
                 category: 'E-Commerce',
                 image: '/images/portfolio/web.svg',
                 alt: 'E-commerce website design',
-                description: 'A store experience designed for premium positioning and stronger product storytelling.',
+                description:
+                    'A store experience designed for premium positioning and stronger product storytelling.',
             },
             {
                 title: 'Aurelia Campaign Site',
                 category: 'Landing Page',
                 image: '/images/portfolio/web.svg',
                 alt: 'Campaign landing page hero',
-                description: 'A launch page combining animation, positioning, and conversion-focused structure.',
+                description:
+                    'A launch page combining animation, positioning, and conversion-focused structure.',
             },
         ],
     },
@@ -360,140 +509,160 @@ export const portfolioCategories: PortfolioCategory[] = [
     {
         type: 'logo-identity',
         title: 'Logo & Identity',
-        description: 'Marks, systems, and identity applications that make brands feel established from the first glance.',
+        description:
+            'Marks, systems, and identity applications that make brands feel established from the first glance.',
         items: [
             {
                 title: 'Lumina Monogram',
                 category: 'Identity',
                 image: '/images/portfolio/identity.svg',
                 alt: 'Lumina identity showcase',
-                description: 'A minimalist monogram system designed for premium wellness positioning.',
+                description:
+                    'A minimalist monogram system designed for premium wellness positioning.',
             },
             {
                 title: 'Summit Wordmark',
                 category: 'Branding',
                 image: '/images/portfolio/identity.svg',
                 alt: 'Summit logo concept',
-                description: 'A high-contrast wordmark crafted for bold digital and print applications.',
+                description:
+                    'A high-contrast wordmark crafted for bold digital and print applications.',
             },
             {
                 title: 'North Peak System',
                 category: 'Brand Suite',
                 image: '/images/portfolio/identity.svg',
                 alt: 'North Peak identity system',
-                description: 'A geometric identity suite with typography and application guidance.',
+                description:
+                    'A geometric identity suite with typography and application guidance.',
             },
         ],
     },
     {
         type: 'packaging-design',
         title: 'Packaging Design',
-        description: 'Retail-ready packaging concepts built to communicate quality, clarity, and differentiation.',
+        description:
+            'Retail-ready packaging concepts built to communicate quality, clarity, and differentiation.',
         items: [
             {
                 title: 'Arbor Living Line',
                 category: 'Packaging',
                 image: '/images/portfolio/packaging.svg',
                 alt: 'Arbor packaging concept',
-                description: 'A nature-led premium packaging system with tactile contrast and clarity.',
+                description:
+                    'A nature-led premium packaging system with tactile contrast and clarity.',
             },
             {
                 title: 'Velora Serum',
                 category: 'Beauty',
                 image: '/images/portfolio/packaging.svg',
                 alt: 'Velora serum packaging',
-                description: 'Dark luxury packaging for a high-margin skincare launch.',
+                description:
+                    'Dark luxury packaging for a high-margin skincare launch.',
             },
             {
                 title: 'Pulse Coffee',
                 category: 'Consumer Goods',
                 image: '/images/portfolio/packaging.svg',
                 alt: 'Pulse coffee packaging',
-                description: 'Graphic-led pouch design that balanced energy and shelf presence.',
+                description:
+                    'Graphic-led pouch design that balanced energy and shelf presence.',
             },
         ],
     },
     {
         type: 'social-media-graphics',
         title: 'Social Media Graphics',
-        description: 'High-performance visual systems for campaigns, product drops, and ongoing content calendars.',
+        description:
+            'High-performance visual systems for campaigns, product drops, and ongoing content calendars.',
         items: [
             {
                 title: 'Flux Launch Set',
                 category: 'Campaign',
                 image: '/images/portfolio/social.svg',
                 alt: 'Flux campaign graphics',
-                description: 'A fast-moving launch pack designed for urgency and consistency across formats.',
+                description:
+                    'A fast-moving launch pack designed for urgency and consistency across formats.',
             },
             {
                 title: 'Nova Teaser Series',
                 category: 'Product Social',
                 image: '/images/portfolio/social.svg',
                 alt: 'Nova teaser series',
-                description: 'Teaser visuals built around dramatic product framing and strong contrast.',
+                description:
+                    'Teaser visuals built around dramatic product framing and strong contrast.',
             },
             {
                 title: 'Aurelia Event Loop',
                 category: 'Event Promotion',
                 image: '/images/portfolio/social.svg',
                 alt: 'Aurelia social event graphics',
-                description: 'A modular visual system for event promotion and recap posts.',
+                description:
+                    'A modular visual system for event promotion and recap posts.',
             },
         ],
     },
     {
         type: 'print-design',
         title: 'Print Design',
-        description: 'Collateral and large-format graphics with strong hierarchy, finish detail, and brand consistency.',
+        description:
+            'Collateral and large-format graphics with strong hierarchy, finish detail, and brand consistency.',
         items: [
             {
                 title: 'Investor Prospectus',
                 category: 'Editorial',
                 image: '/images/portfolio/print.svg',
                 alt: 'Investor prospectus print layout',
-                description: 'A sleek editorial system designed to carry complex information with confidence.',
+                description:
+                    'A sleek editorial system designed to carry complex information with confidence.',
             },
             {
                 title: 'Conference Suite',
                 category: 'Event Print',
                 image: '/images/portfolio/print.svg',
                 alt: 'Conference print suite',
-                description: 'Signage and collateral designed for clarity at scale and in motion.',
+                description:
+                    'Signage and collateral designed for clarity at scale and in motion.',
             },
             {
                 title: 'Brand Brochure',
                 category: 'Sales Material',
                 image: '/images/portfolio/print.svg',
                 alt: 'Brand brochure concept',
-                description: 'A premium brochure layout with layered image treatment and persuasive structure.',
+                description:
+                    'A premium brochure layout with layered image treatment and persuasive structure.',
             },
         ],
     },
     {
         type: 'photoshop-editing',
         title: 'Photoshop Editing',
-        description: 'Retouching and compositing work that turns rough source material into polished visual assets.',
+        description:
+            'Retouching and compositing work that turns rough source material into polished visual assets.',
         items: [
             {
                 title: 'Studio Composite',
                 category: 'Compositing',
                 image: '/images/portfolio/photo.svg',
                 alt: 'Photoshop compositing showcase',
-                description: 'A layered product scene built for campaign-ready hero usage.',
+                description:
+                    'A layered product scene built for campaign-ready hero usage.',
             },
             {
                 title: 'Beauty Retouch',
                 category: 'Retouching',
                 image: '/images/portfolio/photo.svg',
                 alt: 'Beauty retouching example',
-                description: 'Commercial retouching focused on refinement without losing realism.',
+                description:
+                    'Commercial retouching focused on refinement without losing realism.',
             },
             {
                 title: 'Lifestyle Cleanup',
                 category: 'Post Production',
                 image: '/images/portfolio/photo.svg',
                 alt: 'Lifestyle cleanup example',
-                description: 'Tone, color, and environmental cleanup for polished final campaign imagery.',
+                description:
+                    'Tone, color, and environmental cleanup for polished final campaign imagery.',
             },
         ],
     },
@@ -553,15 +722,18 @@ export const faqItems: FaqItem[] = [
 export const culturePerks: HighlightItem[] = [
     {
         title: 'Remote-Friendly',
-        description: 'We build distributed workflows that protect momentum, focus, and strong communication across time zones.',
+        description:
+            'We build distributed workflows that protect momentum, focus, and strong communication across time zones.',
     },
     {
         title: 'Creative Environment',
-        description: 'Design craft, experimentation, and taste matter here. We care deeply about the quality of what reaches the client.',
+        description:
+            'Design craft, experimentation, and taste matter here. We care deeply about the quality of what reaches the client.',
     },
     {
         title: 'Growth-Focused',
-        description: 'You will work on ambitious projects, sharpen your process, and expand your range alongside a multidisciplinary team.',
+        description:
+            'You will work on ambitious projects, sharpen your process, and expand your range alongside a multidisciplinary team.',
     },
 ];
 
@@ -570,31 +742,36 @@ export const jobListings: JobListing[] = [
         title: 'Graphic Designer',
         location: 'Remote',
         type: 'Full Time',
-        description: 'Build premium brand systems, campaign visuals, and polished presentation assets for fast-moving client work.',
+        description:
+            'Build premium brand systems, campaign visuals, and polished presentation assets for fast-moving client work.',
     },
     {
         title: 'Video Editor',
         location: 'Remote',
         type: 'Full Time',
-        description: 'Edit social, branded, and long-form content with a strong sense of rhythm, storytelling, and motion detail.',
+        description:
+            'Edit social, branded, and long-form content with a strong sense of rhythm, storytelling, and motion detail.',
     },
     {
         title: 'Web Developer',
         location: 'Remote',
         type: 'Full Time',
-        description: 'Ship high-quality digital experiences with strong frontend craft and dependable backend execution.',
+        description:
+            'Ship high-quality digital experiences with strong frontend craft and dependable backend execution.',
     },
     {
         title: 'Digital Marketer',
         location: 'Remote',
         type: 'Full Time',
-        description: 'Own campaign strategy, channel growth, and performance-minded systems across search, social, and lifecycle marketing.',
+        description:
+            'Own campaign strategy, channel growth, and performance-minded systems across search, social, and lifecycle marketing.',
     },
     {
         title: '3D Artist',
         location: 'Remote',
         type: 'Full Time',
-        description: 'Create high-end models, renders, and motion sequences for brand, product, and architectural work.',
+        description:
+            'Create high-end models, renders, and motion sequences for brand, product, and architectural work.',
     },
 ];
 

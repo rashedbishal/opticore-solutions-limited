@@ -122,7 +122,12 @@ export default function BlogShow({ slug, dbBlog }: BlogShowProps) {
                                         {post.excerpt}
                                     </p>
 
-                                    <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: post.content }} />
+                                    <div
+                                        className="whitespace-pre-wrap"
+                                        dangerouslySetInnerHTML={{
+                                            __html: post.content,
+                                        }}
+                                    />
 
                                     {/* Generic Rich Content Example */}
                                     <div className="mt-8 space-y-6 md:mt-12 md:space-y-8">
