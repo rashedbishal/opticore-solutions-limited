@@ -574,13 +574,13 @@ export default function HomeIndex({
             </section>
 
             <section className="section-shell pt-0">
-                <div className="section-inner grid grid-cols-1 items-center gap-10 xl:grid-cols-[0.7fr_1.3fr] xl:gap-16">
+                <div className="section-inner grid grid-cols-1 items-center gap-4 xl:grid-cols-[0.7fr_1.3fr] xl:gap-6">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
                         variants={desktop ? slideLeft : fadeUp}
-                        className="max-w-lg lg:max-w-none xl:pr-12"
+                        className="max-w-lg lg:max-w-none "
                     >
                         <span className="section-kicker">About Opticore</span>
                         <h2 className="max-w-xl text-3xl font-extrabold text-balance text-white sm:text-4xl lg:text-[2.45rem] xl:text-[2.2rem]">
@@ -609,7 +609,7 @@ export default function HomeIndex({
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
                         variants={desktop ? slideRight : fadeUp}
-                        className="flex flex-col gap-4 md:flex-row xl:gap-6"
+                        className="flex flex-col gap-2 md:flex-row xl:gap-4"
                     >
                         {/* Define Card Groups */}
                         {[
@@ -622,7 +622,7 @@ export default function HomeIndex({
                         ].map((group, groupIndex) => (
                             <div
                                 key={groupIndex}
-                                className={`flex flex-col gap-4 xl:gap-6 ${group.className}`}
+                                className={`flex flex-col gap-2 xl:gap-4 ${group.className}`}
                             >
                                 {group.items.map((service) => {
                                     const index = services.indexOf(service);
