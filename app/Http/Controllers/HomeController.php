@@ -41,12 +41,11 @@ class HomeController extends Controller
                     $portfolios[$category] = [];
                 }
             }
-
             return $portfolios;
         });
 
         $brands = Cache::remember('home.brands', now()->addMinutes(60), function () {
-            return Brand::orderBy('created_at', 'asc')->pluck('name');
+            return Brand::orderBy('created_at', 'asc')->get(['name', 'logo_path'])->toArray();
         });
 
         return Inertia::render('Home/Index', [

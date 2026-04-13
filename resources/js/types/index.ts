@@ -43,6 +43,7 @@ export interface Testimonial {
     role: string;
     company: string;
     quote: string;
+    icon?: string;
 }
 
 export interface ProcessStep {

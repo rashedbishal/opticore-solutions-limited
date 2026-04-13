@@ -96,15 +96,18 @@ export default function Navbar() {
             <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 xl:px-5 2xl:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-5 xl:py-3 2xl:px-6',
                         scrolled
-                            ? 'border-white/10 bg-black/60 shadow-2xl shadow-black/30 backdrop-blur-xl'
+                            ? 'xl:rounded-full xl:border xl:border-white/10 xl:bg-black/60 xl:shadow-2xl xl:shadow-black/30 xl:backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
                     )}
                 >
                     <Link
                         href="/"
-                        className="touch-target inline-flex items-center rounded-full px-2"
+                        className={cn(
+                            'touch-target inline-flex items-center rounded-full p-2 transition-all duration-300',
+                            'bg-black/40 backdrop-blur-md border border-white/10 xl:border-transparent xl:bg-transparent xl:backdrop-blur-none'
+                        )}
                         aria-label="Opticore Solutions home"
                     >
                         <img
@@ -136,7 +139,10 @@ export default function Navbar() {
                                 ? 'Close navigation menu'
                                 : 'Open navigation menu'
                         }
-                        className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white xl:hidden"
+                        className={cn(
+                            'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
+                            'h-14 w-14 bg-black/40 backdrop-blur-md border border-white/10 text-white'
+                        )}
                         onClick={() => setOpen((current) => !current)}
                     >
                         {open ? (
@@ -154,29 +160,31 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-60 flex flex-col bg-black/98 p-4 backdrop-blur-2xl xl:hidden"
+                        className="fixed inset-0 z-60 flex flex-col bg-black/98 backdrop-blur-2xl xl:hidden"
                     >
                         <div className="flex h-full flex-col">
                             {/* Header inside the menu for consistent top spacing and close button */}
-                            <div className="flex items-center justify-between pt-4 pb-6 sm:px-2">
-                                <Link
-                                    href="/"
-                                    className="flex items-center"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    <img
-                                        src="/images/logo/opticore.png"
-                                        alt="Opticore Solutions"
-                                        className="h-10 w-auto shrink-0 object-contain"
-                                    />
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={() => setOpen(false)}
-                                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
+                            <div className="px-4 pt-4 sm:px-6">
+                                <div className="mx-auto flex max-w-7xl items-center justify-between">
+                                    <Link
+                                        href="/"
+                                        className="touch-target inline-flex items-center rounded-full p-2 border border-transparent bg-transparent"
+                                        onClick={() => setOpen(false)}
+                                    >
+                                        <img
+                                            src="/images/logo/opticore.png"
+                                            alt="Opticore Solutions"
+                                            className="h-10 w-auto shrink-0 object-contain"
+                                        />
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => setOpen(false)}
+                                        className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Scrollable links area */}
