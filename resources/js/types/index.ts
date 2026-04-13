@@ -60,6 +60,7 @@ export interface PortfolioItem {
     title: string;
     category: string;
     media_path: string | null;
+    image?: string;
     media_type: 'image' | 'video';
     alt: string;
     description?: string;

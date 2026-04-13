@@ -1,7 +1,7 @@
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
-import { Edit, Layers, Plus, Trash2 } from 'lucide-react';
+import { Edit, Plus, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface SubCategory {
@@ -84,7 +84,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                         {sub.category_label}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 font-mono text-sm text-xs whitespace-nowrap text-zinc-400">
+                                <td className="px-6 py-4 font-mono text-xs whitespace-nowrap text-zinc-400">
                                     {sub.slug}
                                 </td>
                                 <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">

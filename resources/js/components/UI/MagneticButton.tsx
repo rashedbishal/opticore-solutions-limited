@@ -22,6 +22,7 @@ export default function MagneticButton({
     ...props
 }: MagneticButtonProps) {
     const magnetic = useMagneticHover<HTMLAnchorElement | HTMLButtonElement>();
+    const usesNativeAnchor = Boolean(href && /^(tel:|mailto:|https?:)/.test(href));
 
     const content = (
         <motion.span className="flex relative z-10" style={{ x: magnetic.x, y: magnetic.y }}>
@@ -30,6 +31,21 @@ export default function MagneticButton({
     );
 
     if (href) {
+        if (usesNativeAnchor) {
+            return (
+                <a
+                    href={href}
+                    aria-label={ariaLabel}
+                    className={cn(classes, fullWidth && 'w-full', className)}
+                    ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
+                    onMouseMove={magnetic.handleMouseMove as React.MouseEventHandler<HTMLAnchorElement>}
+                    onMouseLeave={magnetic.handleMouseLeave as React.MouseEventHandler<HTMLAnchorElement>}
+                >
+                    {content}
+                </a>
+            );
+        }
+
         return (
             <Link
                 href={href}
