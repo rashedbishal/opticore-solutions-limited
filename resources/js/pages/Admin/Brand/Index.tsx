@@ -1,12 +1,13 @@
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { Link, useForm } from '@inertiajs/react';
-import { Plus, Trash2, Edit, X } from 'lucide-react';
-import React, { ReactNode, useState } from 'react';
+import { Link, useForm, router } from '@inertiajs/react';
+import { Plus, Trash2, Edit, X, Upload, Image as ImageIcon } from 'lucide-react';
+import React, { ReactNode, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface Brand {
     id: number;
     name: string;
+    logo_path: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -18,32 +19,42 @@ interface Props {
 export default function BrandIndex({ brands }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const {
         data,
         setData,
         post,
-        put,
-        delete: destroy,
         processing,
         errors,
         reset,
         clearErrors,
-    } = useForm({
+    } = useForm<{
+        name: string;
+        logo: File | null;
+        _method?: string;
+    }>({
         name: '',
+        logo: null,
     });
 
     const openCreateModal = () => {
         clearErrors();
         reset();
         setEditingBrand(null);
+        setPreviewUrl(null);
         setIsModalOpen(true);
     };
 
     const openEditModal = (brand: Brand) => {
         clearErrors();
         setEditingBrand(brand);
-        setData('name', brand.name);
+        setData({
+            name: brand.name,
+            logo: null,
+        });
+        setPreviewUrl(brand.logo_path);
         setIsModalOpen(true);
     };
 
@@ -51,13 +62,31 @@ export default function BrandIndex({ brands }: Props) {
         setIsModalOpen(false);
         reset();
         clearErrors();
+        setPreviewUrl(null);
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('logo', file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (editingBrand) {
-            put(`/admin/brands/${editingBrand.id}`, {
+            // Use post with _method put for file uploads
+            post(`/admin/brands/${editingBrand.id}`, {
+                data: {
+                    ...data,
+                    _method: 'PUT',
+                },
                 onSuccess: () => closeModal(),
             });
         } else {
@@ -69,7 +98,7 @@ export default function BrandIndex({ brands }: Props) {
 
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this brand?')) {
-            destroy(`/admin/brands/${id}`);
+            router.delete(`/admin/brands/${id}`);
         }
     };
 
@@ -90,6 +119,9 @@ export default function BrandIndex({ brands }: Props) {
                     <thead className="bg-zinc-800/50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                                Logo
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
                                 Brand Name
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
@@ -104,7 +136,7 @@ export default function BrandIndex({ brands }: Props) {
                         {brands.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan={3}
+                                    colSpan={4}
                                     className="px-6 py-8 text-center text-sm text-zinc-500"
                                 >
                                     No brands added yet.
@@ -116,6 +148,21 @@ export default function BrandIndex({ brands }: Props) {
                                     key={brand.id}
                                     className="transition-colors hover:bg-white/5"
                                 >
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        {brand.logo_path ? (
+                                            <div className="h-10 w-10 overflow-hidden rounded-lg border border-white/10 bg-black/40 p-1">
+                                                <img
+                                                    src={brand.logo_path}
+                                                    alt={brand.name}
+                                                    className="h-full w-full object-contain"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/5 bg-zinc-800/50 text-zinc-600">
+                                                <ImageIcon className="h-5 w-5" />
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-white">
                                         {brand.name}
                                     </td>
@@ -177,30 +224,80 @@ export default function BrandIndex({ brands }: Props) {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label
-                                        htmlFor="name"
-                                        className="mb-1 block text-sm font-medium text-zinc-300"
-                                    >
-                                        Brand Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        value={data.name}
-                                        onChange={(e) =>
-                                            setData('name', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 disabled:opacity-50"
-                                        placeholder="e.g. Velocity Commerce"
-                                        autoComplete="off"
-                                    />
-                                    {errors.name && (
-                                        <p className="mt-1 text-sm text-red-500">
-                                            {errors.name}
-                                        </p>
-                                    )}
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="space-y-4">
+                                    <div>
+                                        <label
+                                            htmlFor="name"
+                                            className="mb-1 block text-sm font-medium text-zinc-300"
+                                        >
+                                            Brand Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            value={data.name}
+                                            onChange={(e) =>
+                                                setData('name', e.target.value)
+                                            }
+                                            className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 disabled:opacity-50"
+                                            placeholder="e.g. Velocity Commerce"
+                                            autoComplete="off"
+                                        />
+                                        {errors.name && (
+                                            <p className="mt-1 text-sm text-red-500">
+                                                {errors.name}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="mb-1 block text-sm font-medium text-zinc-300">
+                                            Brand Logo
+                                        </label>
+                                        <div 
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 bg-zinc-900/50 p-8 transition-colors hover:border-cyan-500/50"
+                                        >
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                            />
+                                            
+                                            {previewUrl ? (
+                                                <div className="relative aspect-square w-32 overflow-hidden rounded-lg bg-black/40 p-2">
+                                                    <img
+                                                        src={previewUrl}
+                                                        alt="Preview"
+                                                        className="h-full w-full object-contain"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                                                        <Upload className="h-6 w-6 text-white" />
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center text-center">
+                                                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-zinc-400 group-hover:text-cyan-400">
+                                                        <Upload className="h-6 w-6" />
+                                                    </div>
+                                                    <p className="text-sm font-medium text-zinc-300">
+                                                        Click to upload logo
+                                                    </p>
+                                                    <p className="mt-1 text-xs text-zinc-500">
+                                                        SVG, PNG, JPG (max. 2MB)
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {errors.logo && (
+                                            <p className="mt-1 text-sm text-red-500">
+                                                {errors.logo}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-end gap-3 border-t border-white/10 pt-4">

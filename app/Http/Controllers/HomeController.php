@@ -40,7 +40,7 @@ class HomeController extends Controller
             }
         }
 
-        $brands = Brand::orderBy('created_at', 'asc')->pluck('name');
+        $brands = Brand::orderBy('created_at', 'asc')->get(['name', 'logo_path'])->toArray();
 
         return Inertia::render('Home/Index', [
             'featuredPortfolios' => $featuredPortfolios,
