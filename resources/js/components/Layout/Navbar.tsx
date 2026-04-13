@@ -96,9 +96,9 @@ export default function Navbar() {
             <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 transition-all duration-300 xl:px-5 2xl:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-5 xl:py-3 2xl:px-6',
                         scrolled
-                            ? 'border-white/10 bg-black/60 shadow-2xl shadow-black/30 backdrop-blur-xl'
+                            ? 'xl:rounded-full xl:border xl:border-white/10 xl:bg-black/60 xl:shadow-2xl xl:shadow-black/30 xl:backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
                     )}
                 >
