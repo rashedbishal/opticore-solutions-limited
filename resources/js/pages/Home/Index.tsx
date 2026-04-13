@@ -12,11 +12,12 @@ import {
     Sparkles,
     Star,
 } from 'lucide-react';
-import { useEffect, useRef, useMemo, useState } from 'react';
-import Section2 from '@/components/Robot/Section2';
-import Section3 from '@/components/Robot/Section3';
-import Section4 from '@/components/Robot/Section4';
-import Section5 from '@/components/Robot/Section5';
+import { useEffect, useRef, useMemo, useState, lazy, Suspense } from 'react';
+
+const Section2 = lazy(() => import('@/components/Robot/Section2'));
+const Section3 = lazy(() => import('@/components/Robot/Section3'));
+const Section4 = lazy(() => import('@/components/Robot/Section4'));
+const Section5 = lazy(() => import('@/components/Robot/Section5'));
 import AnimatedCounter from '@/components/UI/AnimatedCounter';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -550,10 +551,12 @@ export default function HomeIndex({
                 </div>
             </section>
 
-            <Section2 />
-            <Section3 />
-            <Section4 />
-            <Section5 />
+            <Suspense fallback={<div className="flex h-96 w-full items-center justify-center text-sm text-zinc-500">Loading sections...</div>}>
+                <Section2 />
+                <Section3 />
+                <Section4 />
+                <Section5 />
+            </Suspense>
 
             <section className="section-shell pt-0">
                 <div className="section-inner">

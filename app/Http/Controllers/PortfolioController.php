@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,28 +15,30 @@ class PortfolioController extends Controller
      */
     public function index(): Response
     {
-        $configCategories = $this->portfolioCategories();
+        $categories = Cache::remember('portfolio.categories.index', now()->addMinutes(60), function () {
+            $configCategories = $this->portfolioCategories();
 
-        $subCategoryCounts = PortfolioSubCategory::query()
-            ->selectRaw('category_slug, COUNT(*) as aggregate')
-            ->groupBy('category_slug')
-            ->pluck('aggregate', 'category_slug');
+            $subCategoryCounts = PortfolioSubCategory::query()
+                ->selectRaw('category_slug, COUNT(*) as aggregate')
+                ->groupBy('category_slug')
+                ->pluck('aggregate', 'category_slug');
 
-        $portfolioCounts = Portfolio::query()
-            ->selectRaw('category, COUNT(*) as aggregate')
-            ->groupBy('category')
-            ->pluck('aggregate', 'category');
+            $portfolioCounts = Portfolio::query()
+                ->selectRaw('category, COUNT(*) as aggregate')
+                ->groupBy('category')
+                ->pluck('aggregate', 'category');
 
-        $categories = collect($configCategories)
-            ->map(fn (array $data, string $slug) => [
-                'slug' => $slug,
-                'label' => $data['label'],
-                'description' => $data['description'],
-                'sub_categories_count' => (int) ($subCategoryCounts[$slug] ?? 0),
-                'portfolios_count' => (int) ($portfolioCounts[$slug] ?? 0),
-            ])
-            ->values()
-            ->toArray();
+            return collect($configCategories)
+                ->map(fn (array $data, string $slug) => [
+                    'slug' => $slug,
+                    'label' => $data['label'],
+                    'description' => $data['description'],
+                    'sub_categories_count' => (int) ($subCategoryCounts[$slug] ?? 0),
+                    'portfolios_count' => (int) ($portfolioCounts[$slug] ?? 0),
+                ])
+                ->values()
+                ->toArray();
+        });
 
         return Inertia::render('Portfolio/Show', [
             'categories' => $categories,
@@ -86,6 +89,8 @@ class PortfolioController extends Controller
      */
     public function preview(Portfolio $portfolio): Response
     {
+        $portfolio->loadMissing('subCategory');
+
         $subCategory = $portfolio->subCategory;
         $categorySlug = $subCategory?->category_slug ?? $portfolio->category;
         $subCategorySlug = $subCategory?->slug;
@@ -121,21 +126,23 @@ class PortfolioController extends Controller
      */
     private function subCategoriesFor(string $category): array
     {
-        return PortfolioSubCategory::query()
-            ->where('category_slug', $category)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->withCount('portfolios')
-            ->get()
-            ->map(fn (PortfolioSubCategory $subCategory) => [
-                'id' => $subCategory->id,
-                'name' => $subCategory->name,
-                'slug' => $subCategory->slug,
-                'description' => $subCategory->description,
-                'portfolios_count' => $subCategory->portfolios_count,
-            ])
-            ->values()
-            ->toArray();
+        return Cache::remember("portfolio.subcategories.{$category}", now()->addMinutes(60), function () use ($category) {
+            return PortfolioSubCategory::query()
+                ->where('category_slug', $category)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->withCount('portfolios')
+                ->get()
+                ->map(fn (PortfolioSubCategory $subCategory) => [
+                    'id' => $subCategory->id,
+                    'name' => $subCategory->name,
+                    'slug' => $subCategory->slug,
+                    'description' => $subCategory->description,
+                    'portfolios_count' => $subCategory->portfolios_count,
+                ])
+                ->values()
+                ->toArray();
+        });
     }
 
     /**

@@ -1,0 +1,88 @@
+# CI Pipeline — Laravel + Inertia + React
+# Runs on every push and PR to main. Fails fast on any error.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Install PHP 8.3.29 with required extensions for Laravel
+      #    Uses shivammathur/setup-php for exact version pinning
+      - name: Setup PHP 8.3.29
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3.29'
+          extensions: mbstring, pdo, pdo_sqlite, sqlite3, bcmath, ctype, fileinfo, json, tokenizer, xml
+          coverage: none
+
+      # 3. Install Node 22.22.2 for the frontend build
+      #    Pinned to prevent version drift between CI runs
+      - name: Setup Node 22.22.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: 'npm'
+
+      # 4. Cache Composer dependencies to speed up subsequent runs
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      # 5. Install PHP dependencies from the lock file (deterministic)
+      #    --no-interaction: no prompts
+      #    --prefer-dist: faster download via zip archives
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # 6. Prepare the Laravel environment
+      #    Copies .env.example as the base config and generates the APP_KEY
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # 7. Configure SQLite for testing
+      #    Creates the database file and overrides .env to use it
+      - name: Setup SQLite database
+        run: |
+          touch database/database.sqlite
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's|# DB_DATABASE=.*|DB_DATABASE=database/database.sqlite|' .env
+          sed -i 's/CACHE_STORE=.*/CACHE_STORE=file/' .env
+          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
+          sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
+
+      # 8. Run database migrations to create all tables
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      # 9. Install frontend dependencies from the lock file (deterministic)
+      #    npm ci is stricter than npm install — fails if lock file is out of sync
+      - name: Install Node dependencies
+        run: npm ci
+
+      # 10. Build frontend assets with Vite
+      #     Produces the production JS/CSS bundles that Inertia needs
+      - name: Build frontend
+        run: npm run build
+
+      # 11. Run the Pest test suite
+      #     Uses --ci flag to disable TTY (required in CI environments)
+      - name: Run tests
+        run: vendor/bin/pest --ci

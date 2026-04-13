@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Portfolio;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,28 +20,34 @@ class HomeController extends Controller
             'web-development',
         ];
 
-        $featuredPortfolios = [];
-        foreach ($categories as $category) {
-            $items = Portfolio::where('category', $category)
-                ->latest()
-                ->take(3)
-                ->get();
+        $featuredPortfolios = Cache::remember('home.featuredPortfolios', now()->addMinutes(60), function () use ($categories) {
+            $portfolios = [];
+            foreach ($categories as $category) {
+                $items = Portfolio::where('category', $category)
+                    ->latest()
+                    ->take(3)
+                    ->get();
 
-            if ($items->isNotEmpty()) {
-                $featuredPortfolios[$category] = $items->map(fn ($item) => [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'category' => $item->category,
-                    'media_path' => $item->media_path ? asset('storage/'.$item->media_path) : null,
-                    'media_type' => $item->media_type ?? 'image',
-                    'alt' => $item->alt ?? $item->title,
-                ])->toArray();
-            } else {
-                $featuredPortfolios[$category] = [];
+                if ($items->isNotEmpty()) {
+                    $portfolios[$category] = $items->map(fn ($item) => [
+                        'id' => $item->id,
+                        'title' => $item->title,
+                        'category' => $item->category,
+                        'media_path' => $item->media_path ? asset('storage/'.$item->media_path) : null,
+                        'media_type' => $item->media_type ?? 'image',
+                        'alt' => $item->alt ?? $item->title,
+                    ])->toArray();
+                } else {
+                    $portfolios[$category] = [];
+                }
             }
-        }
 
-        $brands = Brand::orderBy('created_at', 'asc')->pluck('name');
+            return $portfolios;
+        });
+
+        $brands = Cache::remember('home.brands', now()->addMinutes(60), function () {
+            return Brand::orderBy('created_at', 'asc')->pluck('name');
+        });
 
         return Inertia::render('Home/Index', [
             'featuredPortfolios' => $featuredPortfolios,

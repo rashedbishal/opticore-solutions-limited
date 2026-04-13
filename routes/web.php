@@ -41,10 +41,10 @@ Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, '
 
 Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
-Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore');
-Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore');
-Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply');
-Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat');
+Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
+Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
+Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
+Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:30,1');
 
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BrandController;

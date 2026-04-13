@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessContactMessage;
 use App\Models\Contact;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -17,7 +18,9 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Contact::create($validated);
+        $contact = Contact::create($validated);
+
+        ProcessContactMessage::dispatch($contact);
 
         return back()->with('success', 'Thanks for reaching out. We will be in touch soon.');
     }
