@@ -155,75 +155,75 @@ export default function PortfolioCategoryShow({
                                 </div>
                             )}
 
-                            <motion.div
-                                key={selectedSubCategory?.slug ?? category.slug}
-                                initial="hidden"
-                                animate="visible"
-                                variants={staggerContainer}
-                                className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3"
-                            >
-                                {portfolios.map((item) => (
-                                    <motion.div
-                                        key={item.id}
-                                        variants={scaleIn}
-                                        className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem]"
-                                    >
-                                        {item.media_type === 'video' ? (
-                                            <video
-                                                src={item.media_path ?? undefined}
-                                                muted
-                                                preload="metadata"
-                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            />
-                                        ) : (
-                                            <img
-                                                src={item.media_path ?? PLACEHOLDER}
-                                                alt={item.alt}
-                                                loading="lazy"
-                                                onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
-                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            />
-                                        )}
+                            {portfolios.length > 0 ? (
+                                <motion.div
+                                    key={selectedSubCategory?.slug ?? category.slug}
+                                    initial="hidden"
+                                    animate="visible"
+                                    variants={staggerContainer}
+                                    className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3"
+                                >
+                                    {portfolios.map((item) => (
+                                        <motion.div
+                                            key={item.id}
+                                            variants={scaleIn}
+                                            className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem]"
+                                        >
+                                            {item.media_type === 'video' ? (
+                                                <video
+                                                    src={item.media_path ?? undefined}
+                                                    muted
+                                                    preload="metadata"
+                                                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={item.media_path ?? PLACEHOLDER}
+                                                    alt={item.alt}
+                                                    loading="lazy"
+                                                    onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                />
+                                            )}
 
-                                        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
-                                        <div className="absolute inset-x-0 bottom-0 p-5">
-                                            <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
-                                                {selectedSubCategory?.name ?? category.label}
-                                            </p>
-                                            <div className="mt-2 flex items-center justify-between gap-4">
-                                                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                                                <Link
-                                                    href={portfolioPreview.url(item.id)}
-                                                    className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
-                                                    aria-label={`View ${item.title} full screen`}
-                                                >
-                                                    {item.media_type === 'video'
-                                                        ? <><Film className="h-4 w-4" /> Watch</>
-                                                        : <><ArrowRight className="h-4 w-4" /> View</>
-                                                    }
-                                                </Link>
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
+                                            <div className="absolute inset-x-0 bottom-0 p-5">
+                                                <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                                    {selectedSubCategory?.name ?? category.label}
+                                                </p>
+                                                <div className="mt-2 flex items-center justify-between gap-4">
+                                                    <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                                    <Link
+                                                        href={portfolioPreview.url(item.id)}
+                                                        className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
+                                                        aria-label={`View ${item.title} full screen`}
+                                                    >
+                                                        {item.media_type === 'video'
+                                                            ? <><Film className="h-4 w-4" /> Watch</>
+                                                            : <><ArrowRight className="h-4 w-4" /> View</>
+                                                        }
+                                                    </Link>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </motion.div>
-                                ))}
-
-                                {portfolios.length === 0 && (
-                                    <div className="glass-panel flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
-                                        <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
-                                        <p className="text-lg font-medium text-zinc-300">No portfolio items in this sub-category yet.</p>
-                                        <p className="mt-2 text-sm text-zinc-500">
-                                            Add items from the CMS and they will appear here automatically.
-                                        </p>
-                                    </div>
-                                )}
-                            </motion.div>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            ) : (
+                                <div className="mt-10 glass-panel flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
+                                    <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
+                                    <p className="text-lg font-medium text-zinc-300">No portfolio items in this sub-category yet.</p>
+                                    <p className="mt-2 text-sm text-zinc-500">
+                                        Check back later for new projects and updates.
+                                    </p>
+                                </div>
+                            )}
                         </>
                     ) : (
                         <div className="glass-panel rounded-[1.5rem] py-20 text-center">
                             <FolderOpen className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
                             <p className="text-lg font-medium text-zinc-400">No sub-categories yet.</p>
                             <p className="mt-1 text-sm text-zinc-600">
-                                Sub-categories will appear here once added via the CMS.
+                                Check back later for new categories and updates.
                             </p>
                         </div>
                     )}
