@@ -949,13 +949,7 @@ export default function HomeIndex({
                     <SectionHeader
                         eyebrow="Testimonials"
                         title="Trusted by Brands That Expect More"
-                        titles={[
-                            'Trusted by Brands That Expect More',
-                            'Real Stories from Exceptional Partners',
-                            'Building Trust Through Design Excellence',
-                            'Proven Results for Visionary Brands',
-                            'What Our Partners Say About Opticore',
-                        ]}
+                        animationType="testimonials"
                         description="From identity overhauls to growth campaigns and production-heavy launches, our clients come to us when the work needs to feel sharp."
                         align="center"
                     />

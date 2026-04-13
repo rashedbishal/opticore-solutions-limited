@@ -9,7 +9,7 @@ interface SectionHeaderProps {
     description?: string;
     align?: 'left' | 'center';
     variant?: 'default' | 'scanned';
-    animationType?: 'capabilities' | 'why-opticore' | 'process' | 'selected-work';
+    animationType?: 'capabilities' | 'why-opticore' | 'process' | 'selected-work' | 'testimonials';
 }
 
 const blurReveal: Variants = {
@@ -23,6 +23,39 @@ const blurReveal: Variants = {
 };
 
 // --- UNIQUE ANIMATION COMPONENTS ---
+
+/** Type E: Testimonials - Continuous Floating with Shifting Gradient */
+function TestimonialsTitle({ text }: { text: string }) {
+    return (
+        <span className="inline-block py-2 leading-[1.25]">
+            <motion.span
+                animate={{
+                    y: [0, -10, 0],
+                }}
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                }}
+                className="inline-block"
+            >
+                <motion.span
+                    animate={{
+                        backgroundPosition: ['0% center', '200% center'],
+                    }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'linear',
+                    }}
+                    className="inline-block bg-[linear-gradient(110deg,#a855f7,45%,#ec4899,55%,#a855f7)] bg-[length:200%_100%] bg-clip-text text-transparent py-1"
+                >
+                    {text}
+                </motion.span>
+            </motion.span>
+        </span>
+    );
+}
 
 /** Type A: Capabilities - Character Bounce-In with Tech Gradient */
 function CapabilitiesTitle({ text }: { text: string }) {
@@ -296,6 +329,8 @@ export default function SectionHeader({
                 return <ProcessTitle text={title} />;
             case 'selected-work':
                 return <SelectedWorkTitle text={title} />;
+            case 'testimonials':
+                return <TestimonialsTitle text={title} />;
             default:
                 return (
                     <span className="text-white">
