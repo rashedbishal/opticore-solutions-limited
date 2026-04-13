@@ -125,30 +125,35 @@ export const testimonials: Testimonial[] = [
         role: 'Founder',
         company: 'North Peak Studio',
         quote: 'Opticore gave our rebrand the kind of presence that usually takes years to earn. The visuals felt premium, strategic, and immediately credible.',
+        icon: 'Mountain',
     },
     {
         name: 'Imran Hossain',
         role: 'Marketing Lead',
         company: 'Velocity Commerce',
         quote: 'Their team connected design, paid ads, and landing page execution into one coherent growth system. The speed and clarity were exceptional.',
+        icon: 'Zap',
     },
     {
         name: 'Laura Mitchell',
         role: 'Operations Director',
         company: 'Arbor Living',
         quote: 'From packaging to campaign edits, every deliverable looked intentional and market-ready. Opticore understands how to make brands feel expensive.',
+        icon: 'Trees',
     },
     {
         name: 'Kevin Tran',
         role: 'Product Manager',
         company: 'Nova Devices',
         quote: 'The 3D renders and website launch gave our product story real weight. We looked sharper in one month than we had in the previous year.',
+        icon: 'Orbit',
     },
     {
         name: 'Nadia Rahman',
         role: 'CEO',
         company: 'Luma Health Media',
         quote: 'They operate like a true creative partner. Direction was smart, revisions were precise, and the final output landed exactly where we needed it.',
+        icon: 'Sun',
     },
 ];
 
