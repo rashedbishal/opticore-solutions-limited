@@ -104,7 +104,11 @@ export default function Navbar() {
                 >
                     <Link
                         href="/"
-                        className="touch-target inline-flex items-center rounded-full px-2"
+                        className={cn(
+                            'touch-target inline-flex items-center rounded-full p-2 transition-all duration-300',
+                            !scrolled && 'xl:bg-transparent',
+                            'bg-black/40 backdrop-blur-md border border-white/10 xl:border-transparent xl:bg-transparent xl:backdrop-blur-none'
+                        )}
                         aria-label="Opticore Solutions home"
                     >
                         <img
@@ -136,7 +140,10 @@ export default function Navbar() {
                                 ? 'Close navigation menu'
                                 : 'Open navigation menu'
                         }
-                        className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white xl:hidden"
+                        className={cn(
+                            'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
+                            'h-12 w-12 bg-black/40 backdrop-blur-md border border-white/10 text-white'
+                        )}
                         onClick={() => setOpen((current) => !current)}
                     >
                         {open ? (
