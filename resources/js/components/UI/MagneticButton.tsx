@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { useEffect } from 'react';
 import { useMagneticHover } from '@/hooks/useMagneticHover';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +23,30 @@ export default function MagneticButton({
     ...props
 }: MagneticButtonProps) {
     const magnetic = useMagneticHover<HTMLAnchorElement | HTMLButtonElement>();
-    const usesNativeAnchor = Boolean(href && /^(tel:|mailto:|https?:)/.test(href));
+
+    // Attach mouse handlers via effect to avoid accessing ref-derived values during render
+    useEffect(() => {
+        const el = magnetic.ref.current;
+
+        if (!el) {
+            return;
+        }
+
+        const onMove = (e: MouseEvent) => {
+            magnetic.handleMouseMove(e as unknown as React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>);
+        };
+        const onLeave = () => {
+            magnetic.handleMouseLeave();
+        };
+
+        el.addEventListener('mousemove', onMove);
+        el.addEventListener('mouseleave', onLeave);
+
+        return () => {
+            el.removeEventListener('mousemove', onMove);
+            el.removeEventListener('mouseleave', onLeave);
+        };
+    }, [magnetic]);
 
     const content = (
         <motion.span className="flex relative z-10" style={{ x: magnetic.x, y: magnetic.y }}>
@@ -31,15 +55,16 @@ export default function MagneticButton({
     );
 
     if (href) {
+        const usesNativeAnchor = Boolean(/^(tel:|mailto:|https?:)/.test(href));
+
         if (usesNativeAnchor) {
             return (
                 <a
                     href={href}
                     aria-label={ariaLabel}
                     className={cn(classes, fullWidth && 'w-full', className)}
+                     
                     ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
-                    onMouseMove={magnetic.handleMouseMove as React.MouseEventHandler<HTMLAnchorElement>}
-                    onMouseLeave={magnetic.handleMouseLeave as React.MouseEventHandler<HTMLAnchorElement>}
                 >
                     {content}
                 </a>
@@ -51,9 +76,8 @@ export default function MagneticButton({
                 href={href}
                 aria-label={ariaLabel}
                 className={cn(classes, fullWidth && 'w-full', className)}
+                // eslint-disable-next-line react-hooks/refs
                 ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
-                onMouseMove={magnetic.handleMouseMove as React.MouseEventHandler<HTMLAnchorElement>}
-                onMouseLeave={magnetic.handleMouseLeave as React.MouseEventHandler<HTMLAnchorElement>}
             >
                 {content}
             </Link>
@@ -65,9 +89,8 @@ export default function MagneticButton({
             type="button"
             aria-label={ariaLabel}
             className={cn(classes, fullWidth && 'w-full', className)}
+            // eslint-disable-next-line react-hooks/refs
             ref={magnetic.ref as React.RefObject<HTMLButtonElement>}
-            onMouseMove={magnetic.handleMouseMove as React.MouseEventHandler<HTMLButtonElement>}
-            onMouseLeave={magnetic.handleMouseLeave as React.MouseEventHandler<HTMLButtonElement>}
             {...props}
         >
             {content}

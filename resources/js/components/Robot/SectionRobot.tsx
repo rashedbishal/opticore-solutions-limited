@@ -1,3 +1,4 @@
+import {
     Environment,
     ContactShadows,
 } from '@react-three/drei';
@@ -28,6 +29,7 @@ export default function SectionRobot({
     useEffect(() => {
         if (!animation) {
             const animations = ['idle', 'dance', 'punch', 'jump'];
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSelectedAnimation(animations[Math.floor(Math.random() * animations.length)]);
         }
     }, [animation]);

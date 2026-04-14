@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Film, Image, FolderOpen } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 
 interface PortfolioItem {

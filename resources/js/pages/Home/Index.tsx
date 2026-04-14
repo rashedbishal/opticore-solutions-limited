@@ -2,7 +2,6 @@ import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import {
-    ArrowDown,
     ArrowRight,
     Box,
     Film,
@@ -12,27 +11,26 @@ import {
     Sparkles,
     Star,
 } from 'lucide-react';
-import { useEffect, useRef, useMemo, useState, lazy, Suspense } from 'react';
+import { useEffect, useRef, useState, lazy, Suspense } from 'react';
 
 const Section2 = lazy(() => import('@/components/Robot/Section2'));
 const Section3 = lazy(() => import('@/components/Robot/Section3'));
 const Section4 = lazy(() => import('@/components/Robot/Section4'));
 const Section5 = lazy(() => import('@/components/Robot/Section5'));
-import AnimatedCounter from '@/components/UI/AnimatedCounter';
+
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
-import ScannedServiceCard, {
+import {
     ServiceCarousel,
 } from '@/components/UI/ScannedServiceCard';
 import SectionHeader from '@/components/UI/SectionHeader';
-import ServiceCard from '@/components/UI/ServiceCard';
+
 import TestimonialCard from '@/components/UI/TestimonialCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
     aboutBentoImages,
     clientLogos,
-    homeStats,
     services,
     testimonials,
 } from '@/lib/site';
@@ -141,7 +139,7 @@ function HeroHeadline() {
             el.style.opacity = '1';
 
             // Align gradients across letters
-            const frame = requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
                 const containerWidth = el.offsetWidth;
                 const containerRect = el.getBoundingClientRect();
                 const letters = el.querySelectorAll<HTMLElement>('.anime-letter');
@@ -185,6 +183,7 @@ function HeroHeadline() {
                 animeInstance.pause();
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
     const currentPhrase = phrases[index];
@@ -311,13 +310,7 @@ export default function HomeIndex({
     featuredPortfolios,
     brands,
 }: HomeIndexProps) {
-    const categoriesMapped = [
-        'graphic-design',
-        'digital-marketing',
-        '3d-production',
-        'web-development',
-    ];
-    const bentoOrder = [0, 3, 2, 1];
+
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {

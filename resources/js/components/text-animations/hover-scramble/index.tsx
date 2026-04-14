@@ -71,13 +71,15 @@ return;
 
             return () => clearTimeout(timer);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [triggerOnMount, children]);
 
     useEffect(() => {
         if (trigger && !isAnimating) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+             
             scramble();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [trigger, isAnimating]);
 
     useEffect(() => {

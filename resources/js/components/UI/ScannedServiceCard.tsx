@@ -6,7 +6,7 @@
  *   <ServiceCarousel services={duplicatedServices} />
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import type { ServiceItem, PortfolioItem } from '@/types';
 import ServiceCard from './ServiceCard';
 

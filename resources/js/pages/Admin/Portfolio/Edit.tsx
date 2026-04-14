@@ -57,6 +57,7 @@ export default function PortfolioEdit({
         } else {
             setData('sub_category_id', '');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
 
     const submit: FormEventHandler = (e) => {
