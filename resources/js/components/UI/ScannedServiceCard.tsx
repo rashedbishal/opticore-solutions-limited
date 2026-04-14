@@ -533,7 +533,10 @@ function ScannedCarousel({
 
         const mm = (e: MouseEvent)  => onDrag(e.clientX);
         const tm = (e: TouchEvent) => {
-            e.preventDefault(); onDrag(e.touches[0].clientX); 
+            if (state.current.dragging) {
+                e.preventDefault();
+                onDrag(e.touches[0].clientX);
+            }
         };
         document.addEventListener('mousemove', mm);
         document.addEventListener('mouseup', endDrag);
@@ -596,7 +599,7 @@ function ScannedCarousel({
                     ref={trackRef}
                     onMouseDown={(e) => startDrag(e.clientX)}
                     onTouchStart={(e) => {
-                        e.preventDefault(); startDrag(e.touches[0].clientX); 
+                        startDrag(e.touches[0].clientX); 
                     }}
                     onWheel={(e) => {
                         e.preventDefault(); state.current.pos += e.deltaY > 0 ? 20 : -20; 
