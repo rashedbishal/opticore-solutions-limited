@@ -86,7 +86,7 @@ export default function MessageFromMd() {
                                     duration: 0.8,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="group relative mx-auto max-w-md lg:mx-0 lg:max-w-none"
+                                className="flex justify-center group relative mx-auto max-w-md lg:mx-0 lg:max-w-none"
                             >
                                 {/* Decorative elements */}
                                 <div className="absolute -inset-4 -rotate-2 rounded-[2.5rem] border border-white/5 transition-transform duration-700 group-hover:rotate-0" />
