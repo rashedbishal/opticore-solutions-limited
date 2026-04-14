@@ -1,8 +1,8 @@
+import { Link, useForm } from '@inertiajs/react';
+import { Save, X } from 'lucide-react';
+import type { FormEventHandler, ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
-import { Link, useForm } from '@inertiajs/react';
-import type { FormEventHandler, ReactNode } from 'react';
-import { Save, X } from 'lucide-react';
 
 export default function BlogCreate() {
     const { data, setData, post, processing, errors } = useForm({

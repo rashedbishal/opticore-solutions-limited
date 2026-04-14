@@ -368,7 +368,7 @@ function ScannedCarousel({
     }, []);
 
     // ── clip loop ─────────────────────────────────────────────────────────────
-    const updateClip = useCallback(() => {
+    const updateClip = useCallback(function tick() {
         if (!trackRef.current) {
             return;
         }
@@ -420,11 +420,11 @@ function ScannedCarousel({
             scannerRef.current.scanningActive = anyScanning;
         }
 
-        state.current.clipId = requestAnimationFrame(updateClip);
+        state.current.clipId = requestAnimationFrame(tick);
     }, [getScanPageX]);
 
     // ── scroll loop ───────────────────────────────────────────────────────────
-    const animateTrack = useCallback(() => {
+    const animateTrack = useCallback(function frame() {
         const s = state.current;
         const now = performance.now();
         const dt = Math.min((now - s.lastT) / 1000, 0.05);
@@ -446,7 +446,7 @@ function ScannedCarousel({
             }
         }
 
-        s.animId = requestAnimationFrame(animateTrack);
+        s.animId = requestAnimationFrame(frame);
     }, []);
 
     // ── drag ──────────────────────────────────────────────────────────────────

@@ -132,6 +132,7 @@ function HeroHeadline() {
             const anime =
                 (await import('animejs')).default ?? (await import('animejs'));
             const el = phraseRef.current;
+
             if (!el) {
                 return;
             }
@@ -216,6 +217,7 @@ function HeroHeadline() {
                         if (word === '<br/>') {
                             return <br key={`br-${wi}`} />;
                         }
+
                         return (
                             <span key={`word-${wi}`} className="anime-word">
                                 {word.split('').map((char, ci) => (
@@ -317,12 +319,6 @@ export default function HomeIndex({
     ];
     const bentoOrder = [0, 3, 2, 1];
     const desktop = useMediaQuery('(min-width: 1024px)');
-    const [isPaused, setIsPaused] = useState(false);
-    const handlePointerEnter = () => setIsPaused(true);
-    const handlePointerLeave = () => setIsPaused(false);
-    const handlePointerDown = () => setIsPaused(true);
-
-    const statVariants = useMemo(() => [slideLeft, fadeUp, slideRight], []);
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -345,6 +341,7 @@ export default function HomeIndex({
                 card.style.setProperty('--perim', `${perim}px`);
                 rect.setAttribute('width', `${w - 2.5}`);
                 rect.setAttribute('height', `${h - 2.5}`);
+
                 if (beam) {
                     beam.setAttribute('width', `${w - 2.5}`);
                     beam.setAttribute('height', `${h - 2.5}`);

@@ -1,13 +1,11 @@
-import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import {
-    OrbitControls,
     Environment,
     PerspectiveCamera,
     ContactShadows,
 } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef, useEffect, Suspense } from 'react';
 import RobotModel from './RobotModel';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -26,7 +24,9 @@ export default function RobotScene3D() {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            if (!robotRef.current) return;
+            if (!robotRef.current) {
+return;
+}
 
             // --- ANIMATION SEQUENCE ---
 

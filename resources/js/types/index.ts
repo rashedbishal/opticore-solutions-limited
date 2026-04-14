@@ -1,3 +1,5 @@
+import type { Auth } from './auth';
+
 export type * from './auth';
 
 export interface SiteMeta {
@@ -11,7 +13,7 @@ export interface FlashProps {
 
 export interface SharedPageProps {
     name: string;
-    auth: import('./auth').Auth;
+    auth: Auth;
     flash: FlashProps;
     meta?: SiteMeta;
     [key: string]: unknown;

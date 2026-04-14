@@ -41,6 +41,7 @@ class HomeController extends Controller
                     $portfolios[$category] = [];
                 }
             }
+
             return $portfolios;
         });
 

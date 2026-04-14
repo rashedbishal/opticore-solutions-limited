@@ -6,9 +6,10 @@ import {
     Trees,
     Sun,
     Activity,
-    Pyramid,
-    type LucideIcon,
+    Pyramid
+    
 } from 'lucide-react';
+import type {LucideIcon} from 'lucide-react';
 
 const IconMap: Record<string, LucideIcon> = {
     Mountain,
@@ -40,6 +41,7 @@ export default function Marquee({ items }: MarqueeProps) {
     // To prevent gaps on large screens or with very few items, 
     // we ensure the "half" (baseSet) is long enough.
     let baseSet = [...normalized];
+
     if (baseSet.length > 0) {
         while (baseSet.length < 12) {
             baseSet = [...baseSet, ...normalized];
@@ -53,6 +55,7 @@ export default function Marquee({ items }: MarqueeProps) {
             <div className="marquee-track flex min-w-max items-center">
                 {repeated.map((item, index) => {
                     const Icon = item.icon ? IconMap[item.icon] : null;
+
                     return (
                         <div
                             key={`${item.name}-${index}`}

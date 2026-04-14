@@ -11,15 +11,17 @@ interface GlowingKickerProps {
 
 const GlowingKicker: React.FC<GlowingKickerProps> = ({ children, className }) => {
     // Generate a fixed number of particles
-    const particles = useMemo(() => {
-        return Array.from({ length: 8 }).map((_, i) => ({
+    const [particles, setParticles] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        setParticles(Array.from({ length: 8 }).map((_, i) => ({
             id: i,
             x: Math.random() * 100,
             y: Math.random() * 100,
             size: Math.random() * 2 + 1,
             duration: Math.random() * 3 + 2,
             delay: Math.random() * 2,
-        }));
+        })));
     }, []);
 
     return (

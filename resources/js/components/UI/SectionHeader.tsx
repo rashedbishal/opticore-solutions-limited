@@ -60,6 +60,7 @@ function TestimonialsTitle({ text }: { text: string }) {
 /** Type A: Capabilities - Character Bounce-In with Tech Gradient */
 function CapabilitiesTitle({ text }: { text: string }) {
     const words = text.split(' ');
+
     return (
         <span className="inline-flex flex-wrap items-center leading-[1.15] py-2">
             {words.map((word, wordIndex) => (
@@ -289,6 +290,7 @@ export default function SectionHeader({
     // for animation, the gradient appears as one seamless transition.
     useLayoutEffect(() => {
         const container = h2Ref.current;
+
         if (!container) {
             return;
         }

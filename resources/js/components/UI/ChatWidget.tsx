@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, Sparkles, Clock, Shield, Loader2, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import ImmersiveChatTrigger from "./ImmersiveChatTrigger";
 
@@ -10,6 +10,20 @@ interface Message {
     role: "user" | "assistant";
     content: string;
 }
+
+const teasers = [
+    "Expert guidance for your next project.",
+    "Inquiry? I'm here to assist you.",
+    "Explore our precision 3D solutions.",
+    "Tailored support for your vision.",
+    "Let's architect something amazing.",
+];
+
+const suggestedQuestions = [
+    "What services do you offer?",
+    "Tell me about your 3D work",
+    "How can I get a quote?",
+];
 
 export default function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,20 +41,6 @@ export default function ChatWidget() {
     const [sessionId, setSessionId] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-
-    const teasers = [
-        "Expert guidance for your next project.",
-        "Inquiry? I'm here to assist you.",
-        "Explore our precision 3D solutions.",
-        "Tailored support for your vision.",
-        "Let's architect something amazing.",
-    ];
-
-    const suggestedQuestions = [
-        "What services do you offer?",
-        "Tell me about your 3D work",
-        "How can I get a quote?",
-    ];
 
     // Focus input when chat opens
     useEffect(() => {
@@ -85,10 +85,17 @@ export default function ChatWidget() {
 
     const handleSend = async (textOverride?: string) => {
         const messageToSend = textOverride || input;
-        if (!messageToSend.trim() || isLoading) return;
+
+        if (!messageToSend.trim() || isLoading) {
+return;
+}
 
         setMessages((prev) => [...prev, { role: "user", content: messageToSend }]);
-        if (!textOverride) setInput("");
+
+        if (!textOverride) {
+setInput("");
+}
+
         setIsLoading(true);
 
         try {
@@ -104,10 +111,16 @@ export default function ChatWidget() {
                 body: JSON.stringify({ message: messageToSend, session_id: sessionId }),
             });
 
-            if (!response.ok) throw new Error("Failed to send message");
+            if (!response.ok) {
+throw new Error("Failed to send message");
+}
 
             const data = await response.json();
-            if (data.session_id) setSessionId(data.session_id);
+
+            if (data.session_id) {
+setSessionId(data.session_id);
+}
+
             setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
         } catch (error) {
             console.error("Chat Error:", error);

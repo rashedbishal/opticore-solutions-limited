@@ -1,12 +1,13 @@
 'use client';
 
 import {
-    type SpringOptions,
-    type UseInViewOptions,
+    
+    
     useInView,
     useMotionValue,
-    useSpring,
+    useSpring
 } from 'motion/react';
+import type {SpringOptions, UseInViewOptions} from 'motion/react';
 import * as React from 'react';
 
 type CountingNumberProps = React.ComponentProps<'span'> & {

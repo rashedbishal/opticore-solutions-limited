@@ -1,6 +1,6 @@
 import { useSpring } from 'framer-motion';
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface MagneticHoverResult<T extends HTMLElement> {
@@ -20,7 +20,7 @@ export function useMagneticHover<
     const y = useSpring(0, { stiffness: 150, damping: 20 });
     const enabled = useMediaQuery('(pointer: fine)');
 
-    const handleMouseMove = (event: React.MouseEvent<T>) => {
+    const handleMouseMove = useCallback((event: React.MouseEvent<T>) => {
         if (!enabled || !ref.current) {
             return;
         }
@@ -31,12 +31,12 @@ export function useMagneticHover<
 
         x.set(Math.max(-15, Math.min(15, relativeX * 0.18)));
         y.set(Math.max(-8, Math.min(8, relativeY * 0.18)));
-    };
+    }, [enabled, x, y]);
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = useCallback(() => {
         x.set(0);
         y.set(0);
-    };
+    }, [x, y]);
 
     return { ref, x, y, handleMouseMove, handleMouseLeave, enabled };
 }

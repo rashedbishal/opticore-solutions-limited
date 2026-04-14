@@ -22,18 +22,25 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}<>?/';
 
     const scramble = () => {
-        if (!textRef.current || isAnimating.current) return;
+        if (!textRef.current || isAnimating.current) {
+return;
+}
 
         isAnimating.current = true;
         let iteration = 0;
 
         const interval = setInterval(() => {
-            if (!textRef.current) return;
+            if (!textRef.current) {
+return;
+}
 
             textRef.current.innerText = text
                 .split('')
                 .map((letter, index) => {
-                    if (index < iteration) return text[index];
+                    if (index < iteration) {
+return text[index];
+}
+
                     return chars[Math.floor(Math.random() * chars.length)];
                 })
                 .join('');
@@ -42,9 +49,11 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
 
             if (iteration >= text.length) {
                 clearInterval(interval);
+
                 if (textRef.current) {
                     textRef.current.innerText = text;
                 }
+
                 isAnimating.current = false;
             }
         }, speed);
@@ -52,7 +61,10 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
 
     useEffect(() => {
         const el = textRef.current;
-        if (!el) return;
+
+        if (!el) {
+return;
+}
 
         const observer = new IntersectionObserver(
             (entries) => {

@@ -3,8 +3,6 @@ import {
     BriefcaseBusiness,
     Camera,
     Globe,
-    Instagram,
-    Linkedin,
     Mail,
     MapPin,
     Music,
@@ -13,13 +11,11 @@ import {
     Pin,
     Play,
     Send,
-    Twitter,
-    Youtube,
 } from 'lucide-react';
 // Note: If some brand icons are still missing in v1.7.0, we use metaphorical fallbacks:
 // Facebook -> Globe, X/Twitter -> Send, etc.
-import MagneticButton from '@/components/UI/MagneticButton';
 import { CursorSwitcher } from '@/components/UI/CursorSelector';
+import MagneticButton from '@/components/UI/MagneticButton';
 import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,

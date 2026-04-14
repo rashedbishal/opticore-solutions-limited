@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useRef, useEffect } from 'react';
+import type * as THREE from 'three';
 
 interface RobotModelProps {
     modelPath: string;
@@ -32,6 +32,7 @@ export default function RobotModel({ modelPath, ...props }: RobotModelProps) {
         // Play the first available animation if any
         if (animations && animations.length > 0) {
             const firstAction = actions[Object.keys(actions)[0]];
+
             if (firstAction) {
                 firstAction.fadeIn(0.5).play();
             }

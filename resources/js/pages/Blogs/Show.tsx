@@ -4,11 +4,10 @@ import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 
 interface BlogShowProps {
-    slug: string;
     dbBlog?: any;
 }
 
-export default function BlogShow({ slug, dbBlog }: BlogShowProps) {
+export default function BlogShow({ dbBlog }: BlogShowProps) {
     const post = dbBlog;
 
     if (!post) {

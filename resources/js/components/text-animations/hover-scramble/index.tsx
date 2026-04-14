@@ -30,7 +30,9 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
     const tweenRef = useRef<gsap.core.Tween | null>(null);
 
     const scramble = () => {
-        if (!textRef.current) return;
+        if (!textRef.current) {
+return;
+}
 
         setIsAnimating(true);
 
@@ -48,7 +50,10 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
     };
 
     const handleMouseEnter = () => {
-        if (isAnimating) return;
+        if (isAnimating) {
+return;
+}
+
         scramble();
     };
 
@@ -63,15 +68,17 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
             const timer = setTimeout(() => {
                 scramble();
             }, 100);
+
             return () => clearTimeout(timer);
         }
     }, [triggerOnMount, children]);
 
     useEffect(() => {
         if (trigger && !isAnimating) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             scramble();
         }
-    }, [trigger]);
+    }, [trigger, isAnimating]);
 
     useEffect(() => {
         return () => {

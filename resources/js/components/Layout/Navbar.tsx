@@ -219,6 +219,7 @@ export default function Navbar() {
                                                                         item
                                                                             .icon
                                                                     ];
+
                                                                 return (
                                                                     <Icon className="h-5 w-5" />
                                                                 );

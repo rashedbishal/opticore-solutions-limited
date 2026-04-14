@@ -195,7 +195,9 @@ export default function PortfolioSubCategoryShow({
                                             src={item.media_path ?? PLACEHOLDER}
                                             alt={item.alt}
                                             loading="lazy"
-                                            onError={(e) => { e.currentTarget.src = PLACEHOLDER; }}
+                                            onError={(e) => {
+ e.currentTarget.src = PLACEHOLDER; 
+}}
                                             className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
                                     )}

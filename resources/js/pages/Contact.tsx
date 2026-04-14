@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Head, useForm as useInertiaForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -15,6 +14,7 @@ import {
     Info,
     Share2,
 } from 'lucide-react';
+import React from 'react';
 import HandwritingText from '@/components/text-animations/handwriting-text';
 import GlowingKicker from '@/components/UI/GlowingKicker';
 import GradientOrb from '@/components/UI/GradientOrb';

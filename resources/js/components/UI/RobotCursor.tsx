@@ -23,6 +23,7 @@ export default function RobotCursor() {
     useEffect(() => {
         if (!finePointer) {
             document.documentElement.classList.remove('has-robot-cursor');
+
             return;
         }
 
@@ -35,14 +36,22 @@ export default function RobotCursor() {
 
         const onPointerOver = (event: Event) => {
             const target = event.target;
-            if (!(target instanceof Element)) return;
+
+            if (!(target instanceof Element)) {
+return;
+}
+
             const hovering = !!target.closest('a, button, input, textarea, select, [role="button"], [data-cursor="interactive"]');
             setIsHovering(hovering);
         };
 
         const onPointerOut = (event: Event) => {
             const target = event.target;
-            if (!(target instanceof Element)) return;
+
+            if (!(target instanceof Element)) {
+return;
+}
+
             // Only set false if we are actually leaving an interactive element
             if (target.closest('a, button, input, textarea, select, [role="button"], [data-cursor="interactive"]')) {
                 setIsHovering(false);
@@ -61,7 +70,9 @@ export default function RobotCursor() {
         };
     }, [finePointer, mouseX, mouseY]);
 
-    if (!finePointer) return null;
+    if (!finePointer) {
+return null;
+}
 
     return (
         <motion.div

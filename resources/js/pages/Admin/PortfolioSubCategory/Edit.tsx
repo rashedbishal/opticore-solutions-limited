@@ -1,7 +1,7 @@
-import AdminLayout from '@/components/Layout/AdminLayout';
-import adminRoutes from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
 import type { FormEventHandler, ReactNode } from 'react';
+import AdminLayout from '@/components/Layout/AdminLayout';
+import adminRoutes from '@/routes/admin';
 
 interface SubCategory {
     id: number;

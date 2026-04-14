@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
     public function index(): Response
     {
         return Inertia::render('Admin/User/Index', [
-            'users' => User::latest()->paginate(10)
+            'users' => User::latest()->paginate(10),
         ]);
     }
 
@@ -42,7 +42,7 @@ class UserController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('Admin/User/Edit', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -54,7 +54,7 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8',
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
@@ -71,6 +71,7 @@ class UserController extends Controller
             return back()->with('error', 'You cannot delete yourself.');
         }
         $user->delete();
+
         return back()->with('success', 'User deleted.');
     }
 }

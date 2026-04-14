@@ -1,13 +1,12 @@
-import React, { useRef, useEffect, useState, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import {
     Environment,
-    PerspectiveCamera,
     ContactShadows,
 } from '@react-three/drei';
-import RobotModel, { RobotModelRef } from './RobotModel';
+import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
-import * as THREE from 'three';
+import React, { useRef, useEffect, useState, Suspense } from 'react';
+import type * as THREE from 'three';
+import RobotModel from './RobotModel';
+import type { RobotModelRef } from './RobotModel';
 
 interface SectionRobotProps {
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -24,10 +23,14 @@ export default function SectionRobot({
     const containerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
-    // Random animations if none provided
-    const animations = ['idle', 'dance', 'punch', 'jump'];
-    const selectedAnimation =
-        animation || animations[Math.floor(Math.random() * animations.length)];
+    const [selectedAnimation, setSelectedAnimation] = useState(animation || 'idle');
+
+    useEffect(() => {
+        if (!animation) {
+            const animations = ['idle', 'dance', 'punch', 'jump'];
+            setSelectedAnimation(animations[Math.floor(Math.random() * animations.length)]);
+        }
+    }, [animation]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -106,7 +109,9 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
         const groupRef = useRef<THREE.Group>(null);
 
         useEffect(() => {
-            if (!groupRef.current) return;
+            if (!groupRef.current) {
+return;
+}
 
             // Add some random subtle movement or spinning if requested
             if (animation === 'spin') {

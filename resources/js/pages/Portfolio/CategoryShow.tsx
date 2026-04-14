@@ -137,6 +137,7 @@ export default function PortfolioCategoryShow({
                                 {subCategories.map((sub) => {
                                     const isActive =
                                         sub.slug === selectedSubCategory?.slug;
+
                                     return (
                                         <Link
                                             key={sub.id}

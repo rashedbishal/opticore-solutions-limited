@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
+import type {
+    LucideIcon} from 'lucide-react';
 import {
     ArrowRight,
     Check,
@@ -22,8 +24,7 @@ import {
     Camera,
     ScanLine,
     Cpu,
-    Sparkles,
-    LucideIcon,
+    Sparkles
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';

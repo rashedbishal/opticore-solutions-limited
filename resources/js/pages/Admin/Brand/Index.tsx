@@ -1,8 +1,9 @@
-import AdminLayout from '@/components/Layout/AdminLayout';
-import { Link, useForm, router } from '@inertiajs/react';
-import { Plus, Trash2, Edit, X, Upload, Image as ImageIcon } from 'lucide-react';
-import React, { ReactNode, useState, useRef } from 'react';
+import { useForm, router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Plus, Trash2, Edit, X, Upload, Image as ImageIcon } from 'lucide-react';
+import type { ReactNode} from 'react';
+import React, { useState, useRef } from 'react';
+import AdminLayout from '@/components/Layout/AdminLayout';
 
 interface Brand {
     id: number;
@@ -67,6 +68,7 @@ export default function BrandIndex({ brands }: Props) {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             setData('logo', file);
             const reader = new FileReader();

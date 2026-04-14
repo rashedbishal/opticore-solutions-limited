@@ -13,9 +13,13 @@ export function useCursorPreference() {
 
     useEffect(() => {
         const stored = localStorage.getItem(STORAGE_KEY) as CursorType;
+
         if (stored && ['robot', 'default'].includes(stored)) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCursorType(stored);
         }
+
+         
         setIsLoaded(true);
     }, []);
 
@@ -45,7 +49,9 @@ export default function CursorSelector({ cursorType }: CursorSelectorProps) {
 export function CursorSwitcher() {
     const { cursorType, setCursor, isLoaded } = useCursorPreference();
 
-    if (!isLoaded) return null;
+    if (!isLoaded) {
+return null;
+}
 
     const options: { value: CursorType; label: string; icon: string }[] = [
         { value: 'robot', label: 'Robot Cursor', icon: '🤖' },

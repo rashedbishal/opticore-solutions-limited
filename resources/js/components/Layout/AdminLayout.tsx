@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
     LayoutDashboard,
     Image,
@@ -15,7 +16,6 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import type { SharedPageProps } from '@/types';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -29,8 +29,10 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     useEffect(() => {
         if (flash?.success) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowToast(true);
             const timer = setTimeout(() => setShowToast(false), 4000);
+
             return () => clearTimeout(timer);
         }
     }, [flash]);
@@ -169,6 +171,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                 ) &&
                                 (item.href !== '/admin' ||
                                     window.location.pathname === '/admin');
+
                             return (
                                 <Link
                                     key={item.name}

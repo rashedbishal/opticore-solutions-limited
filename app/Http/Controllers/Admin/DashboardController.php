@@ -22,7 +22,7 @@ class DashboardController extends Controller
                 'chat_sessions' => ChatSession::count(),
                 'contacts' => Contact::count(),
                 'users' => User::count(),
-            ]
+            ],
         ]);
     }
 }

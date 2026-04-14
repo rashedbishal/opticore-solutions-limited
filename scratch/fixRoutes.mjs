@@ -10,7 +10,9 @@ function walkDir(dir, callback) {
 }
 
 function processFile(filePath) {
-    if (!filePath.endsWith('.tsx')) return;
+    if (!filePath.endsWith('.tsx')) {
+return;
+}
     
     let content = fs.readFileSync(filePath, 'utf8');
     let original = content;
@@ -29,6 +31,7 @@ function processFile(filePath) {
         if (!modified.includes('import adminRoutes from')) {
             modified = modified.replace(/(import .*?;)/, `$1\nimport adminRoutes from '@/routes/admin';`);
         }
+
         fs.writeFileSync(filePath, modified, 'utf8');
         console.log(`Updated: ${filePath}`);
     }

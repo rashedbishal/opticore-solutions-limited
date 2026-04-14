@@ -1,8 +1,8 @@
-import AdminLayout from '@/components/Layout/AdminLayout';
-import adminRoutes from '@/routes/admin';
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import AdminLayout from '@/components/Layout/AdminLayout';
+import adminRoutes from '@/routes/admin';
 
 interface Contact {
     id: number;

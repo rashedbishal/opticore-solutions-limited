@@ -1,8 +1,8 @@
-import AdminLayout from '@/components/Layout/AdminLayout';
-import adminRoutes from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import type { FormEventHandler, ReactNode } from 'react';
+import AdminLayout from '@/components/Layout/AdminLayout';
+import adminRoutes from '@/routes/admin';
 
 interface SubCategory {
     id: number;
@@ -41,6 +41,7 @@ export default function PortfolioCreate({
             const exists = currentSubCategories.some(
                 (s) => s.id === data.sub_category_id,
             );
+
             if (!exists) {
                 setData('sub_category_id', currentSubCategories[0].id);
             }

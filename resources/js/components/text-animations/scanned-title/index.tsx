@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>[]{}';
@@ -44,7 +44,9 @@ function Letter({ char, index }: { char: string; index: number }) {
     const inView = useInView(ref, { once: true, margin: '1px' });
 
     useEffect(() => {
-        if (!inView) return;
+        if (!inView) {
+return;
+}
 
         let iterations = 0;
         const maxIterations = 8 + Math.floor(Math.random() * 12);

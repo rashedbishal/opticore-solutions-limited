@@ -15,7 +15,7 @@ class BlogController extends Controller
 {
     private function deleteImage(?string $path): void
     {
-        if (!$path) {
+        if (! $path) {
             return;
         }
 

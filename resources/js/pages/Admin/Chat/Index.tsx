@@ -1,10 +1,7 @@
-import AdminLayout from '@/components/Layout/AdminLayout';
-import adminRoutes from '@/routes/admin';
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-    MessageSquare,
     Trash2,
-    Calendar,
     User,
     Bot,
     Mail,
@@ -13,7 +10,8 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import type { ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import AdminLayout from '@/components/Layout/AdminLayout';
+import adminRoutes from '@/routes/admin';
 
 interface ChatMessage {
     id: number;
@@ -45,6 +43,7 @@ export default function ChatIndex({ sessions }: Props) {
     const handleDelete = (id: number, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
         if (confirm('Are you sure you want to delete this chat session?')) {
             destroy(adminRoutes.chats.destroy.url(id));
         }
@@ -187,7 +186,7 @@ export default function ChatIndex({ sessions }: Props) {
 
                                                         <div className="custom-scrollbar max-h-[60vh] space-y-10 overflow-y-auto pr-4">
                                                             {session.messages?.map(
-                                                                (msg, idx) => (
+                                                                (msg) => (
                                                                     <div
                                                                         key={
                                                                             msg.id
