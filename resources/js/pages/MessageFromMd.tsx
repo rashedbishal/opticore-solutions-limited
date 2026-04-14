@@ -75,7 +75,7 @@ export default function MessageFromMd() {
                         </motion.h1>
                     </div>
 
-                    <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-20">
+                    <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-20">
                         {/* MD Image Sticky Container */}
                         <div className="lg:sticky lg:top-32 lg:col-span-5">
                             <motion.div
@@ -86,13 +86,13 @@ export default function MessageFromMd() {
                                     duration: 0.8,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="group relative"
+                                className="group relative mx-auto max-w-md lg:mx-0 lg:max-w-none"
                             >
                                 {/* Decorative elements */}
                                 <div className="absolute -inset-4 -rotate-2 rounded-[2.5rem] border border-white/5 transition-transform duration-700 group-hover:rotate-0" />
                                 <div className="absolute -inset-4 rotate-2 rounded-[2.5rem] border border-primary/20 transition-transform duration-700 group-hover:rotate-0" />
 
-                                <div className="glass-panel relative aspect-[4/5] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] lg:aspect-[4/5]">
+                                <div className="glass-panel relative aspect-[4/5] h-[60vh] min-h-[400px] max-h-[700px] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
                                     <img
                                         src={mdImage}
                                         alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
@@ -102,17 +102,17 @@ export default function MessageFromMd() {
                                     {/* Overlay Gradient */}
                                     <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-40" />
 
-                                    <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/80 to-transparent p-8 pt-20">
+                                    <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/80 to-transparent p-6 pt-20 sm:p-8">
                                         <motion.div
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
                                             transition={{ delay: 0.4 }}
                                         >
-                                            <h3 className="text-2xl font-bold tracking-tight text-white">
+                                            <h3 className="text-xl font-bold tracking-tight text-white whitespace-nowrap sm:text-2xl">
                                                 Md. Asaduzzaman
                                             </h3>
-                                            <p className="mt-1 text-sm font-medium tracking-[0.2em] text-primary uppercase">
+                                            <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-primary uppercase sm:text-sm">
                                                 Managing Director
                                             </p>
                                         </motion.div>
@@ -252,9 +252,9 @@ export default function MessageFromMd() {
                                     </div>
 
                                     <div className="mt-16 border-t border-white/5 pt-12">
-                                        <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-                                            <div>
-                                                <p className="font-serif text-4xl leading-none text-white italic">
+                                        <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end lg:flex-col lg:items-start xl:flex-row xl:items-end">
+                                            <div className="shrink-0">
+                                                <p className="whitespace-nowrap font-serif text-4xl leading-none text-white italic">
                                                     Md. Asaduzzaman
                                                 </p>
                                                 <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-primary to-transparent" />
@@ -263,10 +263,10 @@ export default function MessageFromMd() {
                                                 </p>
                                             </div>
 
-                                            <div className="flex items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
-                                                <span>EST. 2015</span>
+                                            <div className="flex flex-wrap items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
+                                                <span className="whitespace-nowrap">EST. 2015</span>
                                                 <span className="h-1 w-1 rounded-full bg-zinc-700" />
-                                                <span>
+                                                <span className="whitespace-nowrap">
                                                     OPTICORE SOLUTIONS LTD.
                                                 </span>
                                             </div>
@@ -304,9 +304,9 @@ export default function MessageFromMd() {
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="group relative mt-12 overflow-hidden rounded-[2.5rem] border border-white/5 bg-linear-to-br from-primary/20 via-primary/5 to-transparent p-8 md:p-10"
+                                className="group relative mt-12 overflow-hidden rounded-[2.5rem] border border-white/5 bg-linear-to-br from-primary/20 via-primary/5 to-transparent p-6 md:p-10"
                             >
-                                <div className="relative z-10 flex flex-col items-center justify-between gap-8 text-center md:flex-row md:text-left">
+                                <div className="relative z-10 flex flex-col items-center justify-between gap-8 text-center sm:flex-row sm:text-left xl:flex-row">
                                     <div className="max-w-md">
                                         <h3 className="mb-3 text-2xl font-bold text-white">
                                             Ready to transform your brand?
@@ -317,16 +317,18 @@ export default function MessageFromMd() {
                                             their digital excellence.
                                         </p>
                                     </div>
-                                    <MagneticButton
-                                        href="/request-appointment"
-                                        className="group/btn"
-                                        ariaLabel={''}
-                                    >
-                                        <span className="flex items-center gap-2">
-                                            Start Conversation
-                                            <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                                        </span>
-                                    </MagneticButton>
+                                    <div className="shrink-0">
+                                        <MagneticButton
+                                            href="/request-appointment"
+                                            className="group/btn"
+                                            ariaLabel={''}
+                                        >
+                                            <span className="flex items-center gap-2 whitespace-nowrap px-2">
+                                                Start Conversation
+                                                <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 shrink-0" />
+                                            </span>
+                                        </MagneticButton>
+                                    </div>
                                 </div>
 
                                 {/* Background Glow */}
