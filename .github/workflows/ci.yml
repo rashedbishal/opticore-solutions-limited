@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    name: Build & Test
+    name: Lint & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -19,24 +19,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install PHP 8.3.29 with required extensions for Laravel
-      #    Uses shivammathur/setup-php for exact version pinning
-      - name: Setup PHP 8.3.29
+      # 2. Install PHP 8.3
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3.29'
+          php-version: '8.3'
           extensions: mbstring, pdo, pdo_sqlite, sqlite3, bcmath, ctype, fileinfo, json, tokenizer, xml
           coverage: none
 
-      # 3. Install Node 22.22.2 for the frontend build
-      #    Pinned to prevent version drift between CI runs
-      - name: Setup Node 22.22.2
+      # 3. Install Node 22
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22.22.2'
+          node-version: '22'
           cache: 'npm'
 
-      # 4. Cache Composer dependencies to speed up subsequent runs
+      # 4. Cache Composer packages
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
@@ -44,21 +42,37 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      # 5. Install PHP dependencies from the lock file (deterministic)
-      #    --no-interaction: no prompts
-      #    --prefer-dist: faster download via zip archives
+      # 5. Install PHP dependencies
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      # 6. Prepare the Laravel environment
-      #    Copies .env.example as the base config and generates the APP_KEY
+      # 6. Install Node dependencies
+      - name: Install Node dependencies
+        run: npm ci
+
+      # 7. PHP Linting (Pint)
+      - name: Run Pint (PHP Lint)
+        run: ./vendor/bin/pint --test
+
+      # 8. JS/TS Linting (ESLint)
+      - name: Run ESLint
+        run: npm run lint:check
+
+      # 9. Prettier Check
+      - name: Run Prettier check
+        run: npm run format:check
+
+      # 10. TypeScript Check
+      - name: Run Type Check
+        run: npm run types:check
+
+      # 11. Prepare Laravel environment for testing
       - name: Prepare environment
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      # 7. Configure SQLite for testing
-      #    Creates the database file and overrides .env to use it
+      # 12. Setup SQLite for testing
       - name: Setup SQLite database
         run: |
           touch database/database.sqlite
@@ -68,21 +82,14 @@ jobs:
           sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
           sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
 
-      # 8. Run database migrations to create all tables
+      # 13. Run migrations
       - name: Run migrations
         run: php artisan migrate --force
 
-      # 9. Install frontend dependencies from the lock file (deterministic)
-      #    npm ci is stricter than npm install — fails if lock file is out of sync
-      - name: Install Node dependencies
-        run: npm ci
-
-      # 10. Build frontend assets with Vite
-      #     Produces the production JS/CSS bundles that Inertia needs
+      # 14. Build frontend assets
       - name: Build frontend
         run: npm run build
 
-      # 11. Run the Pest test suite
-      #     Uses --ci flag to disable TTY (required in CI environments)
+      # 15. Run Pest tests
       - name: Run tests
-        run: vendor/bin/pest --ci
+        run: ./vendor/bin/pest --ci
