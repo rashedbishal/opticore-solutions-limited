@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Quote, CheckCircle2, ArrowRight } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
-import mdImage from "@/images/md.jpg"
+import mdImage from '@/images/md.jpg';
 
 const commitments = [
     {
@@ -86,13 +86,13 @@ export default function MessageFromMd() {
                                     duration: 0.8,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="flex justify-center group relative mx-auto max-w-md lg:mx-0 lg:max-w-none"
+                                className="group relative mx-auto flex max-w-md justify-center lg:mx-0 lg:max-w-none"
                             >
                                 {/* Decorative elements */}
                                 <div className="absolute -inset-4 -rotate-2 rounded-[2.5rem] border border-white/5 transition-transform duration-700 group-hover:rotate-0" />
                                 <div className="absolute -inset-4 rotate-2 rounded-[2.5rem] border border-primary/20 transition-transform duration-700 group-hover:rotate-0" />
 
-                                <div className="glass-panel relative aspect-[4/5] h-[60vh] min-h-[400px] max-h-[700px] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
+                                <div className="glass-panel relative aspect-[4/5] h-[60vh] max-h-[700px] min-h-[400px] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
                                     <img
                                         src={mdImage}
                                         alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
@@ -109,7 +109,7 @@ export default function MessageFromMd() {
                                             viewport={{ once: true }}
                                             transition={{ delay: 0.4 }}
                                         >
-                                            <h3 className="text-xl font-bold tracking-tight text-white whitespace-nowrap sm:text-2xl">
+                                            <h3 className="text-xl font-bold tracking-tight whitespace-nowrap text-white sm:text-2xl">
                                                 Md. Asaduzzaman
                                             </h3>
                                             <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-primary uppercase sm:text-sm">
@@ -148,7 +148,7 @@ export default function MessageFromMd() {
                             </motion.div>
 
                             {/* Commitments Grid */}
-                            <div className="hidden mt-12 lg:grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div className="mt-12 hidden grid-cols-1 gap-6 md:grid-cols-2 lg:grid">
                                 {commitments.map((item, index) => (
                                     <motion.div
                                         key={item.title}
@@ -254,7 +254,7 @@ export default function MessageFromMd() {
                                     <div className="mt-16 border-t border-white/5 pt-12">
                                         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end lg:flex-col lg:items-start xl:flex-row xl:items-end">
                                             <div className="shrink-0">
-                                                <p className="whitespace-nowrap font-serif text-4xl leading-none text-white italic">
+                                                <p className="font-serif text-4xl leading-none whitespace-nowrap text-white italic">
                                                     Md. Asaduzzaman
                                                 </p>
                                                 <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-primary to-transparent" />
@@ -264,7 +264,9 @@ export default function MessageFromMd() {
                                             </div>
 
                                             <div className="flex flex-wrap items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
-                                                <span className="whitespace-nowrap">EST. 2015</span>
+                                                <span className="whitespace-nowrap">
+                                                    EST. 2015
+                                                </span>
                                                 <span className="h-1 w-1 rounded-full bg-zinc-700" />
                                                 <span className="whitespace-nowrap">
                                                     OPTICORE SOLUTIONS LTD.
@@ -276,7 +278,7 @@ export default function MessageFromMd() {
                             </motion.div>
 
                             {/* Commitments Grid */}
-                            <div className="mt-12 lg:hidden grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3 lg:hidden">
                                 {commitments.map((item, index) => (
                                     <motion.div
                                         key={item.title}
@@ -323,9 +325,9 @@ export default function MessageFromMd() {
                                             className="group/btn"
                                             ariaLabel={''}
                                         >
-                                            <span className="flex items-center gap-2 whitespace-nowrap px-2">
+                                            <span className="flex items-center gap-2 px-2 whitespace-nowrap">
                                                 Start Conversation
-                                                <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 shrink-0" />
+                                                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover/btn:translate-x-1" />
                                             </span>
                                         </MagneticButton>
                                     </div>

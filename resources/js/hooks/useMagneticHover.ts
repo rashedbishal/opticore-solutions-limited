@@ -1,5 +1,5 @@
-import { useSpring } from 'framer-motion';
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
+import { useSpring } from 'framer-motion';
 import { useRef, useCallback } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
@@ -20,18 +20,21 @@ export function useMagneticHover<
     const y = useSpring(0, { stiffness: 150, damping: 20 });
     const enabled = useMediaQuery('(pointer: fine)');
 
-    const handleMouseMove = useCallback((event: React.MouseEvent<T>) => {
-        if (!enabled || !ref.current) {
-            return;
-        }
+    const handleMouseMove = useCallback(
+        (event: React.MouseEvent<T>) => {
+            if (!enabled || !ref.current) {
+                return;
+            }
 
-        const rect = ref.current.getBoundingClientRect();
-        const relativeX = event.clientX - rect.left - rect.width / 2;
-        const relativeY = event.clientY - rect.top - rect.height / 2;
+            const rect = ref.current.getBoundingClientRect();
+            const relativeX = event.clientX - rect.left - rect.width / 2;
+            const relativeY = event.clientY - rect.top - rect.height / 2;
 
-        x.set(Math.max(-15, Math.min(15, relativeX * 0.18)));
-        y.set(Math.max(-8, Math.min(8, relativeY * 0.18)));
-    }, [enabled, x, y]);
+            x.set(Math.max(-15, Math.min(15, relativeX * 0.18)));
+            y.set(Math.max(-8, Math.min(8, relativeY * 0.18)));
+        },
+        [enabled, x, y],
+    );
 
     const handleMouseLeave = useCallback(() => {
         x.set(0);

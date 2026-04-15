@@ -23,23 +23,23 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
 
     const scramble = () => {
         if (!textRef.current || isAnimating.current) {
-return;
-}
+            return;
+        }
 
         isAnimating.current = true;
         let iteration = 0;
 
         const interval = setInterval(() => {
             if (!textRef.current) {
-return;
-}
+                return;
+            }
 
             textRef.current.innerText = text
                 .split('')
                 .map((letter, index) => {
                     if (index < iteration) {
-return text[index];
-}
+                        return text[index];
+                    }
 
                     return chars[Math.floor(Math.random() * chars.length)];
                 })
@@ -63,8 +63,8 @@ return text[index];
         const el = textRef.current;
 
         if (!el) {
-return;
-}
+            return;
+        }
 
         const observer = new IntersectionObserver(
             (entries) => {

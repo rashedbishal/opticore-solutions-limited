@@ -1,6 +1,7 @@
+import type { ServiceItem, PortfolioItem } from '@/types';
+import type { Variants } from 'framer-motion';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
 import {
     Box,
     Clapperboard,
@@ -15,7 +16,6 @@ import {
     ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ServiceItem, PortfolioItem } from '@/types';
 
 const iconMap = {
     Box,

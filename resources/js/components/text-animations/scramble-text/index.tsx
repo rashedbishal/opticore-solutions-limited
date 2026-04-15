@@ -1,9 +1,9 @@
 'use client';
 
+import type React from 'react';
 import { gsap } from 'gsap';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { SplitText } from 'gsap/SplitText';
-import type React from 'react';
 import { useEffect, useRef } from 'react';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);

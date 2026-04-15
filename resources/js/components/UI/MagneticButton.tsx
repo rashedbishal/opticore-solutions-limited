@@ -1,6 +1,6 @@
+import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useEffect } from 'react';
 import { useMagneticHover } from '@/hooks/useMagneticHover';
 import { cn } from '@/lib/utils';
@@ -32,7 +32,7 @@ export default function MagneticButton({
             return;
         }
 
-        const onMove = (e: MouseEvent) => {
+        const onMove = (e: Event) => {
             magnetic.handleMouseMove(e as unknown as React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>);
         };
         const onLeave = () => {

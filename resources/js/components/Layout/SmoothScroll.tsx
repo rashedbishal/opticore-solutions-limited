@@ -1,5 +1,5 @@
-import Lenis from '@studio-freight/lenis';
 import type { ReactNode } from 'react';
+import Lenis from '@studio-freight/lenis';
 import { useEffect, useRef } from 'react';
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {

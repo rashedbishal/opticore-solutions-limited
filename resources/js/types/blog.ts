@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export interface BlogPost {
     id: string;
     slug: string;
@@ -13,7 +15,7 @@ export interface BlogPost {
     author: string;
     date: string;
     readTime: string;
-    content: string | JSX.Element;
+    content: string | React.ReactNode;
 }
 
 export type BlogCategory = BlogPost['category'] | 'All';

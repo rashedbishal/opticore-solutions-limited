@@ -74,6 +74,7 @@ export default [
                 'error',
                 {
                     groups: [
+                        'type',
                         'builtin',
                         'external',
                         'internal',

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -8,7 +9,6 @@ import {
     Users,
     ArrowRight,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
 interface DashboardProps {

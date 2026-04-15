@@ -1,7 +1,14 @@
+import type { ReactNode } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2, Edit, X, Upload, Image as ImageIcon } from 'lucide-react';
-import type { ReactNode} from 'react';
+import {
+    Plus,
+    Trash2,
+    Edit,
+    X,
+    Upload,
+    Image as ImageIcon,
+} from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
@@ -23,22 +30,15 @@ export default function BrandIndex({ brands }: Props) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const {
-        data,
-        setData,
-        post,
-        processing,
-        errors,
-        reset,
-        clearErrors,
-    } = useForm<{
-        name: string;
-        logo: File | null;
-        _method?: string;
-    }>({
-        name: '',
-        logo: null,
-    });
+    const { data, setData, post, processing, errors, reset, clearErrors } =
+        useForm<{
+            name: string;
+            logo: File | null;
+            _method?: string;
+        }>({
+            name: '',
+            logo: null,
+        });
 
     const openCreateModal = () => {
         clearErrors();
@@ -84,11 +84,8 @@ export default function BrandIndex({ brands }: Props) {
 
         if (editingBrand) {
             // Use post with _method put for file uploads
+            setData('_method', 'PUT');
             post(`/admin/brands/${editingBrand.id}`, {
-                data: {
-                    ...data,
-                    _method: 'PUT',
-                },
                 onSuccess: () => closeModal(),
             });
         } else {
@@ -257,8 +254,10 @@ export default function BrandIndex({ brands }: Props) {
                                         <label className="mb-1 block text-sm font-medium text-zinc-300">
                                             Brand Logo
                                         </label>
-                                        <div 
-                                            onClick={() => fileInputRef.current?.click()}
+                                        <div
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
                                             className="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 bg-zinc-900/50 p-8 transition-colors hover:border-cyan-500/50"
                                         >
                                             <input
@@ -268,7 +267,7 @@ export default function BrandIndex({ brands }: Props) {
                                                 accept="image/*"
                                                 onChange={handleFileChange}
                                             />
-                                            
+
                                             {previewUrl ? (
                                                 <div className="relative aspect-square w-32 overflow-hidden rounded-lg bg-black/40 p-2">
                                                     <img

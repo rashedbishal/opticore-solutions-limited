@@ -1,21 +1,12 @@
+import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-    Menu,
-    X,
-    PenTool,
-    Globe,
-    Film,
-    Box,
-    Code2,
-    Mail,
-} from 'lucide-react';
+import { Menu, X, PenTool, Globe, Film, Box, Code2, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { bangladeshPhoneLink, navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
-import type { SharedPageProps } from '@/types';
 
 const IconMap: Record<string, typeof Globe> = {
     PenTool,
@@ -141,7 +132,7 @@ export default function Navbar() {
                         }
                         className={cn(
                             'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
-                            'h-14 w-14 bg-black/40 backdrop-blur-md border border-white/10 text-white'
+                            'h-14 w-14 border border-white/10 bg-black/40 text-white backdrop-blur-md',
                         )}
                         onClick={() => setOpen((current) => !current)}
                     >
@@ -168,7 +159,7 @@ export default function Navbar() {
                                 <div className="mx-auto flex max-w-7xl items-center justify-between">
                                     <Link
                                         href="/"
-                                        className="touch-target inline-flex items-center rounded-full p-2 border border-transparent bg-transparent"
+                                        className="touch-target inline-flex items-center rounded-full border border-transparent bg-transparent p-2"
                                         onClick={() => setOpen(false)}
                                     >
                                         <img
@@ -220,12 +211,12 @@ export default function Navbar() {
                                                                             .icon
                                                                     ];
 
-                                                                return (
-                                                                    <Icon className="h-5 w-5" />
-                                                                );
-                                                            })()}
-                                                        </div>
-                                                    )}
+                                                                    return (
+                                                                        <Icon className="h-5 w-5" />
+                                                                    );
+                                                                })()}
+                                                            </div>
+                                                        )}
                                                     <HoverScramble
                                                         duration={0.8}
                                                         speed={1}

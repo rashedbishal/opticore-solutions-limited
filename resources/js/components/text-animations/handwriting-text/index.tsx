@@ -1,5 +1,6 @@
 'use client';
 
+import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -21,7 +22,7 @@ const HandwritingText: React.FC<HandwritingTextProps> = ({
     // Split text into characters including spaces
     const characters = text.split('');
 
-    const container = {
+    const container: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -32,7 +33,7 @@ const HandwritingText: React.FC<HandwritingTextProps> = ({
         },
     };
 
-    const child = {
+    const child: Variants = {
         visible: {
             opacity: 1,
             y: 0,

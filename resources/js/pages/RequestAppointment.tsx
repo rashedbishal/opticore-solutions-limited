@@ -1,3 +1,4 @@
+import type { AppointmentFormData } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
@@ -5,7 +6,6 @@ import { useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { services } from '@/lib/site';
-import type { AppointmentFormData } from '@/types';
 
 const initialValues: AppointmentFormData = {
     name: '',

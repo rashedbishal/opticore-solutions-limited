@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Edit, Film, Image, Plus, Trash2 } from 'lucide-react';
-import type { ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -8,6 +8,10 @@ interface Portfolio {
     id: number;
     title: string;
     category: string;
+    sub_category?: {
+        id: number;
+        name: string;
+    } | null;
     media_path: string | null;
     media_type: 'image' | 'video';
 }

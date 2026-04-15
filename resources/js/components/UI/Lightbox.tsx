@@ -1,7 +1,7 @@
+import type { PortfolioItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { PortfolioItem } from '@/types';
 
 interface LightboxProps {
     items: PortfolioItem[];

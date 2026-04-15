@@ -1,3 +1,4 @@
+import type { CareerFormData } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
@@ -6,7 +7,6 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import Modal from '@/components/UI/Modal';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { culturePerks, jobListings } from '@/lib/site';
-import type { CareerFormData } from '@/types';
 
 const initialValues: CareerFormData = {
     name: '',

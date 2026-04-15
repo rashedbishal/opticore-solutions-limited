@@ -1,8 +1,8 @@
 'use client';
 
-import { motion  } from 'motion/react';
-import type {Transition} from 'motion/react';
+import type { Transition } from 'motion/react';
 import type * as React from 'react';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 type GradientTextProps = React.ComponentProps<'span'> & {

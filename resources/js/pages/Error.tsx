@@ -21,7 +21,8 @@ const descriptions: Record<number, string> = {
 
 export default function Error({ status, message }: ErrorPageProps) {
     const title = titles[status] || 'Error';
-    const description = message || descriptions[status] || 'An unexpected error occurred.';
+    const description =
+        message || descriptions[status] || 'An unexpected error occurred.';
 
     return (
         <>

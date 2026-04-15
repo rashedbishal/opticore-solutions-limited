@@ -31,8 +31,8 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
 
     const scramble = () => {
         if (!textRef.current) {
-return;
-}
+            return;
+        }
 
         setIsAnimating(true);
 
@@ -51,8 +51,8 @@ return;
 
     const handleMouseEnter = () => {
         if (isAnimating) {
-return;
-}
+            return;
+        }
 
         scramble();
     };
@@ -76,7 +76,6 @@ return;
 
     useEffect(() => {
         if (trigger && !isAnimating) {
-             
             scramble();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

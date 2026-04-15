@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
 import type { BlogCategory } from '@/types/blog';
+import { motion } from 'framer-motion';
 
 interface FilterBarProps {
     categories: BlogCategory[];

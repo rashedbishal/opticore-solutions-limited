@@ -1,7 +1,6 @@
 # CI Pipeline — Laravel + Inertia + React
 # Runs on every push and PR to main. Fails fast on any error.
 
-
 name: CI
 
 on:
@@ -63,17 +62,13 @@ jobs:
       - name: Run Prettier check
         run: npm run format:check
 
-      # 10. TypeScript Check
-      - name: Run Type Check
-        run: npm run types:check
-
-      # 11. Prepare Laravel environment for testing
+      # 10. Prepare Laravel environment for testing
       - name: Prepare environment
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      # 12. Setup SQLite for testing
+      # 11. Setup SQLite for testing
       - name: Setup SQLite database
         run: |
           touch database/database.sqlite
@@ -83,14 +78,22 @@ jobs:
           sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
           sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
 
-      # 13. Run migrations
+      # 12. Run migrations
       - name: Run migrations
         run: php artisan migrate --force
 
-      # 14. Build frontend assets
+      # 13. Generate Wayfinder Routes & Types
+      - name: Generate Wayfinder Routes
+        run: php artisan wayfinder:generate
+
+      # 14. TypeScript Check
+      - name: Run Type Check
+        run: npm run types:check
+
+      # 15. Build frontend assets
       - name: Build frontend
         run: npm run build
 
-      # 15. Run Pest tests
+      # 16. Run Pest tests
       - name: Run tests
         run: ./vendor/bin/pest --ci

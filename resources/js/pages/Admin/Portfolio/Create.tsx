@@ -1,6 +1,6 @@
+import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import type { FormEventHandler, ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 

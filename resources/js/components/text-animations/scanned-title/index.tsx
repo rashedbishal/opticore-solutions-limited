@@ -45,8 +45,8 @@ function Letter({ char, index }: { char: string; index: number }) {
 
     useEffect(() => {
         if (!inView) {
-return;
-}
+            return;
+        }
 
         let iterations = 0;
         const maxIterations = 8 + Math.floor(Math.random() * 12);

@@ -1,13 +1,15 @@
+import type * as THREE from 'three';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import React, { useRef, useEffect } from 'react';
-import type * as THREE from 'three';
 
 interface RobotModelProps {
     modelPath: string;
     animationName?: string;
     [key: string]: any;
 }
+
+export type RobotModelRef = THREE.Group;
 
 /**
  * RobotModel - Loads and animates the GLB model

@@ -1,3 +1,4 @@
+import type * as THREE from 'three';
 import {
     Environment,
     PerspectiveCamera,
@@ -26,8 +27,8 @@ export default function RobotScene3D() {
     useEffect(() => {
         const ctx = gsap.context(() => {
             if (!robotRef.current) {
-return;
-}
+                return;
+            }
 
             // --- ANIMATION SEQUENCE ---
 
