@@ -56,13 +56,14 @@ export default function ServiceCard({
         <motion.div
             variants={scaleIn}
             className={cn(
-                'glass-panel group relative flex flex-col overflow-hidden rounded-[2rem] p-4 lg:p-5 transition-all duration-300 hover:border-violet-400/40 hover:shadow-[0_0_40px_rgba(124,58,237,0.2)]',
+                'glass-panel group relative flex flex-col overflow-hidden rounded-[2rem] transition-all duration-300 hover:border-violet-400/40 hover:shadow-[0_0_40px_rgba(124,58,237,0.2)]',
                 className,
             )}
         >
-            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-violet-400/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <Link href={service.href} className="flex h-full w-full flex-col p-4 outline-none lg:p-5">
+                <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-violet-400/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-            <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full">
                 {/* TOP CONTENT */}
                 <div>
                     <div className="flex items-start justify-between gap-4">
@@ -186,18 +187,16 @@ export default function ServiceCard({
                 </div>
 
                 {/* CTA */}
-                <Link
-                    href={service.href}
-                    className="mt-auto inline-flex items-center justify-between group/link"
-                >
+                <div className="mt-auto inline-flex items-center justify-between">
                     <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase">
                         Explore System
                     </span>
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-white/5 text-cyan-400 transition-all duration-300 group-hover/link:border-cyan-400/50 group-hover/link:bg-cyan-400/10">
-                        <ArrowRight className="h-3.5 w-3.5" />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-white/5 text-cyan-400 transition-all duration-300 group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </div>
-                </Link>
+                </div>
             </div>
+            </Link>
         </motion.div>
     );
 }
