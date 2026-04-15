@@ -196,8 +196,9 @@ export default function PortfolioSubCategoryShow({
                                             alt={item.alt}
                                             loading="lazy"
                                             onError={(e) => {
- e.currentTarget.src = PLACEHOLDER; 
-}}
+                                                e.currentTarget.src =
+                                                    PLACEHOLDER;
+                                            }}
                                             className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
                                     )}
@@ -209,17 +210,28 @@ export default function PortfolioSubCategoryShow({
                                             {subCategory.name}
                                         </p>
                                         <div className="mt-2 flex items-center justify-between gap-4">
-                                            <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                                            <h3 className="text-lg font-semibold text-white">
+                                                {item.title}
+                                            </h3>
                                             <Link
                                                 href={`/portfolio-item/${item.id}`}
-                                                onClick={(e) => e.stopPropagation()}
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
                                                 className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
                                                 aria-label={`View ${item.title} full screen`}
                                             >
-                                                {item.media_type === 'video'
-                                                    ? <><Film className="h-4 w-4" /> Watch</>
-                                                    : <><ArrowRight className="h-4 w-4" /> View</>
-                                                }
+                                                {item.media_type === 'video' ? (
+                                                    <>
+                                                        <Film className="h-4 w-4" />{' '}
+                                                        Watch
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ArrowRight className="h-4 w-4" />{' '}
+                                                        View
+                                                    </>
+                                                )}
                                             </Link>
                                         </div>
                                     </div>
@@ -227,9 +239,11 @@ export default function PortfolioSubCategoryShow({
                             ))}
                         </motion.div>
                     ) : (
-                        <div className="mt-10 glass-panel flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
+                        <div className="glass-panel mt-10 flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
                             <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
-                            <p className="text-lg font-medium text-zinc-300">No portfolio items in this sub-category yet.</p>
+                            <p className="text-lg font-medium text-zinc-300">
+                                No portfolio items in this sub-category yet.
+                            </p>
                             <p className="mt-2 text-sm text-zinc-500">
                                 Check back later for new projects and updates.
                             </p>

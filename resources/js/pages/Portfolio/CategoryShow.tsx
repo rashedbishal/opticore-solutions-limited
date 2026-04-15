@@ -289,7 +289,9 @@ export default function PortfolioCategoryShow({
                             className="glass-panel mt-10 rounded-[1.5rem] py-20 text-center"
                         >
                             <FolderOpen className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-                            <p className="text-lg font-medium text-zinc-400">No sub-categories yet.</p>
+                            <p className="text-lg font-medium text-zinc-400">
+                                No sub-categories yet.
+                            </p>
                             <p className="mt-1 text-sm text-zinc-600">
                                 Check back later for new categories and updates.
                             </p>

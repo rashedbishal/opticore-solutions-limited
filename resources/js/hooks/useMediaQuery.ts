@@ -5,7 +5,7 @@ export function useMediaQuery(query: string): boolean {
         (callback) => {
             const mediaQueryList = window.matchMedia(query);
             mediaQueryList.addEventListener('change', callback);
-            
+
             return () => {
                 mediaQueryList.removeEventListener('change', callback);
             };

@@ -1,14 +1,7 @@
 import type { ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-    Trash2,
-    User,
-    Bot,
-    Mail,
-    Sparkles,
-    ChevronDown,
-} from 'lucide-react';
+import { Trash2, User, Bot, Mail, Sparkles, ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';

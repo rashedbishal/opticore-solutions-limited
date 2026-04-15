@@ -14,13 +14,16 @@ const AnimatedProgressBar = ({ initialValue }) => {
     const [value, setValue] = React.useState(parseInt(initialValue));
 
     React.useEffect(() => {
-        const interval = setInterval(() => {
-            const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
-            setValue((prev) => {
-                const next = prev + change;
-                return Math.min(Math.max(next, 70), 100); // Keep between 70% and 100%
-            });
-        }, 1000 + Math.random() * 2000); // Random interval between 1-3s
+        const interval = setInterval(
+            () => {
+                const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
+                setValue((prev) => {
+                    const next = prev + change;
+                    return Math.min(Math.max(next, 70), 100); // Keep between 70% and 100%
+                });
+            },
+            1000 + Math.random() * 2000,
+        ); // Random interval between 1-3s
 
         return () => clearInterval(interval);
     }, []);
@@ -114,10 +117,12 @@ export default function Section3() {
                         PHASE 02 : DEVELOPMENT
                     </span>
 
-                    <h2 className="mb-6 text-balance text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+                    <h2 className="mb-6 text-3xl font-bold text-balance text-white sm:text-4xl md:text-5xl">
                         Creative Development
                         <br />
-                        <span className="text-violet-400">& Smart Execution</span>
+                        <span className="text-violet-400">
+                            & Smart Execution
+                        </span>
                     </h2>
 
                     <p className="mx-auto max-w-2xl text-base text-zinc-400 sm:text-lg">

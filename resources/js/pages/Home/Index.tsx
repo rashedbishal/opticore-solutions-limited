@@ -17,9 +17,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
-import {
-    ServiceCarousel,
-} from '@/components/UI/ScannedServiceCard';
+import { ServiceCarousel } from '@/components/UI/ScannedServiceCard';
 import SectionHeader from '@/components/UI/SectionHeader';
 
 import TestimonialCard from '@/components/UI/TestimonialCard';
@@ -36,7 +34,6 @@ const Section2 = lazy(() => import('@/components/Robot/Section2'));
 const Section3 = lazy(() => import('@/components/Robot/Section3'));
 const Section4 = lazy(() => import('@/components/Robot/Section4'));
 const Section5 = lazy(() => import('@/components/Robot/Section5'));
-
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -143,7 +140,8 @@ function HeroHeadline() {
             requestAnimationFrame(() => {
                 const containerWidth = el.offsetWidth;
                 const containerRect = el.getBoundingClientRect();
-                const letters = el.querySelectorAll<HTMLElement>('.anime-letter');
+                const letters =
+                    el.querySelectorAll<HTMLElement>('.anime-letter');
 
                 letters.forEach((letter) => {
                     const letterRect = letter.getBoundingClientRect();
@@ -311,7 +309,6 @@ export default function HomeIndex({
     featuredPortfolios,
     brands,
 }: HomeIndexProps) {
-
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {
@@ -542,7 +539,13 @@ export default function HomeIndex({
                 </div>
             </section>
 
-            <Suspense fallback={<div className="flex h-96 w-full items-center justify-center text-sm text-zinc-500">Loading sections...</div>}>
+            <Suspense
+                fallback={
+                    <div className="flex h-96 w-full items-center justify-center text-sm text-zinc-500">
+                        Loading sections...
+                    </div>
+                }
+            >
                 <Section2 />
                 <Section3 />
                 <Section4 />
@@ -574,7 +577,7 @@ export default function HomeIndex({
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
                         variants={desktop ? slideLeft : fadeUp}
-                        className="max-w-lg lg:max-w-none "
+                        className="max-w-lg lg:max-w-none"
                     >
                         <span className="section-kicker">About Opticore</span>
                         <h2 className="max-w-xl text-3xl font-extrabold text-balance text-white sm:text-4xl lg:text-[2.45rem] xl:text-[2.2rem]">
@@ -607,12 +610,19 @@ export default function HomeIndex({
                     >
                         {/* Define Card Groups */}
                         {[
-                            { items: services.slice(0, 2), className: 'flex-1' },
+                            {
+                                items: services.slice(0, 2),
+                                className: 'flex-1',
+                            },
                             {
                                 items: services.slice(2, 3),
-                                className: 'flex-1 flex flex-col justify-center',
+                                className:
+                                    'flex-1 flex flex-col justify-center',
                             },
-                            { items: services.slice(3, 5), className: 'flex-1' },
+                            {
+                                items: services.slice(3, 5),
+                                className: 'flex-1',
+                            },
                         ].map((group, groupIndex) => (
                             <div
                                 key={groupIndex}
@@ -741,14 +751,14 @@ export default function HomeIndex({
                                             duration:
                                                 0.5 +
                                                 Math.abs(Math.cos(i * 777)) *
-                                                1.5,
+                                                    1.5,
                                         };
                                     });
 
                                     return (
                                         <div
                                             key={service.key}
-                                            className={`bento-card glass-panel bg-black group relative flex flex-col overflow-hidden rounded-[1.75rem] p-4 transition-all duration-500 sm:p-5 lg:p-6 ${service.key === 'video-editing' ? 'shadow-[0_0_45px_rgba(34,211,238,0.12)]' : ''}`}
+                                            className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] bg-black p-4 transition-all duration-500 sm:p-5 lg:p-6 ${service.key === 'video-editing' ? 'shadow-[0_0_45px_rgba(34,211,238,0.12)]' : ''}`}
                                         >
                                             {/* Background Aura Glow */}
                                             <div className="aura-glow" />
@@ -816,22 +826,22 @@ export default function HomeIndex({
                                                                     ' ',
                                                                 )}
                                                         </h3>
-                                                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 border border-cyan-400/20">
-                                                            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,1)]" />
+                                                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-400/10">
+                                                            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,1)]" />
                                                         </div>
                                                     </div>
-                                                    <p className="text-[11px] font-medium leading-relaxed text-zinc-400 line-clamp-2">
+                                                    <p className="line-clamp-2 text-[11px] leading-relaxed font-medium text-zinc-400">
                                                         {service?.tagline ||
                                                             'Premium digital solutions'}
                                                     </p>
                                                 </div>
 
                                                 {/* Main Demo Frame */}
-                                                <div className="relative w-full flex-1 min-h-[7rem] overflow-hidden rounded-xl bg-zinc-950/60 ring-1 ring-white/10 transition-all duration-500 group-hover:ring-cyan-500/20 shadow-inner">
+                                                <div className="relative min-h-[7rem] w-full flex-1 overflow-hidden rounded-xl bg-zinc-950/60 shadow-inner ring-1 ring-white/10 transition-all duration-500 group-hover:ring-cyan-500/20">
                                                     {portfolio ? (
                                                         <>
                                                             {portfolio.media_type ===
-                                                                'video' ? (
+                                                            'video' ? (
                                                                 <video
                                                                     src={
                                                                         portfolio.media_path ??
@@ -856,9 +866,11 @@ export default function HomeIndex({
                                                                 />
                                                             )}
                                                             <div className="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                                                            <div className="absolute inset-x-0 bottom-0 p-3 pt-6 translate-y-2 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                                                                <p className="text-[10px] font-bold tracking-wider text-white line-clamp-1 drop-shadow-md">
-                                                                    {portfolio.title}
+                                                            <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 pt-6 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                                                                <p className="line-clamp-1 text-[10px] font-bold tracking-wider text-white drop-shadow-md">
+                                                                    {
+                                                                        portfolio.title
+                                                                    }
                                                                 </p>
                                                             </div>
                                                         </>
@@ -868,17 +880,17 @@ export default function HomeIndex({
                                                                 fallbackImage?.src ??
                                                                 aboutBentoImages[
                                                                     index %
-                                                                    aboutBentoImages.length
+                                                                        aboutBentoImages.length
                                                                 ].src
                                                             }
                                                             alt={
                                                                 fallbackImage?.alt ??
                                                                 aboutBentoImages[
                                                                     index %
-                                                                    aboutBentoImages.length
+                                                                        aboutBentoImages.length
                                                                 ].alt
                                                             }
-                                                            className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 group-hover:opacity-60 saturate-50"
+                                                            className="absolute inset-0 h-full w-full object-cover opacity-40 grayscale saturate-50 transition-transform duration-700 group-hover:scale-[1.03] group-hover:opacity-60 group-hover:grayscale-0"
                                                         />
                                                     )}
                                                 </div>
@@ -888,10 +900,10 @@ export default function HomeIndex({
                                                     {highlights.map((h, i) => (
                                                         <div
                                                             key={i}
-                                                            className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/[0.02] px-2.5 py-1.5 transition-colors group-hover:bg-white/[0.05] group-hover:border-white/10"
+                                                            className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/[0.02] px-2.5 py-1.5 transition-colors group-hover:border-white/10 group-hover:bg-white/[0.05]"
                                                         >
                                                             <div className="h-1 w-1 rounded-full bg-violet-400 shadow-[0_0_5px_rgba(167,139,250,0.8)]" />
-                                                            <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest leading-none">
+                                                            <span className="text-[9px] leading-none font-semibold tracking-widest text-zinc-400 uppercase">
                                                                 {h}
                                                             </span>
                                                         </div>

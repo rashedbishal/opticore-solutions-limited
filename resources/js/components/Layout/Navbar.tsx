@@ -1,16 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-    Menu,
-    X,
-    PenTool,
-    Globe,
-    Film,
-    Box,
-    Code2,
-    Mail,
-} from 'lucide-react';
+import { Menu, X, PenTool, Globe, Film, Box, Code2, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -49,7 +40,9 @@ function NavLink({
                 <Icon
                     className={cn(
                         'h-3.5 w-3.5 transition-colors duration-300',
-                        active ? 'text-cyan-400' : 'text-zinc-500 group-hover:text-violet-400',
+                        active
+                            ? 'text-cyan-400'
+                            : 'text-zinc-500 group-hover:text-violet-400',
                     )}
                 />
             )}
@@ -106,7 +99,7 @@ export default function Navbar() {
                         href="/"
                         className={cn(
                             'touch-target inline-flex items-center rounded-full p-2 transition-all duration-300',
-                            'bg-black/40 backdrop-blur-md border border-white/10 xl:border-transparent xl:bg-transparent xl:backdrop-blur-none'
+                            'border border-white/10 bg-black/40 backdrop-blur-md xl:border-transparent xl:bg-transparent xl:backdrop-blur-none',
                         )}
                         aria-label="Opticore Solutions home"
                     >
@@ -141,7 +134,7 @@ export default function Navbar() {
                         }
                         className={cn(
                             'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
-                            'h-14 w-14 bg-black/40 backdrop-blur-md border border-white/10 text-white'
+                            'h-14 w-14 border border-white/10 bg-black/40 text-white backdrop-blur-md',
                         )}
                         onClick={() => setOpen((current) => !current)}
                     >
@@ -168,7 +161,7 @@ export default function Navbar() {
                                 <div className="mx-auto flex max-w-7xl items-center justify-between">
                                     <Link
                                         href="/"
-                                        className="touch-target inline-flex items-center rounded-full p-2 border border-transparent bg-transparent"
+                                        className="touch-target inline-flex items-center rounded-full border border-transparent bg-transparent p-2"
                                         onClick={() => setOpen(false)}
                                     >
                                         <img
@@ -211,21 +204,22 @@ export default function Navbar() {
                                                 onClick={() => setOpen(false)}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    {item.icon && IconMap[item.icon] && (
-                                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-violet-400">
-                                                            {(() => {
-                                                                const Icon =
-                                                                    IconMap[
-                                                                        item
-                                                                            .icon
-                                                                    ];
+                                                    {item.icon &&
+                                                        IconMap[item.icon] && (
+                                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-violet-400">
+                                                                {(() => {
+                                                                    const Icon =
+                                                                        IconMap[
+                                                                            item
+                                                                                .icon
+                                                                        ];
 
-                                                                return (
-                                                                    <Icon className="h-5 w-5" />
-                                                                );
-                                                            })()}
-                                                        </div>
-                                                    )}
+                                                                    return (
+                                                                        <Icon className="h-5 w-5" />
+                                                                    );
+                                                                })()}
+                                                            </div>
+                                                        )}
                                                     <HoverScramble
                                                         duration={0.8}
                                                         speed={1}

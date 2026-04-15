@@ -1,9 +1,6 @@
 import type { RobotModelRef } from './RobotModel';
 import type * as THREE from 'three';
-import {
-    Environment,
-    ContactShadows,
-} from '@react-three/drei';
+import { Environment, ContactShadows } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import React, { useRef, useEffect, useState, Suspense } from 'react';
@@ -24,13 +21,17 @@ export default function SectionRobot({
     const containerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
-    const [selectedAnimation, setSelectedAnimation] = useState(animation || 'idle');
+    const [selectedAnimation, setSelectedAnimation] = useState(
+        animation || 'idle',
+    );
 
     useEffect(() => {
         if (!animation) {
             const animations = ['idle', 'dance', 'punch', 'jump'];
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSelectedAnimation(animations[Math.floor(Math.random() * animations.length)]);
+            setSelectedAnimation(
+                animations[Math.floor(Math.random() * animations.length)],
+            );
         }
     }, [animation]);
 
@@ -112,8 +113,8 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
 
         useEffect(() => {
             if (!groupRef.current) {
-return;
-}
+                return;
+            }
 
             // Add some random subtle movement or spinning if requested
             if (animation === 'spin') {
