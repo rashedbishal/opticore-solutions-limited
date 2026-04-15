@@ -28,7 +28,9 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                 'Are you sure you want to delete this sub-category? This will only work if no portfolios are assigned to it.',
             )
         ) {
-            destroy(adminRoutes.portfolioSubCategories.destroy.url(id.toString()));
+            destroy(
+                adminRoutes.portfolioSubCategories.destroy.url(id.toString()),
+            );
         }
     };
 
