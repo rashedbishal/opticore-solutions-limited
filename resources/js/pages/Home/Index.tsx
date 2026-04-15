@@ -764,12 +764,18 @@ export default function HomeIndex({
 
                                     const getServiceUrl = (slug: string) => {
                                         switch (slug) {
-                                            case 'graphic-design': return graphicDesign.url();
-                                            case 'digital-marketing': return digitalMarketing.url();
-                                            case 'video-editing': return videoEditing.url();
-                                            case '3d-production': return threeDProduction.url();
-                                            case 'web-development': return webDevelopment.url();
-                                            default: return '#';
+                                            case 'graphic-design':
+                                                return graphicDesign.url();
+                                            case 'digital-marketing':
+                                                return digitalMarketing.url();
+                                            case 'video-editing':
+                                                return videoEditing.url();
+                                            case '3d-production':
+                                                return threeDProduction.url();
+                                            case 'web-development':
+                                                return webDevelopment.url();
+                                            default:
+                                                return '#';
                                         }
                                     };
 
