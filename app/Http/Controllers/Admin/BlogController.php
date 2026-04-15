@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -57,6 +58,8 @@ class BlogController extends Controller
 
         Blog::create($validated);
 
+        Cache::forget('blog.index');
+
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created.');
     }
 
@@ -89,6 +92,9 @@ class BlogController extends Controller
 
         $blog->update($validated);
 
+        Cache::forget('blog.index');
+        Cache::forget("blog.show.{$blog->slug}");
+
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated.');
     }
 
@@ -98,6 +104,9 @@ class BlogController extends Controller
         $this->deleteImage($blog->image);
 
         $blog->delete();
+
+        Cache::forget('blog.index');
+        Cache::forget("blog.show.{$blog->slug}");
 
         return back()->with('success', 'Blog deleted.');
     }

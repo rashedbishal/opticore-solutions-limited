@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -70,6 +71,10 @@ class PortfolioSubCategoryController extends Controller
 
         PortfolioSubCategory::create($validated);
 
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        Cache::forget("portfolio.subcategories.{$validated['category_slug']}");
+
         return redirect()->route('admin.portfolio-sub-categories.index')
             ->with('success', 'Sub-category created.');
     }
@@ -110,7 +115,15 @@ class PortfolioSubCategoryController extends Controller
             ? Str::slug($validated['slug'])
             : Str::slug($validated['name']);
 
+        $oldCategorySlug = $portfolioSubCategory->category_slug;
         $portfolioSubCategory->update($validated);
+
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        Cache::forget("portfolio.subcategories.{$portfolioSubCategory->category_slug}");
+        if ($oldCategorySlug !== $portfolioSubCategory->category_slug) {
+            Cache::forget("portfolio.subcategories.{$oldCategorySlug}");
+        }
 
         return redirect()->route('admin.portfolio-sub-categories.index')
             ->with('success', 'Sub-category updated.');
@@ -122,7 +135,13 @@ class PortfolioSubCategoryController extends Controller
             return back()->with('error', 'Cannot delete a sub-category that has portfolios assigned to it.');
         }
 
+        $categorySlug = $portfolioSubCategory->category_slug;
+
         $portfolioSubCategory->delete();
+
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        Cache::forget("portfolio.subcategories.{$categorySlug}");
 
         return back()->with('success', 'Sub-category deleted.');
     }

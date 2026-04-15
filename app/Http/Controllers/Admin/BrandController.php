@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -33,6 +34,8 @@ class BrandController extends Controller
 
         Brand::create($validated);
 
+        Cache::forget('home.brands');
+
         return back()->with('success', 'Brand added successfully.');
     }
 
@@ -57,6 +60,8 @@ class BrandController extends Controller
 
         $brand->update($validated);
 
+        Cache::forget('home.brands');
+
         return back()->with('success', 'Brand updated successfully.');
     }
 
@@ -68,6 +73,8 @@ class BrandController extends Controller
         }
 
         $brand->delete();
+
+        Cache::forget('home.brands');
 
         return back()->with('success', 'Brand deleted successfully.');
     }

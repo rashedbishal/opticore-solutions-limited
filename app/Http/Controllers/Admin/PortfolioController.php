@@ -8,6 +8,7 @@ use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -107,6 +108,12 @@ class PortfolioController extends Controller
             'media_type' => $mediaType,
         ]);
 
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        if ($categorySlug) {
+            Cache::forget("portfolio.subcategories.{$categorySlug}");
+        }
+
         return redirect()->route('admin.portfolios.index')->with('success', 'Portfolio created.');
     }
 
@@ -167,18 +174,36 @@ class PortfolioController extends Controller
             $updateData['media_type'] = $mediaType;
         }
 
+        $oldCategorySlug = $portfolio->category;
         $portfolio->update($updateData);
+
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        if ($categorySlug) {
+            Cache::forget("portfolio.subcategories.{$categorySlug}");
+        }
+        if ($oldCategorySlug && $oldCategorySlug !== $categorySlug) {
+            Cache::forget("portfolio.subcategories.{$oldCategorySlug}");
+        }
 
         return redirect()->route('admin.portfolios.index')->with('success', 'Portfolio updated.');
     }
 
     public function destroy(Portfolio $portfolio): RedirectResponse
     {
+        $categorySlug = $portfolio->category;
+
         if ($portfolio->media_path) {
             Storage::disk('public')->delete($portfolio->media_path);
         }
 
         $portfolio->delete();
+
+        Cache::forget('portfolio.categories.index');
+        Cache::forget('home.featuredPortfolios');
+        if ($categorySlug) {
+            Cache::forget("portfolio.subcategories.{$categorySlug}");
+        }
 
         return back()->with('success', 'Portfolio deleted.');
     }
