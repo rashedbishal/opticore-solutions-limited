@@ -28,7 +28,14 @@ import {
     services,
     testimonials,
 } from '@/lib/site';
-import { portfolio } from '@/routes';
+import {
+    portfolio,
+    graphicDesign,
+    digitalMarketing,
+    threeDProduction,
+    videoEditing,
+    webDevelopment,
+} from '@/routes';
 
 const Section2 = lazy(() => import('@/components/Robot/Section2'));
 const Section3 = lazy(() => import('@/components/Robot/Section3'));
@@ -755,8 +762,20 @@ export default function HomeIndex({
                                         };
                                     });
 
+                                    const getServiceUrl = (slug: string) => {
+                                        switch (slug) {
+                                            case 'graphic-design': return graphicDesign.url();
+                                            case 'digital-marketing': return digitalMarketing.url();
+                                            case 'video-editing': return videoEditing.url();
+                                            case '3d-production': return threeDProduction.url();
+                                            case 'web-development': return webDevelopment.url();
+                                            default: return '#';
+                                        }
+                                    };
+
                                     return (
-                                        <div
+                                        <Link
+                                            href={getServiceUrl(service.key)}
                                             key={service.key}
                                             className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] bg-black p-4 transition-all duration-500 sm:p-5 lg:p-6 ${service.key === 'video-editing' ? 'shadow-[0_0_45px_rgba(34,211,238,0.12)]' : ''}`}
                                         >
@@ -941,7 +960,7 @@ export default function HomeIndex({
                                                     )}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     );
                                 })}
                             </div>
