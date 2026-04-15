@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
             </Head>
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
-                <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+                <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-8 px-4 lg:grid-cols-[280px_minmax(0,1fr)]">
                     {mobile ? (
                         <select
                             value={activeSection}

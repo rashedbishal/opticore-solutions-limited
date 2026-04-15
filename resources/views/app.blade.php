@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-x-hidden">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +19,7 @@
             <title>Opticore Solutions Limited</title>
         </x-inertia::head>
     </head>
-    <body class="overflow-x-hidden bg-dark font-sans antialiased">
+    <body class="bg-dark font-sans antialiased">
         <x-inertia::app />
     </body>
 </html>
