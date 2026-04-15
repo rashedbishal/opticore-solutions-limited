@@ -74,12 +74,15 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [triggerOnMount, children]);
 
+    const prevTrigger = useRef(trigger);
+
     useEffect(() => {
-        if (trigger && !isAnimating) {
+        if (trigger !== prevTrigger.current) {
+            prevTrigger.current = trigger;
             scramble();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [trigger, isAnimating]);
+    }, [trigger]);
 
     useEffect(() => {
         return () => {
