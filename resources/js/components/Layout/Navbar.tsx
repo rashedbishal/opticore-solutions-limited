@@ -34,7 +34,7 @@ function NavLink({
             href={item.href}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className="group relative flex items-center gap-2.5 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+            className="group relative flex items-center gap-2 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
         >
             {Icon && (
                 <Icon
@@ -89,7 +89,7 @@ export default function Navbar() {
             <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-5 2xl:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4',
                         scrolled
                             ? 'xl:rounded-full xl:border xl:border-white/10 xl:bg-black/60 xl:shadow-2xl xl:shadow-black/30 xl:backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
@@ -110,7 +110,7 @@ export default function Navbar() {
                         />
                     </Link>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-5 2xl:gap-8">
+                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-4 2xl:gap-6">
                         {navigationItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
