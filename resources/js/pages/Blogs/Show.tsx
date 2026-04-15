@@ -13,11 +13,19 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
     const handleShare = (platform: 'facebook' | 'twitter') => {
         const url = encodeURIComponent(window.location.href);
         const title = encodeURIComponent(post?.title || '');
-        
+
         if (platform === 'facebook') {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+            window.open(
+                `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+                '_blank',
+                'width=600,height=400',
+            );
         } else if (platform === 'twitter') {
-            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank', 'width=600,height=400');
+            window.open(
+                `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
+                '_blank',
+                'width=600,height=400',
+            );
         }
     };
 
@@ -189,22 +197,48 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                         </h4>
                                         <div className="flex gap-3 md:gap-4">
                                             <button
-                                                onClick={() => handleShare('facebook')}
+                                                onClick={() =>
+                                                    handleShare('facebook')
+                                                }
                                                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-zinc-400 transition-all hover:border-[#1877F2]/30 hover:bg-[#1877F2]/10 hover:text-[#1877F2] md:h-10 md:w-10 md:rounded-xl"
                                                 aria-label="Share on Facebook"
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 md:h-5 md:w-5">
-                                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    className="h-4 w-4 md:h-5 md:w-5"
+                                                >
+                                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                                                 </svg>
                                             </button>
                                             <button
-                                                onClick={() => handleShare('twitter')}
+                                                onClick={() =>
+                                                    handleShare('twitter')
+                                                }
                                                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-zinc-400 transition-all hover:border-white/30 hover:bg-white/10 hover:text-white md:h-10 md:w-10 md:rounded-xl"
                                                 aria-label="Share on X (Twitter)"
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 md:h-5 md:w-5">
-                                                    <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
-                                                    <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    className="h-4 w-4 md:h-5 md:w-5"
+                                                >
+                                                    <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+                                                    <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
                                                 </svg>
                                             </button>
                                         </div>
