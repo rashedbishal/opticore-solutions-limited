@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { Link } from '@inertiajs/react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends PropsWithChildren, ButtonHTMLAttributes<HTMLButtonElement> {

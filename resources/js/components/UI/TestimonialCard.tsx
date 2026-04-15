@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
+import type { Testimonial } from '@/types';
 import type { Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     Star,
     Mountain,
@@ -11,7 +12,6 @@ import {
     Activity,
     Pyramid,
 } from 'lucide-react';
-import type { Testimonial } from '@/types';
 
 const IconMap: Record<string, typeof Star> = {
     Mountain,

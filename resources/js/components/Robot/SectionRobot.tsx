@@ -1,3 +1,5 @@
+import type { RobotModelRef } from './RobotModel';
+import type * as THREE from 'three';
 import {
     Environment,
     ContactShadows,
@@ -5,9 +7,7 @@ import {
 import { Canvas } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import React, { useRef, useEffect, useState, Suspense } from 'react';
-import type * as THREE from 'three';
 import RobotModel from './RobotModel';
-import type { RobotModelRef } from './RobotModel';
 
 interface SectionRobotProps {
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';

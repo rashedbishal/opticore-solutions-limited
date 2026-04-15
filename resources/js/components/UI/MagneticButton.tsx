@@ -1,6 +1,6 @@
+import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useEffect } from 'react';
 import { useMagneticHover } from '@/hooks/useMagneticHover';
 import { cn } from '@/lib/utils';

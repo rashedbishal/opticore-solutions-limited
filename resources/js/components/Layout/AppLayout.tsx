@@ -1,6 +1,7 @@
+import type { SharedPageProps } from '@/types';
+import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { PropsWithChildren } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
@@ -8,7 +9,6 @@ import ChatWidget from '@/components/UI/ChatWidget';
 import CursorSelector, {
     useCursorPreference,
 } from '@/components/UI/CursorSelector';
-import type { SharedPageProps } from '@/types';
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();

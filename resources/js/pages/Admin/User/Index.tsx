@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Plus, Trash2, Edit } from 'lucide-react';
-import type { ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 

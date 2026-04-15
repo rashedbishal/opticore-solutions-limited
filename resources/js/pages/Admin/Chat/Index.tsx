@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -9,7 +10,6 @@ import {
     ChevronDown,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import type { ReactNode } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 

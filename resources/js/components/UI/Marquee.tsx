@@ -1,3 +1,4 @@
+import type {LucideIcon} from 'lucide-react';
 import {
     Mountain,
     Zap,
@@ -9,7 +10,6 @@ import {
     Pyramid
     
 } from 'lucide-react';
-import type {LucideIcon} from 'lucide-react';
 
 const IconMap: Record<string, LucideIcon> = {
     Mountain,

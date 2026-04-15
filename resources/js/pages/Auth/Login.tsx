@@ -1,7 +1,7 @@
+import type { FormEventHandler, ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Lock } from 'lucide-react';
-import type { FormEventHandler, ReactNode } from 'react';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({

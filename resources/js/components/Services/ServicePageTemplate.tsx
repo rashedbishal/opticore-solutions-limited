@@ -1,8 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import type { ServicePageContent } from '@/types';
 import type { Variants } from 'framer-motion';
 import type {
     LucideIcon} from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import {
     ArrowRight,
     Check,
@@ -28,7 +29,6 @@ import {
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
-import type { ServicePageContent } from '@/types';
 import GradientText from '../text-animations/gradient-text';
 
 // Icon mapping for service pages

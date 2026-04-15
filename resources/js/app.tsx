@@ -1,7 +1,7 @@
 import '../css/app.css';
 
-import { createInertiaApp } from '@inertiajs/react';
 import type { ReactElement, ReactNode } from 'react';
+import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';

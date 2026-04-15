@@ -1,7 +1,7 @@
+import type { ReactNode} from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, Trash2, Edit, X, Upload, Image as ImageIcon } from 'lucide-react';
-import type { ReactNode} from 'react';
 import React, { useState, useRef } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 

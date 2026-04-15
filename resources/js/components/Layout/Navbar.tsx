@@ -1,3 +1,4 @@
+import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -15,7 +16,6 @@ import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { bangladeshPhoneLink, navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
-import type { SharedPageProps } from '@/types';
 
 const IconMap: Record<string, typeof Globe> = {
     PenTool,

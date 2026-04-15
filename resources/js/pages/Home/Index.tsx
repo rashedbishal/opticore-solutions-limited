@@ -1,6 +1,7 @@
+import type { PortfolioItem } from '@/types';
+import type { Variants } from 'framer-motion';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
 import {
     ArrowRight,
     Box,
@@ -12,11 +13,6 @@ import {
     Star,
 } from 'lucide-react';
 import { useEffect, useRef, useState, lazy, Suspense } from 'react';
-
-const Section2 = lazy(() => import('@/components/Robot/Section2'));
-const Section3 = lazy(() => import('@/components/Robot/Section3'));
-const Section4 = lazy(() => import('@/components/Robot/Section4'));
-const Section5 = lazy(() => import('@/components/Robot/Section5'));
 
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -35,7 +31,12 @@ import {
     testimonials,
 } from '@/lib/site';
 import { portfolio } from '@/routes';
-import type { PortfolioItem } from '@/types';
+
+const Section2 = lazy(() => import('@/components/Robot/Section2'));
+const Section3 = lazy(() => import('@/components/Robot/Section3'));
+const Section4 = lazy(() => import('@/components/Robot/Section4'));
+const Section5 = lazy(() => import('@/components/Robot/Section5'));
+
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -143,7 +144,7 @@ function HeroHeadline() {
                 const containerWidth = el.offsetWidth;
                 const containerRect = el.getBoundingClientRect();
                 const letters = el.querySelectorAll<HTMLElement>('.anime-letter');
-                
+
                 letters.forEach((letter) => {
                     const letterRect = letter.getBoundingClientRect();
                     const offsetLeft = letterRect.left - containerRect.left;
@@ -740,7 +741,7 @@ export default function HomeIndex({
                                             duration:
                                                 0.5 +
                                                 Math.abs(Math.cos(i * 777)) *
-                                                    1.5,
+                                                1.5,
                                         };
                                     });
 
@@ -830,7 +831,7 @@ export default function HomeIndex({
                                                     {portfolio ? (
                                                         <>
                                                             {portfolio.media_type ===
-                                                            'video' ? (
+                                                                'video' ? (
                                                                 <video
                                                                     src={
                                                                         portfolio.media_path ??
@@ -867,14 +868,14 @@ export default function HomeIndex({
                                                                 fallbackImage?.src ??
                                                                 aboutBentoImages[
                                                                     index %
-                                                                        aboutBentoImages.length
+                                                                    aboutBentoImages.length
                                                                 ].src
                                                             }
                                                             alt={
                                                                 fallbackImage?.alt ??
                                                                 aboutBentoImages[
                                                                     index %
-                                                                        aboutBentoImages.length
+                                                                    aboutBentoImages.length
                                                                 ].alt
                                                             }
                                                             className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 group-hover:opacity-60 saturate-50"

@@ -1,3 +1,4 @@
+import type { ContactFormData } from '@/types';
 import { Head, useForm as useInertiaForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,7 +21,6 @@ import GlowingKicker from '@/components/UI/GlowingKicker';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { cn } from '@/lib/utils';
-import type { ContactFormData } from '@/types';
 
 const socialLinks = [
     { href: 'https://facebook.com', label: 'Facebook', icon: Globe },

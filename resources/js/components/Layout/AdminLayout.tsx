@@ -1,3 +1,4 @@
+import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -15,7 +16,6 @@ import {
     Layers,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import type { SharedPageProps } from '@/types';
 
 interface AdminLayoutProps {
     children: React.ReactNode;

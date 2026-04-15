@@ -1,6 +1,6 @@
+import type { PropsWithChildren } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import type { PropsWithChildren } from 'react';
 
 interface ModalProps extends PropsWithChildren {
     open: boolean;

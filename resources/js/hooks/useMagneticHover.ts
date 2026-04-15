@@ -1,5 +1,5 @@
-import { useSpring } from 'framer-motion';
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
+import { useSpring } from 'framer-motion';
 import { useRef, useCallback } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 

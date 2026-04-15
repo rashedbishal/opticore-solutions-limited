@@ -1,7 +1,7 @@
+import type { ReactNode } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, X } from 'lucide-react';
-import type { ReactNode } from 'react';
 
 interface PortfolioItem {
     id: number;

@@ -1,6 +1,6 @@
+import type { Variants } from 'framer-motion';
 import { Head, Link, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 
