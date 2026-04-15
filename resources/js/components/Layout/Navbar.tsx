@@ -34,7 +34,7 @@ function NavLink({
             href={item.href}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className="group relative flex items-center gap-2 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+            className="group relative flex items-center gap-1 py-2 text-md font-medium text-white/70 transition-colors hover:text-white"
         >
             {Icon && (
                 <Icon

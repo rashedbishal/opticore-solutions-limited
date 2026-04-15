@@ -229,12 +229,10 @@
     }
 
     html {
-        overflow-x: hidden;
         background: var(--color-dark);
     }
 
     body {
-        overflow-x: hidden;
         background:
             radial-gradient(
                 circle at top left,
@@ -286,7 +284,7 @@
 
 @layer components {
     .app-shell {
-        @apply relative min-h-screen overflow-x-hidden bg-dark text-zinc-100;
+        @apply relative min-h-screen bg-dark text-zinc-100;
     }
 
     .section-shell {
