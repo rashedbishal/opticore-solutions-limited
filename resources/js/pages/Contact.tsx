@@ -99,6 +99,42 @@ export default function Contact() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        form.clearErrors();
+        let hasErrors = false;
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!form.data.name || form.data.name.trim().length === 0) {
+            form.setError('name', 'Name is required.');
+            hasErrors = true;
+        }
+
+        if (!form.data.email || !emailRegex.test(form.data.email)) {
+            form.setError('email', 'Please enter a valid email address with a domain.');
+            hasErrors = true;
+        }
+
+        if (form.data.phone) {
+            const digitCount = form.data.phone.replace(/\D/g, '').length;
+            if (digitCount < 7 || digitCount > 15) {
+                form.setError('phone', 'Phone number must be between 7 and 15 digits.');
+                hasErrors = true;
+            }
+        }
+
+        if (!form.data.subject || form.data.subject.trim().length === 0) {
+            form.setError('subject', 'Subject is required.');
+            hasErrors = true;
+        }
+
+        if (!form.data.message || form.data.message.trim().length === 0) {
+            form.setError('message', 'Message is required.');
+            hasErrors = true;
+        }
+
+        if (hasErrors) return;
+
         form.post('/api/contact', {
             preserveScroll: true,
             onSuccess: () => {
@@ -223,12 +259,11 @@ export default function Contact() {
                                                         required
                                                         placeholder="Your name"
                                                         value={form.data.name}
-                                                        onChange={(e) =>
-                                                            form.setData(
-                                                                'name',
-                                                                e.target.value,
-                                                            )
-                                                        }
+                                                        maxLength={50}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value.replace(/[^A-Za-z\s-]/g, '');
+                                                            form.setData('name', val);
+                                                        }}
                                                         className={cn(
                                                             'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
                                                             form.errors.name &&
@@ -278,16 +313,23 @@ export default function Contact() {
                                                     </label>
                                                     <input
                                                         type="tel"
-                                                        placeholder="+1 (000) 000-0000"
+                                                        placeholder="+10000000000"
+                                                        maxLength={16}
                                                         value={form.data.phone}
-                                                        onChange={(e) =>
-                                                            form.setData(
-                                                                'phone',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        className="w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl"
+                                                        onChange={(e) => {
+                                                            const val = e.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
+                                                            form.setData('phone', val);
+                                                        }}
+                                                        className={cn(
+                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
+                                                            form.errors.phone && 'border-rose-500',
+                                                        )}
                                                     />
+                                                    {form.errors.phone && (
+                                                        <p className="ml-1 text-xs text-rose-400">
+                                                            {form.errors.phone}
+                                                        </p>
+                                                    )}
                                                 </div>
 
                                                 <div className="space-y-2">
@@ -301,6 +343,7 @@ export default function Contact() {
                                                         value={
                                                             form.data.subject
                                                         }
+                                                        maxLength={100}
                                                         onChange={(e) =>
                                                             form.setData(
                                                                 'subject',
@@ -332,6 +375,7 @@ export default function Contact() {
                                                 <textarea
                                                     required
                                                     rows={5}
+                                                    maxLength={1000}
                                                     placeholder="Tell us about your project or inquiry..."
                                                     value={form.data.message}
                                                     onChange={(e) =>
@@ -346,11 +390,18 @@ export default function Contact() {
                                                             'border-rose-500',
                                                     )}
                                                 />
-                                                {form.errors.message && (
-                                                    <p className="ml-1 text-xs text-rose-400">
-                                                        {form.errors.message}
-                                                    </p>
-                                                )}
+                                                <div className="flex items-start justify-between">
+                                                    <div>
+                                                        {form.errors.message && (
+                                                            <p className="ml-1 mt-1 text-xs text-rose-400">
+                                                                {form.errors.message}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <span className="mt-1 text-xs text-zinc-500">
+                                                        {form.data.message.length} / 1000
+                                                    </span>
+                                                </div>
                                             </div>
 
                                             <div className="pt-4">
