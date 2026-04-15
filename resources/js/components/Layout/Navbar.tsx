@@ -96,7 +96,7 @@ export default function Navbar() {
             <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
                 <nav
                     className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-5 xl:py-3 2xl:px-6',
+                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-5 2xl:px-6',
                         scrolled
                             ? 'xl:rounded-full xl:border xl:border-white/10 xl:bg-black/60 xl:shadow-2xl xl:shadow-black/30 xl:backdrop-blur-xl'
                             : 'border-transparent bg-transparent',
@@ -105,15 +105,15 @@ export default function Navbar() {
                     <Link
                         href="/"
                         className={cn(
-                            'touch-target inline-flex items-center rounded-full p-2 transition-all duration-300',
+                            'touch-target inline-flex items-center rounded-full transition-all duration-300',
                             'bg-black/40 backdrop-blur-md border border-white/10 xl:border-transparent xl:bg-transparent xl:backdrop-blur-none'
                         )}
                         aria-label="Opticore Solutions home"
                     >
                         <img
-                            src="/images/logo/opticore.png"
+                            src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="h-10 w-auto shrink-0 object-contain"
+                            className="h-16 md:h-20 w-auto shrink-0 object-contain"
                         />
                     </Link>
 
@@ -172,9 +172,9 @@ export default function Navbar() {
                                         onClick={() => setOpen(false)}
                                     >
                                         <img
-                                            src="/images/logo/opticore.png"
+                                            src="/images/logo/opticore-white.webp"
                                             alt="Opticore Solutions"
-                                            className="h-10 w-auto shrink-0 object-contain"
+                                            className="h-16 md:h-20 w-auto shrink-0 object-contain"
                                         />
                                     </Link>
                                     <button
@@ -188,7 +188,7 @@ export default function Navbar() {
                             </div>
 
                             {/* Scrollable links area */}
-                            <div className="hide-scrollbar flex-1 overflow-y-auto overscroll-contain py-4">
+                            <div className="hide-scrollbar flex-1 overflow-y-auto overscroll-contain p-4">
                                 <div className="mx-auto w-full max-w-md space-y-2">
                                     {navigationItems.map((item, index) => (
                                         <motion.div
@@ -204,7 +204,7 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-start rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 transition-colors active:bg-white/10',
+                                                    'flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-2 md:px-3 lg:px-4 py-2.5 md:py-3 lg:py-3.5 transition-colors active:bg-white/10',
                                                     url === item.href &&
                                                         'border-violet-400/40 bg-violet-500/10',
                                                 )}
@@ -212,7 +212,7 @@ export default function Navbar() {
                                             >
                                                 <div className="flex items-center gap-4">
                                                     {item.icon && IconMap[item.icon] && (
-                                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-violet-400">
+                                                        <div className="items-center justify-center rounded-xl text-violet-400">
                                                             {(() => {
                                                                 const Icon =
                                                                     IconMap[
@@ -231,7 +231,7 @@ export default function Navbar() {
                                                         speed={1}
                                                         scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                                                         triggerOnMount={true}
-                                                        className="text-lg font-semibold text-white sm:text-xl"
+                                                        className="text-sm font-semibold text-white sm:text-md"
                                                     >
                                                         {item.label}
                                                     </HoverScramble>
