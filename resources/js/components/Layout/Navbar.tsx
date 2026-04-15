@@ -40,9 +40,7 @@ function NavLink({
                 <Icon
                     className={cn(
                         'h-4 w-4 transition-colors duration-300',
-                        active
-                            ? 'text-cyan-400'
-                            : 'text-zinc-500 group-hover:text-violet-400',
+                        active ? 'text-cyan-400' : 'text-zinc-500 group-hover:text-violet-400',
                     )}
                 />
             )}
@@ -110,7 +108,7 @@ export default function Navbar() {
                         />
                     </Link>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-4 2xl:gap-6">
+                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-3 2xl:gap-4">
                         {navigationItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
