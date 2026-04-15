@@ -40,10 +40,22 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
         );
     }
 
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
     return (
         <>
             <Head title={post.title}>
-                <meta name="description" content={post.description} />
+                <meta name="description" content={post.excerpt} />
+                <meta property="og:type" content="article" />
+                <meta property="og:title" content={post.title} />
+                <meta property="og:description" content={post.excerpt} />
+                <meta property="og:image" content={post.image} />
+                {shareUrl && <meta property="og:url" content={shareUrl} />}
+                <meta property="og:site_name" content="Opticore Solutions Ltd." />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={post.title} />
+                <meta name="twitter:description" content={post.excerpt} />
+                <meta name="twitter:image" content={post.image} />
             </Head>
 
             <article className="relative min-h-screen overflow-hidden pt-28 pb-20 md:pt-40 md:pb-32 lg:pt-48">
