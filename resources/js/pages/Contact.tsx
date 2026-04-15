@@ -14,6 +14,9 @@ import {
     MessageSquare,
     Info,
     Share2,
+    Palette,
+    Pin,
+    Music,
 } from 'lucide-react';
 import React from 'react';
 import HandwritingText from '@/components/text-animations/handwriting-text';
@@ -21,23 +24,52 @@ import GlowingKicker from '@/components/UI/GlowingKicker';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { cn } from '@/lib/utils';
+import { bangladeshPhoneNumber } from '@/lib/site';
 
 const socialLinks = [
-    { href: 'https://facebook.com', label: 'Facebook', icon: Globe },
-    { href: 'https://instagram.com', label: 'Instagram', icon: Camera },
     {
-        href: 'https://linkedin.com',
+        href: 'https://www.facebook.com/opticoresolutionsltd',
+        label: 'Facebook',
+        icon: Globe,
+    },
+    { href: 'https://x.com/osl_opticore', label: 'X (Twitter)', icon: Send },
+    {
+        href: 'https://www.instagram.com/opticoresolutionsltd',
+        label: 'Instagram',
+        icon: Camera,
+    },
+    {
+        href: 'https://www.linkedin.com/in/opticoresolutionsltd',
         label: 'LinkedIn',
         icon: BriefcaseBusiness,
     },
-    { href: 'https://youtube.com', label: 'YouTube', icon: Play },
+    {
+        href: 'https://www.youtube.com/@OpticoreSolutionsLtd',
+        label: 'YouTube',
+        icon: Play,
+    },
+    {
+        href: 'https://www.behance.net/opticorsolutionsltd#',
+        label: 'Behance',
+        icon: Palette,
+    },
+    {
+        href: 'https://www.pinterest.com/opticoresolutionsltd',
+        label: 'Pinterest',
+        icon: Pin,
+    },
+    {
+        href: 'https://www.tiktok.com/@opticoresolutionsltd',
+        label: 'TikTok',
+        icon: Music,
+    },
 ];
 
 const contactItems = [
     {
         id: 'phone',
         label: 'Phone Number',
-        value: '+88-01896204400',
+        value: bangladeshPhoneNumber,
         subValue: '+1 (575) 303-6925',
         icon: Phone,
         color: 'from-violet-500/20 to-violet-500/5',
@@ -46,7 +78,7 @@ const contactItems = [
     {
         id: 'email',
         label: 'Email Address',
-        value: 'hello@opticoresolutions.com',
+        value: 'osl@opticoresolutionsltd.com',
         icon: Mail,
         color: 'from-cyan-500/20 to-cyan-500/5',
         iconColor: 'text-cyan-400',
@@ -435,13 +467,13 @@ export default function Contact() {
                                     <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/60 px-4 py-2 backdrop-blur-md">
                                         <MapPin className="h-4 w-4 text-rose-500" />
                                         <span className="text-xs font-bold tracking-wide text-balance text-white">
-                                            Dhaka, Bangladesh
+                                            East Monipur, Mirpur, Dhaka
                                         </span>
                                     </div>
                                 </div>
                                 <iframe
                                     title="Opticore Solutions Ltd. location"
-                                    src="https://www.google.com/maps?q=Dhaka%2C%20Bangladesh&z=11&output=embed"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.4890191049462!2d90.36899679999999!3d23.801203700000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c711e66e7703%3A0x6262d3b99b8ae3d4!2sOpticore%20solutions%20Ltd!5e0!3m2!1sen!2sbd!4v1776248482450!5m2!1sen!2sbd"
                                     className="h-full w-full rounded-[1.75rem] opacity-30 grayscale invert transition-all duration-1000 ease-out group-hover:opacity-100 group-hover:grayscale-0 group-hover:invert-0"
                                     loading="lazy"
                                 />
