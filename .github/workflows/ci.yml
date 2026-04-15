@@ -1,7 +1,6 @@
 # CI Pipeline — Laravel + Inertia + React
 # Runs on every push and PR to main. Fails fast on any error.
 
-
 name: CI
 
 on:
