@@ -28,7 +28,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                 'Are you sure you want to delete this sub-category? This will only work if no portfolios are assigned to it.',
             )
         ) {
-            destroy(adminRoutes.portfolioSubCategories.destroy.url(id));
+            destroy(adminRoutes.portfolioSubCategories.destroy.url(id.toString()));
         }
     };
 
@@ -98,7 +98,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <Link
                                         href={adminRoutes.portfolioSubCategories.edit.url(
-                                            sub.id,
+                                            sub.id.toString(),
                                         )}
                                         className="mr-4 inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300"
                                     >

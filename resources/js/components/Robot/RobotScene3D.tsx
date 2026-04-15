@@ -1,3 +1,4 @@
+import type * as THREE from 'three';
 import {
     Environment,
     PerspectiveCamera,

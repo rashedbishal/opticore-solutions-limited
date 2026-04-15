@@ -32,7 +32,7 @@ export default function MagneticButton({
             return;
         }
 
-        const onMove = (e: MouseEvent) => {
+        const onMove = (e: Event) => {
             magnetic.handleMouseMove(e as unknown as React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>);
         };
         const onLeave = () => {

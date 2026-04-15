@@ -141,10 +141,10 @@ export default function PortfolioCategoryShow({
                                     return (
                                         <Link
                                             key={sub.id}
-                                            href={portfolioSubCategory.url(
+                                            href={portfolioSubCategory.url([
                                                 category.slug,
                                                 sub.slug,
-                                            )}
+                                            ])}
                                             className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                                                 isActive
                                                     ? 'border-violet-400/50 bg-violet-500/15 text-white'

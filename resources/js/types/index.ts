@@ -9,6 +9,7 @@ export interface SiteMeta {
 
 export interface FlashProps {
     success?: string | null;
+    error?: string | null;
 }
 
 export interface SharedPageProps {
@@ -59,12 +60,12 @@ export interface HighlightItem {
 }
 
 export interface PortfolioItem {
-    id: number;
+    id?: number;
     title: string;
     category: string;
-    media_path: string | null;
+    media_path?: string | null;
     image?: string;
-    media_type: 'image' | 'video';
+    media_type?: 'image' | 'video';
     alt: string;
     description?: string;
 }

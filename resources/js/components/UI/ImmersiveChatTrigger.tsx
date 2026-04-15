@@ -1,5 +1,6 @@
 "use client";
 
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import { Bot, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ export default function ImmersiveChatTrigger({
 }: ImmersiveChatTriggerProps) {
 
     // Subtle scaling pulse animation variants
-    const attentionVariants = {
+    const attentionVariants: Variants = {
         idle: { scale: 1, y: 0, rotate: 0 },
         attention: {
             scale: [1, 1.18, 1],

@@ -9,6 +9,8 @@ interface RobotModelProps {
     [key: string]: any;
 }
 
+export type RobotModelRef = THREE.Group;
+
 /**
  * RobotModel - Loads and animates the GLB model
  * Handles model positioning, scaling, and basic idle animation.

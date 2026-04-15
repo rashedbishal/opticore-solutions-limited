@@ -84,11 +84,8 @@ export default function BrandIndex({ brands }: Props) {
 
         if (editingBrand) {
             // Use post with _method put for file uploads
+            setData('_method', 'PUT');
             post(`/admin/brands/${editingBrand.id}`, {
-                data: {
-                    ...data,
-                    _method: 'PUT',
-                },
                 onSuccess: () => closeModal(),
             });
         } else {

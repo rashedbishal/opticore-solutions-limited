@@ -8,6 +8,10 @@ interface Portfolio {
     id: number;
     title: string;
     category: string;
+    sub_category?: {
+        id: number;
+        name: string;
+    } | null;
     media_path: string | null;
     media_type: 'image' | 'video';
 }
