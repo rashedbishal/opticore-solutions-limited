@@ -40,7 +40,9 @@ function NavLink({
                 <Icon
                     className={cn(
                         'h-4 w-4 transition-colors duration-300',
-                        active ? 'text-cyan-400' : 'text-zinc-500 group-hover:text-violet-400',
+                        active
+                            ? 'text-cyan-400'
+                            : 'text-zinc-500 group-hover:text-violet-400',
                     )}
                 />
             )}
@@ -97,14 +99,14 @@ export default function Navbar() {
                         href="/"
                         className={cn(
                             'touch-target inline-flex items-center rounded-full transition-all duration-300',
-                            'bg-black/40 backdrop-blur-md border border-white/10 xl:border-transparent xl:bg-transparent xl:backdrop-blur-none'
+                            'border border-white/10 bg-black/40 backdrop-blur-md xl:border-transparent xl:bg-transparent xl:backdrop-blur-none',
                         )}
                         aria-label="Opticore Solutions home"
                     >
                         <img
                             src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="h-16 md:h-20 w-auto shrink-0 object-contain"
+                            className="h-16 w-auto shrink-0 object-contain md:h-20"
                         />
                     </Link>
 
@@ -165,7 +167,7 @@ export default function Navbar() {
                                         <img
                                             src="/images/logo/opticore-white.webp"
                                             alt="Opticore Solutions"
-                                            className="h-16 md:h-20 w-auto shrink-0 object-contain"
+                                            className="h-16 w-auto shrink-0 object-contain md:h-20"
                                         />
                                     </Link>
                                     <button
@@ -195,21 +197,22 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-2 md:px-3 lg:px-4 py-2.5 md:py-3 lg:py-3.5 transition-colors active:bg-white/10',
+                                                    'flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-2 py-2.5 transition-colors active:bg-white/10 md:px-3 md:py-3 lg:px-4 lg:py-3.5',
                                                     url === item.href &&
                                                         'border-violet-400/40 bg-violet-500/10',
                                                 )}
                                                 onClick={() => setOpen(false)}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    {item.icon && IconMap[item.icon] && (
-                                                        <div className="items-center justify-center rounded-xl text-violet-400">
-                                                            {(() => {
-                                                                const Icon =
-                                                                    IconMap[
-                                                                        item
-                                                                            .icon
-                                                                    ];
+                                                    {item.icon &&
+                                                        IconMap[item.icon] && (
+                                                            <div className="items-center justify-center rounded-xl text-violet-400">
+                                                                {(() => {
+                                                                    const Icon =
+                                                                        IconMap[
+                                                                            item
+                                                                                .icon
+                                                                        ];
 
                                                                     return (
                                                                         <Icon className="h-5 w-5" />
@@ -222,7 +225,7 @@ export default function Navbar() {
                                                         speed={1}
                                                         scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                                                         triggerOnMount={true}
-                                                        className="text-sm font-semibold text-white sm:text-md"
+                                                        className="sm:text-md text-sm font-semibold text-white"
                                                     >
                                                         {item.label}
                                                     </HoverScramble>
