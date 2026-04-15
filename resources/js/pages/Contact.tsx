@@ -230,7 +230,7 @@ export default function Contact() {
                                                             )
                                                         }
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
+                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
                                                             form.errors.name &&
                                                                 'border-rose-500',
                                                         )}
@@ -258,7 +258,7 @@ export default function Contact() {
                                                             )
                                                         }
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
+                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
                                                             form.errors.email &&
                                                                 'border-rose-500',
                                                         )}
@@ -286,7 +286,7 @@ export default function Contact() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className="w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]"
+                                                        className="w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl"
                                                     />
                                                 </div>
 
@@ -308,7 +308,7 @@ export default function Contact() {
                                                             )
                                                         }
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
+                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
                                                             form.errors
                                                                 .subject &&
                                                                 'border-rose-500',
@@ -341,7 +341,7 @@ export default function Contact() {
                                                         )
                                                     }
                                                     className={cn(
-                                                        'w-full resize-none border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
+                                                        'w-full resize-none border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
                                                         form.errors.message &&
                                                             'border-rose-500',
                                                     )}
