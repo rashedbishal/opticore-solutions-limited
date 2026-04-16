@@ -30,15 +30,12 @@ Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->nam
 
 // Portfolio public routes
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
-
 Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
     ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
     ->name('portfolioCategory');
-
 Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
     ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
     ->name('portfolioSubCategory');
-
 Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
 Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
@@ -51,20 +48,60 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SocialController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
-// Authentication Routes
+// User Auth Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+
+    // Social Auth
+    Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])->name('social.redirect');
+    Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])->name('social.callback');
 });
-Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/verify-email', [VerifyEmailController::class, 'notice'])->name('verification.notice');
+    Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])->middleware('signed')->name('verification.verify');
+    Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+
+    // Settings
+    Route::get('/settings', function () {
+        return Inertia::render('Settings');
+    })->name('settings');
+});
+
+// Admin Auth Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest:admin')->group(function () {
+        Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
+        Route::post('/login', [AdminLoginController::class, 'store']);
+    });
+
+    Route::middleware('auth:admin')->group(function () {
+        Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+    });
+});
 
 // CMS Admin Routes
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
     Route::resource('portfolio-sub-categories', PortfolioSubCategoryController::class);

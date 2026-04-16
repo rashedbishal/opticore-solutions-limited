@@ -1,27 +1,28 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X, PenTool, Globe, Film, Box, Code2, Mail } from 'lucide-react';
+import { Menu, X, PenTool, Globe, Film, Box, Code2, Mail, Settings, LogOut, LogIn } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import { bangladeshPhoneLink, navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
-const IconMap: Record<string, typeof Globe> = {
+const IconMap: Record<string, any> = {
     PenTool,
     Globe,
     Film,
     Box,
     Code2,
     Mail,
+    Settings,
 };
 
 function NavLink({
     item,
     url,
 }: {
-    item: (typeof navigationItems)[0];
+    item: { label: string; href: string; icon?: string };
     url: string;
 }) {
     const [hovered, setHovered] = useState(false);
@@ -69,6 +70,7 @@ export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { user } = props.auth;
 
     useEffect(() => {
         const onScroll = () => {
@@ -82,6 +84,11 @@ export default function Navbar() {
             window.removeEventListener('scroll', onScroll);
         };
     }, []);
+
+    const navItems = [...navigationItems];
+    if (user) {
+        navItems.push({ label: 'Settings', href: '/settings', icon: 'Settings' });
+    }
 
     return (
         <>
@@ -111,18 +118,33 @@ export default function Navbar() {
                     </Link>
 
                     <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-3 2xl:gap-4">
-                        {navigationItems.map((item) => (
+                        {navItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
                     </div>
 
                     <div className="hidden xl:block">
-                        <MagneticButton
-                            href={bangladeshPhoneLink}
-                            ariaLabel="Call Opticore Solutions Ltd. now"
-                        >
-                            Call now
-                        </MagneticButton>
+                        {user ? (
+                            <Link
+                                href="/logout"
+                                method="post"
+                                as="button"
+                                className="group relative flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/10"
+                            >
+                                <LogOut className="h-4 w-4 text-violet-400" />
+                                Sign out
+                            </Link>
+                        ) : (
+                            <MagneticButton
+                                href="/login"
+                                ariaLabel="Sign in to your account"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <LogIn className="h-4 w-4" />
+                                    Sign in
+                                </div>
+                            </MagneticButton>
+                        )}
                     </div>
 
                     <button
@@ -183,7 +205,7 @@ export default function Navbar() {
                             {/* Scrollable links area */}
                             <div className="hide-scrollbar flex-1 overflow-y-auto overscroll-contain p-4">
                                 <div className="mx-auto w-full max-w-md space-y-2">
-                                    {navigationItems.map((item, index) => (
+                                    {navItems.map((item, index) => (
                                         <motion.div
                                             key={item.href}
                                             initial={{ opacity: 0, x: -20 }}
@@ -245,15 +267,31 @@ export default function Navbar() {
                                     transition={{ delay: 0.25 }}
                                     className="mx-auto w-full max-w-md"
                                 >
-                                    <MagneticButton
-                                        href={bangladeshPhoneLink}
-                                        fullWidth
-                                        ariaLabel="Call Opticore Solutions Ltd. now"
-                                        onClick={() => setOpen(false)}
-                                        className="py-4 text-base font-bold tracking-wide uppercase"
-                                    >
-                                        Call now
-                                    </MagneticButton>
+                                    {user ? (
+                                        <Link
+                                            href="/logout"
+                                            method="post"
+                                            as="button"
+                                            onClick={() => setOpen(false)}
+                                            className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
+                                        >
+                                            <LogOut className="h-5 w-5" />
+                                            Sign out
+                                        </Link>
+                                    ) : (
+                                        <MagneticButton
+                                            href="/login"
+                                            fullWidth
+                                            ariaLabel="Sign in to your account"
+                                            onClick={() => setOpen(false)}
+                                            className="py-4 text-base font-bold tracking-wide uppercase"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <LogIn className="h-5 w-5" />
+                                                Sign in
+                                            </div>
+                                        </MagneticButton>
+                                    )}
                                 </motion.div>
                             </div>
                         </div>
