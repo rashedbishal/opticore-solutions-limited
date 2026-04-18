@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Brand;
 use App\Models\Admin;
+use App\Models\Brand;
 
 beforeEach(function () {
     $this->admin = Admin::factory()->create();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Test data factory for the secondary Admin model.
  */
