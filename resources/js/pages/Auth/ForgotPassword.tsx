@@ -1,4 +1,4 @@
-import type { FormEventHandler } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
@@ -75,4 +75,4 @@ export default function ForgotPassword({ status }: { status?: string }) {
     );
 }
 
-ForgotPassword.layout = (page: import('react').ReactNode) => <>{page}</>;
+ForgotPassword.layout = (page: ReactNode) => <>{page}</>;

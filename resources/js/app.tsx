@@ -2,11 +2,11 @@ import '../css/app.css';
 
 import type { ReactElement, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
+import { configureEcho, echo } from '@laravel/echo-react';
+import axios from 'axios';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
-import { configureEcho, echo } from '@laravel/echo-react';
-import axios from 'axios';
 
 configureEcho({
     broadcaster: 'reverb',
@@ -19,12 +19,14 @@ configureEcho({
 axios.interceptors.request.use((config) => {
     try {
         const socketId = echo().socketId();
+
         if (socketId) {
             config.headers['X-Socket-ID'] = socketId;
         }
     } catch {
         // Echo not yet connected — no socket ID available, skip
     }
+
     return config;
 });
 

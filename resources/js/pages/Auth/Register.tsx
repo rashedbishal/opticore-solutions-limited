@@ -1,4 +1,4 @@
-import type { FormEventHandler } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
@@ -102,7 +102,9 @@ export default function Register() {
                             className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                             placeholder="+880123456789"
                             autoComplete="tel"
-                            onChange={(e) => setData('phone_number', e.target.value)}
+                            onChange={(e) =>
+                                setData('phone_number', e.target.value)
+                            }
                         />
                         {errors.phone_number && (
                             <p className="mt-2 text-sm text-red-400">
@@ -129,7 +131,9 @@ export default function Register() {
                                 className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                                 autoComplete="new-password"
                                 required
-                                onChange={(e) => setData('password', e.target.value)}
+                                onChange={(e) =>
+                                    setData('password', e.target.value)
+                                }
                             />
                         </div>
                     </div>
@@ -150,12 +154,17 @@ export default function Register() {
                                 className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                                 autoComplete="new-password"
                                 required
-                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                onChange={(e) =>
+                                    setData(
+                                        'password_confirmation',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </div>
                     </div>
                 </div>
-                
+
                 {(errors.password || errors.password_confirmation) && (
                     <p className="mt-2 text-sm text-red-400">
                         {errors.password || errors.password_confirmation}
@@ -215,7 +224,11 @@ export default function Register() {
                         href="/auth/facebook/redirect"
                         className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
-                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                        <svg
+                            className="h-5 w-5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
                             <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
                         </svg>
                         Facebook
@@ -236,4 +249,4 @@ export default function Register() {
     );
 }
 
-Register.layout = (page: import('react').ReactNode) => <>{page}</>;
+Register.layout = (page: ReactNode) => <>{page}</>;

@@ -1,10 +1,18 @@
 import type { SharedPageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Download, FileText, Image as ImageIcon, MessageSquare, Paperclip, Send, X } from 'lucide-react';
+import {
+    Download,
+    FileText,
+    Image as ImageIcon,
+    MessageSquare,
+    Paperclip,
+    Send,
+    X,
+} from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useEcho } from '@laravel/echo-react';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -42,9 +50,12 @@ export default function SupportWidget() {
     // Initialize Conversation
     useEffect(() => {
         if (auth.user) {
-            axios.post('/user-chat/init').then((res) => {
-                setConversation(res.data.conversation);
-            }).catch(e => console.error('Failed to init chat', e));
+            axios
+                .post('/user-chat/init')
+                .then((res) => {
+                    setConversation(res.data.conversation);
+                })
+                .catch((e) => console.error('Failed to init chat', e));
         }
     }, [auth.user]);
 
@@ -55,20 +66,27 @@ export default function SupportWidget() {
                 setMessages(res.data.data.reverse());
                 scrollToBottom();
 
-                if (unread > 0) {
-                    axios.post(`/user-chat/${conversation.id}/read`);
-                    setUnread(0);
-                }
+                setUnread((prev) => {
+                    if (prev > 0) {
+                        axios.post(`/user-chat/${conversation.id}/read`);
+                    }
+
+                    return 0;
+                });
             });
         }
     }, [isOpen, conversation]);
 
     // Ping server while chat window is open so admin knows user is online
     useEffect(() => {
-        if (!isOpen || !conversation) return;
+        if (!isOpen || !conversation) {
+            return;
+        }
+
         const ping = () => axios.post('/user-chat/ping').catch(() => {});
         ping();
         const interval = setInterval(ping, 60_000);
+
         return () => clearInterval(interval);
     }, [isOpen, conversation]);
 
@@ -76,22 +94,29 @@ export default function SupportWidget() {
     useEcho(
         conversation ? `conversations.${conversation.id}` : '',
         'MessageSent',
-        useCallback((e: any) => {
-            const incoming = e.message;
-            setMessages((prev) => {
-                if (prev.some(m => m.id === incoming.id)) return prev;
-                return [...prev, incoming];
-            });
+        useCallback(
+            (e: any) => {
+                const incoming = e.message;
+                setMessages((prev) => {
+                    if (prev.some((m) => m.id === incoming.id)) {
+                        return prev;
+                    }
 
-            if (incoming.sender_type === 'admin') {
-                if (!isOpenRef.current) {
-                    setUnread(u => u + 1);
-                } else if (conversation) {
-                    axios.post(`/user-chat/${conversation.id}/read`);
+                    return [...prev, incoming];
+                });
+
+                if (incoming.sender_type === 'admin') {
+                    if (!isOpenRef.current) {
+                        setUnread((u) => u + 1);
+                    } else if (conversation) {
+                        axios.post(`/user-chat/${conversation.id}/read`);
+                    }
                 }
-            }
-            scrollToBottom();
-        }, [conversation])
+
+                scrollToBottom();
+            },
+            [conversation],
+        ),
     );
 
     const scrollToBottom = () => {
@@ -102,14 +127,24 @@ export default function SupportWidget() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
-        if (!file) return;
 
-        if (file.size > MAX_FILE_BYTES) {
-            setAttachmentError(`File too large. Maximum size is 15MB. Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB.`);
-            setAttachment(null);
-            if (fileInputRef.current) fileInputRef.current.value = '';
+        if (!file) {
             return;
         }
+
+        if (file.size > MAX_FILE_BYTES) {
+            setAttachmentError(
+                `File too large. Maximum size is 15MB. Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB.`,
+            );
+            setAttachment(null);
+
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+
+            return;
+        }
+
         setAttachmentError(null);
         setAttachment(file);
     };
@@ -117,38 +152,61 @@ export default function SupportWidget() {
     const handleRemoveAttachment = () => {
         setAttachment(null);
         setAttachmentError(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
-        if ((!newMessage.trim() && !attachment) || !conversation || isSending) return;
+
+        if ((!newMessage.trim() && !attachment) || !conversation || isSending) {
+            return;
+        }
 
         const formData = new FormData();
-        if (newMessage.trim()) formData.append('message', newMessage);
-        if (attachment) formData.append('attachment', attachment);
+
+        if (newMessage.trim()) {
+            formData.append('message', newMessage);
+        }
+
+        if (attachment) {
+            formData.append('attachment', attachment);
+        }
 
         setIsSending(true);
+
         try {
-            const res = await axios.post(`/user-chat/${conversation.id}/message`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            setMessages(prev => {
-                if (prev.some(m => m.id === res.data.id)) return prev;
+            const res = await axios.post(
+                `/user-chat/${conversation.id}/message`,
+                formData,
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                },
+            );
+            setMessages((prev) => {
+                if (prev.some((m) => m.id === res.data.id)) {
+                    return prev;
+                }
+
                 return [...prev, res.data];
             });
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
         } catch (error: any) {
-            const msg = error?.response?.data?.message || 'Failed to send message.';
+            const msg =
+                error?.response?.data?.message || 'Failed to send message.';
             setAttachmentError(msg);
         } finally {
             setIsSending(false);
         }
     };
 
-    if (!auth.user) return null;
+    if (!auth.user) {
+        return null;
+    }
 
     return (
         <div className="fixed bottom-6 left-6 z-50">
@@ -164,38 +222,62 @@ export default function SupportWidget() {
                         {/* Header */}
                         <div className="flex items-center justify-between bg-violet-600 px-4 py-3 text-white">
                             <div>
-                                <h3 className="font-semibold">Customer Support</h3>
-                                <p className="text-xs text-violet-200">We typically reply in a few minutes</p>
+                                <h3 className="font-semibold">
+                                    Customer Support
+                                </h3>
+                                <p className="text-xs text-violet-200">
+                                    We typically reply in a few minutes
+                                </p>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="rounded-full p-1 hover:bg-white/20">
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="rounded-full p-1 hover:bg-white/20"
+                            >
                                 <X size={20} />
                             </button>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-900/50">
+                        <div className="flex-1 space-y-3 overflow-y-auto bg-slate-900/50 p-4">
                             {messages.map((msg) => (
-                                <div key={msg.id} className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm ${
-                                        msg.sender_type === 'user'
-                                            ? 'bg-violet-600 text-white rounded-br-none'
-                                            : 'bg-slate-800 text-slate-200 rounded-bl-none'
-                                    }`}>
+                                <div
+                                    key={msg.id}
+                                    className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    <div
+                                        className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm ${
+                                            msg.sender_type === 'user'
+                                                ? 'rounded-br-none bg-violet-600 text-white'
+                                                : 'rounded-bl-none bg-slate-800 text-slate-200'
+                                        }`}
+                                    >
                                         {msg.attachment_path && (
                                             <a
                                                 href={`/chat/attachments/${msg.id}/download`}
-                                                className="flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 mb-1.5 hover:bg-black/40 transition group"
+                                                className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
                                             >
                                                 <span className="shrink-0">
-                                                    {msg.attachment_type === 'image' ? <ImageIcon size={15} /> : <FileText size={15} />}
+                                                    {msg.attachment_type ===
+                                                    'image' ? (
+                                                        <ImageIcon size={15} />
+                                                    ) : (
+                                                        <FileText size={15} />
+                                                    )}
                                                 </span>
                                                 <span className="flex-1 truncate text-xs underline underline-offset-2">
                                                     Download Attachment
                                                 </span>
-                                                <Download size={13} className="shrink-0 opacity-60 group-hover:opacity-100" />
+                                                <Download
+                                                    size={13}
+                                                    className="shrink-0 opacity-60 group-hover:opacity-100"
+                                                />
                                             </a>
                                         )}
-                                        {msg.message && <p className="whitespace-pre-wrap break-words">{msg.message}</p>}
+                                        {msg.message && (
+                                            <p className="break-words whitespace-pre-wrap">
+                                                {msg.message}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -204,8 +286,10 @@ export default function SupportWidget() {
 
                         {/* Input */}
                         <div className="border-t border-slate-800 bg-slate-900 px-4 py-3">
-                            <form onSubmit={handleSend} className="flex flex-col gap-2">
-
+                            <form
+                                onSubmit={handleSend}
+                                className="flex flex-col gap-2"
+                            >
                                 {/* Error notification */}
                                 <AnimatePresence>
                                     {attachmentError && (
@@ -213,10 +297,18 @@ export default function SupportWidget() {
                                             initial={{ opacity: 0, y: -6 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -6 }}
-                                            className="flex items-start gap-2 rounded-lg bg-red-500/15 border border-red-500/30 px-3 py-2 text-xs text-red-400"
+                                            className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/15 px-3 py-2 text-xs text-red-400"
                                         >
-                                            <span className="flex-1">{attachmentError}</span>
-                                            <button type="button" onClick={() => setAttachmentError(null)} className="shrink-0 mt-0.5 hover:text-red-300">
+                                            <span className="flex-1">
+                                                {attachmentError}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setAttachmentError(null)
+                                                }
+                                                className="mt-0.5 shrink-0 hover:text-red-300"
+                                            >
                                                 <X size={12} />
                                             </button>
                                         </motion.div>
@@ -230,14 +322,28 @@ export default function SupportWidget() {
                                             initial={{ opacity: 0, y: 4 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 4 }}
-                                            className="flex items-center gap-2 rounded-lg bg-violet-500/10 border border-violet-500/30 px-3 py-2"
+                                            className="flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-2"
                                         >
-                                            <Paperclip size={13} className="shrink-0 text-violet-400" />
-                                            <span className="flex-1 truncate text-xs text-slate-300">{attachment.name}</span>
-                                            <span className="shrink-0 text-[10px] text-slate-500">
-                                                {(attachment.size / 1024 / 1024).toFixed(1)} MB
+                                            <Paperclip
+                                                size={13}
+                                                className="shrink-0 text-violet-400"
+                                            />
+                                            <span className="flex-1 truncate text-xs text-slate-300">
+                                                {attachment.name}
                                             </span>
-                                            <button type="button" onClick={handleRemoveAttachment} className="shrink-0 text-slate-400 hover:text-red-400 transition">
+                                            <span className="shrink-0 text-[10px] text-slate-500">
+                                                {(
+                                                    attachment.size /
+                                                    1024 /
+                                                    1024
+                                                ).toFixed(1)}{' '}
+                                                MB
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveAttachment}
+                                                className="shrink-0 text-slate-400 transition hover:text-red-400"
+                                            >
                                                 <X size={14} />
                                             </button>
                                         </motion.div>
@@ -254,7 +360,9 @@ export default function SupportWidget() {
                                     />
                                     <button
                                         type="button"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={() =>
+                                            fileInputRef.current?.click()
+                                        }
                                         className={`shrink-0 transition-colors ${attachment ? 'text-violet-400' : 'text-slate-400 hover:text-violet-400'}`}
                                     >
                                         <Paperclip size={20} />
@@ -262,14 +370,19 @@ export default function SupportWidget() {
                                     <input
                                         type="text"
                                         value={newMessage}
-                                        onChange={e => setNewMessage(e.target.value)}
+                                        onChange={(e) =>
+                                            setNewMessage(e.target.value)
+                                        }
                                         placeholder="Type a message..."
-                                        className="flex-1 bg-slate-800 border-none rounded-full px-4 py-2 text-sm text-white focus:ring-1 focus:ring-violet-500"
+                                        className="flex-1 rounded-full border-none bg-slate-800 px-4 py-2 text-sm text-white focus:ring-1 focus:ring-violet-500"
                                     />
                                     <button
                                         type="submit"
-                                        disabled={isSending || (!newMessage.trim() && !attachment)}
-                                        className="shrink-0 rounded-full bg-violet-600 p-2 text-white hover:bg-violet-500 disabled:opacity-40 transition"
+                                        disabled={
+                                            isSending ||
+                                            (!newMessage.trim() && !attachment)
+                                        }
+                                        className="shrink-0 rounded-full bg-violet-600 p-2 text-white transition hover:bg-violet-500 disabled:opacity-40"
                                     >
                                         <Send size={16} />
                                     </button>

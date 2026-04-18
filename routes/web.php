@@ -9,7 +9,17 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ServiceController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+// Broadcasting Auth
+Route::post('/broadcasting/auth', function (Request $request) {
+    if (auth('admin')->check()) {
+        return Broadcast::guard('admin')->auth($request);
+    }
+
+    return Broadcast::auth($request);
+})->middleware(['web']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs');
@@ -60,6 +70,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConversationController;
+use Illuminate\Http\Request;
 
 // User Auth Routes
 Route::middleware('guest')->group(function () {
@@ -129,3 +140,5 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/api/customer-conversations/{conversation}/read', [CustomerConversationController::class, 'markAsRead'])->name('customer-conversations.read');
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
 });
+
+require __DIR__.'/../routes/channels.php';

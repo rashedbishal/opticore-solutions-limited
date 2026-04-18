@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Admin;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
@@ -7,13 +8,13 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('conversations.{id}', function ($user, $id) {
-    if ($user instanceof \App\Models\Admin) {
+    if ($user instanceof Admin) {
         return true;
     }
-    
+
     return $user->conversation && (int) $user->conversation->id === (int) $id;
 }, ['guards' => ['web', 'admin']]);
 
 Broadcast::channel('admin.conversations', function ($user) {
-    return true;
-}, ['guards' => ['admin']]);
+    return $user instanceof Admin;
+}, ['guards' => ['admin', 'web']]);

@@ -1,4 +1,4 @@
-import type { FormEventHandler } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
@@ -79,7 +79,9 @@ export default function ResetPassword({
                             className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
                             autoComplete="new-password"
                             autoFocus
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
                         />
                         {errors.password && (
                             <p className="mt-2 text-sm text-red-400">
@@ -131,4 +133,4 @@ export default function ResetPassword({
     );
 }
 
-ResetPassword.layout = (page: import('react').ReactNode) => <>{page}</>;
+ResetPassword.layout = (page: ReactNode) => <>{page}</>;

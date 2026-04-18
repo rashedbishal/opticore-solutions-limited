@@ -1,4 +1,4 @@
-import type { FormEventHandler } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
@@ -57,4 +57,4 @@ export default function VerifyEmail({ status }: { status?: string }) {
     );
 }
 
-VerifyEmail.layout = (page: import('react').ReactNode) => <>{page}</>;
+VerifyEmail.layout = (page: ReactNode) => <>{page}</>;

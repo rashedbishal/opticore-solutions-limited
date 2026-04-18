@@ -2,11 +2,11 @@ import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import SupportWidget from '@/components/chat/SupportWidget';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
 import ChatWidget from '@/components/UI/ChatWidget';
-import SupportWidget from '@/components/chat/SupportWidget';
 import CursorSelector, {
     useCursorPreference,
 } from '@/components/UI/CursorSelector';
