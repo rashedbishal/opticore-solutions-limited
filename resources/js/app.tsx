@@ -5,10 +5,27 @@ import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
-import { configureEcho } from '@laravel/echo-react';
+import { configureEcho, echo } from '@laravel/echo-react';
+import axios from 'axios';
 
 configureEcho({
     broadcaster: 'reverb',
+});
+
+// Attach the current Echo socket ID to every Axios request so that
+// broadcast()->toOthers() can correctly exclude the sender's own tab.
+// Without this header, Laravel cannot identify the sender and broadcasts
+// back to them too, causing duplicate messages.
+axios.interceptors.request.use((config) => {
+    try {
+        const socketId = echo().socketId();
+        if (socketId) {
+            config.headers['X-Socket-ID'] = socketId;
+        }
+    } catch {
+        // Echo not yet connected — no socket ID available, skip
+    }
+    return config;
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';

@@ -3,31 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Mail\AdminChatMessageReceivedMail;
+use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class ConversationController extends Controller
 {
     public function init(Request $request)
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             abort(401);
         }
 
         $conversation = $user->conversation()->firstOrCreate([]);
+
         return response()->json([
-            'conversation' => $conversation
+            'conversation' => $conversation,
         ]);
+    }
+
+    /**
+     * Called by the frontend periodically to mark the user as online/viewing their chat.
+     * Stores a per-user cache key that expires in 2 minutes.
+     */
+    public function pingOnline(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user) {
+            abort(401);
+        }
+
+        Cache::put("user_chat_online_{$user->id}", true, now()->addMinutes(2));
+
+        return response()->json(['ok' => true]);
     }
 
     public function fetchMessages(Conversation $conversation, Request $request)
     {
         $user = Auth::user();
-        if (!$user || $conversation->user_id !== $user->id) {
+        if (! $user || $conversation->user_id !== $user->id) {
             abort(403);
         }
 
@@ -41,16 +62,16 @@ class ConversationController extends Controller
     public function sendMessage(Conversation $conversation, Request $request)
     {
         $user = Auth::user();
-        if (!$user || $conversation->user_id !== $user->id) {
+        if (! $user || $conversation->user_id !== $user->id) {
             abort(403);
         }
 
         $request->validate([
             'message' => 'nullable|string|max:5000',
-            'attachment' => 'nullable|file|max:5120|mimes:jpeg,png,jpg,gif,pdf,doc,docx'
+            'attachment' => 'nullable|file|max:15360|mimes:jpeg,png,jpg,gif,pdf,doc,docx,zip,txt',
         ]);
 
-        if (!$request->filled('message') && !$request->hasFile('attachment')) {
+        if (! $request->filled('message') && ! $request->hasFile('attachment')) {
             return response()->json(['error' => 'Message or attachment is required'], 422);
         }
 
@@ -76,7 +97,18 @@ class ConversationController extends Controller
             'last_message_at' => now(),
         ]);
 
+        // Load relations needed by the event and mailables
+        $message->load('conversation.user');
+
         broadcast(new MessageSent($message))->toOthers();
+
+        // Check if any admin is currently online (active session in last 5 minutes)
+        $anyAdminOnline = Cache::has('admin_online');
+        if (! $anyAdminOnline) {
+            Admin::all()->each(function (Admin $admin) use ($message) {
+                Mail::to($admin->email)->queue(new AdminChatMessageReceivedMail($message));
+            });
+        }
 
         return response()->json($message);
     }
@@ -84,7 +116,7 @@ class ConversationController extends Controller
     public function markAsRead(Conversation $conversation)
     {
         $user = Auth::user();
-        if (!$user || $conversation->user_id !== $user->id) {
+        if (! $user || $conversation->user_id !== $user->id) {
             abort(403);
         }
 
@@ -100,21 +132,24 @@ class ConversationController extends Controller
     {
         $user = Auth::user();
         $admin = Auth::guard('admin')->user();
-        
-        if (!$user && !$admin) {
+
+        if (! $user && ! $admin) {
             abort(401);
         }
 
-        if (!$admin) {
+        if (! $admin) {
             if ($message->conversation->user_id !== $user->id) {
                 abort(403);
             }
         }
 
-        if (!$message->attachment_path || !Storage::disk('local')->exists($message->attachment_path)) {
+        if (! $message->attachment_path || ! Storage::disk('local')->exists($message->attachment_path)) {
             abort(404);
         }
 
-        return Storage::disk('local')->response($message->attachment_path);
+        return Storage::disk('local')->download(
+            $message->attachment_path,
+            basename($message->attachment_path)
+        );
     }
 }

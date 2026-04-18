@@ -47,6 +47,7 @@ use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\CustomerConversationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
@@ -58,6 +59,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ConversationController;
 
 // User Auth Routes
 Route::middleware('guest')->group(function () {
@@ -87,11 +89,12 @@ Route::middleware('auth')->group(function () {
     })->name('settings');
 
     // User Chat Routes
-    Route::post('/user-chat/init', [\App\Http\Controllers\ConversationController::class, 'init'])->name('user.chat.init');
-    Route::get('/user-chat/{conversation}/messages', [\App\Http\Controllers\ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
-    Route::post('/user-chat/{conversation}/message', [\App\Http\Controllers\ConversationController::class, 'sendMessage'])->name('user.chat.send');
-    Route::post('/user-chat/{conversation}/read', [\App\Http\Controllers\ConversationController::class, 'markAsRead'])->name('user.chat.read');
-    Route::get('/chat/attachments/{message}/download', [\App\Http\Controllers\ConversationController::class, 'downloadAttachment'])->name('chat.attachment.download');
+    Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init');
+    Route::get('/user-chat/{conversation}/messages', [ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
+    Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
+    Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
+    Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
+    Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])->name('chat.attachment.download');
 });
 
 // Admin Auth Routes
@@ -119,9 +122,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('users', UserController::class);
 
     // Customer Support Chat Routes
-    Route::get('/customer-conversations', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'index'])->name('customer-conversations.index');
-    Route::get('/api/customer-conversations', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'getConversations'])->name('customer-conversations.list');
-    Route::get('/api/customer-conversations/{conversation}/messages', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'fetchMessages'])->name('customer-conversations.messages');
-    Route::post('/api/customer-conversations/{conversation}/message', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'sendMessage'])->name('customer-conversations.send');
-    Route::post('/api/customer-conversations/{conversation}/read', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'markAsRead'])->name('customer-conversations.read');
+    Route::get('/customer-conversations', [CustomerConversationController::class, 'index'])->name('customer-conversations.index');
+    Route::get('/api/customer-conversations', [CustomerConversationController::class, 'getConversations'])->name('customer-conversations.list');
+    Route::get('/api/customer-conversations/{conversation}/messages', [CustomerConversationController::class, 'fetchMessages'])->name('customer-conversations.messages');
+    Route::post('/api/customer-conversations/{conversation}/message', [CustomerConversationController::class, 'sendMessage'])->name('customer-conversations.send');
+    Route::post('/api/customer-conversations/{conversation}/read', [CustomerConversationController::class, 'markAsRead'])->name('customer-conversations.read');
+    Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
 });

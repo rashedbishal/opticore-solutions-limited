@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
+use App\Mail\ChatMessageReceivedMail;
 use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class CustomerConversationController extends Controller
@@ -16,13 +20,18 @@ class CustomerConversationController extends Controller
         return Inertia::render('Admin/CustomerChat/Index');
     }
 
-    public function getConversations()
+    public function getConversations(Request $request)
     {
+        $search = $request->query('search', '');
+
         $conversations = Conversation::with('user')
             ->withCount(['messages as unread_count' => function ($query) {
                 $query->where('sender_type', 'user')
-                      ->whereNull('read_at');
+                    ->whereNull('read_at');
             }])
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+            })
             ->orderBy('last_message_at', 'desc')
             ->paginate(50);
 
@@ -44,10 +53,10 @@ class CustomerConversationController extends Controller
 
         $request->validate([
             'message' => 'nullable|string|max:5000',
-            'attachment' => 'nullable|file|max:5120|mimes:jpeg,png,jpg,gif,pdf,doc,docx'
+            'attachment' => 'nullable|file|max:15360|mimes:jpeg,png,jpg,gif,pdf,doc,docx,zip,txt',
         ]);
 
-        if (!$request->filled('message') && !$request->hasFile('attachment')) {
+        if (! $request->filled('message') && ! $request->hasFile('attachment')) {
             return response()->json(['error' => 'Message or attachment is required'], 422);
         }
 
@@ -73,7 +82,19 @@ class CustomerConversationController extends Controller
             'last_message_at' => now(),
         ]);
 
+        // Load relations needed by the event and mailables
+        $message->load('conversation.user');
+
         broadcast(new MessageSent($message))->toOthers();
+
+        // Check if the user is currently viewing their chat (active session cache key)
+        $userOnline = Cache::has("user_chat_online_{$conversation->user_id}");
+        if (! $userOnline) {
+            $user = $conversation->user;
+            if ($user) {
+                Mail::to($user->email)->queue(new ChatMessageReceivedMail($message));
+            }
+        }
 
         return response()->json($message);
     }
@@ -86,5 +107,16 @@ class CustomerConversationController extends Controller
             ->update(['read_at' => now()]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Called by the frontend to mark admin as online (ping endpoint).
+     * Stores a cache key that expires in 2 minutes.
+     */
+    public function pingOnline()
+    {
+        Cache::put('admin_online', true, now()->addMinutes(2));
+
+        return response()->json(['ok' => true]);
     }
 }
