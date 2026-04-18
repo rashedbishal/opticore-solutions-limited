@@ -567,51 +567,79 @@ export default function HomeIndex({
 
             <div className="relative z-10">
                 <section className="bg-black py-20">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-cyan-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 1</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Portal Loop</h2>
-                        <p className="text-zinc-500 mt-4">Scroll down to experience the zoom motion</p>
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
+                            Portfolio Concept 1
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Portal Loop
+                        </h2>
+                        <p className="mt-4 text-zinc-500">
+                            Scroll down to experience the zoom motion
+                        </p>
                     </div>
                 </section>
                 <PortalLoop />
 
-                <section className="bg-zinc-950 py-20 border-t border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-violet-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 2</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Nebula Cluster</h2>
-                        <p className="text-zinc-500 mt-4">Move your mouse to interact with the cluster</p>
+                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
+                            Portfolio Concept 2
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Nebula Cluster
+                        </h2>
+                        <p className="mt-4 text-zinc-500">
+                            Move your mouse to interact with the cluster
+                        </p>
                     </div>
                 </section>
                 <NebulaCluster />
 
-                <section className="bg-black py-20 border-t border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 3</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Kinetic Bento</h2>
+                <section className="border-t border-white/5 bg-black py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
+                            Portfolio Concept 3
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Kinetic Bento
+                        </h2>
                     </div>
                 </section>
                 <KineticBento />
 
-                <section className="bg-zinc-950 py-20 border-t border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-pink-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 1</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Liquid Shuffle</h2>
+                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-pink-400 uppercase">
+                            Testimonial Concept 1
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Liquid Shuffle
+                        </h2>
                     </div>
                 </section>
                 <LiquidShuffle />
 
-                <section className="bg-black py-20 border-t border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-cyan-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 2</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Orbiting Showcase</h2>
+                <section className="border-t border-white/5 bg-black py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
+                            Testimonial Concept 2
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Orbiting Showcase
+                        </h2>
                     </div>
                 </section>
                 <OrbitingShowcase />
 
-                <section className="bg-zinc-950 py-20 border-t border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 text-center">
-                        <span className="text-violet-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 3</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Spotlight Carousel</h2>
+                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
+                            Testimonial Concept 3
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                            Spotlight Carousel
+                        </h2>
                     </div>
                 </section>
                 <SpotlightCarousel />
@@ -646,8 +674,7 @@ export default function HomeIndex({
                                 ariaLabel="Hire Opticore Solutions Ltd. now"
                                 fullWidth={!desktop}
                             >
-                                Hire Us{' '}
-                                <ArrowRight className="ml-2 h-4 w-4" />
+                                Hire Us <ArrowRight className="ml-2 h-4 w-4" />
                             </MagneticButton>
                         </div>
                     </div>
