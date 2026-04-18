@@ -416,7 +416,7 @@ export default function HomeIndex({
                 .group:hover .particle-dot {
                     animation: particleShoot 1.5s ease-out infinite;
                 }
-                
+
                 .aura-glow {
                     position: absolute;
                     inset: -10px;
@@ -559,10 +559,10 @@ export default function HomeIndex({
                     </div>
                 }
             >
-                <Section2 />
-                <Section3 />
-                <Section4 />
-                <Section5 />
+                {/*<Section2 />*/}
+                {/*<Section3 />*/}
+                {/*<Section4 />*/}
+                {/*<Section5 />*/}
             </Suspense>
 
             <div className="relative z-10">
