@@ -6,6 +6,7 @@ import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
 import ChatWidget from '@/components/UI/ChatWidget';
+import SupportWidget from '@/components/chat/SupportWidget';
 import CursorSelector, {
     useCursorPreference,
 } from '@/components/UI/CursorSelector';
@@ -39,6 +40,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                 </AnimatePresence>
                 <Footer />
             </div>
+            <SupportWidget />
             <ChatWidget />
         </SmoothScroll>
     );

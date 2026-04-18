@@ -85,6 +85,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', function () {
         return Inertia::render('Settings');
     })->name('settings');
+
+    // User Chat Routes
+    Route::post('/user-chat/init', [\App\Http\Controllers\ConversationController::class, 'init'])->name('user.chat.init');
+    Route::get('/user-chat/{conversation}/messages', [\App\Http\Controllers\ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
+    Route::post('/user-chat/{conversation}/message', [\App\Http\Controllers\ConversationController::class, 'sendMessage'])->name('user.chat.send');
+    Route::post('/user-chat/{conversation}/read', [\App\Http\Controllers\ConversationController::class, 'markAsRead'])->name('user.chat.read');
+    Route::get('/chat/attachments/{message}/download', [\App\Http\Controllers\ConversationController::class, 'downloadAttachment'])->name('chat.attachment.download');
 });
 
 // Admin Auth Routes
@@ -110,4 +117,11 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class);
+
+    // Customer Support Chat Routes
+    Route::get('/customer-conversations', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'index'])->name('customer-conversations.index');
+    Route::get('/api/customer-conversations', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'getConversations'])->name('customer-conversations.list');
+    Route::get('/api/customer-conversations/{conversation}/messages', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'fetchMessages'])->name('customer-conversations.messages');
+    Route::post('/api/customer-conversations/{conversation}/message', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'sendMessage'])->name('customer-conversations.send');
+    Route::post('/api/customer-conversations/{conversation}/read', [\App\Http\Controllers\Admin\CustomerConversationController::class, 'markAsRead'])->name('customer-conversations.read');
 });
