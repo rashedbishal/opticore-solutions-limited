@@ -111,14 +111,20 @@ export default function Contact() {
         }
 
         if (!form.data.email || !emailRegex.test(form.data.email)) {
-            form.setError('email', 'Please enter a valid email address with a domain.');
+            form.setError(
+                'email',
+                'Please enter a valid email address with a domain.',
+            );
             hasErrors = true;
         }
 
         if (form.data.phone) {
             const digitCount = form.data.phone.replace(/\D/g, '').length;
             if (digitCount < 7 || digitCount > 15) {
-                form.setError('phone', 'Phone number must be between 7 and 15 digits.');
+                form.setError(
+                    'phone',
+                    'Phone number must be between 7 and 15 digits.',
+                );
                 hasErrors = true;
             }
         }
@@ -261,11 +267,18 @@ export default function Contact() {
                                                         value={form.data.name}
                                                         maxLength={50}
                                                         onChange={(e) => {
-                                                            const val = e.target.value.replace(/[^A-Za-z\s-]/g, '');
-                                                            form.setData('name', val);
+                                                            const val =
+                                                                e.target.value.replace(
+                                                                    /[^A-Za-z\s-]/g,
+                                                                    '',
+                                                                );
+                                                            form.setData(
+                                                                'name',
+                                                                val,
+                                                            );
                                                         }}
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
+                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
                                                             form.errors.name &&
                                                                 'border-rose-500',
                                                         )}
@@ -293,7 +306,7 @@ export default function Contact() {
                                                             )
                                                         }
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
+                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
                                                             form.errors.email &&
                                                                 'border-rose-500',
                                                         )}
@@ -317,12 +330,25 @@ export default function Contact() {
                                                         maxLength={16}
                                                         value={form.data.phone}
                                                         onChange={(e) => {
-                                                            const val = e.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
-                                                            form.setData('phone', val);
+                                                            const val =
+                                                                e.target.value
+                                                                    .replace(
+                                                                        /[^\d+]/g,
+                                                                        '',
+                                                                    )
+                                                                    .replace(
+                                                                        /(?!^)\+/g,
+                                                                        '',
+                                                                    );
+                                                            form.setData(
+                                                                'phone',
+                                                                val,
+                                                            );
                                                         }}
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
-                                                            form.errors.phone && 'border-rose-500',
+                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
+                                                            form.errors.phone &&
+                                                                'border-rose-500',
                                                         )}
                                                     />
                                                     {form.errors.phone && (
@@ -351,7 +377,7 @@ export default function Contact() {
                                                             )
                                                         }
                                                         className={cn(
-                                                            'w-full border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
+                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
                                                             form.errors
                                                                 .subject &&
                                                                 'border-rose-500',
@@ -385,21 +411,29 @@ export default function Contact() {
                                                         )
                                                     }
                                                     className={cn(
-                                                        'w-full resize-none border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05] rounded-xl',
+                                                        'w-full resize-none rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
                                                         form.errors.message &&
                                                             'border-rose-500',
                                                     )}
                                                 />
                                                 <div className="flex items-start justify-between">
                                                     <div>
-                                                        {form.errors.message && (
-                                                            <p className="ml-1 mt-1 text-xs text-rose-400">
-                                                                {form.errors.message}
+                                                        {form.errors
+                                                            .message && (
+                                                            <p className="mt-1 ml-1 text-xs text-rose-400">
+                                                                {
+                                                                    form.errors
+                                                                        .message
+                                                                }
                                                             </p>
                                                         )}
                                                     </div>
                                                     <span className="mt-1 text-xs text-zinc-500">
-                                                        {form.data.message.length} / 1000
+                                                        {
+                                                            form.data.message
+                                                                .length
+                                                        }{' '}
+                                                        / 1000
                                                     </span>
                                                 </div>
                                             </div>

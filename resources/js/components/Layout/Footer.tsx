@@ -20,6 +20,7 @@ import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,
     navigationItems,
+    services,
 } from '@/lib/site';
 
 const companyLinks = [
@@ -106,13 +107,13 @@ export default function Footer() {
                             Services
                         </h3>
                         <div className="space-y-3">
-                            {navigationItems.slice(0, 5).map((item) => (
+                            {services.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
                                     className="block text-sm text-zinc-400 transition-colors hover:text-white"
                                 >
-                                    {item.label}
+                                    {item.name}
                                 </Link>
                             ))}
                         </div>

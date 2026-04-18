@@ -54,12 +54,8 @@ const defaultReasons: HighlightItem[] = [
 ];
 
 export const navigationItems: NavItem[] = [
-    { label: 'Graphic Design', href: '/graphic-design', icon: 'PenTool' },
-    { label: 'Digital Marketing', href: '/digital-marketing', icon: 'Globe' },
-    { label: 'Video Editing', href: '/video-editing', icon: 'Film' },
-    { label: '3D Production', href: '/3d-production', icon: 'Box' },
-    { label: 'Web Development', href: '/web-development', icon: 'Code2' },
-    { label: 'Contact', href: '/contact', icon: 'Mail' },
+    { label: 'Home', href: '/', icon: 'Globe' },
+    { label: 'Hire Us', href: '/hire-us', icon: 'Box' },
 ];
 
 export const bangladeshPhoneNumber = '+88-01896204400';
