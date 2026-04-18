@@ -1,0 +1,4 @@
+#!/bin/sh
+git config core.hooksPath --local .husky
+
+npx lint-staged
