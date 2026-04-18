@@ -19,8 +19,14 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
 import { ServiceCarousel } from '@/components/UI/ScannedServiceCard';
 import SectionHeader from '@/components/UI/SectionHeader';
-
 import TestimonialCard from '@/components/UI/TestimonialCard';
+import PortalLoop from '@/components/HomeRedesign/PortalLoop';
+import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
+import KineticBento from '@/components/HomeRedesign/KineticBento';
+import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
+import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
+import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
+
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
     aboutBentoImages,
@@ -559,453 +565,57 @@ export default function HomeIndex({
                 <Section5 />
             </Suspense>
 
-            <section className="section-shell pt-0">
-                <div className="section-inner">
-                    <SectionHeader
-                        eyebrow="Services"
-                        title="What We Do Best"
-                        description="Opticore combines premium creative direction with production discipline so every deliverable looks refined and performs with intent."
-                        variant="scanned"
-                    />
-
-                    <div className="-mx-4 mt-10 sm:-mx-6 lg:-mx-8">
-                        <ServiceCarousel
-                            services={duplicatedServices}
-                            featuredPortfolios={featuredPortfolios}
-                        />
+            <div className="relative z-10">
+                <section className="bg-black py-20">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-cyan-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 1</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Portal Loop</h2>
+                        <p className="text-zinc-500 mt-4">Scroll down to experience the zoom motion</p>
                     </div>
-                </div>
-            </section>
+                </section>
+                <PortalLoop />
 
-            <section className="section-shell pt-0">
-                <div className="section-inner grid grid-cols-1 items-center gap-4 xl:grid-cols-[0.7fr_1.3fr] xl:gap-6">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={desktop ? slideLeft : fadeUp}
-                        className="max-w-lg lg:max-w-none"
-                    >
-                        <span className="section-kicker">About Opticore</span>
-                        <h2 className="max-w-xl text-3xl font-extrabold text-balance text-white sm:text-4xl lg:text-[2.45rem] xl:text-[2.2rem]">
-                            We blend bold creative thinking with polished
-                            execution to help modern brands grow, earn trust,
-                            and stand apart.
-                        </h2>
-                        <p className="mt-6 text-base leading-8 text-zinc-400 sm:text-lg">
-                            Opticore Solutions Ltd. is a multidisciplinary
-                            digital agency built for businesses that want more
-                            than generic creative. We create visual identities,
-                            campaigns, video, 3D assets, and digital experiences
-                            that feel premium, coherent, and commercially
-                            effective.
-                        </p>
-                        <p className="mt-4 text-base leading-8 text-zinc-400 sm:text-lg">
-                            Our work is defined by craft, clarity, and momentum.
-                            We move from strategy to execution with one goal in
-                            mind: deliver digital work that looks exceptional
-                            and performs with intention.
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={desktop ? slideRight : fadeUp}
-                        className="flex flex-col gap-2 md:flex-row xl:gap-4"
-                    >
-                        {/* Define Card Groups */}
-                        {[
-                            {
-                                items: services.slice(0, 2),
-                                className: 'flex-1',
-                            },
-                            {
-                                items: services.slice(2, 3),
-                                className:
-                                    'flex-1 flex flex-col justify-center',
-                            },
-                            {
-                                items: services.slice(3, 5),
-                                className: 'flex-1',
-                            },
-                        ].map((group, groupIndex) => (
-                            <div
-                                key={groupIndex}
-                                className={`flex flex-col gap-2 xl:gap-4 ${group.className}`}
-                            >
-                                {group.items.map((service) => {
-                                    const index = services.indexOf(service);
-                                    const categorySlug = service.key;
-                                    const portfolios =
-                                        featuredPortfolios?.[categorySlug] ||
-                                        [];
-                                    const portfolio = portfolios[0] || null;
-                                    const fallbackImages: Record<
-                                        string,
-                                        { src: string; alt: string }
-                                    > = {
-                                        'graphic-design': {
-                                            src: '/images/portfolio/identity.svg',
-                                            alt: 'Graphic design showcase',
-                                        },
-                                        'digital-marketing': {
-                                            src: '/images/portfolio/marketing.svg',
-                                            alt: 'Digital marketing showcase',
-                                        },
-                                        'video-editing': {
-                                            src: '/images/portfolio/video.svg',
-                                            alt: 'Video editing showcase',
-                                        },
-                                        '3d-production': {
-                                            src: '/images/portfolio/three-d.svg',
-                                            alt: '3D production showcase',
-                                        },
-                                        'web-development': {
-                                            src: '/images/portfolio/web.svg',
-                                            alt: 'Web development showcase',
-                                        },
-                                    };
-
-                                    const fallbackImage =
-                                        fallbackImages[categorySlug];
-
-                                    const categoryHighlights: Record<
-                                        string,
-                                        string[]
-                                    > = {
-                                        'graphic-design': [
-                                            'Pixel Perfect',
-                                            'Brand Ready',
-                                            'High Contrast',
-                                        ],
-                                        'digital-marketing': [
-                                            'ROI Focused',
-                                            'Growth Tracked',
-                                            'Data Driven',
-                                        ],
-                                        'video-editing': [
-                                            'Narrative Tight',
-                                            'Motion Polished',
-                                            'Retention Ready',
-                                        ],
-                                        '3d-production': [
-                                            'Ultra-Realistic',
-                                            'Sim-Optimized',
-                                            '4K Render',
-                                        ],
-                                        'web-development': [
-                                            'Core Vitals',
-                                            'UX Polished',
-                                            'Responsive',
-                                        ],
-                                    };
-
-                                    const highlights =
-                                        categoryHighlights[categorySlug] || [];
-
-                                    const denseParticles = Array.from({
-                                        length: 240,
-                                    }).map((_, i) => {
-                                        const side = Math.floor(i / 60);
-                                        const offset = (i % 60) / 59;
-
-                                        let top, left, tx, ty;
-                                        const spread =
-                                            Math.sin(i * 123.45) * 60;
-                                        const dist =
-                                            20 +
-                                            Math.abs(Math.cos(i * 321.45) * 70);
-
-                                        if (side === 0) {
-                                            top = '-1%';
-                                            left = `${offset * 100}%`;
-                                            ty = -dist;
-                                            tx = spread;
-                                        } else if (side === 2) {
-                                            top = '101%';
-                                            left = `${offset * 100}%`;
-                                            ty = dist;
-                                            tx = spread;
-                                        } else if (side === 1) {
-                                            left = '101%';
-                                            top = `${offset * 100}%`;
-                                            tx = dist;
-                                            ty = spread;
-                                        } else {
-                                            left = '-1%';
-                                            top = `${offset * 100}%`;
-                                            tx = -dist;
-                                            ty = spread;
-                                        }
-
-                                        const isCyan = i % 2 === 0;
-
-                                        return {
-                                            top,
-                                            left,
-                                            tx,
-                                            ty,
-                                            size: 'h-[1px] w-[1px]',
-                                            color: isCyan
-                                                ? 'bg-cyan-400'
-                                                : 'bg-violet-400',
-                                            shadow: '',
-                                            delay:
-                                                Math.abs(Math.sin(i * 555)) *
-                                                0.6,
-                                            duration:
-                                                0.5 +
-                                                Math.abs(Math.cos(i * 777)) *
-                                                    1.5,
-                                        };
-                                    });
-
-                                    const getServiceUrl = (slug: string) => {
-                                        switch (slug) {
-                                            case 'graphic-design':
-                                                return graphicDesign.url();
-                                            case 'digital-marketing':
-                                                return digitalMarketing.url();
-                                            case 'video-editing':
-                                                return videoEditing.url();
-                                            case '3d-production':
-                                                return threeDProduction.url();
-                                            case 'web-development':
-                                                return webDevelopment.url();
-                                            default:
-                                                return '#';
-                                        }
-                                    };
-
-                                    return (
-                                        <Link
-                                            href={getServiceUrl(service.key)}
-                                            key={service.key}
-                                            className={`bento-card glass-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] bg-black p-4 transition-all duration-500 sm:p-5 lg:p-6 ${service.key === 'video-editing' ? 'shadow-[0_0_45px_rgba(34,211,238,0.12)]' : ''}`}
-                                        >
-                                            {/* Background Aura Glow */}
-                                            <div className="aura-glow" />
-
-                                            {/* SVG Trace Layer */}
-                                            <svg
-                                                className="glow-svg pointer-events-none absolute inset-0 h-full w-full"
-                                                aria-hidden="true"
-                                                style={{ overflow: 'visible' }}
-                                            >
-                                                <defs>
-                                                    <linearGradient
-                                                        id={`card-gradient-${index}`}
-                                                        x1="0%"
-                                                        y1="0%"
-                                                        x2="100%"
-                                                        y2="100%"
-                                                    >
-                                                        <stop
-                                                            offset="0%"
-                                                            stopColor="#06b6d4"
-                                                        />
-                                                        <stop
-                                                            offset="50%"
-                                                            stopColor="#7c3aed"
-                                                        />
-                                                        <stop
-                                                            offset="100%"
-                                                            stopColor="#a855f7"
-                                                        />
-                                                    </linearGradient>
-                                                </defs>
-                                                <rect
-                                                    className="trace-rect"
-                                                    x="1.25"
-                                                    y="1.25"
-                                                    width="calc(100% - 2.5px)"
-                                                    height="calc(100% - 2.5px)"
-                                                    rx="26"
-                                                    ry="26"
-                                                    style={{
-                                                        stroke: `url(#card-gradient-${index})`,
-                                                    }}
-                                                />
-                                                <rect
-                                                    className="beam-rect"
-                                                    x="1.25"
-                                                    y="1.25"
-                                                    width="calc(100% - 2.5px)"
-                                                    height="calc(100% - 2.5px)"
-                                                    rx="26"
-                                                    ry="26"
-                                                />
-                                            </svg>
-
-                                            {/* Dashboard Content */}
-                                            <div className="relative z-10 flex h-full flex-col gap-4">
-                                                {/* 1. Header: Title & Description */}
-                                                <div className="flex flex-col gap-1.5">
-                                                    <div className="flex items-center justify-between">
-                                                        <h3 className="text-[13px] font-extrabold tracking-[0.15em] text-cyan-400 uppercase drop-shadow-sm">
-                                                            {service?.name ||
-                                                                categorySlug.replace(
-                                                                    /-/g,
-                                                                    ' ',
-                                                                )}
-                                                        </h3>
-                                                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-400/10">
-                                                            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,1)]" />
-                                                        </div>
-                                                    </div>
-                                                    <p className="line-clamp-2 text-[11px] leading-relaxed font-medium text-zinc-400">
-                                                        {service?.tagline ||
-                                                            'Premium digital solutions'}
-                                                    </p>
-                                                </div>
-
-                                                {/* Main Demo Frame */}
-                                                <div className="relative min-h-[7rem] w-full flex-1 overflow-hidden rounded-xl bg-zinc-950/60 shadow-inner ring-1 ring-white/10 transition-all duration-500 group-hover:ring-cyan-500/20">
-                                                    {portfolio ? (
-                                                        <>
-                                                            {portfolio.media_type ===
-                                                            'video' ? (
-                                                                <video
-                                                                    src={
-                                                                        portfolio.media_path ??
-                                                                        undefined
-                                                                    }
-                                                                    muted
-                                                                    autoPlay
-                                                                    loop
-                                                                    playsInline
-                                                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                                                                />
-                                                            ) : (
-                                                                <img
-                                                                    src={
-                                                                        portfolio.media_path ??
-                                                                        'https://placehold.co/600x400/111111/7C3AED?text=Opticore'
-                                                                    }
-                                                                    alt={
-                                                                        portfolio.alt
-                                                                    }
-                                                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                                                                />
-                                                            )}
-                                                            <div className="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                                                            <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 pt-6 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                                                                <p className="line-clamp-1 text-[10px] font-bold tracking-wider text-white drop-shadow-md">
-                                                                    {
-                                                                        portfolio.title
-                                                                    }
-                                                                </p>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <img
-                                                            src={
-                                                                fallbackImage?.src ??
-                                                                aboutBentoImages[
-                                                                    index %
-                                                                        aboutBentoImages.length
-                                                                ].src
-                                                            }
-                                                            alt={
-                                                                fallbackImage?.alt ??
-                                                                aboutBentoImages[
-                                                                    index %
-                                                                        aboutBentoImages.length
-                                                                ].alt
-                                                            }
-                                                            className="absolute inset-0 h-full w-full object-cover opacity-40 grayscale saturate-50 transition-transform duration-700 group-hover:scale-[1.03] group-hover:opacity-60 group-hover:grayscale-0"
-                                                        />
-                                                    )}
-                                                </div>
-
-                                                {/* Info Grid / Stats */}
-                                                <div className="flex flex-wrap items-center gap-1.5">
-                                                    {highlights.map((h, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/[0.02] px-2.5 py-1.5 transition-colors group-hover:border-white/10 group-hover:bg-white/[0.05]"
-                                                        >
-                                                            <div className="h-1 w-1 rounded-full bg-violet-400 shadow-[0_0_5px_rgba(167,139,250,0.8)]" />
-                                                            <span className="text-[9px] leading-none font-semibold tracking-widest text-zinc-400 uppercase">
-                                                                {h}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-3">
-                                                    <span className="text-[8.5px] font-bold tracking-[0.15em] text-zinc-600 uppercase transition-colors group-hover:text-zinc-500">
-                                                        System Active
-                                                    </span>
-                                                    <span className="text-[8.5px] font-bold tracking-[0.15em] text-zinc-600 uppercase transition-colors group-hover:text-zinc-500">
-                                                        Opticore v3.0
-                                                    </span>
-                                                </div>
-
-                                                {/* Spreading Particles on hover */}
-                                                <div className="pointer-events-none absolute inset-0 z-20">
-                                                    {denseParticles.map(
-                                                        (p, i) => (
-                                                            <div
-                                                                key={i}
-                                                                className={`particle-dot absolute ${p.size} rounded-full ${p.color} opacity-0 mix-blend-screen`}
-                                                                style={
-                                                                    {
-                                                                        '--tx': `${p.tx}px`,
-                                                                        '--ty': `${p.ty}px`,
-                                                                        top: p.top,
-                                                                        left: p.left,
-                                                                        animationDelay: `${p.delay}s`,
-                                                                        animationDuration: `${p.duration}s`,
-                                                                    } as React.CSSProperties
-                                                                }
-                                                            />
-                                                        ),
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-
-            <section className="section-shell pt-0">
-                <div className="section-inner">
-                    <SectionHeader
-                        eyebrow="Testimonials"
-                        title="Trusted by Brands That Expect More"
-                        animationType="testimonials"
-                        description="From identity overhauls to growth campaigns and production-heavy launches, our clients come to us when the work needs to feel sharp."
-                        align="center"
-                    />
-                    <div className="mt-6 flex justify-center">
-                        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200">
-                            <CharmingStar />
-                            4.9-star client satisfaction
-                        </span>
+                <section className="bg-zinc-950 py-20 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-violet-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 2</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Nebula Cluster</h2>
+                        <p className="text-zinc-500 mt-4">Move your mouse to interact with the cluster</p>
                     </div>
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={staggerContainer}
-                        className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8"
-                    >
-                        {testimonials.map((testimonial) => (
-                            <TestimonialCard
-                                key={`${testimonial.name}-${testimonial.company}`}
-                                testimonial={testimonial}
-                            />
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
+                </section>
+                <NebulaCluster />
+
+                <section className="bg-black py-20 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-4 block">Portfolio Concept 3</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Kinetic Bento</h2>
+                    </div>
+                </section>
+                <KineticBento />
+
+                <section className="bg-zinc-950 py-20 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-pink-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 1</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Liquid Shuffle</h2>
+                    </div>
+                </section>
+                <LiquidShuffle />
+
+                <section className="bg-black py-20 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-cyan-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 2</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Orbiting Showcase</h2>
+                    </div>
+                </section>
+                <OrbitingShowcase />
+
+                <section className="bg-zinc-950 py-20 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <span className="text-violet-400 font-bold uppercase tracking-widest text-sm mb-4 block">Testimonial Concept 3</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Spotlight Carousel</h2>
+                    </div>
+                </section>
+                <SpotlightCarousel />
+            </div>
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
@@ -1020,9 +630,9 @@ export default function HomeIndex({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-8 text-center sm:p-10 lg:p-14">
-                        <p className="section-kicker">Let’s Talk</p>
+                        <p className="section-kicker">Ready to Scale?</p>
                         <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
-                            Ready to Build Something Amazing?
+                            Hire the Industry's Finest Talent
                         </h2>
                         <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
                             Whether you need a full brand system, campaign
@@ -1032,11 +642,11 @@ export default function HomeIndex({
                         </p>
                         <div className="mt-8 flex justify-center">
                             <MagneticButton
-                                href="/request-appointment"
-                                ariaLabel="Request an appointment with Opticore Solutions Ltd."
+                                href="/hire-us"
+                                ariaLabel="Hire Opticore Solutions Ltd. now"
                                 fullWidth={!desktop}
                             >
-                                Start a Project{' '}
+                                Hire Us{' '}
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </MagneticButton>
                         </div>
