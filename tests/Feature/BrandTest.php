@@ -1,22 +1,22 @@
 <?php
 
 use App\Models\Brand;
-use App\Models\User;
+use App\Models\Admin;
 
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $this->admin = Admin::factory()->create();
 });
 
 it('can list brands on the admin index', function () {
     Brand::create(['name' => 'Test Brand A']);
 
-    $this->actingAs($this->user)
+    $this->actingAs($this->admin, 'admin')
         ->get('/admin/brands')
         ->assertSuccessful();
 });
 
 it('can create a new brand', function () {
-    $this->actingAs($this->user)
+    $this->actingAs($this->admin, 'admin')
         ->post('/admin/brands', [
             'name' => 'Brand New Name',
         ])
@@ -30,7 +30,7 @@ it('can create a new brand', function () {
 it('can update an existing brand', function () {
     $brand = Brand::create(['name' => 'Old Name']);
 
-    $this->actingAs($this->user)
+    $this->actingAs($this->admin, 'admin')
         ->put('/admin/brands/'.$brand->id, [
             'name' => 'Updated Name',
         ])
@@ -45,7 +45,7 @@ it('can update an existing brand', function () {
 it('can delete a brand', function () {
     $brand = Brand::create(['name' => 'To Be Deleted']);
 
-    $this->actingAs($this->user)
+    $this->actingAs($this->admin, 'admin')
         ->delete('/admin/brands/'.$brand->id)
         ->assertRedirect();
 
@@ -57,7 +57,7 @@ it('can delete a brand', function () {
 it('requires a unique name when creating a brand', function () {
     Brand::create(['name' => 'Duplicate Name']);
 
-    $this->actingAs($this->user)
+    $this->actingAs($this->admin, 'admin')
         ->post('/admin/brands', [
             'name' => 'Duplicate Name',
         ])

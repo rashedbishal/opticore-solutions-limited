@@ -45,7 +45,7 @@ return [
         ],
 
         'admin' => [
-            'driver' => 'mysql',
+            'driver' => env('DB_ADMIN_CONNECTION', 'mysql'),
             'url' => env('DB_URL'),
             'host' => env('DB_ADMIN_HOST', env('DB_HOST', '127.0.0.1')),
             'port' => env('DB_ADMIN_PORT', env('DB_PORT', '3306')),

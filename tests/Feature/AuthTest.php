@@ -1,9 +1,10 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\User;
 
 it('displays the login page', function () {
-    $this->get('/login')->assertSuccessful();
+    $this->get('/login')->assertStatus(200);
 });
 
 it('authenticates a user with valid credentials', function () {
@@ -14,7 +15,7 @@ it('authenticates a user with valid credentials', function () {
     $this->post('/login', [
         'email' => $user->email,
         'password' => 'password123',
-    ])->assertRedirect('/admin');
+    ])->assertRedirect('/');
 
     $this->assertAuthenticatedAs($user);
 });
@@ -36,10 +37,10 @@ it('protects the admin dashboard route from unauthenticated users', function () 
     $this->get('/admin')->assertRedirect('/login');
 });
 
-it('allows authenticated users to access the admin dashboard', function () {
-    $user = User::factory()->create();
+it('allows authenticated admins to access the admin dashboard', function () {
+    $admin = Admin::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAs($admin, 'admin')
         ->get('/admin')
         ->assertSuccessful();
 });
