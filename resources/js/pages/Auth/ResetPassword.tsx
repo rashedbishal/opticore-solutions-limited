@@ -1,4 +1,4 @@
-import { Head, Form } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
     Mail,
@@ -15,6 +15,18 @@ export default function ResetPassword({
     token: string;
     email: string;
 }) {
+    const { data, setData, post, processing, errors } = useForm({
+        token: token,
+        email: email,
+        password: '',
+        password_confirmation: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/reset-password');
+    };
+
     return (
         <GuestLayout maxWidth="lg">
             <Head title="Reset Password | Opticore Solutions Ltd." />
@@ -37,92 +49,78 @@ export default function ResetPassword({
             </div>
 
             {/* Form */}
-            <Form
-                action="/reset-password"
-                method="post"
-                initialValues={{
-                    token: token,
-                    email: email,
-                    password: '',
-                    password_confirmation: '',
-                }}
-                className="space-y-6"
-            >
-                {({ data, setData, errors, processing }) => (
-                    <>
-                        <input type="hidden" name="token" value={data?.token || token} />
-                        
-                        <div className="space-y-4">
-                            <div className="group relative">
-                                <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
-                                    <Mail className="h-5 w-5" />
-                                </div>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={data?.email || email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    placeholder="Email Address"
-                                    className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
-                                    required
-                                />
-                                {errors.email && (
-                                    <p className="mt-2 ml-4 text-xs text-red-500">
-                                        {errors.email}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="group relative">
-                                <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-violet-400">
-                                    <Lock className="h-5 w-5" />
-                                </div>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    value={data?.password || ''}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    placeholder="New Password"
-                                    className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
-                                    required
-                                    autoFocus
-                                />
-                                {errors.password && (
-                                    <p className="mt-2 ml-4 text-xs text-red-500">
-                                        {errors.password}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="group relative">
-                                <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-violet-400">
-                                    <Lock className="h-5 w-5" />
-                                </div>
-                                <input
-                                    type="password"
-                                    name="password_confirmation"
-                                    value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    placeholder="Confirm New Password"
-                                    className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
-                                    required
-                                />
-                            </div>
+            <form onSubmit={submit} className="space-y-6">
+                <input type="hidden" name="token" value={data.token} />
+                
+                <div className="space-y-4">
+                    <div className="group relative">
+                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
+                            <Mail className="h-5 w-5" />
                         </div>
+                        <input
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="Email Address"
+                            className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
+                            required
+                        />
+                        {errors.email && (
+                            <p className="mt-2 ml-4 text-xs text-red-500">
+                                {errors.email}
+                            </p>
+                        )}
+                    </div>
 
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
-                        >
-                            {processing
-                                ? 'Updating Password...'
-                                : 'Reset Password'}{' '}
-                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                        </button>
-                    </>
-                )}
-            </Form>
+                    <div className="group relative">
+                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-violet-400">
+                            <Lock className="h-5 w-5" />
+                        </div>
+                        <input
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            placeholder="New Password"
+                            className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
+                            required
+                            autoFocus
+                        />
+                        {errors.password && (
+                            <p className="mt-2 ml-4 text-xs text-red-500">
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="group relative">
+                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-violet-400">
+                            <Lock className="h-5 w-5" />
+                        </div>
+                        <input
+                            type="password"
+                            name="password_confirmation"
+                            value={data.password_confirmation}
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            placeholder="Confirm New Password"
+                            className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
+                >
+                    {processing
+                        ? 'Updating Password...'
+                        : 'Reset Password'}{' '}
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+            </form>
         </GuestLayout>
     );
 }
