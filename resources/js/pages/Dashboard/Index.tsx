@@ -1,12 +1,12 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Package, 
-    Clock, 
-    CheckCircle2, 
-    AlertCircle, 
-    Star, 
-    MessageSquare, 
+import {
+    Package,
+    Clock,
+    CheckCircle2,
+    AlertCircle,
+    Star,
+    MessageSquare,
     ChevronRight,
     Search,
     Bell,
@@ -14,55 +14,60 @@ import {
     LayoutDashboard,
     Briefcase,
     CreditCard,
-    Zap
+    Zap,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import AppLayout from '@/components/Layout/AppLayout';
 
 const mockOrders = [
-    { 
-        id: 'ORD-7721', 
-        service: 'YouTube Thumbnail Design', 
+    {
+        id: 'ORD-7721',
+        service: 'YouTube Thumbnail Design',
         category: 'Graphic Design',
-        status: 'In Progress', 
-        deadline: '2026-04-18', 
+        status: 'In Progress',
+        deadline: '2026-04-18',
         price: '300 BDT',
         progress: 65,
-        team: 'Visuals Team A'
+        team: 'Visuals Team A',
     },
-    { 
-        id: 'ORD-7718', 
-        service: 'Social Media Post Pack', 
+    {
+        id: 'ORD-7718',
+        service: 'Social Media Post Pack',
         category: 'Graphic Design',
-        status: 'Review Required', 
-        deadline: '2026-04-16', 
+        status: 'Review Required',
+        deadline: '2026-04-16',
         price: '500 BDT',
         progress: 100,
         team: 'Marketing Team B',
-        deliveredAt: '2026-04-16T10:00:00Z'
+        deliveredAt: '2026-04-16T10:00:00Z',
     },
-    { 
-        id: 'ORD-7692', 
-        service: 'Product 3D Render', 
+    {
+        id: 'ORD-7692',
+        service: 'Product 3D Render',
         category: '3D Production',
-        status: 'Completed', 
-        deadline: '2026-04-10', 
+        status: 'Completed',
+        deadline: '2026-04-10',
         price: '3500 BDT',
         progress: 100,
         team: '3D Studio 1',
-        rating: 5
-    }
+        rating: 5,
+    },
 ];
 
 export default function UserDashboard() {
     const [activeTab, setActiveTab] = useState('active');
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-    const [selectedOrderForReview, setSelectedOrderForReview] = useState<any>(null);
+    const [selectedOrderForReview, setSelectedOrderForReview] =
+        useState<any>(null);
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
 
-    const filteredOrders = mockOrders.filter(order => {
-        if (activeTab === 'active') return order.status === 'In Progress' || order.status === 'Review Required';
+    const filteredOrders = mockOrders.filter((order) => {
+        if (activeTab === 'active')
+            return (
+                order.status === 'In Progress' ||
+                order.status === 'Review Required'
+            );
         if (activeTab === 'completed') return order.status === 'Completed';
         return true;
     });
@@ -70,43 +75,67 @@ export default function UserDashboard() {
     return (
         <AppLayout>
             <Head title="Client Dashboard | Opticore Solutions Ltd." />
-            
-            <div className="bg-black min-h-screen pt-32 pb-24 px-4">
-                <div className="max-w-7xl mx-auto">
-                    
+
+            <div className="min-h-screen bg-black px-4 pt-32 pb-24">
+                <div className="mx-auto max-w-7xl">
                     {/* Dashboard Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+                    <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-center">
                         <div>
-                            <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">My Workspace</h1>
-                            <p className="text-zinc-500 font-medium">Track your active projects and manage your deliveries.</p>
+                            <h1 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase">
+                                My Workspace
+                            </h1>
+                            <p className="font-medium text-zinc-500">
+                                Track your active projects and manage your
+                                deliveries.
+                            </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors relative">
-                                <Bell className="w-5 h-5" />
-                                <span className="absolute top-3 right-3 w-2 h-2 bg-cyan-500 rounded-full" />
+                            <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white">
+                                <Bell className="h-5 w-5" />
+                                <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-cyan-500" />
                             </button>
-                            <button className="px-6 py-3 rounded-2xl bg-white text-black font-bold flex items-center gap-2 hover:bg-cyan-400 transition-colors">
-                                <Zap className="w-4 h-4 fill-current" /> New Project
+                            <button className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-cyan-400">
+                                <Zap className="h-4 w-4 fill-current" /> New
+                                Project
                             </button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-12">
-                        
+                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_1fr]">
                         {/* Sidebar Navigation */}
                         <aside className="space-y-2">
                             {[
-                                { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-                                { id: 'orders', label: 'My Orders', icon: Package },
-                                { id: 'messages', label: 'Messages', icon: MessageSquare },
-                                { id: 'billing', label: 'Payments', icon: CreditCard },
-                                { id: 'settings', label: 'Settings', icon: Settings },
+                                {
+                                    id: 'dashboard',
+                                    label: 'Dashboard',
+                                    icon: LayoutDashboard,
+                                },
+                                {
+                                    id: 'orders',
+                                    label: 'My Orders',
+                                    icon: Package,
+                                },
+                                {
+                                    id: 'messages',
+                                    label: 'Messages',
+                                    icon: MessageSquare,
+                                },
+                                {
+                                    id: 'billing',
+                                    label: 'Payments',
+                                    icon: CreditCard,
+                                },
+                                {
+                                    id: 'settings',
+                                    label: 'Settings',
+                                    icon: Settings,
+                                },
                             ].map((item) => (
                                 <button
                                     key={item.id}
-                                    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${item.id === 'orders' ? 'bg-white/5 text-cyan-400 border border-white/10' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'orders' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                                 >
-                                    <item.icon className="w-5 h-5" />
+                                    <item.icon className="h-5 w-5" />
                                     {item.label}
                                 </button>
                             ))}
@@ -114,50 +143,79 @@ export default function UserDashboard() {
 
                         {/* Main Content Area */}
                         <main className="space-y-8">
-                            
                             {/* Stats Summary */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 {[
-                                    { label: 'Active Orders', value: '02', icon: Package, color: 'text-cyan-400' },
-                                    { label: 'Awaiting Review', value: '01', icon: Clock, color: 'text-amber-400' },
-                                    { label: 'Total Invested', value: '4,300 BDT', icon: CreditCard, color: 'text-violet-400' }
+                                    {
+                                        label: 'Active Orders',
+                                        value: '02',
+                                        icon: Package,
+                                        color: 'text-cyan-400',
+                                    },
+                                    {
+                                        label: 'Awaiting Review',
+                                        value: '01',
+                                        icon: Clock,
+                                        color: 'text-amber-400',
+                                    },
+                                    {
+                                        label: 'Total Invested',
+                                        value: '4,300 BDT',
+                                        icon: CreditCard,
+                                        color: 'text-violet-400',
+                                    },
                                 ].map((stat, i) => (
-                                    <div key={i} className="glass-panel p-6 rounded-[2rem] border border-white/5 bg-zinc-900/40">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
-                                                <stat.icon className="w-5 h-5" />
+                                    <div
+                                        key={i}
+                                        className="glass-panel rounded-[2rem] border border-white/5 bg-zinc-900/40 p-6"
+                                    >
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <div
+                                                className={`rounded-xl bg-white/5 p-3 ${stat.color}`}
+                                            >
+                                                <stat.icon className="h-5 w-5" />
                                             </div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Lifetime</span>
+                                            <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                                                Lifetime
+                                            </span>
                                         </div>
-                                        <p className="text-zinc-500 text-sm font-medium mb-1">{stat.label}</p>
-                                        <h3 className="text-2xl font-black text-white">{stat.value}</h3>
+                                        <p className="mb-1 text-sm font-medium text-zinc-500">
+                                            {stat.label}
+                                        </p>
+                                        <h3 className="text-2xl font-black text-white">
+                                            {stat.value}
+                                        </h3>
                                     </div>
                                 ))}
                             </div>
 
                             {/* Orders Table-like View */}
-                            <div className="glass-panel rounded-[2.5rem] border border-white/5 bg-zinc-900/20 overflow-hidden">
-                                <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                                    <div className="flex bg-black/40 p-1 rounded-xl">
-                                        <button 
-                                            onClick={() => setActiveTab('active')}
-                                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/20">
+                                <div className="flex items-center justify-between border-b border-white/5 p-8">
+                                    <div className="flex rounded-xl bg-black/40 p-1">
+                                        <button
+                                            onClick={() =>
+                                                setActiveTab('active')
+                                            }
+                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
                                         >
                                             Active
                                         </button>
-                                        <button 
-                                            onClick={() => setActiveTab('completed')}
-                                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                        <button
+                                            onClick={() =>
+                                                setActiveTab('completed')
+                                            }
+                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
                                         >
                                             Completed
                                         </button>
                                     </div>
                                     <div className="relative hidden md:block">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Search orders..." 
-                                            className="bg-black/40 border border-white/5 rounded-xl py-2 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-all w-64"
+                                        <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-600" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search orders..."
+                                            className="w-64 rounded-xl border border-white/5 bg-black/40 py-2 pr-4 pl-12 text-sm text-white transition-all focus:border-cyan-500/50 focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -166,64 +224,114 @@ export default function UserDashboard() {
                                     {filteredOrders.length > 0 ? (
                                         <div className="divide-y divide-white/5">
                                             {filteredOrders.map((order) => (
-                                                <div key={order.id} className="p-8 hover:bg-white/[0.02] transition-colors group">
-                                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                                <div
+                                                    key={order.id}
+                                                    className="group p-8 transition-colors hover:bg-white/[0.02]"
+                                                >
+                                                    <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
                                                         <div className="flex gap-6">
-                                                            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                                                                <Briefcase className="w-6 h-6 text-zinc-500 group-hover:text-cyan-400 transition-colors" />
+                                                            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                                                                <Briefcase className="h-6 w-6 text-zinc-500 transition-colors group-hover:text-cyan-400" />
                                                             </div>
                                                             <div>
-                                                                <div className="flex items-center gap-3 mb-1">
-                                                                    <h4 className="font-bold text-white text-lg">{order.service}</h4>
-                                                                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${
-                                                                        order.status === 'Review Required' ? 'bg-amber-500/20 text-amber-500' : 
-                                                                        order.status === 'In Progress' ? 'bg-cyan-500/20 text-cyan-500' : 'bg-zinc-800 text-zinc-500'
-                                                                    }`}>
-                                                                        {order.status}
+                                                                <div className="mb-1 flex items-center gap-3">
+                                                                    <h4 className="text-lg font-bold text-white">
+                                                                        {
+                                                                            order.service
+                                                                        }
+                                                                    </h4>
+                                                                    <span
+                                                                        className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${
+                                                                            order.status ===
+                                                                            'Review Required'
+                                                                                ? 'bg-amber-500/20 text-amber-500'
+                                                                                : order.status ===
+                                                                                    'In Progress'
+                                                                                  ? 'bg-cyan-500/20 text-cyan-500'
+                                                                                  : 'bg-zinc-800 text-zinc-500'
+                                                                        }`}
+                                                                    >
+                                                                        {
+                                                                            order.status
+                                                                        }
                                                                     </span>
                                                                 </div>
-                                                                <p className="text-zinc-500 text-xs font-medium uppercase tracking-widest">
-                                                                    ID: {order.id} • {order.category}
+                                                                <p className="text-xs font-medium tracking-widest text-zinc-500 uppercase">
+                                                                    ID:{' '}
+                                                                    {order.id} •{' '}
+                                                                    {
+                                                                        order.category
+                                                                    }
                                                                 </p>
                                                             </div>
                                                         </div>
 
                                                         <div className="flex flex-wrap items-center gap-8 md:gap-12">
                                                             <div>
-                                                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-1">Price</p>
-                                                                <p className="text-white font-bold">{order.price}</p>
+                                                                <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                                                                    Price
+                                                                </p>
+                                                                <p className="font-bold text-white">
+                                                                    {
+                                                                        order.price
+                                                                    }
+                                                                </p>
                                                             </div>
                                                             <div>
-                                                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-1">Deadline</p>
-                                                                <p className="text-white font-bold">{order.deadline}</p>
+                                                                <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                                                                    Deadline
+                                                                </p>
+                                                                <p className="font-bold text-white">
+                                                                    {
+                                                                        order.deadline
+                                                                    }
+                                                                </p>
                                                             </div>
                                                             <div className="w-32">
-                                                                <div className="flex justify-between items-center mb-1.5">
-                                                                    <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Progress</p>
-                                                                    <span className="text-[10px] font-bold text-white">{order.progress}%</span>
+                                                                <div className="mb-1.5 flex items-center justify-between">
+                                                                    <p className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                                                                        Progress
+                                                                    </p>
+                                                                    <span className="text-[10px] font-bold text-white">
+                                                                        {
+                                                                            order.progress
+                                                                        }
+                                                                        %
+                                                                    </span>
                                                                 </div>
-                                                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                                    <motion.div 
-                                                                        initial={{ width: 0 }}
-                                                                        animate={{ width: `${order.progress}%` }}
+                                                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+                                                                    <motion.div
+                                                                        initial={{
+                                                                            width: 0,
+                                                                        }}
+                                                                        animate={{
+                                                                            width: `${order.progress}%`,
+                                                                        }}
                                                                         className={`h-full ${order.status === 'Review Required' ? 'bg-amber-500' : 'bg-cyan-500'}`}
                                                                     />
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                {order.status === 'Review Required' ? (
-                                                                    <button 
+                                                                {order.status ===
+                                                                'Review Required' ? (
+                                                                    <button
                                                                         onClick={() => {
-                                                                            setSelectedOrderForReview(order);
-                                                                            setIsReviewModalOpen(true);
+                                                                            setSelectedOrderForReview(
+                                                                                order,
+                                                                            );
+                                                                            setIsReviewModalOpen(
+                                                                                true,
+                                                                            );
                                                                         }}
-                                                                        className="px-6 py-3 rounded-xl bg-amber-500 text-black font-bold text-sm hover:bg-amber-400 transition-colors flex items-center gap-2"
+                                                                        className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-amber-400"
                                                                     >
-                                                                        Review Now <ArrowRight className="w-4 h-4" />
+                                                                        Review
+                                                                        Now{' '}
+                                                                        <ArrowRight className="h-4 w-4" />
                                                                     </button>
                                                                 ) : (
-                                                                    <button className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white hover:border-white/30 transition-all">
-                                                                        <ChevronRight className="w-5 h-5" />
+                                                                    <button className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-zinc-500 transition-all hover:border-white/30 hover:text-white">
+                                                                        <ChevronRight className="h-5 w-5" />
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -234,14 +342,18 @@ export default function UserDashboard() {
                                         </div>
                                     ) : (
                                         <div className="py-24 text-center">
-                                            <Package className="w-12 h-12 text-zinc-800 mx-auto mb-6" />
-                                            <h3 className="text-xl font-bold text-zinc-600 uppercase tracking-widest">No orders found</h3>
-                                            <p className="text-zinc-700 mt-2">Try switching tabs or start a new project.</p>
+                                            <Package className="mx-auto mb-6 h-12 w-12 text-zinc-800" />
+                                            <h3 className="text-xl font-bold tracking-widest text-zinc-600 uppercase">
+                                                No orders found
+                                            </h3>
+                                            <p className="mt-2 text-zinc-700">
+                                                Try switching tabs or start a
+                                                new project.
+                                            </p>
                                         </div>
                                     )}
                                 </div>
                             </div>
-
                         </main>
                     </div>
                 </div>
@@ -251,81 +363,126 @@ export default function UserDashboard() {
             <AnimatePresence>
                 {isReviewModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsReviewModalOpen(false)}
                             className="absolute inset-0 bg-black/90 backdrop-blur-md"
                         />
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-2xl glass-panel rounded-[3rem] border border-white/10 bg-zinc-900 p-8 md:p-12 overflow-hidden"
+                            className="glass-panel relative w-full max-w-2xl overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900 p-8 md:p-12"
                         >
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500" />
-                            
+                            <div className="absolute top-0 left-0 h-2 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500" />
+
                             <div className="mb-8">
-                                <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Submit Your Review</h3>
-                                <p className="text-zinc-500">How was your experience with <span className="text-white font-bold">{selectedOrderForReview?.service}</span>?</p>
+                                <h3 className="mb-2 text-3xl font-black tracking-tighter text-white uppercase">
+                                    Submit Your Review
+                                </h3>
+                                <p className="text-zinc-500">
+                                    How was your experience with{' '}
+                                    <span className="font-bold text-white">
+                                        {selectedOrderForReview?.service}
+                                    </span>
+                                    ?
+                                </p>
                             </div>
 
                             <div className="space-y-8">
                                 {/* Rating Logic Demo */}
-                                <div className="flex flex-col items-center py-6 bg-white/5 rounded-3xl border border-white/5">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-6">Your Rating</p>
+                                <div className="flex flex-col items-center rounded-3xl border border-white/5 bg-white/5 py-6">
+                                    <p className="mb-6 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                                        Your Rating
+                                    </p>
                                     <div className="flex gap-4">
                                         {[1, 2, 3, 4, 5].map((star) => (
-                                            <button 
+                                            <button
                                                 key={star}
-                                                onMouseEnter={() => setHoverRating(star)}
-                                                onMouseLeave={() => setHoverRating(0)}
+                                                onMouseEnter={() =>
+                                                    setHoverRating(star)
+                                                }
+                                                onMouseLeave={() =>
+                                                    setHoverRating(0)
+                                                }
                                                 onClick={() => setRating(star)}
                                                 className="transition-transform hover:scale-125"
                                             >
-                                                <Star 
-                                                    className={`w-12 h-12 transition-colors ${
-                                                        (hoverRating || rating) >= star ? 'text-amber-400 fill-current' : 'text-zinc-700'
-                                                    }`} 
+                                                <Star
+                                                    className={`h-12 w-12 transition-colors ${
+                                                        (hoverRating ||
+                                                            rating) >= star
+                                                            ? 'fill-current text-amber-400'
+                                                            : 'text-zinc-700'
+                                                    }`}
                                                 />
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="mt-6 text-sm font-bold text-amber-500 uppercase tracking-widest h-4">
-                                        {rating === 5 ? 'Exceptional!' : rating === 4 ? 'Great Work' : rating === 3 ? 'Good' : rating === 2 ? 'Needs Improvement' : rating === 1 ? 'Poor' : ''}
+                                    <p className="mt-6 h-4 text-sm font-bold tracking-widest text-amber-500 uppercase">
+                                        {rating === 5
+                                            ? 'Exceptional!'
+                                            : rating === 4
+                                              ? 'Great Work'
+                                              : rating === 3
+                                                ? 'Good'
+                                                : rating === 2
+                                                  ? 'Needs Improvement'
+                                                  : rating === 1
+                                                    ? 'Poor'
+                                                    : ''}
                                     </p>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-4">Detailed Feedback</p>
-                                    <textarea 
+                                    <p className="px-4 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                                        Detailed Feedback
+                                    </p>
+                                    <textarea
                                         placeholder="Tell us about the quality, communication, and speed..."
-                                        className="w-full h-40 bg-black/40 border border-white/10 rounded-[2rem] p-6 text-white placeholder:text-zinc-700 focus:outline-none focus:border-amber-500/50 transition-all resize-none"
+                                        className="h-40 w-full resize-none rounded-[2rem] border border-white/10 bg-black/40 p-6 text-white transition-all placeholder:text-zinc-700 focus:border-amber-500/50 focus:outline-none"
                                     />
                                 </div>
 
                                 {/* Review System Rule Info */}
-                                <div className="flex gap-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
-                                    <p className="text-xs text-zinc-400 leading-relaxed">
-                                        <span className="text-amber-500 font-bold uppercase">Important:</span> You have <span className="text-white font-bold underline">24 hours</span> to provide a review after delivery. Once submitted, reviews <span className="text-white font-bold">cannot be edited</span>.
+                                <div className="flex gap-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
+                                    <AlertCircle className="h-5 w-5 shrink-0 text-amber-500" />
+                                    <p className="text-xs leading-relaxed text-zinc-400">
+                                        <span className="font-bold text-amber-500 uppercase">
+                                            Important:
+                                        </span>{' '}
+                                        You have{' '}
+                                        <span className="font-bold text-white underline">
+                                            24 hours
+                                        </span>{' '}
+                                        to provide a review after delivery. Once
+                                        submitted, reviews{' '}
+                                        <span className="font-bold text-white">
+                                            cannot be edited
+                                        </span>
+                                        .
                                     </p>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <button 
-                                        onClick={() => setIsReviewModalOpen(false)}
-                                        className="flex-1 px-8 py-5 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-colors"
+                                <div className="flex flex-col gap-4 sm:flex-row">
+                                    <button
+                                        onClick={() =>
+                                            setIsReviewModalOpen(false)
+                                        }
+                                        className="flex-1 rounded-2xl bg-white/5 px-8 py-5 font-bold text-white transition-colors hover:bg-white/10"
                                     >
                                         Skip for now
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => {
-                                            alert("Demo: Review Submitted Successfully! (This review is now locked)");
+                                            alert(
+                                                'Demo: Review Submitted Successfully! (This review is now locked)',
+                                            );
                                             setIsReviewModalOpen(false);
                                         }}
-                                        className="flex-[2] px-8 py-5 rounded-2xl bg-amber-500 text-black font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-xl"
+                                        className="flex-[2] rounded-2xl bg-amber-500 px-8 py-5 font-black tracking-widest text-black uppercase shadow-xl transition-all hover:bg-amber-400"
                                     >
                                         Submit Locked Review
                                     </button>
@@ -335,7 +492,6 @@ export default function UserDashboard() {
                     </div>
                 )}
             </AnimatePresence>
-
         </AppLayout>
     );
 }
