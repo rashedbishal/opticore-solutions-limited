@@ -1,17 +1,44 @@
 import type { PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import GradientOrb from '@/components/UI/GradientOrb';
+import { cn } from '@/lib/utils';
 
-export default function GuestLayout({ children }: PropsWithChildren) {
+interface GuestLayoutProps extends PropsWithChildren {
+    maxWidth?: 'md' | 'lg' | 'xl';
+}
+
+export default function GuestLayout({ children, maxWidth = 'md' }: GuestLayoutProps) {
+    const maxWidthClasses = {
+        md: 'max-w-md',
+        lg: 'max-w-lg',
+        xl: 'max-w-xl',
+    };
+
     return (
-        <div className="flex min-h-screen flex-col items-center bg-black pt-6 sm:justify-center sm:pt-0">
-            <div className="relative w-full max-w-md">
-                {/* Background glow effects */}
-                <div className="pointer-events-none absolute -inset-48 overflow-hidden opacity-30">
-                    <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/30 blur-[100px]" />
-                    <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-[80px]" />
-                </div>
+        <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black px-4 py-24 sm:pt-0">
+            {/* Background Decor */}
+            <GradientOrb
+                className="top-[-10%] left-[-10%] h-[600px] w-[600px] blur-[120px]"
+                color="#06b6d4"
+            />
+            <GradientOrb
+                className="right-[-10%] bottom-[-10%] h-[600px] w-[600px] blur-[120px]"
+                color="#7c3aed"
+            />
 
+            <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03]">
+                <div
+                    className="h-full w-full"
+                    style={{
+                        backgroundImage:
+                            'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                        backgroundSize: '40px 40px',
+                    }}
+                />
+            </div>
+
+            <div className={cn("relative z-10 w-full", maxWidthClasses[maxWidth])}>
                 <div className="relative mb-8 flex justify-center">
                     <Link href="/">
                         <img
@@ -23,10 +50,10 @@ export default function GuestLayout({ children }: PropsWithChildren) {
                 </div>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-950/50 p-8 shadow-2xl backdrop-blur-xl sm:p-10"
+                    className="glass-panel relative w-full overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900/40 p-8 shadow-2xl backdrop-blur-3xl sm:p-12"
                 >
                     {children}
                 </motion.div>
