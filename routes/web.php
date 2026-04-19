@@ -112,8 +112,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
     Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
     Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
-    Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])->name('chat.attachment.download');
 });
+
+Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])
+    ->name('chat.attachment.download')
+    ->middleware('auth:web,admin');
 
 // Admin Auth Routes
 Route::prefix('admin')->name('admin.')->group(function () {

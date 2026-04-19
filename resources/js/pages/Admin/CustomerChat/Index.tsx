@@ -445,6 +445,9 @@ export default function Index() {
                                         {msg.attachment_path && (
                                             <a
                                                 href={`/chat/attachments/${msg.id}/download`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                download
                                                 className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
                                             >
                                                 <span className="shrink-0">
