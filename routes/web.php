@@ -9,15 +9,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ServiceController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 // Broadcasting Auth
 Route::post('/broadcasting/auth', function (Request $request) {
-    if (auth('admin')->check()) {
-        return Broadcast::guard('admin')->auth($request);
-    }
-
     return Broadcast::auth($request);
 })->middleware(['web']);
 
@@ -70,7 +67,6 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConversationController;
-use Illuminate\Http\Request;
 
 // User Auth Routes
 Route::middleware('guest')->group(function () {

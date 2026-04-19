@@ -90,40 +90,11 @@ export default function SupportWidget() {
         return () => clearInterval(interval);
     }, [isOpen, conversation]);
 
-    // Echo listener
-    useEcho(
-        conversation ? `conversations.${conversation.id}` : '',
-        'MessageSent',
-        useCallback(
-            (e: any) => {
-                const incoming = e.message;
-                setMessages((prev) => {
-                    if (prev.some((m) => m.id === incoming.id)) {
-                        return prev;
-                    }
-
-                    return [...prev, incoming];
-                });
-
-                if (incoming.sender_type === 'admin') {
-                    if (!isOpenRef.current) {
-                        setUnread((u) => u + 1);
-                    } else if (conversation) {
-                        axios.post(`/user-chat/${conversation.id}/read`);
-                    }
-                }
-
-                scrollToBottom();
-            },
-            [conversation],
-        ),
-    );
-
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         setTimeout(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
-    };
+    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -210,6 +181,15 @@ export default function SupportWidget() {
 
     return (
         <div className="fixed bottom-6 left-6 z-50">
+            {conversation && (
+                <SupportWidgetEchoListener
+                    conversation={conversation}
+                    setMessages={setMessages}
+                    setUnread={setUnread}
+                    isOpenRef={isOpenRef}
+                    scrollToBottom={scrollToBottom}
+                />
+            )}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -407,4 +387,50 @@ export default function SupportWidget() {
             </button>
         </div>
     );
+}
+
+interface EchoListenerProps {
+    conversation: Conversation;
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    setUnread: React.Dispatch<React.SetStateAction<number>>;
+    isOpenRef: React.MutableRefObject<boolean>;
+    scrollToBottom: () => void;
+}
+
+function SupportWidgetEchoListener({
+    conversation,
+    setMessages,
+    setUnread,
+    isOpenRef,
+    scrollToBottom,
+}: EchoListenerProps) {
+    useEcho(
+        `conversations.${conversation.id}`,
+        'MessageSent',
+        useCallback(
+            (e: any) => {
+                const incoming = e.message;
+                setMessages((prev) => {
+                    if (prev.some((m) => m.id === incoming.id)) {
+                        return prev;
+                    }
+
+                    return [...prev, incoming];
+                });
+
+                if (incoming.sender_type === 'admin') {
+                    if (!isOpenRef.current) {
+                        setUnread((u) => u + 1);
+                    } else {
+                        axios.post(`/user-chat/${conversation.id}/read`);
+                    }
+                }
+
+                scrollToBottom();
+            },
+            [conversation.id, isOpenRef, scrollToBottom, setMessages, setUnread],
+        ),
+    );
+
+    return null;
 }
