@@ -40,7 +40,8 @@ export default function AppLayout({ children }: PropsWithChildren) {
                 </AnimatePresence>
                 <Footer />
             </div>
-            
+            <ChatWidget />
+            <SupportWidget />
         </SmoothScroll>
     );
 }
