@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 
 // Broadcasting Auth
 Route::post('/broadcasting/auth', function (Request $request) {
+    if (auth('admin')->check()) {
+        auth()->shouldUse('admin');
+    }
+
     return Broadcast::auth($request);
 })->middleware(['web']);
 

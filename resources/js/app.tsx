@@ -8,8 +8,18 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 
+import Pusher from 'pusher-js';
+
+(window as any).Pusher = Pusher;
+
 configureEcho({
     broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
+    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
 });
 
 // Attach the current Echo socket ID to every Axios request so that
