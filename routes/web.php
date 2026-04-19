@@ -19,7 +19,14 @@ Route::post('/broadcasting/auth', function (Request $request) {
         auth()->shouldUse('admin');
     }
 
-    return Broadcast::auth($request);
+    try {
+        $response = Broadcast::auth($request);
+        \Log::info('Broadcast auth success for user: ' . optional(auth()->user())->id . ' on channel: ' . $request->channel_name);
+        return $response;
+    } catch (\Exception $e) {
+        \Log::error('Broadcast auth failed for channel: ' . $request->channel_name . ' Error: ' . $e->getMessage());
+        throw $e;
+    }
 })->middleware(['web']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

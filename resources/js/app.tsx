@@ -22,16 +22,26 @@ if (typeof window !== 'undefined') {
         forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
         disableStats: true,
         enabledTransports: ['ws', 'wss'],
+        authorizer: (channel: any, options: any) => {
+            return {
+                authorize: (socketId: string, callback: Function) => {
+                    axios
+                        .post('/broadcasting/auth', {
+                            socket_id: socketId,
+                            channel_name: channel.name,
+                        })
+                        .then((response) => {
+                            callback(null, response.data);
+                        })
+                        .catch((error) => {
+                            callback(error);
+                        });
+                },
+            };
+        },
     });
 
-    // Debugging connection errors
-    echo().connector.pusher.connection.bind('error', (err: any) => {
-        console.error('Echo connection error:', err);
-    });
-
-    echo().connector.pusher.connection.bind('connected', () => {
-        console.log('Echo connected successfully');
-    });
+    // Debugging connection errors removed to avoid property undefined issues during initialization
 
     // Attach the current Echo socket ID to every Axios request so that
     // broadcast()->toOthers() can correctly exclude the sender's own tab.
