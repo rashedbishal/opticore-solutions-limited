@@ -1,17 +1,37 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\CareerController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\ChatSessionController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\CustomerConversationController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
+use App\Http\Controllers\Admin\PortfolioSubCategoryController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SocialController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
-use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentController as OriginalAppointmentController;
+use App\Http\Controllers\CareerController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ConversationController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 // Broadcasting Auth
 Route::post('/broadcasting/auth', function (Request $request) {
@@ -39,6 +59,9 @@ Route::get('/request-appointment', [PageController::class, 'requestAppointment']
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
+// Hire Us Page Route
+Route::get('/hire-us', fn () => Inertia::render('HireUs'))->name('hireUs');
+
 // Portfolio public routes
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
 Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
@@ -50,27 +73,9 @@ Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, '
 Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
 Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
-Route::post('/api/appointment', [AppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
+Route::post('/api/appointment', [OriginalAppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
 Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
 Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:30,1');
-
-use App\Http\Controllers\Admin\BlogController as AdminBlogController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\ChatSessionController;
-use App\Http\Controllers\Admin\ContactController as AdminContactController;
-use App\Http\Controllers\Admin\CustomerConversationController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\LoginController as AdminLoginController;
-use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
-use App\Http\Controllers\Admin\PortfolioSubCategoryController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\SocialController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\ConversationController;
 
 // User Auth Routes
 Route::middleware('guest')->group(function () {
@@ -142,3 +147,4 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 });
 
 require __DIR__.'/../routes/channels.php';
+
