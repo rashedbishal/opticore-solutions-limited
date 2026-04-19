@@ -23,7 +23,7 @@ export default function GradientOrb({
     return (
         <motion.div
             aria-hidden="true"
-            className={cn('orb-surface absolute rounded-full blur-3xl', className)}
+            className={cn('orb-surface pointer-events-none absolute rounded-full blur-3xl', className)}
             style={{
                 y,
                 ['--orb-color' as string]: color,

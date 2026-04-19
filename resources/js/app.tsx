@@ -10,35 +10,47 @@ import AppLayout from '@/components/Layout/AppLayout';
 
 import Pusher from 'pusher-js';
 
-(window as any).Pusher = Pusher;
+if (typeof window !== 'undefined') {
+    (window as any).Pusher = Pusher;
 
-configureEcho({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
-});
+    configureEcho({
+        broadcaster: 'reverb',
+        key: import.meta.env.VITE_REVERB_APP_KEY,
+        wsHost: import.meta.env.VITE_REVERB_HOST,
+        wsPort: parseInt(import.meta.env.VITE_REVERB_PORT ?? '8080', 10),
+        wssPort: parseInt(import.meta.env.VITE_REVERB_PORT ?? '8080', 10),
+        forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+        disableStats: true,
+        enabledTransports: ['ws', 'wss'],
+    });
 
-// Attach the current Echo socket ID to every Axios request so that
-// broadcast()->toOthers() can correctly exclude the sender's own tab.
-// Without this header, Laravel cannot identify the sender and broadcasts
-// back to them too, causing duplicate messages.
-axios.interceptors.request.use((config) => {
-    try {
-        const socketId = echo().socketId();
+    // Debugging connection errors
+    echo().connector.pusher.connection.bind('error', (err: any) => {
+        console.error('Echo connection error:', err);
+    });
 
-        if (socketId) {
-            config.headers['X-Socket-ID'] = socketId;
+    echo().connector.pusher.connection.bind('connected', () => {
+        console.log('Echo connected successfully');
+    });
+
+    // Attach the current Echo socket ID to every Axios request so that
+    // broadcast()->toOthers() can correctly exclude the sender's own tab.
+    // Without this header, Laravel cannot identify the sender and broadcasts
+    // back to them too, causing duplicate messages.
+    axios.interceptors.request.use((config) => {
+        try {
+            const socketId = echo().socketId();
+
+            if (socketId) {
+                config.headers['X-Socket-ID'] = socketId;
+            }
+        } catch {
+            // Echo not yet connected — no socket ID available, skip
         }
-    } catch {
-        // Echo not yet connected — no socket ID available, skip
-    }
 
-    return config;
-});
+        return config;
+    });
+}
 
 const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';
 
