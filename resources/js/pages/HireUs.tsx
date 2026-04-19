@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Assuming these UI components exist or will be created
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // Assuming these UI components exist or will be created
 import { Button } from '@/components/ui/button'; // Assuming this UI component exists
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'; // Assuming these UI components exist
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
