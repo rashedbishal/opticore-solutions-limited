@@ -273,8 +273,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     </div>
                 </main>
             </div>
-            <ChatWidget />
-            <SupportWidget />
         </div>
     );
 }

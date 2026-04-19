@@ -63,8 +63,6 @@ export default function GuestLayout({ children, maxWidth = 'md' }: GuestLayoutPr
                     {children}
                 </motion.div>
             </div>
-            <ChatWidget />
-            <SupportWidget />
         </div>
     );
 }

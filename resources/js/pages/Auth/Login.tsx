@@ -175,3 +175,5 @@ export default function Login({ status }: { status?: string }) {
         </GuestLayout>
     );
 }
+
+Login.layout = (page: any) => page;
