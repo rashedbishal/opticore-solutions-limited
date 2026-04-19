@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -25,7 +26,7 @@ export default function Register() {
     };
 
     return (
-        <GuestLayout maxWidth="xl">
+        <>
             <Head title="Create Account | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -231,6 +232,8 @@ export default function Register() {
                     </Link>
                 </p>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+Register.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="xl" />;

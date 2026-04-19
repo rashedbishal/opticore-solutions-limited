@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -21,7 +22,7 @@ export default function Login({ status }: { status?: string }) {
     };
 
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Sign In | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -172,6 +173,8 @@ export default function Login({ status }: { status?: string }) {
                     </Link>
                 </p>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+Login.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;

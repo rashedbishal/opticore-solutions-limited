@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -18,7 +19,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
     };
 
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Forgot Password | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -92,6 +93,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </Link>
                 </p>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+ForgotPassword.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
