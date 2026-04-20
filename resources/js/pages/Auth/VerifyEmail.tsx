@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -16,7 +17,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
     };
 
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Verify Email | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -67,6 +68,8 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Sign Out
                 </Link>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+VerifyEmail.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;

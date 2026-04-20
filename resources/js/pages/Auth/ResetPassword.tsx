@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -28,7 +29,7 @@ export default function ResetPassword({
     };
 
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Reset Password | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -121,6 +122,12 @@ export default function ResetPassword({
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
             </form>
+<<<<<<< HEAD
         </GuestLayout>
+=======
+        </>
+>>>>>>> @{-1}
     );
 }
+
+ResetPassword.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
