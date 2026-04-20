@@ -177,8 +177,4 @@ export default function Login({ status }: { status?: string }) {
     );
 }
 
-<<<<<<< HEAD
-Login.layout = (page: any) => page;
-=======
 Login.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
->>>>>>> @{-1}
