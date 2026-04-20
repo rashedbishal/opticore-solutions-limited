@@ -30,14 +30,26 @@ const servicesData = {
                 id: 'social-media-post',
                 name: 'Social Media Post Design',
                 icon: '🎨',
+                description: '',
             },
             {
                 id: 'youtube-thumbnail',
                 name: 'YouTube Thumbnail Design',
                 icon: '📺',
+                description: '',
             },
-            { id: 'brochure-design', name: 'Brochure Design', icon: '📄' },
-            { id: 'logo-design', name: 'Logo Design', icon: '💡' },
+            {
+                id: 'brochure-design',
+                name: 'Brochure Design',
+                icon: '📄',
+                description: '',
+            },
+            {
+                id: 'logo-design',
+                name: 'Logo Design',
+                icon: '💡',
+                description: '',
+            },
         ],
     },
     '3d-production': {
@@ -45,13 +57,24 @@ const servicesData = {
         description:
             'Stunning 3D visualizations and animations for immersive experiences.',
         subCategories: [
-            { id: '3d-modeling', name: '3D Modeling', icon: '🧊' },
+            {
+                id: '3d-modeling',
+                name: '3D Modeling',
+                icon: '🧊',
+                description: '',
+            },
             {
                 id: 'product-visualization',
                 name: 'Product Visualization',
                 icon: '📦',
+                description: '',
             },
-            { id: '3d-animation', name: '3D Animation', icon: '🎬' },
+            {
+                id: '3d-animation',
+                name: '3D Animation',
+                icon: '🎬',
+                description: '',
+            },
         ],
     },
     'web-development': {
@@ -63,21 +86,25 @@ const servicesData = {
                 id: 'frontend-development',
                 name: 'Frontend Development',
                 icon: '💻',
+                description: '',
             },
             {
                 id: 'backend-development',
                 name: 'Backend Development',
                 icon: '⚙️',
+                description: '',
             },
             {
                 id: 'fullstack-development',
                 name: 'Fullstack Development',
                 icon: '🌐',
+                description: '',
             },
             {
                 id: 'e-commerce-dev',
                 name: 'E-commerce Development',
                 icon: '🛍️',
+                description: '',
             },
         ],
     },

@@ -11,6 +11,7 @@ import {
     ArrowRight,
     X,
     Send,
+    Users,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import AppLayout from '@/components/Layout/AppLayout';
