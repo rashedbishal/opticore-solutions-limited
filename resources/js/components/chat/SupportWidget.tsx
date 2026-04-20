@@ -47,6 +47,12 @@ export default function SupportWidget() {
     const isOpenRef = useRef(isOpen);
     isOpenRef.current = isOpen;
 
+    const scrollToBottom = useCallback(() => {
+        setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }, []);
+
     // Initialize Conversation
     useEffect(() => {
         if (auth.user) {
@@ -75,7 +81,7 @@ export default function SupportWidget() {
                 });
             });
         }
-    }, [isOpen, conversation]);
+    }, [isOpen, conversation, scrollToBottom]);
 
     // Ping server while chat window is open so admin knows user is online
     useEffect(() => {
@@ -89,12 +95,6 @@ export default function SupportWidget() {
 
         return () => clearInterval(interval);
     }, [isOpen, conversation]);
-
-    const scrollToBottom = useCallback(() => {
-        setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -431,7 +431,13 @@ function SupportWidgetEchoListener({
 
                 scrollToBottom();
             },
-            [conversation.id, isOpenRef, scrollToBottom, setMessages, setUnread],
+            [
+                conversation.id,
+                isOpenRef,
+                scrollToBottom,
+                setMessages,
+                setUnread,
+            ],
         ),
     );
 

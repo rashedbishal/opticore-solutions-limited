@@ -1,5 +1,4 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useRef } from 'react';
 
 const items = [
     {
@@ -39,6 +38,46 @@ const items = [
     },
 ];
 
+interface NebulaItemProps {
+    item: (typeof items)[0];
+    index: number;
+    dx: any;
+    dy: any;
+}
+
+function NebulaItem({ item, index, dx, dy }: NebulaItemProps) {
+    const x = useTransform(dx, [-0.5, 0.5], [index * -50, index * 50]);
+    const y = useTransform(dy, [-0.5, 0.5], [index * -30, index * 30]);
+    const rotateX = useTransform(dy, [-0.5, 0.5], [15, -15]);
+    const rotateY = useTransform(dx, [-0.5, 0.5], [-15, 15]);
+
+    return (
+        <motion.div
+            style={{
+                left: item.x,
+                top: item.y,
+                width: item.size,
+                x,
+                y,
+                rotateX,
+                rotateY,
+            }}
+            className="preserve-3d absolute aspect-[4/3] overflow-hidden rounded-3xl border border-white/5 shadow-2xl"
+            whileHover={{
+                scale: 1.1,
+                z: 50,
+                borderColor: 'rgba(255,255,255,0.2)',
+            }}
+        >
+            <img
+                src={item.src}
+                alt=""
+                className="h-full w-full object-cover grayscale transition-all duration-500 hover:grayscale-0"
+            />
+        </motion.div>
+    );
+}
+
 export default function NebulaCluster() {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -65,47 +104,15 @@ export default function NebulaCluster() {
                 </h2>
             </div>
 
-            {items.map((item, index) => {
-                const x = useTransform(
-                    dx,
-                    [-0.5, 0.5],
-                    [index * -50, index * 50],
-                );
-                const y = useTransform(
-                    dy,
-                    [-0.5, 0.5],
-                    [index * -30, index * 30],
-                );
-                const rotateX = useTransform(dy, [-0.5, 0.5], [15, -15]);
-                const rotateY = useTransform(dx, [-0.5, 0.5], [-15, 15]);
-
-                return (
-                    <motion.div
-                        key={item.id}
-                        style={{
-                            left: item.x,
-                            top: item.y,
-                            width: item.size,
-                            x,
-                            y,
-                            rotateX,
-                            rotateY,
-                        }}
-                        className="preserve-3d absolute aspect-[4/3] overflow-hidden rounded-3xl border border-white/5 shadow-2xl"
-                        whileHover={{
-                            scale: 1.1,
-                            z: 50,
-                            borderColor: 'rgba(255,255,255,0.2)',
-                        }}
-                    >
-                        <img
-                            src={item.src}
-                            alt=""
-                            className="h-full w-full object-cover grayscale transition-all duration-500 hover:grayscale-0"
-                        />
-                    </motion.div>
-                );
-            })}
+            {items.map((item, index) => (
+                <NebulaItem
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    dx={dx}
+                    dy={dy}
+                />
+            ))}
         </div>
     );
 }

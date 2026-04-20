@@ -4,13 +4,11 @@ import type { ReactElement, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { configureEcho, echo } from '@laravel/echo-react';
 import axios from 'axios';
+import Pusher from 'pusher-js';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 
-import Pusher from 'pusher-js';
-
-// Guard browser-specific code
 if (typeof window !== 'undefined') {
     (window as any).Pusher = Pusher;
 
@@ -23,9 +21,12 @@ if (typeof window !== 'undefined') {
         forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
         disableStats: true,
         enabledTransports: ['ws', 'wss'],
-        authorizer: (channel: any, options: any) => {
+        authorizer: (channel: any) => {
             return {
-                authorize: (socketId: string, callback: Function) => {
+                authorize: (
+                    socketId: string,
+                    callback: (error: any, data?: any) => void,
+                ) => {
                     axios
                         .post('/broadcasting/auth', {
                             socket_id: socketId,

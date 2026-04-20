@@ -1,9 +1,8 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Package,
     Clock,
-    CheckCircle2,
     AlertCircle,
     Star,
     MessageSquare,
@@ -16,7 +15,7 @@ import {
     CreditCard,
     Zap,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AppLayout from '@/components/Layout/AppLayout';
 
 const mockOrders = [
@@ -63,12 +62,17 @@ export default function UserDashboard() {
     const [hoverRating, setHoverRating] = useState(0);
 
     const filteredOrders = mockOrders.filter((order) => {
-        if (activeTab === 'active')
+        if (activeTab === 'active') {
             return (
                 order.status === 'In Progress' ||
                 order.status === 'Review Required'
             );
-        if (activeTab === 'completed') return order.status === 'Completed';
+        }
+
+        if (activeTab === 'completed') {
+            return order.status === 'Completed';
+        }
+
         return true;
     });
 
