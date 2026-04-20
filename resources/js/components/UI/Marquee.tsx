@@ -42,7 +42,7 @@ export default function Marquee({ items }: MarqueeProps) {
     // we ensure the "half" (baseSet) is long enough.
     let baseSet = [...normalized];
 
-    if (baseSet.length > 0) {
+    if (normalized.length > 0) {
         while (baseSet.length < 12) {
             baseSet = [...baseSet, ...normalized];
         }

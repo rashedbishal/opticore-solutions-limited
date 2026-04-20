@@ -260,8 +260,8 @@ function CharmingStar() {
                 initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
                 whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
                 animate={{
-                    rotate: [0, 0, 360, 360, 10, -10, 10, 0, 0],
-                    scale: [1, 1.1, 1, 1.2, 1, 1],
+                    rotate: [0, 360, 370, 350, 360, 0],
+                    scale: [1, 1.1, 1.2, 1.1, 1],
                 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{
@@ -270,13 +270,13 @@ function CharmingStar() {
                         duration: 8,
                         repeat: Infinity,
                         ease: 'easeInOut',
-                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
+                        times: [0, 0.4, 0.6, 0.8, 0.9, 1],
                     },
                     scale: {
                         duration: 8,
                         repeat: Infinity,
                         ease: 'easeInOut',
-                        times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                        times: [0, 0.25, 0.5, 0.75, 1],
                     },
                 }}
                 className="absolute inset-0 flex items-center justify-center text-amber-400"
