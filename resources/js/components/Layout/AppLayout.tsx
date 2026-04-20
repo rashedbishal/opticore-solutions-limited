@@ -20,7 +20,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
             {/* Global Wrapper restored to original styling to debug render crash */}
             <div className="app-shell" data-cursor={cursorType}>
                 <CursorSelector cursorType={cursorType} />
-                
+
                 {/* Background effects restored to original layer */}
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div className="absolute inset-x-0 top-0 h-[480px] bg-linear-to-b from-violet-500/10 via-cyan-400/5 to-transparent blur-3xl" />
@@ -51,4 +51,3 @@ export default function AppLayout({ children }: PropsWithChildren) {
         </SmoothScroll>
     );
 }
-

@@ -1,12 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    Lock,
-    ArrowRight,
-    KeyRound,
-} from 'lucide-react';
+import { Mail, Lock, ArrowRight, KeyRound } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function ResetPassword({
@@ -52,7 +47,7 @@ export default function ResetPassword({
             {/* Form */}
             <form onSubmit={submit} className="space-y-6">
                 <input type="hidden" name="token" value={data.token} />
-                
+
                 <div className="space-y-4">
                     <div className="group relative">
                         <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
@@ -82,7 +77,9 @@ export default function ResetPassword({
                             type="password"
                             name="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
                             placeholder="New Password"
                             className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                             required
@@ -103,7 +100,9 @@ export default function ResetPassword({
                             type="password"
                             name="password_confirmation"
                             value={data.password_confirmation}
-                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
                             placeholder="Confirm New Password"
                             className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                             required
@@ -116,9 +115,7 @@ export default function ResetPassword({
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
                 >
-                    {processing
-                        ? 'Updating Password...'
-                        : 'Reset Password'}{' '}
+                    {processing ? 'Updating Password...' : 'Reset Password'}{' '}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
             </form>
@@ -126,4 +123,6 @@ export default function ResetPassword({
     );
 }
 
-ResetPassword.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
+ResetPassword.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);

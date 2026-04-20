@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { MailCheck, ArrowRight, LogOut } from 'lucide-react';
@@ -69,4 +69,6 @@ export default function VerifyEmail({ status }: { status?: string }) {
     );
 }
 
-VerifyEmail.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
+VerifyEmail.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);

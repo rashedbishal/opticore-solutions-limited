@@ -1,11 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    ArrowRight,
-    KeyRound,
-} from 'lucide-react';
+import { Mail, ArrowRight, KeyRound } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function ForgotPassword({ status }: { status?: string }) {
@@ -40,7 +36,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             </div>
 
             {status && (
-                <div className="mb-6 rounded-2xl bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400 border border-emerald-500/20">
+                <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400">
                     {status}
                 </div>
             )}
@@ -75,9 +71,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
                 >
-                    {processing
-                        ? 'Sending Link...'
-                        : 'Send Reset Link'}{' '}
+                    {processing ? 'Sending Link...' : 'Send Reset Link'}{' '}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
             </form>
@@ -97,4 +91,6 @@ export default function ForgotPassword({ status }: { status?: string }) {
     );
 }
 
-ForgotPassword.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
+ForgotPassword.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);

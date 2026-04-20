@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
@@ -180,4 +180,6 @@ export default function Login({ status }: { status?: string }) {
     );
 }
 
-Login.layout = (page: ReactNode) => <GuestLayout children={page} maxWidth="lg" />;
+Login.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);

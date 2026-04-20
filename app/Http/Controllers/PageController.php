@@ -16,6 +16,7 @@ class PageController extends Controller
             ],
         ]);
     }
+
     public function aboutUs(): Response
     {
         return Inertia::render('About', [

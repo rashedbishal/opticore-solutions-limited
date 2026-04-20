@@ -1,4 +1,5 @@
-import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
 const items = [
@@ -77,20 +78,25 @@ const items = [
 ];
 
 interface PortalItemProps {
-    item: typeof items[0];
+    item: (typeof items)[0];
     index: number;
     totalItems: number;
     scrollYProgress: MotionValue<number>;
 }
 
-function PortalItem({ item, index, totalItems, scrollYProgress }: PortalItemProps) {
+function PortalItem({
+    item,
+    index,
+    totalItems,
+    scrollYProgress,
+}: PortalItemProps) {
     const start = Math.min(1, index / totalItems);
     const end = Math.min(1, (index + 2) / totalItems);
 
     const scale = useTransform(
         scrollYProgress,
         [start, (start + end) / 2, end],
-        [0, 1, 7]
+        [0, 1, 7],
     );
 
     // Clamp fade-in/fade-out keypoints so they never cross each other
@@ -103,13 +109,13 @@ function PortalItem({ item, index, totalItems, scrollYProgress }: PortalItemProp
     const opacity = useTransform(
         scrollYProgress,
         [start, fadeInEnd, fadeOutStart, end],
-        [0, 1, 1, 0]
+        [0, 1, 1, 0],
     );
 
     const rotate = useTransform(
         scrollYProgress,
         [start, end],
-        [index % 2 === 0 ? -2 : 2, index % 2 === 0 ? 8 : -8]
+        [index % 2 === 0 ? -2 : 2, index % 2 === 0 ? 8 : -8],
     );
 
     // Higher index = higher zIndex so each new card renders ON TOP of the previous.
@@ -129,7 +135,7 @@ function PortalItem({ item, index, totalItems, scrollYProgress }: PortalItemProp
                 y: 0,
                 willChange: 'transform, opacity',
             }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
             <div className="group pointer-events-auto relative aspect-video w-[85vw] max-w-5xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-black shadow-[0_0_80px_rgba(0,0,0,0.8)] transition-colors duration-500 hover:border-cyan-500/20">
                 <img
@@ -140,7 +146,7 @@ function PortalItem({ item, index, totalItems, scrollYProgress }: PortalItemProp
                     decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                
+
                 <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16">
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -161,7 +167,7 @@ function PortalItem({ item, index, totalItems, scrollYProgress }: PortalItemProp
 
 export default function PortalLoop() {
     const containerRef = useRef<HTMLDivElement>(null);
-    
+
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ['start start', 'end end'],
@@ -173,19 +179,20 @@ export default function PortalLoop() {
     return (
         <div ref={containerRef} className="relative h-[1200vh] bg-black">
             <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
-                <div 
+                <div
                     className="pointer-events-none absolute inset-0 z-0 opacity-20"
-                    style={{ 
-                        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'1\' fill=\'%23ffffff44\' /%3E%3C/svg%3E")',
-                        backgroundSize: '80px 80px'
+                    style={{
+                        backgroundImage:
+                            "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23ffffff44' /%3E%3C/svg%3E\")",
+                        backgroundSize: '80px 80px',
                     }}
                 />
 
-                <motion.div 
-                    style={{ 
-                        scale: titleScale, 
+                <motion.div
+                    style={{
+                        scale: titleScale,
                         opacity: titleOpacity,
-                        willChange: 'transform, opacity'
+                        willChange: 'transform, opacity',
                     }}
                     className="pointer-events-none absolute z-50 text-center"
                 >
@@ -198,12 +205,12 @@ export default function PortalLoop() {
                 </motion.div>
 
                 {items.map((item, index) => (
-                    <PortalItem 
-                        key={item.id} 
-                        item={item} 
-                        index={index} 
-                        totalItems={items.length} 
-                        scrollYProgress={scrollYProgress} 
+                    <PortalItem
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        totalItems={items.length}
+                        scrollYProgress={scrollYProgress}
                     />
                 ))}
 
