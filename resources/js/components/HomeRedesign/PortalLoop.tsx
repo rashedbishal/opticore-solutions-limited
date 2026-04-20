@@ -29,6 +29,54 @@ const items = [
     },
 ];
 
+interface PortalItemProps {
+    item: (typeof items)[0];
+    index: number;
+    scrollYProgress: any;
+}
+
+function PortalItem({ item, index, scrollYProgress }: PortalItemProps) {
+    const start = index / items.length;
+    const end = (index + 1) / items.length;
+
+    const scale = useTransform(scrollYProgress, [start, end], [0.1, 15]);
+    const opacity = useTransform(
+        scrollYProgress,
+        [start, start + 0.1, end - 0.1, end],
+        [0, 1, 1, 0],
+    );
+    const rotate = useTransform(
+        scrollYProgress,
+        [start, end],
+        [0, index % 2 === 0 ? 10 : -10],
+    );
+
+    return (
+        <motion.div
+            style={{
+                scale,
+                opacity,
+                rotate,
+            }}
+            className="absolute inset-0 flex items-center justify-center"
+        >
+            <div className="relative aspect-video w-[60vw] overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
+                <img
+                    src={item.src}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute bottom-8 left-8">
+                    <p className="text-2xl font-bold tracking-widest text-white uppercase">
+                        {item.title}
+                    </p>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 export default function PortalLoop() {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
@@ -45,52 +93,14 @@ export default function PortalLoop() {
                     </h2>
                 </div>
 
-                {items.map((item, index) => {
-                    const start = index / items.length;
-                    const end = (index + 1) / items.length;
-
-                    const scale = useTransform(
-                        scrollYProgress,
-                        [start, end],
-                        [0.1, 15],
-                    );
-                    const opacity = useTransform(
-                        scrollYProgress,
-                        [start, start + 0.1, end - 0.1, end],
-                        [0, 1, 1, 0],
-                    );
-                    const rotate = useTransform(
-                        scrollYProgress,
-                        [start, end],
-                        [0, index % 2 === 0 ? 10 : -10],
-                    );
-
-                    return (
-                        <motion.div
-                            key={item.id}
-                            style={{
-                                scale,
-                                opacity,
-                                rotate,
-                            }}
-                            className="absolute inset-0 flex items-center justify-center"
-                        >
-                            <div className="relative aspect-video w-[60vw] overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
-                                <img
-                                    src={item.src}
-                                    alt={item.title}
-                                    className="h-full w-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/20" />
-                                <div className="absolute bottom-8 left-8">
-                                    <p className="text-2xl font-bold tracking-widest text-white uppercase">
-                                        {item.title}
-                                    </p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    );
-                })}
+                {items.map((item, index) => (
+                    <PortalItem
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        scrollYProgress={scrollYProgress}
+                    />
+                ))}
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
 import { User } from 'lucide-react';
+import { useState } from 'react';
 
 const testimonials = [
     {

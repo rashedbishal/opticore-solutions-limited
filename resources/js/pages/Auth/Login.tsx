@@ -1,11 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    Lock,
-    ArrowRight,
-    ShieldCheck,
-} from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Login({ status }: { status?: string }) {
@@ -42,7 +37,7 @@ export default function Login({ status }: { status?: string }) {
             </div>
 
             {status && (
-                <div className="mb-6 rounded-2xl bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400 border border-emerald-500/20">
+                <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400">
                     {status}
                 </div>
             )}
@@ -79,7 +74,9 @@ export default function Login({ status }: { status?: string }) {
                             type="password"
                             name="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
                             placeholder="Password"
                             className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                             required
@@ -98,14 +95,18 @@ export default function Login({ status }: { status?: string }) {
                             type="checkbox"
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
+                            onChange={(e) =>
+                                setData('remember', e.target.checked)
+                            }
                             className="h-4 w-4 rounded border-white/10 bg-black/40 text-cyan-500 focus:ring-offset-black"
                         />
-                        <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Remember Me</span>
+                        <span className="text-xs font-bold tracking-widest text-zinc-500 uppercase">
+                            Remember Me
+                        </span>
                     </label>
                     <Link
                         href="/forgot-password"
-                        className="text-xs font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-widest"
+                        className="text-xs font-bold tracking-widest text-zinc-500 uppercase transition-colors hover:text-white"
                     >
                         Forgot Password?
                     </Link>
@@ -116,9 +117,7 @@ export default function Login({ status }: { status?: string }) {
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
                 >
-                    {processing
-                        ? 'Signing In...'
-                        : 'Sign In'}{' '}
+                    {processing ? 'Signing In...' : 'Sign In'}{' '}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
 
@@ -151,7 +150,11 @@ export default function Login({ status }: { status?: string }) {
                         href="/auth/facebook/redirect"
                         className="flex items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 py-4 transition-colors hover:bg-white/10"
                     >
-                        <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                        <svg
+                            className="h-5 w-5 text-blue-500"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
                             <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
                         </svg>
                         <span className="text-sm font-bold text-white">

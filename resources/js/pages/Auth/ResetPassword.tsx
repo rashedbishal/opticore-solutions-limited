@@ -1,11 +1,6 @@
 import { Head, Form } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    Lock,
-    ArrowRight,
-    KeyRound,
-} from 'lucide-react';
+import { Mail, Lock, ArrowRight, KeyRound } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function ResetPassword({
@@ -50,8 +45,12 @@ export default function ResetPassword({
             >
                 {({ data, setData, errors, processing }) => (
                     <>
-                        <input type="hidden" name="token" value={data?.token || token} />
-                        
+                        <input
+                            type="hidden"
+                            name="token"
+                            value={data?.token || token}
+                        />
+
                         <div className="space-y-4">
                             <div className="group relative">
                                 <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
@@ -61,7 +60,9 @@ export default function ResetPassword({
                                     type="email"
                                     name="email"
                                     value={data?.email || email}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     placeholder="Email Address"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
                                     required
@@ -81,7 +82,9 @@ export default function ResetPassword({
                                     type="password"
                                     name="password"
                                     value={data?.password || ''}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                     placeholder="New Password"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                                     required
@@ -102,7 +105,12 @@ export default function ResetPassword({
                                     type="password"
                                     name="password_confirmation"
                                     value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'password_confirmation',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Confirm New Password"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                                     required

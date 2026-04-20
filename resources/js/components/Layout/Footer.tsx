@@ -19,7 +19,6 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,
-    navigationItems,
     services,
 } from '@/lib/site';
 

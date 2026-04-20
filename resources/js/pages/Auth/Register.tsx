@@ -1,13 +1,6 @@
 import { Head, Link, Form } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    Mail,
-    Lock,
-    User,
-    Phone,
-    ArrowRight,
-    Sparkles,
-} from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, Sparkles } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Register() {
@@ -56,7 +49,9 @@ export default function Register() {
                                     type="text"
                                     name="name"
                                     value={data?.name || ''}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="Full Name"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
                                     required
@@ -76,7 +71,9 @@ export default function Register() {
                                     type="email"
                                     name="email"
                                     value={data?.email || ''}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     placeholder="Email Address"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
                                     required
@@ -96,7 +93,9 @@ export default function Register() {
                                     type="tel"
                                     name="phone_number"
                                     value={data?.phone_number || ''}
-                                    onChange={(e) => setData('phone_number', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('phone_number', e.target.value)
+                                    }
                                     placeholder="Phone Number"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
                                 />
@@ -115,7 +114,9 @@ export default function Register() {
                                     type="password"
                                     name="password"
                                     value={data?.password || ''}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                     placeholder="Create Password"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                                     required
@@ -135,7 +136,12 @@ export default function Register() {
                                     type="password"
                                     name="password_confirmation"
                                     value={data?.password_confirmation || ''}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'password_confirmation',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Confirm Password"
                                     className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none"
                                     required
@@ -210,7 +216,11 @@ export default function Register() {
                                 href="/auth/facebook/redirect"
                                 className="flex items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 py-4 transition-colors hover:bg-white/10"
                             >
-                                <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <svg
+                                    className="h-5 w-5 text-blue-500"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
                                     <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
                                 </svg>
                                 <span className="text-sm font-bold text-white">

@@ -1,10 +1,6 @@
 import { Head, Form, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    MailCheck,
-    ArrowRight,
-    LogOut,
-} from 'lucide-react';
+import { MailCheck, ArrowRight, LogOut } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function VerifyEmail({ status }: { status?: string }) {
@@ -25,12 +21,13 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Verify Email
                 </h1>
                 <p className="font-medium text-zinc-500">
-                    Please check your inbox for a verification link to activate your account.
+                    Please check your inbox for a verification link to activate
+                    your account.
                 </p>
             </div>
 
             {status === 'verification-link-sent' && (
-                <div className="mb-6 rounded-2xl bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400 border border-emerald-500/20">
+                <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center text-sm font-bold text-emerald-400">
                     A new verification link has been sent to your email address.
                 </div>
             )}
@@ -62,7 +59,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     href="/logout"
                     method="post"
                     as="button"
-                    className="flex items-center justify-center gap-2 mx-auto font-bold text-zinc-500 transition-colors hover:text-white uppercase tracking-widest text-xs"
+                    className="mx-auto flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-zinc-500 uppercase transition-colors hover:text-white"
                 >
                     <LogOut className="h-4 w-4" />
                     Sign Out

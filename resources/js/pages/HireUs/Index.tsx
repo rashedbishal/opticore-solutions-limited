@@ -8,14 +8,12 @@ import {
     Film,
     Box,
     Code2,
-    ChevronRight,
     Star,
     Zap,
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import AppLayout from '@/components/Layout/AppLayout';
-import SectionHeader from '@/components/UI/SectionHeader';
 
 const services = [
     {

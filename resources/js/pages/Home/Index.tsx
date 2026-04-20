@@ -1,5 +1,5 @@
-import type { PortfolioItem } from '@/types';
 import type { Variants } from 'framer-motion';
+
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -10,43 +10,24 @@ import {
     Globe,
     PenTool,
     Sparkles,
-    Star,
 } from 'lucide-react';
-import { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 
+import KineticBento from '@/components/HomeRedesign/KineticBento';
+import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
+import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
+import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
+import PortalLoop from '@/components/HomeRedesign/PortalLoop';
+import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
-import { ServiceCarousel } from '@/components/UI/ScannedServiceCard';
-import SectionHeader from '@/components/UI/SectionHeader';
-import TestimonialCard from '@/components/UI/TestimonialCard';
-import PortalLoop from '@/components/HomeRedesign/PortalLoop';
-import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
-import KineticBento from '@/components/HomeRedesign/KineticBento';
-import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
-import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
-import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import {
-    aboutBentoImages,
-    clientLogos,
-    services,
-    testimonials,
-} from '@/lib/site';
-import {
-    portfolio,
-    graphicDesign,
-    digitalMarketing,
-    threeDProduction,
-    videoEditing,
-    webDevelopment,
-} from '@/routes';
+import { clientLogos } from '@/lib/site';
+import { portfolio } from '@/routes';
 
-const Section2 = lazy(() => import('@/components/Robot/Section2'));
-const Section3 = lazy(() => import('@/components/Robot/Section3'));
-const Section4 = lazy(() => import('@/components/Robot/Section4'));
-const Section5 = lazy(() => import('@/components/Robot/Section5'));
+// Section2-5 lazy imports removed due to being unused
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -58,25 +39,6 @@ const fadeUp: Variants = {
         transition: { duration: 0.8, ease: easing },
     },
 };
-
-const slideLeft: Variants = {
-    hidden: { opacity: 0, x: -80 },
-    visible: {
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.8, ease: easing },
-    },
-};
-
-const slideRight: Variants = {
-    hidden: { opacity: 0, x: 80 },
-    visible: {
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.8, ease: easing },
-    },
-};
-
 const blurReveal: Variants = {
     hidden: { opacity: 0, filter: 'blur(12px)', y: 30 },
     visible: {
@@ -85,11 +47,6 @@ const blurReveal: Variants = {
         y: 0,
         transition: { duration: 0.9, ease: easing },
     },
-};
-
-const staggerContainer: Variants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
 const floatingIcons = [
@@ -120,7 +77,7 @@ const floatingIcons = [
     },
 ];
 
-const duplicatedServices = [...services, ...services];
+// duplicatedServices removed due to being unused
 
 function HeroHeadline() {
     const phrases = [
@@ -249,79 +206,13 @@ function HeroHeadline() {
     );
 }
 
-function CharmingStar() {
-    return (
-        <div className="relative mr-2.5 flex items-center justify-center">
-            {/* The "Shell" star - reduced opacity to be almost invisible guidewires */}
-            <Star strokeWidth={1} className="h-4 w-4 text-white/5" />
-
-            {/* The "Filling" star with Idle Dance & Spin */}
-            <motion.div
-                initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
-                whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
-                animate={{
-                    rotate: [0, 0, 360, 360, 10, -10, 10, 0, 0],
-                    scale: [1, 1.1, 1, 1.2, 1, 1],
-                }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{
-                    clipPath: { duration: 1.2, delay: 0.6, ease: 'easeInOut' },
-                    rotate: {
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                        times: [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
-                    },
-                    scale: {
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                        times: [0, 0.2, 0.4, 0.6, 0.8, 1],
-                    },
-                }}
-                className="absolute inset-0 flex items-center justify-center text-amber-400"
-            >
-                <Star
-                    strokeWidth={0}
-                    className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"
-                />
-            </motion.div>
-
-            {/* The Recurring Sparkle */}
-            <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{
-                    scale: [0, 1.8, 0, 0, 0],
-                    opacity: [0, 1, 0, 0, 0],
-                    rotate: [0, 45, 90, 90, 90],
-                }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    repeatDelay: 1,
-                    ease: 'circOut',
-                    times: [0, 0.15, 0.3, 0.6, 1],
-                }}
-                className="pointer-events-none absolute -top-1 -right-1"
-            >
-                <Sparkles
-                    strokeWidth={0}
-                    className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]"
-                />
-            </motion.div>
-        </div>
-    );
-}
+// CharmingStar removed due to being unused
 
 interface HomeIndexProps {
-    featuredPortfolios: Record<string, PortfolioItem[]>;
     brands?: string[];
 }
 
-export default function HomeIndex({
-    featuredPortfolios,
-    brands,
-}: HomeIndexProps) {
+export default function HomeIndex({ brands }: HomeIndexProps) {
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {

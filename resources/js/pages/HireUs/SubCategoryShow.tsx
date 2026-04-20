@@ -11,7 +11,6 @@ import {
     ArrowRight,
     X,
     Send,
-    Bot,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import AppLayout from '@/components/Layout/AppLayout';
@@ -45,7 +44,10 @@ export default function SubCategoryShow({
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim()) return;
+
+        if (!newMessage.trim()) {
+            return;
+        }
 
         const time = new Date().toLocaleTimeString([], {
             hour: '2-digit',
