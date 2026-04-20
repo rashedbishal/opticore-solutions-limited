@@ -217,30 +217,39 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
-            entries.forEach((entry) => {
-                const card = entry.target as HTMLElement;
-                const rect = card.querySelector<SVGRectElement>('.trace-rect');
-                const beam = card.querySelector<SVGRectElement>('.beam-rect');
+            requestAnimationFrame(() => {
+                entries.forEach((entry) => {
+                    const card = entry.target as HTMLElement;
+                    const rect = card.querySelector<SVGRectElement>('.trace-rect');
+                    const beam = card.querySelector<SVGRectElement>('.beam-rect');
 
-                if (!rect) {
-                    return;
-                }
+                    if (!rect) {
+                        return;
+                    }
 
-                const box = card.getBoundingClientRect();
-                const w = box.width;
-                const h = box.height;
+                    const box = card.getBoundingClientRect();
+                    const w = Math.round(box.width);
+                    const h = Math.round(box.height);
 
-                const r = 26;
-                const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
+                    // Skip if dimensions haven't significantly changed
+                    if (card.dataset.lastW === `${w}` && card.dataset.lastH === `${h}`) {
+                        return;
+                    }
+                    card.dataset.lastW = `${w}`;
+                    card.dataset.lastH = `${h}`;
 
-                card.style.setProperty('--perim', `${perim}px`);
-                rect.setAttribute('width', `${w - 2.5}`);
-                rect.setAttribute('height', `${h - 2.5}`);
+                    const r = 26;
+                    const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
 
-                if (beam) {
-                    beam.setAttribute('width', `${w - 2.5}`);
-                    beam.setAttribute('height', `${h - 2.5}`);
-                }
+                    card.style.setProperty('--perim', `${perim}px`);
+                    rect.setAttribute('width', `${w - 2.5}`);
+                    rect.setAttribute('height', `${h - 2.5}`);
+
+                    if (beam) {
+                        beam.setAttribute('width', `${w - 2.5}`);
+                        beam.setAttribute('height', `${h - 2.5}`);
+                    }
+                });
             });
         });
 

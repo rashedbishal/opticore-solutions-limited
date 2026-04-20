@@ -139,14 +139,14 @@ class ParticleScanner {
 
     private mkP(): Particle {
         return {
-            x: this.barX + this.rng(-this.barW / 2, this.barW / 2),
-            y: this.rng(0, this.h),
-            vx: this.rng(0.2, 1.0),
-            vy: this.rng(-0.15, 0.15),
-            alpha: this.rng(0.6, 1),
-            radius: this.rng(3, 8),
+            x: Math.round(this.barX + (Math.random() - 0.5) * this.barW),
+            y: Math.round(Math.random() * this.h),
+            vx: 0.2 + Math.random() * 0.8,
+            vy: (Math.random() - 0.5) * 0.3,
+            alpha: 0.6 + Math.random() * 0.4,
+            radius: 3 + Math.random() * 5,
             life: 1,
-            decay: this.rng(0.002, 0.006),
+            decay: 0.002 + Math.random() * 0.004,
         };
     }
 
@@ -344,6 +344,7 @@ function ScannedCarousel({
         lastX: 0, mouseVel: 0, lastT: 0,
         trackW: (CARD_W + CARD_GAP) * doubled.length,
         animId: 0, clipId: 0,
+        frame: 0,
     });
 
     // bar X in CANVAS pixels = rootRef.offsetWidth / 2
@@ -370,6 +371,13 @@ function ScannedCarousel({
     // ── clip loop ─────────────────────────────────────────────────────────────
     const updateClip = useCallback(function tick() {
         if (!trackRef.current) {
+            return;
+        }
+
+        // Optimization: only update clipPath every other frame to save CPU
+        state.current.frame++;
+        if (state.current.frame % 2 !== 0) {
+            state.current.clipId = requestAnimationFrame(tick);
             return;
         }
 
@@ -442,7 +450,7 @@ function ScannedCarousel({
             }
 
             if (trackRef.current) {
-                trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
+                trackRef.current.style.transform = `translate3d(${s.pos}px, -50%, 0)`;
             }
         }
 
@@ -473,7 +481,7 @@ function ScannedCarousel({
         s.pos += dx; s.mouseVel = dx * 60; s.lastX = clientX;
 
         if (trackRef.current) {
-            trackRef.current.style.transform = `translateX(${s.pos}px) translateY(-50%)`;
+            trackRef.current.style.transform = `translate3d(${s.pos}px, -50%, 0)`;
         }
     }, []);
 
@@ -514,12 +522,22 @@ function ScannedCarousel({
         updateClip();
 
         const asciiTimer = setInterval(() => {
-            asciiRefs.current.forEach((el) => {
-                if (el && Math.random() < 0.15) {
+            const scanX = getScanPageX();
+            const hw = 100; // Only update cards near the scanner
+
+            asciiRefs.current.forEach((el, i) => {
+                if (!el) {
+ return;
+}
+
+                const rect = el.getBoundingClientRect();
+                const isNearScanner = rect.left < scanX + hw && rect.right > scanX - hw;
+
+                if (isNearScanner && Math.random() < 0.2) {
                     el.textContent = generateCode(CODE_COLS, CODE_ROWS);
                 }
             });
-        }, 200);
+        }, 400);
 
         const onResize = () => {
             s.trackW = (CARD_W + CARD_GAP) * doubled.length;
@@ -618,6 +636,7 @@ function ScannedCarousel({
                             style={{
                                 position:'relative', width:CARD_W, height:CARD_H,
                                 flexShrink:0, borderRadius:'1.5rem', overflow:'hidden',
+                                willChange: 'transform, clip-path',
                             }}
                         >
                             {/* Normal card — revealed to the LEFT of the scanner */}
