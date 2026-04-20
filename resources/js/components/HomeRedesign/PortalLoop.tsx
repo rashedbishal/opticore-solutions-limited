@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
 // Ultra-optimized images: low resolution and high compression for maximum speed
@@ -20,6 +20,11 @@ export default function PortalLoop() {
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
+    });
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 120,
+        damping: 26,
+        mass: 0.25,
     });
 
     return (
@@ -52,7 +57,7 @@ export default function PortalLoop() {
                         item={item} 
                         index={i} 
                         total={items.length} 
-                        progress={scrollYProgress} 
+                        progress={smoothProgress} 
                     />
                 ))}
 
@@ -67,28 +72,20 @@ function PortalCard({ item, index, total, progress }: { item: any, index: number
     // Simple, clean range calculation
     const start = index / total;
     const end = (index + 1) / total;
-    const span = end - start;
-    const entry = start + span * 0.2;
-    const exitStart = start + span * 0.8;
-    
-    // Scale: from 0.4 to 1 (active) to 6 (zoom out)
-    const scale = useTransform(progress, [start, start + 0.1, end], [0.5, 1, 6]);
-    
-    // Opacity: Tight fadeIn/Out to ensure only active cards use resources
-    const opacityInputRange = [
-        start,
-        Math.max(start, entry),
-        Math.max(Math.max(start, entry), exitStart),
-        Math.max(Math.max(Math.max(start, entry), exitStart), end),
-    ];
-    const opacity = useTransform(
-        progress, 
-        opacityInputRange, 
-        [0, 1, 1, 0]
-    );
+    const localProgress = useTransform(progress, [start, end], [0, 1]);
+
+    // Keep every card's growth phase identical regardless of index.
+    const scale = useTransform(localProgress, [0, 0.38, 1], [0.5, 1, 6]);
+
+    // Monotonic and card-local opacity curve.
+    const opacity = useTransform(localProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     // Subtle rotation for organic feel
-    const rotate = useTransform(progress, [start, end], [index % 2 === 0 ? -1 : 1, index % 2 === 0 ? 3 : -3]);
+    const rotate = useTransform(
+        localProgress,
+        [0, 1],
+        [index % 2 === 0 ? -1 : 1, index % 2 === 0 ? 3 : -3],
+    );
 
     return (
         <motion.div
