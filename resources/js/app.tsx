@@ -10,6 +10,7 @@ import AppLayout from '@/components/Layout/AppLayout';
 
 import Pusher from 'pusher-js';
 
+// Guard browser-specific code
 if (typeof window !== 'undefined') {
     (window as any).Pusher = Pusher;
 
