@@ -298,17 +298,31 @@ setSessionId(data.session_id);
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-400"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0,
+                                                    times: [0, 0.5, 1]
+                                                }}                                            />
+                                            <motion.div
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
+                                                animate={{ y: [0, -4, 0] }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0.2,
+                                                    times: [0, 0.5, 1]
+                                                }}
                                             />
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-400"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                                            />
-                                            <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
-                                                animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0.4,
+                                                    times: [0, 0.5, 1]
+                                                }}
                                             />
                                         </div>
                                     </motion.div>

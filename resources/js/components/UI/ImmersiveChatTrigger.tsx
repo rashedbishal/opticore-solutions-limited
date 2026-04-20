@@ -28,11 +28,12 @@ export default function ImmersiveChatTrigger({
                 duration: 1.2,
                 repeat: Infinity,
                 ease: "easeInOut",
+                times: [0, 0.5, 1],
             }
         }
-    };
+        };
 
-    return (
+        return (
         <div className={cn("relative group", className)}>
             {/* AI Pulse Glow */}
             {!isOpen && (
@@ -45,8 +46,8 @@ export default function ImmersiveChatTrigger({
                         duration: isDancing ? 1.2 : 4,
                         repeat: Infinity,
                         ease: "easeInOut",
-                    }}
-                    className="absolute inset-0 rounded-full bg-linear-to-tr from-violet-600 to-cyan-500 blur-xl"
+                        times: [0, 0.5, 1],
+                    }}                    className="absolute inset-0 rounded-full bg-linear-to-tr from-violet-600 to-cyan-500 blur-xl"
                 />
             )}
 

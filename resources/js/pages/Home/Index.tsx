@@ -97,26 +97,31 @@ const floatingIcons = [
         icon: PenTool,
         className: 'top-[10%] left-[4%]',
         animation: { x: [0, 8, 0], y: [0, -12, 0], rotate: [0, 4, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Globe,
         className: 'top-[14%] right-[5%]',
         animation: { x: [0, -10, 0], y: [0, 10, 0], rotate: [0, -4, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Film,
         className: 'bottom-[24%] left-[6%]',
         animation: { x: [0, 12, 0], y: [0, -8, 0], rotate: [0, 5, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Box,
         className: 'right-[8%] bottom-[20%]',
         animation: { x: [0, -12, 0], y: [0, 8, 0], rotate: [0, -5, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Code2,
         className: 'bottom-[8%] left-[14%]',
         animation: { x: [0, 10, 0], y: [0, -6, 0], rotate: [0, 3, 0] },
+        times: [0, 0.5, 1],
     },
 ];
 
@@ -532,11 +537,12 @@ export default function HomeIndex({
                                     <motion.div
                                         key={className}
                                         className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
-                                        animate={animation}
+                                        animate={animation.animation}
                                         transition={{
-                                            duration: 6,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                            ease: 'easeInOut',
+                                           duration: 6,
+                                           repeat: Number.POSITIVE_INFINITY,
+                                           ease: 'easeInOut',
+                                           times: animation.times,
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />
