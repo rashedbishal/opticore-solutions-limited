@@ -1,11 +1,21 @@
-import { Head, Link, Form } from '@inertiajs/react';
+import type { ReactNode } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, KeyRound } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function ForgotPassword({ status }: { status?: string }) {
+    const { data, setData, post, processing, errors } = useForm({
+        email: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/forgot-password');
+    };
+
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Forgot Password | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -32,50 +42,39 @@ export default function ForgotPassword({ status }: { status?: string }) {
             )}
 
             {/* Form */}
-            <Form
-                action="/forgot-password"
-                method="post"
-                initialValues={{ email: '' }}
-                className="space-y-6"
-            >
-                {({ data, setData, errors, processing }) => (
-                    <>
-                        <div className="space-y-4">
-                            <div className="group relative">
-                                <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
-                                    <Mail className="h-5 w-5" />
-                                </div>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={data?.email || ''}
-                                    onChange={(e) =>
-                                        setData('email', e.target.value)
-                                    }
-                                    placeholder="Email Address"
-                                    className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
-                                    required
-                                    autoFocus
-                                />
-                                {errors.email && (
-                                    <p className="mt-2 ml-4 text-xs text-red-500">
-                                        {errors.email}
-                                    </p>
-                                )}
-                            </div>
+            <form onSubmit={submit} className="space-y-6">
+                <div className="space-y-4">
+                    <div className="group relative">
+                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
+                            <Mail className="h-5 w-5" />
                         </div>
+                        <input
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="Email Address"
+                            className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
+                            required
+                            autoFocus
+                        />
+                        {errors.email && (
+                            <p className="mt-2 ml-4 text-xs text-red-500">
+                                {errors.email}
+                            </p>
+                        )}
+                    </div>
+                </div>
 
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
-                        >
-                            {processing ? 'Sending Link...' : 'Send Reset Link'}{' '}
-                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                        </button>
-                    </>
-                )}
-            </Form>
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
+                >
+                    {processing ? 'Sending Link...' : 'Send Reset Link'}{' '}
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+            </form>
 
             <div className="mt-12 text-center">
                 <p className="text-zinc-500">
@@ -88,6 +87,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </Link>
                 </p>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+ForgotPassword.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);

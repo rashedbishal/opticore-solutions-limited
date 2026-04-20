@@ -7,6 +7,16 @@ use Inertia\Response;
 
 class PageController extends Controller
 {
+    public function hireUs(): Response
+    {
+        return Inertia::render('HireUs', [
+            'meta' => [
+                'title' => 'Hire Us — Opticore Solutions Ltd.',
+                'description' => 'Hire Opticore Solutions Ltd. for expert digital services. Explore our offerings and get a custom quote.',
+            ],
+        ]);
+    }
+
     public function aboutUs(): Response
     {
         return Inertia::render('About', [

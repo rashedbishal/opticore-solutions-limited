@@ -108,7 +108,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                 className="flex flex-wrap items-center gap-4 border-b border-white/5 pb-8 text-[10px] font-medium tracking-widest text-zinc-500 uppercase md:gap-10 md:pb-12 md:text-xs"
                             >
                                 <div className="flex items-center gap-2 md:gap-2.5">
-                                    <div className="to-secondary h-7 w-7 rounded-full bg-linear-to-br from-primary p-px md:h-8 md:w-8">
+                                    <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary to-secondary p-px md:h-8 md:w-8">
                                         <div className="flex h-full w-full items-center justify-center rounded-full bg-dark">
                                             <User className="h-3.5 w-3.5 text-white md:h-4 md:w-4" />
                                         </div>

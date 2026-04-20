@@ -133,7 +133,7 @@ export default function PortfolioCategoryShow({
 
                     {subCategories.length > 0 ? (
                         <>
-                            <div className="no-scrollbar mt-10 flex items-center gap-3 overflow-x-auto pb-4 lg:flex-wrap">
+                            <div className="mt-10 no-scrollbar flex items-center gap-3 overflow-x-auto pb-4 lg:flex-wrap">
                                 {subCategories.map((sub) => {
                                     const isActive =
                                         sub.slug === selectedSubCategory?.slug;

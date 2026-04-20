@@ -1,11 +1,19 @@
-import { Head, Form, Link } from '@inertiajs/react';
+import type { ReactNode } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { MailCheck, ArrowRight, LogOut } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function VerifyEmail({ status }: { status?: string }) {
+    const { post, processing } = useForm({});
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/email/verification-notification');
+    };
+
     return (
-        <GuestLayout maxWidth="lg">
+        <>
             <Head title="Verify Email | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -33,26 +41,18 @@ export default function VerifyEmail({ status }: { status?: string }) {
             )}
 
             {/* Form */}
-            <Form
-                action="/email/verification-notification"
-                method="post"
-                className="space-y-6"
-            >
-                {({ processing }) => (
-                    <>
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
-                        >
-                            {processing
-                                ? 'Sending Link...'
-                                : 'Resend Verification Email'}{' '}
-                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                        </button>
-                    </>
-                )}
-            </Form>
+            <form onSubmit={submit} className="space-y-6">
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
+                >
+                    {processing
+                        ? 'Sending Link...'
+                        : 'Resend Verification Email'}{' '}
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+            </form>
 
             <div className="mt-12 text-center">
                 <Link
@@ -65,6 +65,10 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Sign Out
                 </Link>
             </div>
-        </GuestLayout>
+        </>
     );
 }
+
+VerifyEmail.layout = (page: ReactNode) => (
+    <GuestLayout children={page} maxWidth="lg" />
+);
