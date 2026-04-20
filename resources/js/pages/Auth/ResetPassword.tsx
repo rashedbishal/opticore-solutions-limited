@@ -29,7 +29,7 @@ export default function ResetPassword({
     };
 
     return (
-        <>
+        <GuestLayout>
             <Head title="Reset Password | Opticore Solutions Ltd." />
 
             {/* Header */}
@@ -122,7 +122,7 @@ export default function ResetPassword({
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
             </form>
-        </>
+        </GuestLayout>
     );
 }
 
