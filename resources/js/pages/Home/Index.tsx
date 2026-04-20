@@ -13,6 +13,7 @@ import {
     Star,
 } from 'lucide-react';
 import { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import type { ReactNode } from 'react';
 
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -20,12 +21,6 @@ import Marquee from '@/components/UI/Marquee';
 import { ServiceCarousel } from '@/components/UI/ScannedServiceCard';
 import SectionHeader from '@/components/UI/SectionHeader';
 import TestimonialCard from '@/components/UI/TestimonialCard';
-import PortalLoop from '@/components/HomeRedesign/PortalLoop';
-import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
-import KineticBento from '@/components/HomeRedesign/KineticBento';
-import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
-import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
-import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
@@ -47,6 +42,20 @@ const Section2 = lazy(() => import('@/components/Robot/Section2'));
 const Section3 = lazy(() => import('@/components/Robot/Section3'));
 const Section4 = lazy(() => import('@/components/Robot/Section4'));
 const Section5 = lazy(() => import('@/components/Robot/Section5'));
+const PortalLoop = lazy(() => import('@/components/HomeRedesign/PortalLoop'));
+const NebulaCluster = lazy(
+    () => import('@/components/HomeRedesign/NebulaCluster'),
+);
+const KineticBento = lazy(() => import('@/components/HomeRedesign/KineticBento'));
+const LiquidShuffle = lazy(
+    () => import('@/components/HomeRedesign/LiquidShuffle'),
+);
+const OrbitingShowcase = lazy(
+    () => import('@/components/HomeRedesign/OrbitingShowcase'),
+);
+const SpotlightCarousel = lazy(
+    () => import('@/components/HomeRedesign/SpotlightCarousel'),
+);
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -126,6 +135,55 @@ const floatingIcons = [
 ];
 
 const duplicatedServices = [...services, ...services];
+
+function LazySection({
+    minHeightClassName = 'min-h-[60vh]',
+    children,
+}: {
+    minHeightClassName?: string;
+    children: ReactNode;
+}) {
+    const [isVisible, setIsVisible] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '400px 0px' },
+        );
+
+        if (sentinelRef.current) {
+            observer.observe(sentinelRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={sentinelRef}>
+            {isVisible ? (
+                <Suspense
+                    fallback={
+                        <div
+                            className={`flex ${minHeightClassName} items-center justify-center text-sm text-zinc-500`}
+                        >
+                            Loading section...
+                        </div>
+                    }
+                >
+                    {children}
+                </Suspense>
+            ) : (
+                <div className={minHeightClassName} aria-hidden="true" />
+            )}
+        </div>
+    );
+}
 
 function HeroHeadline() {
     const phrases = [
@@ -594,7 +652,9 @@ export default function HomeIndex({
                         </p>
                     </div>
                 </section>
-                <PortalLoop />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <PortalLoop />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -609,7 +669,9 @@ export default function HomeIndex({
                         </p>
                     </div>
                 </section>
-                <NebulaCluster />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <NebulaCluster />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -621,7 +683,9 @@ export default function HomeIndex({
                         </h2>
                     </div>
                 </section>
-                <KineticBento />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <KineticBento />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -633,7 +697,9 @@ export default function HomeIndex({
                         </h2>
                     </div>
                 </section>
-                <LiquidShuffle />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <LiquidShuffle />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -645,7 +711,9 @@ export default function HomeIndex({
                         </h2>
                     </div>
                 </section>
-                <OrbitingShowcase />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <OrbitingShowcase />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -657,7 +725,9 @@ export default function HomeIndex({
                         </h2>
                     </div>
                 </section>
-                <SpotlightCarousel />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <SpotlightCarousel />
+                </LazySection>
             </div>
 
             <section className="section-shell pt-0">
