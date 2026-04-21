@@ -40,7 +40,64 @@ interface Message {
     message: string | null;
     attachment_path: string | null;
     attachment_type: string | null;
+    delivered_at: string | null;
+    read_at: string | null;
     created_at: string;
+}
+
+interface MessageStatusPayload {
+    messages: Array<{
+        id: number;
+        delivered_at: string | null;
+        read_at: string | null;
+    }>;
+}
+
+function applyMessageStatuses(
+    currentMessages: Message[],
+    statuses: MessageStatusPayload['messages'],
+): Message[] {
+    if (statuses.length === 0) {
+        return currentMessages;
+    }
+
+    const statusesById = new Map(statuses.map((status) => [status.id, status]));
+
+    return currentMessages.map((message) => {
+        const status = statusesById.get(message.id);
+
+        if (!status) {
+            return message;
+        }
+
+        return {
+            ...message,
+            delivered_at: status.delivered_at,
+            read_at: status.read_at,
+        };
+    });
+}
+
+function getLatestOutgoingMessageId(messages: Message[]): number | null {
+    for (let index = messages.length - 1; index >= 0; index--) {
+        if (messages[index].sender_type === 'admin') {
+            return messages[index].id;
+        }
+    }
+
+    return null;
+}
+
+function getMessageStatusLabel(message: Message): 'Sent' | 'Delivered' | 'Seen' {
+    if (message.read_at) {
+        return 'Seen';
+    }
+
+    if (message.delivered_at) {
+        return 'Delivered';
+    }
+
+    return 'Sent';
 }
 
 export default function Index() {
@@ -56,6 +113,7 @@ export default function Index() {
     const [attachment, setAttachment] = useState<File | null>(null);
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
+    const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     // Ref to always have the latest activeConv inside the Echo callback (avoids stale closure)
     const activeConvRef = useRef<Conversation | null>(null);
@@ -349,43 +407,52 @@ export default function Index() {
                                     key={`${msg.id}-${idx}`}
                                     className={`flex ${msg.sender_type === 'admin' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div
-                                        className={`max-w-[70%] rounded-2xl px-5 py-3 text-sm shadow-sm ${
-                                            msg.sender_type === 'admin'
-                                                ? 'rounded-br-none bg-cyan-600 text-white'
-                                                : 'rounded-bl-none border border-white/5 bg-slate-800 text-slate-200'
-                                        }`}
-                                    >
-                                        {msg.attachment_path && (
-                                            <a
-                                                href={`/chat/attachments/${msg.id}/download`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                download
-                                                className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
-                                            >
-                                                <span className="shrink-0">
-                                                    {msg.attachment_type ===
-                                                    'image' ? (
-                                                        <ImageIcon size={15} />
-                                                    ) : (
-                                                        <FileText size={15} />
-                                                    )}
-                                                </span>
-                                                <span className="flex-1 truncate text-xs underline underline-offset-2">
-                                                    Download Attachment
-                                                </span>
-                                                <Download
-                                                    size={13}
-                                                    className="shrink-0 opacity-60 group-hover:opacity-100"
-                                                />
-                                            </a>
-                                        )}
-                                        {msg.message && (
-                                            <p className="break-words whitespace-pre-wrap">
-                                                {msg.message}
-                                            </p>
-                                        )}
+                                    <div className="max-w-[70%]">
+                                        <div
+                                            className={`rounded-2xl px-5 py-3 text-sm shadow-sm ${
+                                                msg.sender_type === 'admin'
+                                                    ? 'rounded-br-none bg-cyan-600 text-white'
+                                                    : 'rounded-bl-none border border-white/5 bg-slate-800 text-slate-200'
+                                            }`}
+                                        >
+                                            {msg.attachment_path && (
+                                                <a
+                                                    href={`/chat/attachments/${msg.id}/download`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    download
+                                                    className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
+                                                >
+                                                    <span className="shrink-0">
+                                                        {msg.attachment_type ===
+                                                        'image' ? (
+                                                            <ImageIcon size={15} />
+                                                        ) : (
+                                                            <FileText size={15} />
+                                                        )}
+                                                    </span>
+                                                    <span className="flex-1 truncate text-xs underline underline-offset-2">
+                                                        Download Attachment
+                                                    </span>
+                                                    <Download
+                                                        size={13}
+                                                        className="shrink-0 opacity-60 group-hover:opacity-100"
+                                                    />
+                                                </a>
+                                            )}
+                                            {msg.message && (
+                                                <p className="break-words whitespace-pre-wrap">
+                                                    {msg.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                        {msg.sender_type === 'admin' &&
+                                            msg.id ===
+                                                latestOutgoingMessageId && (
+                                                <p className="mt-1 px-1 text-right text-[11px] text-slate-500">
+                                                    {getMessageStatusLabel(msg)}
+                                                </p>
+                                            )}
                                     </div>
                                 </div>
                             ))}
@@ -628,6 +695,17 @@ function AdminConversationEchoListener({
                 setFilteredConversations,
                 setMessages,
             ],
+        ),
+    );
+
+    useEcho<MessageStatusPayload>(
+        'admin.conversations',
+        'MessageStatusUpdated',
+        useCallback(
+            (e) => {
+                setMessages((prev) => applyMessageStatuses(prev, e.messages));
+            },
+            [setMessages],
         ),
     );
 

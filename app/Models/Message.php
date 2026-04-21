@@ -11,9 +11,13 @@ class Message extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'read_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'delivered_at' => 'datetime',
+            'read_at' => 'datetime',
+        ];
+    }
 
     public function conversation()
     {

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Events\MessageStatusUpdated;
 use App\Mail\AdminChatMessageReceivedMail;
 use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Message;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -51,6 +54,8 @@ class ConversationController extends Controller
         if (! $user || $conversation->user_id !== $user->id) {
             abort(403);
         }
+
+        $this->markIncomingMessagesAsDelivered($conversation, 'admin');
 
         $messages = $conversation->messages()
             ->latest()
@@ -120,10 +125,7 @@ class ConversationController extends Controller
             abort(403);
         }
 
-        $conversation->messages()
-            ->where('sender_type', 'admin')
-            ->whereNull('read_at')
-            ->update(['read_at' => now()]);
+        $this->markIncomingMessagesAsRead($conversation, 'admin');
 
         return response()->json(['success' => true]);
     }
@@ -151,5 +153,79 @@ class ConversationController extends Controller
             $message->attachment_path,
             basename($message->attachment_path)
         );
+    }
+
+    private function markIncomingMessagesAsDelivered(Conversation $conversation, string $senderType): void
+    {
+        $messageIds = $conversation->messages()
+            ->where('sender_type', $senderType)
+            ->whereNull('delivered_at')
+            ->pluck('id');
+
+        if ($messageIds->isEmpty()) {
+            return;
+        }
+
+        $deliveredAt = now();
+
+        Message::query()
+            ->whereIn('id', $messageIds)
+            ->update(['delivered_at' => $deliveredAt]);
+
+        $this->broadcastMessageStatuses(
+            $conversation,
+            Message::query()->whereKey($messageIds)->get(['id', 'delivered_at', 'read_at'])
+        );
+    }
+
+    private function markIncomingMessagesAsRead(Conversation $conversation, string $senderType): void
+    {
+        $messageIds = $conversation->messages()
+            ->where('sender_type', $senderType)
+            ->where(function (Builder $query) {
+                $query->whereNull('delivered_at')
+                    ->orWhereNull('read_at');
+            })
+            ->pluck('id');
+
+        if ($messageIds->isEmpty()) {
+            return;
+        }
+
+        $seenAt = now();
+
+        Message::query()
+            ->whereIn('id', $messageIds)
+            ->update([
+                'delivered_at' => $seenAt,
+                'read_at' => $seenAt,
+            ]);
+
+        $this->broadcastMessageStatuses(
+            $conversation,
+            Message::query()->whereKey($messageIds)->get(['id', 'delivered_at', 'read_at'])
+        );
+    }
+
+    /**
+     * @param  Collection<int, Message>  $messages
+     */
+    private function broadcastMessageStatuses(Conversation $conversation, $messages): void
+    {
+        if ($messages->isEmpty()) {
+            return;
+        }
+
+        broadcast(new MessageStatusUpdated(
+            conversationId: $conversation->id,
+            messages: $messages
+                ->map(fn (Message $message) => [
+                    'id' => $message->id,
+                    'delivered_at' => $message->delivered_at?->toJSON(),
+                    'read_at' => $message->read_at?->toJSON(),
+                ])
+                ->values()
+                ->all(),
+        ))->toOthers();
     }
 }
