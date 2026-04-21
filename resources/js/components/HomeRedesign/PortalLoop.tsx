@@ -20,6 +20,11 @@ export default function PortalLoop() {
         target: containerRef,
         offset: ["start start", "end end"]
     });
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 120,
+        damping: 26,
+        mass: 0.25,
+    });
 
     return (
         <div ref={containerRef} className="relative h-[800vh] bg-black">
@@ -51,7 +56,7 @@ export default function PortalLoop() {
                         item={item} 
                         index={i} 
                         total={items.length} 
-                        progress={scrollYProgress} 
+                        progress={smoothProgress} 
                     />
                 ))}
 
