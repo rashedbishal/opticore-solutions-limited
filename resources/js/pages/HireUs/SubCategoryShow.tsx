@@ -740,7 +740,7 @@ export default function SubCategoryShow({
             </div>
 
             {/* ── Floating Chat ── */}
-            <div className="fixed right-6 bottom-6 z-[60] flex flex-col items-end sm:right-8 sm:bottom-8">
+            <div className="fixed left-6 bottom-6 z-[100] flex flex-col items-start sm:left-8 sm:bottom-8">
                 <AnimatePresence>
                     {isChatOpen && (
                         <motion.div
@@ -837,20 +837,20 @@ export default function SubCategoryShow({
                 <button
                     type="button"
                     onClick={() => setIsChatOpen((v) => !v)}
-                    className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-2xl transition-all duration-300 ${
+                    className={`relative flex h-16 w-16 items-center justify-center rounded-full shadow-[0_0_20px_rgba(6,182,212,0.3)] border-2 border-cyan-500/30 transition-all duration-300 ${
                         isChatOpen
                             ? 'rotate-90 bg-zinc-800 text-white'
-                            : 'bg-white text-black hover:scale-110'
+                            : 'bg-white text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]'
                     }`}
                     aria-label={isChatOpen ? 'Close chat' : 'Open chat'}
                 >
                     {isChatOpen ? (
-                        <X className="h-6 w-6" />
+                        <X className="h-7 w-7" />
                     ) : (
-                        <MessageSquare className="h-6 w-6" />
+                        <MessageSquare className="h-7 w-7" />
                     )}
                     {!isChatOpen && (
-                        <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 animate-ping rounded-full bg-cyan-500" />
+                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-500" />
                     )}
                 </button>
             </div>
