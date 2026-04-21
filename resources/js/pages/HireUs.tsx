@@ -3,6 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, PenTool, Globe, Film, Box, Code2, Star, Zap, Users } from 'lucide-react';
 import { useState } from 'react';
 
+interface HireUsSubCategory {
+    name: string;
+    slug: string;
+    price: string;
+    rating: number;
+    reviews: number;
+    image: string;
+}
+
+interface Props {
+    subCategories: Record<string, HireUsSubCategory[]>;
+}
+
 const services = [
     {
         id: 'graphic-design',
@@ -41,40 +54,7 @@ const services = [
     },
 ];
 
-// Define sub-categories for each service, including slugs for navigation
-const subCategories: Record<string, any[]> = {
-    'graphic-design': [
-        { name: 'Social Media Post', slug: 'social-media-post', price: '500 BDT', rating: 4.9, reviews: 128, image: '/images/demo/social-post-1.png' },
-        { name: 'YouTube Thumbnail', slug: 'youtube-thumbnail', price: '300 BDT', rating: 5.0, reviews: 84, image: '/images/demo/youtube-thumb-1.png' },
-        { name: 'Brochure Design', slug: 'brochure-design', price: '1500 BDT', rating: 4.8, reviews: 42, image: '/images/demo/brochure-1.png' },
-        { name: 'Logo Design', slug: 'logo-design', price: '2500 BDT', rating: 5.0, reviews: 156, image: '/images/demo/logo-1.png' },
-    ],
-    '3d-production': [
-        { name: '3D Modeling', slug: '3d-modeling', price: '2000 BDT', rating: 4.8, reviews: 55, image: '/images/demo/3d-model-1.png' },
-        { name: 'Product Visualization', slug: 'product-visualization', price: '1000 BDT', rating: 5.0, reviews: 34, image: '/images/demo/product-viz-1.png' },
-        { name: '3D Animation', slug: '3d-animation', price: '10000 BDT', rating: 4.9, reviews: 18, image: '/images/demo/3d-anim-1.png' },
-    ],
-    'web-development': [
-        { name: 'Frontend Development', slug: 'frontend-development', price: '15000 BDT', rating: 4.9, reviews: 67, image: '/images/demo/frontend-1.png' },
-        { name: 'Backend Development', slug: 'backend-development', price: '20000 BDT', rating: 4.7, reviews: 45, image: '/images/demo/backend-1.png' },
-        { name: 'Fullstack Development', slug: 'fullstack-development', price: '50000 BDT', rating: 5.0, reviews: 29, image: '/images/demo/fullstack-1.png' },
-        { name: 'E-commerce Development', slug: 'e-commerce-dev', price: '25000 BDT', rating: 5.0, reviews: 30, image: '/images/demo/ecommerce-1.png' },
-    ],
-    'digital-marketing': [ // Added placeholder data for Digital Marketing
-        { name: 'SEO Optimization', slug: 'seo-optimization', price: '8000 BDT', rating: 4.8, reviews: 72, image: '/images/demo/seo-1.png' },
-        { name: 'Content Marketing', slug: 'content-marketing', price: '12000 BDT', rating: 4.9, reviews: 58, image: '/images/demo/content-1.png' },
-        { name: 'Social Media Management', slug: 'social-media-management', price: '10000 BDT', rating: 4.7, reviews: 99, image: '/images/demo/social-mng-1.png' },
-        { name: 'Paid Advertising (PPC)', slug: 'paid-advertising', price: 'Custom Quote', rating: 4.9, reviews: 61, image: '/images/demo/ppc-1.png' },
-    ],
-    'video-editing': [ // Added placeholder data for Video Editing
-        { name: 'Promotional Videos', slug: 'promotional-videos', price: '15000 BDT', rating: 4.8, reviews: 52, image: '/images/demo/promo-vid-1.png' },
-        { name: 'Social Media Videos', slug: 'social-media-videos', price: '8000 BDT', rating: 4.9, reviews: 115, image: '/images/demo/sm-vid-1.png' },
-        { name: 'Explainer Videos', slug: 'explainer-videos', price: '25000 BDT', rating: 4.7, reviews: 39, image: '/images/demo/explainer-vid-1.png' },
-        { name: 'Corporate Videos', slug: 'corporate-videos', price: '35000 BDT', rating: 4.8, reviews: 22, image: '/images/demo/corp-vid-1.png' },
-    ],
-};
-
-const HireUsPage = () => {
+const HireUsPage = ({ subCategories }: Props) => {
     // Initialize activeTab with the first service's id from the 'services' array.
     const [activeTab, setActiveTab] = useState(services[0].id);
 

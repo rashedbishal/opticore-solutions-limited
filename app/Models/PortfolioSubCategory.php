@@ -15,8 +15,26 @@ class PortfolioSubCategory extends Model
         'name',
         'slug',
         'description',
+        'price',
+        'rating',
+        'reviews_count',
+        'image',
         'sort_order',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'decimal:1',
+            'reviews_count' => 'integer',
+            'sort_order' => 'integer',
+        ];
+    }
 
     /**
      * Get all portfolios belonging to this sub-category.

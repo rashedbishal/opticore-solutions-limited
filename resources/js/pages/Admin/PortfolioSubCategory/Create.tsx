@@ -15,6 +15,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
         name: '',
         slug: '',
         description: '',
+        price: '',
+        rating: '5.0',
+        reviews_count: 0,
+        image: '',
         sort_order: 0,
     });
 
@@ -114,6 +118,89 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         {errors.description && (
                             <p className="mt-1 text-sm text-red-400">
                                 {errors.description}
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Starting Price
+                        </label>
+                        <input
+                            type="text"
+                            value={data.price}
+                            onChange={(e) => setData('price', e.target.value)}
+                            placeholder="e.g. 500 BDT"
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                        />
+                        {errors.price && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.price}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div>
+                            <label className="block text-sm font-medium text-zinc-300">
+                                Rating
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="5"
+                                step="0.1"
+                                value={data.rating}
+                                onChange={(e) =>
+                                    setData('rating', e.target.value)
+                                }
+                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            />
+                            {errors.rating && (
+                                <p className="mt-1 text-sm text-red-400">
+                                    {errors.rating}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-zinc-300">
+                                Reviews Count
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                value={data.reviews_count}
+                                onChange={(e) =>
+                                    setData(
+                                        'reviews_count',
+                                        Number.parseInt(e.target.value) || 0,
+                                    )
+                                }
+                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            />
+                            {errors.reviews_count && (
+                                <p className="mt-1 text-sm text-red-400">
+                                    {errors.reviews_count}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-300">
+                            Image URL
+                        </label>
+                        <input
+                            type="url"
+                            value={data.image}
+                            onChange={(e) => setData('image', e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                        />
+                        {errors.image && (
+                            <p className="mt-1 text-sm text-red-400">
+                                {errors.image}
                             </p>
                         )}
                     </div>

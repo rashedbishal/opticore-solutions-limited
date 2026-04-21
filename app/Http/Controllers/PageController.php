@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PortfolioSubCategory;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,7 +16,44 @@ class PageController extends Controller
                 'title' => 'Hire Us — Opticore Solutions Ltd.',
                 'description' => 'Hire Opticore Solutions Ltd. for expert digital services. Explore our offerings and get a custom quote.',
             ],
+            'subCategories' => $this->hireUsSubCategories(),
         ]);
+    }
+
+    /**
+     * @return array<string, array<int, array{name: string, slug: string, price: string, rating: float, reviews: int, image: string}>>
+     */
+    private function hireUsSubCategories(): array
+    {
+        /** @var array<string, array{label: string, description: string}> $categories */
+        $categories = config('portfolio.categories', []);
+
+        return Cache::remember('hire-us.subcategories', now()->addMinutes(60), function () use ($categories) {
+            $groupedSubCategories = PortfolioSubCategory::query()
+                ->orderBy('category_slug')
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get()
+                ->groupBy('category_slug');
+
+            return collect(array_keys($categories))
+                ->mapWithKeys(function (string $categorySlug) use ($groupedSubCategories) {
+                    $subCategories = $groupedSubCategories->get($categorySlug, collect())
+                        ->map(fn (PortfolioSubCategory $subCategory) => [
+                            'name' => $subCategory->name,
+                            'slug' => $subCategory->slug,
+                            'price' => $subCategory->price ?: 'Custom Quote',
+                            'rating' => $subCategory->rating !== null ? (float) $subCategory->rating : 5.0,
+                            'reviews' => $subCategory->reviews_count ?? 0,
+                            'image' => $subCategory->image ?: 'https://placehold.co/800x600/111111/FFFFFF?text=Opticore',
+                        ])
+                        ->values()
+                        ->toArray();
+
+                    return [$categorySlug => $subCategories];
+                })
+                ->toArray();
+        });
     }
 
     public function aboutUs(): Response

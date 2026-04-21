@@ -37,6 +37,10 @@ class PortfolioSubCategoryController extends Controller
                 'name' => $s->name,
                 'slug' => $s->slug,
                 'description' => $s->description,
+                'price' => $s->price,
+                'rating' => $s->rating !== null ? (float) $s->rating : null,
+                'reviews_count' => $s->reviews_count,
+                'image' => $s->image,
                 'sort_order' => $s->sort_order,
                 'portfolios_count' => $s->portfolios_count,
             ]);
@@ -62,6 +66,10 @@ class PortfolioSubCategoryController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'slug' => ['nullable', 'string', 'max:120', 'unique:portfolio_sub_categories,slug'],
             'description' => ['nullable', 'string', 'max:255'],
+            'price' => ['nullable', 'string', 'max:50'],
+            'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
+            'reviews_count' => ['nullable', 'integer', 'min:0', 'max:999999'],
+            'image' => ['nullable', 'string', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
@@ -74,6 +82,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$validated['category_slug']}");
+        Cache::forget('hire-us.subcategories');
 
         return redirect()->route('admin.portfolio-sub-categories.index')
             ->with('success', 'Sub-category created.');
@@ -88,6 +97,10 @@ class PortfolioSubCategoryController extends Controller
                 'name' => $portfolioSubCategory->name,
                 'slug' => $portfolioSubCategory->slug,
                 'description' => $portfolioSubCategory->description,
+                'price' => $portfolioSubCategory->price,
+                'rating' => $portfolioSubCategory->rating !== null ? (float) $portfolioSubCategory->rating : null,
+                'reviews_count' => $portfolioSubCategory->reviews_count,
+                'image' => $portfolioSubCategory->image,
                 'sort_order' => $portfolioSubCategory->sort_order,
             ],
             'categories' => $this->categoryOptions(),
@@ -108,6 +121,10 @@ class PortfolioSubCategoryController extends Controller
                 Rule::unique('portfolio_sub_categories', 'slug')->ignore($portfolioSubCategory->id),
             ],
             'description' => ['nullable', 'string', 'max:255'],
+            'price' => ['nullable', 'string', 'max:50'],
+            'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
+            'reviews_count' => ['nullable', 'integer', 'min:0', 'max:999999'],
+            'image' => ['nullable', 'string', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
@@ -121,6 +138,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$portfolioSubCategory->category_slug}");
+        Cache::forget('hire-us.subcategories');
         if ($oldCategorySlug !== $portfolioSubCategory->category_slug) {
             Cache::forget("portfolio.subcategories.{$oldCategorySlug}");
         }
@@ -142,6 +160,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$categorySlug}");
+        Cache::forget('hire-us.subcategories');
 
         return back()->with('success', 'Sub-category deleted.');
     }

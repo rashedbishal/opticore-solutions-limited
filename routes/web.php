@@ -66,7 +66,7 @@ Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('p
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
 // Hire Us Page Route
-Route::get('/hire-us', fn () => Inertia::render('HireUs'))->name('hireUs');
+Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
 
 // Portfolio public routes
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');

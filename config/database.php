@@ -45,7 +45,7 @@ return [
         ],
 
         'admin' => [
-            'driver' => env('DB_ADMIN_DRIVER', (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing') ? 'sqlite' : 'pgsql'),
+            'driver' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_CONNECTION') === 'sqlite') ? 'sqlite' : 'pgsql',
             'host' => env('DB_ADMIN_HOST', '127.0.0.1'),
             'port' => env('DB_ADMIN_PORT', '5432'),
             'database' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_ADMIN_DRIVER') === 'sqlite') ? database_path('testing_admin.sqlite') : env('DB_ADMIN_DATABASE', 'opticoresolutions_admin'),

@@ -11,6 +11,10 @@ interface SubCategory {
     name: string;
     slug: string;
     description: string | null;
+    price: string | null;
+    rating: number | null;
+    reviews_count: number;
+    image: string | null;
     sort_order: number;
     portfolios_count: number;
 }
@@ -22,14 +26,14 @@ interface Props {
 export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
     const { delete: destroy } = useForm();
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (slug: string) => {
         if (
             confirm(
                 'Are you sure you want to delete this sub-category? This will only work if no portfolios are assigned to it.',
             )
         ) {
             destroy(
-                adminRoutes.portfolioSubCategories.destroy.url(id.toString()),
+                adminRoutes.portfolioSubCategories.destroy.url(slug),
             );
         }
     };
@@ -100,14 +104,14 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <Link
                                         href={adminRoutes.portfolioSubCategories.edit.url(
-                                            sub.id.toString(),
+                                            sub.slug,
                                         )}
                                         className="mr-4 inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300"
                                     >
                                         <Edit className="h-4 w-4" /> Edit
                                     </Link>
                                     <button
-                                        onClick={() => handleDelete(sub.id)}
+                                        onClick={() => handleDelete(sub.slug)}
                                         className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300 disabled:opacity-50"
                                         disabled={sub.portfolios_count > 0}
                                         title={
