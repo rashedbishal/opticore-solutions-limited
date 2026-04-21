@@ -389,7 +389,7 @@ function ScannedCarousel({
                 return;
             }
 
-            if (rect.left < scanR && rect.right > scanL) {
+            if (rect.left < scanR && rect.right > scanL && cw > 0) {
                 anyScanning = true;
                 const intL = Math.max(scanL - rect.left, 0);
                 const intR = Math.min(scanR - rect.left, cw);

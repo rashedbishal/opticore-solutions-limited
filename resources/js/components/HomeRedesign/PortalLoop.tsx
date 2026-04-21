@@ -104,46 +104,36 @@ function PortalItem({
     // With 12 items, end - start ≈ 0.167, so fixed offsets like 0.05 and 0.15 overlap.
     const range = end - start;
 
-    // Scale peaks at 45% of range to leave plenty of room for the exit zoom.
+    // Scale peaks at 45% of its range so the exit zoom has room.
     const mid = start + range * 0.45;
 
-    // ─── Scale ────────────────────────────────────────────────────────────────
-    // CRITICAL: after the card fully exits (opacity=0), we snap scale back to 0.
-    // Cards stuck at scale=7 in the compositor is the root cause of old cards
-    // "covering" new ones and the "already zoomed in" appearance.
-    // The 7→0 jump is invisible because it occurs exactly when opacity reaches 0.
-    //
-    // We cannot call useTransform conditionally (Rules of Hooks), so we pre-compute
-    // the keyframe arrays and pass them as arguments — the hook call is unconditional.
-    const hasResetPoint = end < 0.9999; // last (clamped-to-1) card doesn't need reset
-    const scaleKeys = hasResetPoint ? [start, mid, end, end + 0.0005] : [start, mid, end];
-    const scaleVals = hasResetPoint ? [0, 1, 7, 0]                    : [0, 1, 7];
-    const scale = useTransform(scrollYProgress, scaleKeys, scaleVals);
+    const scale = useTransform(
+        scrollYProgress,
+        [start, mid, end],
+        [0, 1, 7]
+    );
 
-    // ─── Opacity ──────────────────────────────────────────────────────────────
-    // Proportional fade timings — guaranteed monotone for any range size.
+    // Proportional fade points — always monotone regardless of range size.
     const fadeInEnd    = start + range * 0.12;
     const fadeOutStart = end   - range * 0.25;
+
     const opacity = useTransform(
         scrollYProgress,
         [start, fadeInEnd, fadeOutStart, end],
         [0, 1, 1, 0],
     );
 
-    // ─── Rotate ───────────────────────────────────────────────────────────────
     const rotate = useTransform(
         scrollYProgress,
         [start, end],
         [index % 2 === 0 ? -2 : 2, index % 2 === 0 ? 8 : -8],
     );
 
-    // ─── Z-Index ──────────────────────────────────────────────────────────────
-    // Each new card sits IN FRONT of the previous one (higher zIndex).
-    // Because old cards reset to scale=0 after exiting, only the active cards
-    // occupy meaningful compositor space — no accumulation of scale=7 layers.
-    //
-    // The visual effect: as card N zooms out, card N+1 appears as a small
-    // "portal" thumbnail growing in the foreground. The classic tunnel effect.
+    // Each new card sits IN FRONT of the previous one.
+    // As card N zooms large, card N+1 grows as a small "portal" in the foreground.
+    // Because there is NO explicit willChange/translateZ on individual cards,
+    // the browser only creates compositor layers for actively-animating cards —
+    // not all 12 at once — preventing the GPU budget exhaustion that caused glitches.
     const zIndex = index + 1;
 
     return (
@@ -237,7 +227,7 @@ export default function PortalLoop() {
                     />
                 ))}
 
-                {/* Vignette overlay */}
+                {/* Vignette */}
                 <div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_0%,black_85%)] opacity-60" />
             </div>
         </div>
