@@ -21,6 +21,11 @@ import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
 import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 import MagneticButton from '@/components/UI/MagneticButton';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import GradientOrb from '@/components/UI/GradientOrb';
+import { portfolio } from '@/routes';
+import Marquee from '@/components/UI/Marquee';
+import { clientLogos } from '@/lib/site';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
