@@ -46,14 +46,14 @@ export default function SpotlightCarousel() {
                                 <span className="mb-8 text-sm font-black tracking-[0.3em] text-cyan-500 uppercase">
                                     Client Success
                                 </span>
-                                <p className="text-foreground mb-12 text-4xl leading-tight font-black tracking-tighter uppercase md:text-6xl">
+                                <p className="mb-12 text-4xl leading-tight font-black tracking-tighter text-foreground uppercase md:text-6xl">
                                     "{testimonials[index].quote}"
                                 </p>
                                 <div>
-                                    <h4 className="text-foreground text-2xl font-bold">
+                                    <h4 className="text-2xl font-bold text-foreground">
                                         {testimonials[index].name}
                                     </h4>
-                                    <p className="text-theme-muted mt-1 text-sm font-medium tracking-widest uppercase">
+                                    <p className="mt-1 text-sm font-medium tracking-widest text-theme-muted uppercase">
                                         {testimonials[index].role}
                                     </p>
                                 </div>
@@ -67,10 +67,10 @@ export default function SpotlightCarousel() {
                             <button
                                 key={t.id}
                                 onClick={() => setIndex(i)}
-                                className={`group border-theme relative w-full overflow-hidden rounded-[2rem] border p-8 text-left transition-all duration-500 ${
+                                className={`group relative w-full overflow-hidden rounded-[2rem] border border-theme p-8 text-left transition-all duration-500 ${
                                     index === i
-                                        ? 'bg-theme-surface border-cyan-500/30'
-                                        : 'bg-transparent hover:bg-theme-surface/50'
+                                        ? 'border-cyan-500/30 bg-theme-surface'
+                                        : 'hover:bg-theme-surface/50 bg-transparent'
                                 }`}
                             >
                                 {index === i && (
@@ -86,7 +86,7 @@ export default function SpotlightCarousel() {
                                         >
                                             {t.name}
                                         </h4>
-                                        <p className="text-theme-muted mt-1 text-sm font-medium tracking-widest uppercase">
+                                        <p className="mt-1 text-sm font-medium tracking-widest text-theme-muted uppercase">
                                             {t.role}
                                         </p>
                                     </div>

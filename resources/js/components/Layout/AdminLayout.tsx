@@ -34,7 +34,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     useEffect(() => {
         if (flash?.success) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowToast(true);
             const timer = setTimeout(() => setShowToast(false), 4000);
 

@@ -61,7 +61,7 @@ export default function KineticBento() {
                                 ease: [0.22, 1, 0.36, 1],
                             }}
                             viewport={{ once: true }}
-                            className={`${item.size} group border-theme relative overflow-hidden rounded-[2.5rem] border`}
+                            className={`${item.size} group relative overflow-hidden rounded-[2.5rem] border border-theme`}
                         >
                             <img
                                 src={item.src}

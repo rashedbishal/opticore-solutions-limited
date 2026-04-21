@@ -38,9 +38,9 @@ export default function OrbitingShowcase() {
         <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background py-32">
             <div className="relative flex aspect-square w-full max-w-4xl items-center justify-center">
                 {/* Orbiting Circles */}
-                <div className="border-theme absolute inset-0 scale-100 rounded-full border opacity-20" />
-                <div className="border-theme absolute inset-0 scale-75 rounded-full border opacity-40" />
-                <div className="border-theme absolute inset-0 scale-50 rounded-full border opacity-60" />
+                <div className="absolute inset-0 scale-100 rounded-full border border-theme opacity-20" />
+                <div className="absolute inset-0 scale-75 rounded-full border border-theme opacity-40" />
+                <div className="absolute inset-0 scale-50 rounded-full border border-theme opacity-60" />
 
                 {/* Central Content */}
                 <div className="relative z-10 max-w-2xl px-12 text-center">
@@ -52,14 +52,14 @@ export default function OrbitingShowcase() {
                             exit={{ opacity: 0, y: -20 }}
                             className="space-y-6"
                         >
-                            <p className="text-foreground text-2xl leading-relaxed font-medium md:text-3xl">
+                            <p className="text-2xl leading-relaxed font-medium text-foreground md:text-3xl">
                                 "{active.quote}"
                             </p>
                             <div>
                                 <h4 className="font-black tracking-widest text-cyan-500 uppercase">
                                     {active.name}
                                 </h4>
-                                <p className="text-theme-muted text-sm font-bold uppercase">
+                                <p className="text-sm font-bold text-theme-muted uppercase">
                                     {active.role}
                                 </p>
                             </div>

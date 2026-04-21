@@ -20,6 +20,14 @@ export default function useEchoReady(): boolean {
             return;
         }
 
+        if (window.__echoConfigured) {
+            queueMicrotask(() => {
+                setIsReady(true);
+            });
+
+            return;
+        }
+
         const handleConfigured = () => setIsReady(true);
 
         window.addEventListener('echo:configured', handleConfigured);

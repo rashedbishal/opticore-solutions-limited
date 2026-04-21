@@ -1,20 +1,30 @@
+import type { Offer, OfferMessage } from '@/components/Offer/CreateOfferModal';
 import type { ReactNode } from 'react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+    Clock,
+    CreditCard,
+    DollarSign,
     Download,
+    ExternalLink,
     FileText,
     Image as ImageIcon,
+    Layers,
     MessageSquare,
+    Package,
+    Paperclip,
     Search,
     Send,
-    Paperclip,
+    Trash2,
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import useEchoReady from '@/hooks/useEchoReady';
+import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
+import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -34,17 +44,8 @@ interface Conversation {
     is_online?: boolean;
 }
 
-interface Message {
-    id: number;
-    conversation_id: number;
-    sender_type: 'user' | 'admin';
-    message: string | null;
-    attachment_path: string | null;
-    attachment_type: string | null;
-    delivered_at: string | null;
-    read_at: string | null;
-    created_at: string;
-}
+// Extends OfferMessage so the union is complete
+type Message = OfferMessage;
 
 interface MessageStatusPayload {
     messages: Array<{
@@ -108,6 +109,158 @@ function getMessageStatusLabel(
     return 'Sent';
 }
 
+const STATUS_BADGE: Record<
+    Offer['status'],
+    { label: string; className: string }
+> = {
+    pending: {
+        label: 'Pending',
+        className: 'bg-yellow-500/15 text-yellow-400',
+    },
+    accepted: {
+        label: 'Accepted',
+        className: 'bg-green-500/15 text-green-400',
+    },
+    declined: {
+        label: 'Declined',
+        className: 'bg-red-500/15 text-red-400',
+    },
+    expired: {
+        label: 'Expired',
+        className: 'bg-slate-500/15 text-slate-400',
+    },
+};
+
+function OfferCard({
+    offer,
+    messageId,
+    conversationId,
+    onDeleted,
+}: {
+    offer: Offer;
+    messageId: number;
+    conversationId: number;
+    onDeleted: (messageId: number) => void;
+}) {
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const totalPrice =
+        offer.payment_type === 'single'
+            ? parseFloat(offer.price ?? '0')
+            : offer.milestones.reduce((sum: number, m: any) => sum + parseFloat(m.price), 0);
+
+    const totalDays =
+        offer.payment_type === 'single'
+            ? (offer.delivery_days ?? 0)
+            : offer.milestones.reduce((sum: number, m: any) => sum + m.delivery_days, 0);
+
+    const badge = STATUS_BADGE[offer.status];
+
+    const handleDelete = async () => {
+        if (
+            !window.confirm(
+                'Delete this offer? The client will no longer see it.',
+            )
+        ) {
+            return;
+        }
+
+        setIsDeleting(true);
+
+        try {
+            await axios.delete(
+                `/admin/api/customer-conversations/${conversationId}/offer/${messageId}`,
+            );
+            onDeleted(messageId);
+        } catch {
+            setIsDeleting(false);
+        }
+    };
+
+    return (
+        <div className="w-72 overflow-hidden rounded-xl border border-white/10 bg-slate-800/90 shadow-lg">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
+                <div className="flex items-center gap-1.5">
+                    <Package size={13} className="text-cyan-400" />
+                    <span className="text-[11px] font-semibold tracking-wide text-cyan-400 uppercase">
+                        Service Offer
+                    </span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge.className}`}
+                    >
+                        {badge.label}
+                    </span>
+                    <button
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        title="Delete offer"
+                        className="rounded p-0.5 text-slate-500 transition hover:text-red-400 disabled:opacity-40"
+                    >
+                        <Trash2 size={13} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-4">
+                {/* Category / sub-category */}
+                {(offer.sub_category || offer.category_slug) && (
+                    <p className="mb-1 text-sm font-semibold text-white">
+                        {offer.sub_category?.name ??
+                            CATEGORY_LABELS[offer.category_slug ?? ''] ??
+                            offer.category_slug}
+                    </p>
+                )}
+
+                {/* Description preview */}
+                <p className="mb-3 line-clamp-2 text-xs text-slate-400">
+                    {offer.description}
+                </p>
+
+                {/* Stats */}
+                <div className="mb-3 flex items-center gap-3 text-xs text-slate-400">
+                    <span className="flex items-center gap-1">
+                        <DollarSign size={11} className="text-green-400" />
+                        <span className="font-semibold text-white">
+                            ${totalPrice.toFixed(2)}
+                        </span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <Clock size={11} />
+                        {totalDays} day{totalDays !== 1 ? 's' : ''}
+                    </span>
+                    {offer.payment_type === 'milestone' ? (
+                        <span className="flex items-center gap-1">
+                            <Layers size={11} />
+                            {offer.milestones.length} milestone
+                            {offer.milestones.length !== 1 ? 's' : ''}
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-1">
+                            <CreditCard size={11} />
+                            Full Payment
+                        </span>
+                    )}
+                </div>
+
+                {/* CTA */}
+                <a
+                    href={`/offer/${offer.offer_token}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-cyan-600 py-2 text-xs font-semibold text-white transition hover:bg-cyan-500"
+                >
+                    View Offer Details
+                    <ExternalLink size={11} />
+                </a>
+            </div>
+        </div>
+    );
+}
+
 export default function Index() {
     const echoReady = useEchoReady();
     const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -121,6 +274,7 @@ export default function Index() {
     const [attachment, setAttachment] = useState<File | null>(null);
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
+    const [showOfferModal, setShowOfferModal] = useState(false);
     // userId → timestamp of last received presence ping (ms). Used for green dot.
     const [onlineUsers, setOnlineUsers] = useState<Record<number, number>>({});
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
@@ -340,13 +494,54 @@ export default function Index() {
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
-        } catch (error: any) {
+        } catch (error: unknown) {
             const msg =
-                error?.response?.data?.message || 'Failed to send message.';
+                (error as any)?.response?.data?.message ||
+                'Failed to send message.';
             setAttachmentError(msg);
         } finally {
             setIsSending(false);
         }
+    };
+
+    const handleOfferSent = (message: Message) => {
+        if (!activeConv) {
+            return;
+        }
+
+        // Ensure the message has the offer data for rendering
+        setMessages((prev) => {
+            if (prev.some((m) => m.id === message.id)) {
+                return prev;
+            }
+
+            return [...prev, message];
+        });
+
+        setConversations((prev) => {
+            const updatedList = prev.map((c) =>
+                c.id === activeConv.id
+                    ? {
+                          ...c,
+                          last_message: 'Sent an offer',
+                          last_message_at: message.created_at,
+                      }
+                    : c,
+            );
+
+            return updatedList.sort((a, b) => {
+                const timeA = a.last_message_at
+                    ? new Date(a.last_message_at).getTime()
+                    : 0;
+                const timeB = b.last_message_at
+                    ? new Date(b.last_message_at).getTime()
+                    : 0;
+
+                return timeB - timeA;
+            });
+        });
+
+        scrollToBottom();
     };
 
     return (
@@ -361,6 +556,19 @@ export default function Index() {
                     setOnlineUsers={setOnlineUsers}
                 />
             )}
+
+            {/* Offer Modal */}
+            <AnimatePresence>
+                {showOfferModal && activeConv && (
+                    <CreateOfferModal
+                        conversationId={activeConv.id}
+                        userName={activeConv.user.name}
+                        onOfferSent={handleOfferSent}
+                        onClose={() => setShowOfferModal(false)}
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Sidebar List */}
             <div className="flex w-1/3 flex-col border-r border-white/5 bg-slate-900/50">
                 <div className="border-b border-white/5 p-4">
@@ -442,7 +650,8 @@ export default function Index() {
             <div className="flex flex-1 flex-col bg-slate-900/30">
                 {activeConv ? (
                     <>
-                        <div className="flex items-center border-b border-white/5 bg-slate-900/50 p-4">
+                        {/* Chat Header */}
+                        <div className="flex items-center justify-between border-b border-white/5 bg-slate-900/50 p-4">
                             <div>
                                 <h3 className="font-semibold text-white">
                                     {activeConv.user.name}
@@ -451,6 +660,13 @@ export default function Index() {
                                     {activeConv.user.email}
                                 </p>
                             </div>
+                            <button
+                                onClick={() => setShowOfferModal(true)}
+                                className="flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-400 transition hover:border-cyan-500/50 hover:bg-cyan-500/20"
+                            >
+                                <Package size={13} />
+                                Create an Offer
+                            </button>
                         </div>
 
                         <div className="flex-1 space-y-4 overflow-y-auto p-6">
@@ -459,49 +675,64 @@ export default function Index() {
                                     key={`${msg.id}-${idx}`}
                                     className={`flex ${msg.sender_type === 'admin' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div className="max-w-[70%]">
-                                        <div
-                                            className={`rounded-2xl px-5 py-3 text-sm shadow-sm ${
-                                                msg.sender_type === 'admin'
-                                                    ? 'rounded-br-none bg-cyan-600 text-white'
-                                                    : 'rounded-bl-none border border-white/5 bg-slate-800 text-slate-200'
-                                            }`}
-                                        >
-                                            {msg.attachment_path && (
-                                                <a
-                                                    href={`/chat/attachments/${msg.id}/download`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    download
-                                                    className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
-                                                >
-                                                    <span className="shrink-0">
-                                                        {msg.attachment_type ===
-                                                        'image' ? (
-                                                            <ImageIcon
-                                                                size={15}
-                                                            />
-                                                        ) : (
-                                                            <FileText
-                                                                size={15}
-                                                            />
-                                                        )}
-                                                    </span>
-                                                    <span className="flex-1 truncate text-xs underline underline-offset-2">
-                                                        Download Attachment
-                                                    </span>
-                                                    <Download
-                                                        size={13}
-                                                        className="shrink-0 opacity-60 group-hover:opacity-100"
-                                                    />
-                                                </a>
-                                            )}
-                                            {msg.message && (
-                                                <p className="break-words whitespace-pre-wrap">
-                                                    {msg.message}
-                                                </p>
-                                            )}
-                                        </div>
+                                    <div className="max-w-[75%]">
+                                        {msg.offer ? (
+                                            <OfferCard
+                                                offer={msg.offer}
+                                                messageId={msg.id}
+                                                conversationId={activeConv.id}
+                                                onDeleted={(id) =>
+                                                    setMessages((prev) =>
+                                                        prev.filter(
+                                                            (m) => m.id !== id,
+                                                        ),
+                                                    )
+                                                }
+                                            />
+                                        ) : (
+                                            <div
+                                                className={`rounded-2xl px-5 py-3 text-sm shadow-sm ${
+                                                    msg.sender_type === 'admin'
+                                                        ? 'rounded-br-none bg-cyan-600 text-white'
+                                                        : 'rounded-bl-none border border-white/5 bg-slate-800 text-slate-200'
+                                                }`}
+                                            >
+                                                {msg.attachment_path && (
+                                                    <a
+                                                        href={`/chat/attachments/${msg.id}/download`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        download
+                                                        className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
+                                                    >
+                                                        <span className="shrink-0">
+                                                            {msg.attachment_type ===
+                                                            'image' ? (
+                                                                <ImageIcon
+                                                                    size={15}
+                                                                />
+                                                            ) : (
+                                                                <FileText
+                                                                    size={15}
+                                                                />
+                                                            )}
+                                                        </span>
+                                                        <span className="flex-1 truncate text-xs underline underline-offset-2">
+                                                            Download Attachment
+                                                        </span>
+                                                        <Download
+                                                            size={13}
+                                                            className="shrink-0 opacity-60 group-hover:opacity-100"
+                                                        />
+                                                    </a>
+                                                )}
+                                                {msg.message && (
+                                                    <p className="break-words whitespace-pre-wrap">
+                                                        {msg.message}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
                                         {msg.sender_type === 'admin' &&
                                             msg.id ===
                                                 latestOutgoingMessageId && (
@@ -680,9 +911,11 @@ function AdminConversationEchoListener({
 
                             return {
                                 ...c,
-                                last_message: incoming.attachment_path
-                                    ? 'Sent an attachment'
-                                    : incoming.message,
+                                last_message: incoming.offer_id
+                                    ? 'Sent an offer'
+                                    : incoming.attachment_path
+                                      ? 'Sent an attachment'
+                                      : incoming.message,
                                 last_message_at: incoming.created_at,
                                 unread_count: isActive
                                     ? 0
@@ -708,9 +941,11 @@ function AdminConversationEchoListener({
                             id: convData.id,
                             user_id: convData.user_id,
                             user: convData.user,
-                            last_message: incoming.attachment_path
-                                ? 'Sent an attachment'
-                                : incoming.message,
+                            last_message: incoming.offer_id
+                                ? 'Sent an offer'
+                                : incoming.attachment_path
+                                  ? 'Sent an attachment'
+                                  : incoming.message,
                             last_message_at: incoming.created_at,
                             unread_count:
                                 incoming.sender_type === 'user' ? 1 : 0,
@@ -790,6 +1025,39 @@ function AdminConversationEchoListener({
                 }
             },
             [setOnlineUsers],
+        ),
+    );
+
+    useEcho<{ offer_id: number; status: Offer['status'] }>(
+        'admin.conversations',
+        'OfferStatusChanged',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.offer?.id === e.offer_id
+                            ? {
+                                  ...msg,
+                                  offer: { ...msg.offer!, status: e.status },
+                              }
+                            : msg,
+                    ),
+                );
+            },
+            [setMessages],
+        ),
+    );
+
+    useEcho<{ message_id: number; conversation_id: number }>(
+        'admin.conversations',
+        'OfferDeleted',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.filter((m) => m.id !== e.message_id),
+                );
+            },
+            [setMessages],
         ),
     );
 

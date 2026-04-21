@@ -545,7 +545,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <PortalLoop />
                 </LazySection>
 
-                <section className="border-theme bg-background border-t py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Portfolio Concept 2
@@ -562,7 +562,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <NebulaCluster />
                 </LazySection>
 
-                <section className="border-theme bg-background border-t py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
                             Portfolio Concept 3
@@ -576,7 +576,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <KineticBento />
                 </LazySection>
 
-                <section className="border-theme bg-background border-t py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-pink-400 uppercase">
                             Testimonial Concept 1
@@ -590,7 +590,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <LiquidShuffle />
                 </LazySection>
 
-                <section className="border-theme bg-background border-t py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
                             Testimonial Concept 2
@@ -604,7 +604,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <OrbitingShowcase />
                 </LazySection>
 
-                <section className="border-theme bg-background border-t py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Testimonial Concept 3

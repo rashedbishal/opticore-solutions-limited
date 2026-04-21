@@ -98,7 +98,7 @@ export default function PortalLoop() {
                     <span className="mb-2 block text-xs font-bold tracking-[0.4em] text-cyan-500 uppercase">
                         Universe
                     </span>
-                    <h2 className="text-theme text-5xl font-black tracking-tighter uppercase md:text-8xl">
+                    <h2 className="text-5xl font-black tracking-tighter text-theme uppercase md:text-8xl">
                         Showcase
                     </h2>
                 </motion.div>
@@ -160,7 +160,7 @@ function PortalCard({
             }}
             className="pointer-events-none absolute inset-0 flex items-center justify-center p-4"
         >
-            <div className="pointer-events-auto border-theme bg-theme-surface relative aspect-video w-full max-w-4xl overflow-hidden rounded-[2rem] border shadow-2xl">
+            <div className="pointer-events-auto relative aspect-video w-full max-w-4xl overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl">
                 <img
                     src={item.src}
                     alt={item.title}

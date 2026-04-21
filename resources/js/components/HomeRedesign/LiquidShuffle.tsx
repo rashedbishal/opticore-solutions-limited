@@ -69,7 +69,7 @@ export default function LiquidShuffle() {
                                 className="absolute inset-0 flex flex-col items-center justify-center"
                             >
                                 <motion.div
-                                    className={`absolute inset-0 bg-linear-to-br ${active.color} -z-10 rounded-full blur-[100px] opacity-40`}
+                                    className={`absolute inset-0 bg-linear-to-br ${active.color} -z-10 rounded-full opacity-40 blur-[100px]`}
                                     animate={{
                                         scale: [1, 1.2, 1],
                                         rotate: [0, 90, 0],
@@ -81,7 +81,7 @@ export default function LiquidShuffle() {
                                     }}
                                 />
 
-                                <p className="text-foreground mb-12 text-3xl leading-tight font-bold italic md:text-5xl">
+                                <p className="mb-12 text-3xl leading-tight font-bold text-foreground italic md:text-5xl">
                                     "{active.quote}"
                                 </p>
 
@@ -89,7 +89,7 @@ export default function LiquidShuffle() {
                                     <h4 className="text-xl font-black tracking-widest text-cyan-500 uppercase">
                                         {active.name}
                                     </h4>
-                                    <p className="text-theme-muted mt-1 text-sm font-bold uppercase">
+                                    <p className="mt-1 text-sm font-bold text-theme-muted uppercase">
                                         {active.role}
                                     </p>
                                 </div>
@@ -100,13 +100,13 @@ export default function LiquidShuffle() {
                     <div className="mt-12 flex gap-4">
                         <button
                             onClick={prev}
-                            className="border-theme text-foreground hover:bg-theme-surface rounded-full border p-4 transition-colors"
+                            className="rounded-full border border-theme p-4 text-foreground transition-colors hover:bg-theme-surface"
                         >
                             <ChevronLeft className="h-6 w-6" />
                         </button>
                         <button
                             onClick={next}
-                            className="border-theme text-foreground hover:bg-theme-surface rounded-full border p-4 transition-colors"
+                            className="rounded-full border border-theme p-4 text-foreground transition-colors hover:bg-theme-surface"
                         >
                             <ChevronRight className="h-6 w-6" />
                         </button>
