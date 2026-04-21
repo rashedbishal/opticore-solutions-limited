@@ -67,7 +67,7 @@ Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('p
 Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
 // Hire Us Page Routes
-Route::get('/hire-us', fn () => Inertia::render('HireUs'))->name('hireUs');
+Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
 Route::get('/hire-us/{category}/{subcategory}', [HireUsController::class, 'showSubCategory'])
     ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
     ->name('hireUsSubCategory');
