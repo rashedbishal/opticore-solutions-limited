@@ -17,7 +17,6 @@ import {
     ArrowRight,
 } from 'lucide-react';
 import { useState } from 'react';
-import AppLayout from '@/components/Layout/AppLayout';
 
 const mockOrders = [
     {
@@ -78,7 +77,7 @@ export default function UserDashboard() {
     });
 
     return (
-        <AppLayout>
+        <>
             <Head title="Client Dashboard | Opticore Solutions Ltd." />
 
             <div className="min-h-screen bg-black px-4 pt-32 pb-24">
@@ -497,6 +496,6 @@ export default function UserDashboard() {
                     </div>
                 )}
             </AnimatePresence>
-        </AppLayout>
+        </>
     );
 }

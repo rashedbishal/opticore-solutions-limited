@@ -1,18 +1,8 @@
-import { Link, Head, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, PenTool, Globe, Film, Box, Code2, ChevronRight, Star, Zap, Users } from 'lucide-react';
+import { Sparkles, ArrowRight, PenTool, Globe, Film, Box, Code2, Star, Zap, Users } from 'lucide-react';
 import { useState } from 'react';
-import AppLayout from '@/components/Layout/AppLayout'; // Import Link, Head, and router
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 
-// Define services with their IDs, names, icons, and colors
 const services = [
     {
         id: 'graphic-design',
@@ -84,49 +74,12 @@ const subCategories: Record<string, any[]> = {
     ],
 };
 
-// Mock serviceDetails for all sub-categories (consolidated and detailed)
-const serviceDetails = {
-    'social-media-post': { name: 'Social Media Post Design', description: 'Eye-catching social media posts optimized for engagement.', demos: ['/images/demo/social-post-1.png', '/images/demo/social-post-2.png'], pricing: [{ tier: 'Basic', description: 'Single post design', price: '500 BDT' }, { tier: 'Standard', description: '5 posts package', price: '2000 BDT' }, { tier: 'Premium', description: '10 posts package + analytics insights', price: '3500 BDT' }] },
-    'youtube-thumbnail': { name: 'YouTube Thumbnail Design', description: 'Click-worthy thumbnails to boost your video views.', demos: ['/images/demo/youtube-thumb-1.png', '/images/demo/youtube-thumb-2.png'], pricing: [{ tier: 'Basic', description: 'Single thumbnail design', price: '700 BDT' }, { tier: 'Standard', description: '5 thumbnails package', price: '3000 BDT' }, { tier: 'Premium', description: '10 thumbnails package + A/B testing suggestions', price: '5000 BDT' }] },
-    'brochure-design': { name: 'Brochure Design', description: 'Professional brochures to effectively communicate your message.', demos: ['/images/demo/brochure-1.png'], pricing: [{ tier: 'Basic', description: 'Single-fold brochure', price: '1500 BDT' }, { tier: 'Standard', description: 'Bi-fold brochure', price: '2500 BDT' }, { tier: 'Premium', description: 'Tri-fold brochure + print-ready files', price: '4000 BDT' }] },
-    'logo-design': { name: 'Logo Design', description: 'Memorable logos that define your brand identity.', demos: ['/images/demo/logo-1.png'], pricing: [{ tier: 'Concept', description: '3 initial logo concepts', price: '3000 BDT' }, { tier: 'Standard', description: 'Final logo + Brand Guidelines', price: '6000 BDT' }, { tier: 'Premium', description: 'Full Brand Identity Kit', price: '10000 BDT' }] },
-    '3d-modeling': { name: '3D Modeling', description: 'Creating detailed 3D models for various applications.', demos: ['/images/demo/3d-model-1.png'], pricing: [{ tier: 'Basic', description: 'Simple object model', price: '2000 BDT' }, { tier: 'Standard', description: 'Complex object model', price: '5000 BDT' }, { tier: 'Premium', description: 'High-poly detailed model', price: '8000 BDT' }] },
-    'product-visualization': { name: 'Product Visualization', description: 'Realistic 3D renders of your products.', demos: ['/images/demo/product-viz-1.png'], pricing: [{ tier: 'Basic', description: 'Single render', price: '1000 BDT' }, { tier: 'Standard', description: '5 renders package', price: '4500 BDT' }, { tier: 'Premium', description: '360° product view', price: '7000 BDT' }] },
-    '3d-animation': { name: '3D Animation', description: 'Bringing your products and ideas to life with 3D animation.', demos: ['/images/demo/3d-anim-1.png'], pricing: [{ tier: 'Short Clip', description: 'Up to 15 seconds', price: '10000 BDT' }, { tier: 'Product Explainer', description: 'Up to 60 seconds', price: '25000 BDT' }, { tier: 'Full Animation', description: 'Custom length', price: 'Custom Quote' }] },
-    'frontend-development': { name: 'Frontend Development', description: 'Crafting intuitive and responsive user interfaces.', demos: ['/images/demo/frontend-1.png'], pricing: [{ tier: 'Landing Page', description: 'Single page site', price: '15000 BDT' }, { tier: 'Complex UI', description: 'Multi-page application', price: '40000 BDT' }, { tier: 'Web App', description: 'Interactive web application', price: 'Custom Quote' }] },
-    'backend-development': { name: 'Backend Development', description: 'Building robust server-side logic and APIs.', demos: ['/images/demo/backend-1.png'], pricing: [{ tier: 'API Development', description: 'RESTful API creation', price: '20000 BDT' }, { tier: 'Database Integration', description: 'Complex database setup', price: '30000 BDT' }, { tier: 'Server Logic', description: 'Custom server-side features', price: 'Custom Quote' }] },
-    'fullstack-development': { name: 'Fullstack Development', description: 'End-to-end web development services.', demos: ['/images/demo/fullstack-1.png'], pricing: [{ tier: 'Standard App', description: 'Integrated frontend & backend', price: '50000 BDT' }, { tier: 'Enterprise Solution', description: 'Scalable web applications', price: 'Custom Quote' }] },
-    'e-commerce-dev': { name: 'E-commerce Development', description: 'Building powerful and user-friendly online stores.', demos: ['/images/demo/ecommerce-1.png'], pricing: [{ tier: 'Basic Store', description: 'Shopify/WooCommerce setup', price: '25000 BDT' }, { tier: 'Custom Platform', description: 'Bespoke e-commerce solution', price: '60000 BDT' }] },
-    'seo-optimization': { name: 'SEO Optimization', description: 'Improve your search engine rankings and drive organic traffic.', demos: ['/images/demo/seo-1.png'], pricing: [{ tier: 'Audit', description: 'Comprehensive SEO audit', price: '8000 BDT' }, { tier: 'On-Page', description: 'On-page optimization (up to 10 pages)', price: '20000 BDT' }, { tier: 'Monthly Management', description: 'Ongoing SEO strategy & execution', price: '30000 BDT/month' }] },
-    'content-marketing': { name: 'Content Marketing', description: 'Engaging content to attract and retain customers.', demos: ['/images/demo/content-1.png'], pricing: [{ tier: 'Blog Posts', description: '4 high-quality blog posts', price: '12000 BDT' }, { tier: 'Article Creation', description: 'In-depth articles', price: '5000 BDT/article' }, { tier: 'Content Strategy', description: 'Full content plan', price: '18000 BDT' }] },
-    'social-media-management': { name: 'Social Media Management', description: 'Boost your brand presence across social platforms.', demos: ['/images/demo/social-mng-1.png'], pricing: [{ tier: 'Basic', description: '2 platforms, 12 posts/month', price: '10000 BDT' }, { tier: 'Standard', description: '3 platforms, 20 posts/month + engagement', price: '18000 BDT' }, { tier: 'Premium', description: '4+ platforms, daily posts, ads management', price: '30000 BDT/month' }] },
-    'paid-advertising': { name: 'Paid Advertising (PPC)', description: 'Targeted campaigns for maximum ROI on ad spend.', demos: ['/images/demo/ppc-1.png'], pricing: [{ tier: 'Setup Fee', description: 'Campaign setup & strategy', price: '15000 BDT' }, { tier: 'Management Fee', description: 'Monthly ad spend % or flat fee', price: '20% ad spend / 25000 BDT' }] },
-    'promotional-videos': { name: 'Promotional Videos', description: 'Engaging videos to showcase your products or services.', demos: ['/images/demo/promo-vid-1.png'], pricing: [{ tier: 'Short Ad', description: '15-30 seconds', price: '15000 BDT' }, { tier: 'Product Demo', description: '1-2 minutes', price: '30000 BDT' }] },
-    'social-media-videos': { name: 'Social Media Videos', description: 'Short, attention-grabbing videos for social platforms.', demos: ['/images/demo/sm-vid-1.png'], pricing: [{ tier: 'Reel/TikTok', description: '15-60 seconds', price: '8000 BDT' }, { tier: 'Short Story', description: 'Up to 30 seconds', price: '5000 BDT' }] },
-    'explainer-videos': { name: 'Explainer Videos', description: 'Clearly explain complex concepts or products.', demos: ['/images/demo/explainer-vid-1.png'], pricing: [{ tier: 'Animated', description: 'Up to 60 seconds', price: '25000 BDT' }, { tier: 'Live Action', description: 'Up to 90 seconds', price: '40000 BDT' }] },
-    'corporate-videos': { name: 'Corporate Videos', description: 'Professional videos for company profiles, training, or events.', demos: ['/images/demo/corp-vid-1.png'], pricing: [{ tier: 'Company Profile', description: '1-3 minutes', price: '35000 BDT' }, { tier: 'Event Coverage', description: 'Highlights reel', price: 'Custom Quote' }] },
-};
-
-
-const defaultHeroVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-};
-
 const HireUsPage = () => {
     // Initialize activeTab with the first service's id from the 'services' array.
     const [activeTab, setActiveTab] = useState(services[0].id);
-    // Removed unused states and handlers (selectedService, isContactModalOpen, customDealMessage, customDealService, handleCustomDealClick, handleSendMessage)
-    // as they are not directly related to displaying services or navigation.
-
-    // Updated handleTabChange to correctly set the active tab
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-    };
 
     return (
-        // Using AppLayout and Head from Inertia
-        <AppLayout>
+        <>
             <Head title="Hire Opticore | Digital Services Marketplace" />
 
             <div className="relative min-h-screen overflow-hidden bg-black px-4 pt-32 pb-24">
@@ -270,7 +223,7 @@ const HireUsPage = () => {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 };
 

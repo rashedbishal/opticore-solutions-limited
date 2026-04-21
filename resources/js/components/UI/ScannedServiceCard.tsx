@@ -376,8 +376,10 @@ function ScannedCarousel({
 
         // Optimization: only update clipPath every other frame to save CPU
         state.current.frame++;
+
         if (state.current.frame % 2 !== 0) {
             state.current.clipId = requestAnimationFrame(tick);
+
             return;
         }
 
@@ -525,13 +527,14 @@ function ScannedCarousel({
             const scanX = getScanPageX();
             const hw = 100; // Only update cards near the scanner
 
-            asciiRefs.current.forEach((el, i) => {
+            asciiRefs.current.forEach((el) => {
                 if (!el) {
- return;
-}
+                    return;
+                }
 
                 const rect = el.getBoundingClientRect();
-                const isNearScanner = rect.left < scanX + hw && rect.right > scanX - hw;
+                const isNearScanner =
+                    rect.left < scanX + hw && rect.right > scanX - hw;
 
                 if (isNearScanner && Math.random() < 0.2) {
                     el.textContent = generateCode(CODE_COLS, CODE_ROWS);
@@ -572,7 +575,15 @@ function ScannedCarousel({
             document.removeEventListener('touchend', endDrag);
             scannerRef.current?.destroy();
         };
-    }, [animateTrack, updateClip, onDrag, endDrag, getBarX, doubled.length]);
+    }, [
+        animateTrack,
+        updateClip,
+        onDrag,
+        endDrag,
+        getBarX,
+        getScanPageX,
+        doubled.length,
+    ]);
 
     return (
         <>

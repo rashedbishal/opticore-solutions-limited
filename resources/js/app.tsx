@@ -109,8 +109,11 @@ createInertiaApp({
         }
 
         if ('requestIdleCallback' in window) {
-            (window as Window & { requestIdleCallback: Function })
-                .requestIdleCallback(() => void initializeRealtime());
+            (
+                window as Window & {
+                    requestIdleCallback: (callback: () => void) => void;
+                }
+            ).requestIdleCallback(() => void initializeRealtime());
         } else {
             setTimeout(() => void initializeRealtime(), 0);
         }
