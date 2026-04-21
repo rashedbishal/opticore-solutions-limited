@@ -146,7 +146,7 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="absolute right-2 bottom-18 mb-3 w-52 rounded-2xl border border-white/10 bg-zinc-950/90 p-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-xl pointer-events-none sm:right-8 sm:bottom-24 sm:mb-4"
+                        className="absolute right-0 bottom-20 mb-3 w-52 rounded-2xl border border-white/10 bg-zinc-950/90 p-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-xl pointer-events-none sm:right-0 sm:bottom-24 sm:mb-4"
                     >
                         <div className="relative">
                             <div className="flex items-center gap-1.5 mb-2">
@@ -164,12 +164,24 @@ setSessionId(data.session_id);
             </AnimatePresence>
 
             {/* Immersive Trigger Button */}
-            <div className="absolute right-2 bottom-2 sm:right-6 sm:bottom-6">
+            <div className="absolute right-0 bottom-0 group/chat flex flex-row-reverse items-center gap-3">
                 <ImmersiveChatTrigger
                     onClick={() => setIsOpen(!isOpen)}
                     isOpen={isOpen}
                     isDancing={isDancing}
                 />
+                {/* Hover label */}
+                {!isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 8 }}
+                        className="hidden sm:flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-zinc-950/90 px-3 py-1.5 shadow-[0_0_20px_rgba(124,58,237,0.2)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
+                    >
+                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
+                        <span className="text-[11px] font-semibold text-white/80 whitespace-nowrap">Chat with AI</span>
+                    </motion.div>
+                )}
             </div>
 
             {/* Chat Window */}
@@ -180,7 +192,7 @@ setSessionId(data.session_id);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        className="absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0d1320]/95 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-6 sm:bottom-24"
+                        className="absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0d1320]/95 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-0 sm:bottom-24"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
