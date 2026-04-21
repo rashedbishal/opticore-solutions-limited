@@ -1,5 +1,6 @@
-import type { MotionValue } from 'framer-motion';
-import { motion, useScroll, useTransform } from 'framer-motion';
+"use client";
+
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
 // Ultra-optimized images: low resolution and high compression for maximum speed
@@ -67,71 +68,35 @@ export default function PortalLoop() {
     );
 }
 
-function PortalItem({
-    item,
-    index,
-    totalItems,
-    scrollYProgress,
-}: PortalItemProps) {
-    const start = Math.min(1, index / totalItems);
-    const end = Math.min(1, (index + 2) / totalItems);
+function PortalCard({ item, index, total, progress }: { item: any, index: number, total: number, progress: any }) {
+    // Simple, clean range calculation
+    const start = index / total;
+    const end = (index + 1) / total;
+    const localProgress = useTransform(progress, [start, end], [0, 1]);
 
-    const scale = useTransform(
-        scrollYProgress,
-        [start, (start + end) / 2, end],
-        [0, 1, 7],
-    );
+    // Keep every card's growth phase identical regardless of index.
+    const scale = useTransform(localProgress, [0, 0.38, 1], [0.5, 1, 6]);
 
-    // Clamp fade-in/fade-out keypoints so they never cross each other
-    // (violates "Offsets must be monotonically non-decreasing" when range is tight).
-    // With 12 items, end - start ≈ 0.167, so fixed offsets like 0.05 and 0.15 overlap.
-    const range = end - start;
+    // Monotonic and card-local opacity curve.
+    const opacity = useTransform(localProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
-    // Scale peaks at 45% of its range so the exit zoom has room.
-    const mid = start + range * 0.45;
-
-    const scale = useTransform(
-        scrollYProgress,
-        [start, mid, end],
-        [0, 1, 7]
-    );
-
-    // Proportional fade points — always monotone regardless of range size.
-    const fadeInEnd    = start + range * 0.12;
-    const fadeOutStart = end   - range * 0.25;
-
-    const opacity = useTransform(
-        scrollYProgress,
-        [start, fadeInEnd, fadeOutStart, end],
-        [0, 1, 1, 0],
-    );
-
+    // Subtle rotation for organic feel
     const rotate = useTransform(
-        scrollYProgress,
-        [start, end],
-        [index % 2 === 0 ? -2 : 2, index % 2 === 0 ? 8 : -8],
+        localProgress,
+        [0, 1],
+        [index % 2 === 0 ? -1 : 1, index % 2 === 0 ? 3 : -3],
     );
-
-    // Each new card sits IN FRONT of the previous one.
-    // As card N zooms large, card N+1 grows as a small "portal" in the foreground.
-    // Because there is NO explicit willChange/translateZ on individual cards,
-    // the browser only creates compositor layers for actively-animating cards —
-    // not all 12 at once — preventing the GPU budget exhaustion that caused glitches.
-    const zIndex = index + 1;
 
     return (
         <motion.div
-            style={{
-                scale,
-                opacity,
+            style={{ 
+                scale, 
+                opacity, 
                 rotate,
-                zIndex,
-                // No explicit willChange/translateZ on individual cards.
-                // Framer Motion promotes layers internally during active animation.
-                // Forcing 12 permanent GPU layers exhausts compositor budget and
-                // causes the Navbar + Hero to glitch.
+                zIndex: index + 1,
+                willChange: 'transform, opacity'
             }}
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none p-4"
         >
             <div className="relative aspect-video w-full max-w-4xl overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900 shadow-2xl pointer-events-auto">
                 <img 
@@ -154,61 +119,5 @@ function PortalItem({
                 </div>
             </div>
         </motion.div>
-    );
-}
-
-export default function PortalLoop() {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end'],
-    });
-
-    const titleScale   = useTransform(scrollYProgress, [0, 0.08], [1, 0.85]);
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.10], [1, 0]);
-
-    return (
-        <div ref={containerRef} className="relative h-[1200vh] bg-black">
-            <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
-                <div
-                    className="pointer-events-none absolute inset-0 z-0 opacity-20"
-                    style={{
-                        backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23ffffff44' /%3E%3C/svg%3E\")",
-                        backgroundSize: '80px 80px',
-                    }}
-                />
-
-                <motion.div
-                    style={{
-                        scale: titleScale,
-                        opacity: titleOpacity,
-                        willChange: 'transform, opacity',
-                    }}
-                    className="pointer-events-none absolute z-50 text-center"
-                >
-                    <span className="mb-4 block text-sm font-bold tracking-[0.3em] text-cyan-400 uppercase opacity-70">
-                        Portfolio Showcase
-                    </span>
-                    <h2 className="text-6xl font-black tracking-tighter text-white uppercase md:text-9xl">
-                        Our <br className="md:hidden" /> Universe
-                    </h2>
-                </motion.div>
-
-                {items.map((item, index) => (
-                    <PortalItem
-                        key={item.id}
-                        item={item}
-                        index={index}
-                        totalItems={items.length}
-                        scrollYProgress={scrollYProgress}
-                    />
-                ))}
-
-                {/* Vignette */}
-                <div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_0%,black_85%)] opacity-60" />
-            </div>
-        </div>
     );
 }

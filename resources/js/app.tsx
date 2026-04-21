@@ -2,14 +2,38 @@ import '../css/app.css';
 
 import type { ReactElement, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
-import { configureEcho, echo } from '@laravel/echo-react';
-import axios from 'axios';
-import Pusher from 'pusher-js';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 
-if (typeof window !== 'undefined') {
+const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';
+
+interface InertiaPageModule {
+    default: InertiaPageComponent;
+}
+
+interface InertiaPageComponent {
+    (props: Record<string, unknown>): ReactElement;
+    layout?: (page: ReactNode) => ReactNode;
+}
+
+const pages = import.meta.glob<InertiaPageModule>('./pages/**/*.tsx');
+let realtimeInitialized = false;
+
+const initializeRealtime = async () => {
+    if (realtimeInitialized || typeof window === 'undefined') {
+        return;
+    }
+
+    realtimeInitialized = true;
+
+    const [{ configureEcho, echo }, { default: axios }, { default: Pusher }] =
+        await Promise.all([
+            import('@laravel/echo-react'),
+            import('axios'),
+            import('pusher-js'),
+        ]);
+
     (window as any).Pusher = Pusher;
 
     configureEcho({

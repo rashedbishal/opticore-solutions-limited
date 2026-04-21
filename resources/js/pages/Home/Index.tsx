@@ -11,7 +11,8 @@ import {
     PenTool,
     Sparkles,
 } from 'lucide-react';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import type { ReactNode } from 'react';
 
 import KineticBento from '@/components/HomeRedesign/KineticBento';
 import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
@@ -22,12 +23,32 @@ import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
+import { ServiceCarousel } from '@/components/UI/ScannedServiceCard';
+import SectionHeader from '@/components/UI/SectionHeader';
+import TestimonialCard from '@/components/UI/TestimonialCard';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { clientLogos } from '@/lib/site';
 import { portfolio } from '@/routes';
 
-// Section2-5 lazy imports removed due to being unused
+const Section2 = lazy(() => import('@/components/Robot/Section2'));
+const Section3 = lazy(() => import('@/components/Robot/Section3'));
+const Section4 = lazy(() => import('@/components/Robot/Section4'));
+const Section5 = lazy(() => import('@/components/Robot/Section5'));
+const PortalLoop = lazy(() => import('@/components/HomeRedesign/PortalLoop'));
+const NebulaCluster = lazy(
+    () => import('@/components/HomeRedesign/NebulaCluster'),
+);
+const KineticBento = lazy(() => import('@/components/HomeRedesign/KineticBento'));
+const LiquidShuffle = lazy(
+    () => import('@/components/HomeRedesign/LiquidShuffle'),
+);
+const OrbitingShowcase = lazy(
+    () => import('@/components/HomeRedesign/OrbitingShowcase'),
+);
+const SpotlightCarousel = lazy(
+    () => import('@/components/HomeRedesign/SpotlightCarousel'),
+);
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -83,6 +104,55 @@ const floatingIcons = [
 ];
 
 // duplicatedServices removed due to being unused
+
+function LazySection({
+    minHeightClassName = 'min-h-[60vh]',
+    children,
+}: {
+    minHeightClassName?: string;
+    children: ReactNode;
+}) {
+    const [isVisible, setIsVisible] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '400px 0px' },
+        );
+
+        if (sentinelRef.current) {
+            observer.observe(sentinelRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={sentinelRef}>
+            {isVisible ? (
+                <Suspense
+                    fallback={
+                        <div
+                            className={`flex ${minHeightClassName} items-center justify-center text-sm text-zinc-500`}
+                        >
+                            Loading section...
+                        </div>
+                    }
+                >
+                    {children}
+                </Suspense>
+            ) : (
+                <div className={minHeightClassName} aria-hidden="true" />
+            )}
+        </div>
+    );
+}
 
 function LazySection({
     minHeightClassName = 'min-h-[60vh]',
@@ -260,7 +330,69 @@ function HeroHeadline() {
     );
 }
 
-// CharmingStar removed due to being unused
+function CharmingStar() {
+    return (
+        <div className="relative mr-2.5 flex items-center justify-center">
+            {/* The "Shell" star - reduced opacity to be almost invisible guidewires */}
+            <Star strokeWidth={1} className="h-4 w-4 text-white/5" />
+
+            {/* The "Filling" star with Idle Dance & Spin */}
+            <motion.div
+                initial={{ clipPath: 'inset(100% 0 0 0)', scale: 0.2 }}
+                whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
+                animate={{
+                    rotate: [0, 360, 370, 350, 360, 0],
+                    scale: [1, 1.1, 1.2, 1.1, 1],
+                }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{
+                    clipPath: { duration: 1.2, delay: 0.6, ease: 'easeInOut' },
+                    rotate: {
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                        times: [0, 0.4, 0.6, 0.8, 0.9, 1],
+                    },
+                    scale: {
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                        times: [0, 0.25, 0.5, 0.75, 1],
+                    },
+                }}
+                className="absolute inset-0 flex items-center justify-center text-amber-400"
+            >
+                <Star
+                    strokeWidth={0}
+                    className="h-4 w-4 fill-current drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"
+                />
+            </motion.div>
+
+            {/* The Recurring Sparkle */}
+            <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{
+                    scale: [0, 1.8, 0, 0, 0],
+                    opacity: [0, 1, 0, 0, 0],
+                    rotate: [0, 45, 90, 90, 90],
+                }}
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    repeatDelay: 1,
+                    ease: 'circOut',
+                    times: [0, 0.15, 0.3, 0.6, 1],
+                }}
+                className="pointer-events-none absolute -top-1 -right-1"
+            >
+                <Sparkles
+                    strokeWidth={0}
+                    className="h-3 w-3 fill-current text-white shadow-[0_0_10px_white]"
+                />
+            </motion.div>
+        </div>
+    );
+}
 
 interface HomeIndexProps {
     brands?: string[];
