@@ -54,7 +54,7 @@ const services = [
     },
 ];
 
-const HireUsPage = ({ subCategories }: Props) => {
+const HireUsPage = ({ subCategories = {} }: Props) => {
     // Initialize activeTab with the first service's id from the 'services' array.
     const [activeTab, setActiveTab] = useState(services[0].id);
 
