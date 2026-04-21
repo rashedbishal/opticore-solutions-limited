@@ -103,24 +103,47 @@ function PortalItem({
     // (violates "Offsets must be monotonically non-decreasing" when range is tight).
     // With 12 items, end - start ≈ 0.167, so fixed offsets like 0.05 and 0.15 overlap.
     const range = end - start;
-    const fadeInEnd = start + Math.min(0.05, range * 0.3);
-    const fadeOutStart = end - Math.min(0.15, range * 0.3);
 
+    // Scale peaks at 45% of range to leave plenty of room for the exit zoom.
+    const mid = start + range * 0.45;
+
+    // ─── Scale ────────────────────────────────────────────────────────────────
+    // CRITICAL: after the card fully exits (opacity=0), we snap scale back to 0.
+    // Cards stuck at scale=7 in the compositor is the root cause of old cards
+    // "covering" new ones and the "already zoomed in" appearance.
+    // The 7→0 jump is invisible because it occurs exactly when opacity reaches 0.
+    //
+    // We cannot call useTransform conditionally (Rules of Hooks), so we pre-compute
+    // the keyframe arrays and pass them as arguments — the hook call is unconditional.
+    const hasResetPoint = end < 0.9999; // last (clamped-to-1) card doesn't need reset
+    const scaleKeys = hasResetPoint ? [start, mid, end, end + 0.0005] : [start, mid, end];
+    const scaleVals = hasResetPoint ? [0, 1, 7, 0]                    : [0, 1, 7];
+    const scale = useTransform(scrollYProgress, scaleKeys, scaleVals);
+
+    // ─── Opacity ──────────────────────────────────────────────────────────────
+    // Proportional fade timings — guaranteed monotone for any range size.
+    const fadeInEnd    = start + range * 0.12;
+    const fadeOutStart = end   - range * 0.25;
     const opacity = useTransform(
         scrollYProgress,
         [start, fadeInEnd, fadeOutStart, end],
         [0, 1, 1, 0],
     );
 
+    // ─── Rotate ───────────────────────────────────────────────────────────────
     const rotate = useTransform(
         scrollYProgress,
         [start, end],
         [index % 2 === 0 ? -2 : 2, index % 2 === 0 ? 8 : -8],
     );
 
-    // Higher index = higher zIndex so each new card renders ON TOP of the previous.
-    // This lets card N+1 grow visibly as a "portal" in the center of card N,
-    // rather than being hidden beneath the zooming card N.
+    // ─── Z-Index ──────────────────────────────────────────────────────────────
+    // Each new card sits IN FRONT of the previous one (higher zIndex).
+    // Because old cards reset to scale=0 after exiting, only the active cards
+    // occupy meaningful compositor space — no accumulation of scale=7 layers.
+    //
+    // The visual effect: as card N zooms out, card N+1 appears as a small
+    // "portal" thumbnail growing in the foreground. The classic tunnel effect.
     const zIndex = index + 1;
 
     return (
@@ -130,10 +153,10 @@ function PortalItem({
                 opacity,
                 rotate,
                 zIndex,
-                translateZ: 0,
-                x: 0,
-                y: 0,
-                willChange: 'transform, opacity',
+                // No explicit willChange/translateZ on individual cards.
+                // Framer Motion promotes layers internally during active animation.
+                // Forcing 12 permanent GPU layers exhausts compositor budget and
+                // causes the Navbar + Hero to glitch.
             }}
             className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
@@ -173,8 +196,8 @@ export default function PortalLoop() {
         offset: ['start start', 'end end'],
     });
 
-    const titleScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.85]);
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+    const titleScale   = useTransform(scrollYProgress, [0, 0.08], [1, 0.85]);
+    const titleOpacity = useTransform(scrollYProgress, [0, 0.10], [1, 0]);
 
     return (
         <div ref={containerRef} className="relative h-[1200vh] bg-black">
@@ -214,6 +237,7 @@ export default function PortalLoop() {
                     />
                 ))}
 
+                {/* Vignette overlay */}
                 <div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_0%,black_85%)] opacity-60" />
             </div>
         </div>

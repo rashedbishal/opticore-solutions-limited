@@ -110,7 +110,10 @@ export default function Navbar() {
     return (
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
-            <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8">
+            <header
+                className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8 will-change-transform"
+                style={{ transform: 'translateZ(0)' }}
+            >
                 <nav
                     className={cn(
                         'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4',
