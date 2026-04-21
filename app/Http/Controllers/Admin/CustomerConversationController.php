@@ -39,13 +39,17 @@ class CustomerConversationController extends Controller
             ->orderBy('last_message_at', 'desc')
             ->paginate(50);
 
+        $conversations->getCollection()->transform(function (Conversation $conversation) {
+            $conversation->setAttribute('is_online', Cache::has("user_chat_online_{$conversation->user_id}"));
+
+            return $conversation;
+        });
+
         return response()->json($conversations);
     }
 
     public function fetchMessages(Conversation $conversation)
     {
-        $this->markIncomingMessagesAsDelivered($conversation, 'user');
-
         $messages = $conversation->messages()
             ->latest()
             ->paginate(20);
@@ -75,12 +79,15 @@ class CustomerConversationController extends Controller
             $type = explode('/', $file->getMimeType())[0] === 'image' ? 'image' : 'document';
         }
 
+        $userOnline = Cache::has("user_chat_online_{$conversation->user_id}");
+
         $message = $conversation->messages()->create([
             'sender_type' => 'admin',
             'sender_id' => $admin->id,
             'message' => $request->message,
             'attachment_path' => $path,
             'attachment_type' => $type,
+            'delivered_at' => $userOnline ? now() : null,
         ]);
 
         $conversation->update([
@@ -93,8 +100,6 @@ class CustomerConversationController extends Controller
 
         broadcast(new MessageSent($message))->toOthers();
 
-        // Check if the user is currently viewing their chat (active session cache key)
-        $userOnline = Cache::has("user_chat_online_{$conversation->user_id}");
         if (! $userOnline) {
             $user = $conversation->user;
             if ($user) {
@@ -115,12 +120,44 @@ class CustomerConversationController extends Controller
     /**
      * Called by the frontend to mark admin as online (ping endpoint).
      * Stores a cache key that expires in 2 minutes.
+     * On transition from offline → online, marks any "sent" user messages as "delivered".
      */
     public function pingOnline()
     {
+        $wasOffline = ! Cache::has('admin_online');
+
         Cache::put('admin_online', true, now()->addMinutes(2));
 
+        if ($wasOffline) {
+            // Admin just came online — upgrade all "sent" user messages across every conversation
+            $this->markAllUserMessagesAsDelivered();
+        }
+
         return response()->json(['ok' => true]);
+    }
+
+    private function markAllUserMessagesAsDelivered(): void
+    {
+        $now = now();
+
+        $messageIds = Message::where('sender_type', 'user')
+            ->whereNull('delivered_at')
+            ->pluck('id');
+
+        if ($messageIds->isEmpty()) {
+            return;
+        }
+
+        Message::whereIn('id', $messageIds)->update(['delivered_at' => $now]);
+
+        $messages = Message::whereKey($messageIds)->get(['id', 'conversation_id', 'delivered_at', 'read_at']);
+
+        foreach ($messages->groupBy('conversation_id') as $conversationId => $group) {
+            $this->broadcastMessageStatuses(
+                Conversation::find($conversationId),
+                $group,
+            );
+        }
     }
 
     private function markIncomingMessagesAsDelivered(Conversation $conversation, string $senderType): void

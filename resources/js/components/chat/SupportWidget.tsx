@@ -112,39 +112,38 @@ export default function SupportWidget() {
         }, 100);
     }, []);
 
-    // Initialize Conversation
+    // Initialize Conversation and seed unread count from server so the badge
+    // is correct even for messages received while the user was offline.
     useEffect(() => {
         if (auth.user) {
             axios
                 .post('/user-chat/init')
                 .then((res) => {
                     setConversation(res.data.conversation);
+                    setUnread(res.data.unread_count ?? 0);
                 })
                 .catch((e) => console.error('Failed to init chat', e));
         }
     }, [auth.user]);
 
-    // Fetch Messages
+    // Fetch Messages — always mark as read when opening so admin sees "Seen"
+    // regardless of whether the local unread counter was tracking those messages.
     useEffect(() => {
         if (isOpen && conversation) {
             axios.get(`/user-chat/${conversation.id}/messages`).then((res) => {
                 setMessages(res.data.data.reverse());
+                setUnread(0);
                 scrollToBottom();
-
-                setUnread((prev) => {
-                    if (prev > 0) {
-                        axios.post(`/user-chat/${conversation.id}/read`);
-                    }
-
-                    return 0;
-                });
+                // Always call markAsRead; server is idempotent (no-ops if nothing to mark).
+                axios.post(`/user-chat/${conversation.id}/read`).catch(() => {});
             });
         }
     }, [isOpen, conversation, scrollToBottom]);
 
-    // Ping server while chat window is open so admin knows user is online
+    // Ping server whenever the user is authenticated so admin knows they're online
+    // and deferred delivery upgrades happen as soon as the user lands on the page.
     useEffect(() => {
-        if (!isOpen || !conversation) {
+        if (!conversation) {
             return;
         }
 
@@ -153,7 +152,33 @@ export default function SupportWidget() {
         const interval = setInterval(ping, 60_000);
 
         return () => clearInterval(interval);
-    }, [isOpen, conversation]);
+    }, [conversation]);
+
+    // Broadcast "offline" instantly on tab close, logout redirect, or Inertia navigation.
+    // Uses sendBeacon so the request survives page unload; CSRF token is sent as form data.
+    useEffect(() => {
+        if (!conversation) {
+            return;
+        }
+
+        const sendOffline = () => {
+            const token =
+                document.head
+                    .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+                    ?.getAttribute('content') ?? '';
+            const body = new FormData();
+            body.append('_token', token);
+            navigator.sendBeacon('/user-chat/offline', body);
+        };
+
+        window.addEventListener('beforeunload', sendOffline);
+
+        return () => {
+            window.removeEventListener('beforeunload', sendOffline);
+            // Also fire on Inertia navigation (component unmounts without beforeunload).
+            sendOffline();
+        };
+    }, [conversation]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;

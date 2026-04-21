@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
 use App\Events\MessageStatusUpdated;
+use App\Events\UserPresenceUpdated;
 use App\Mail\AdminChatMessageReceivedMail;
 use App\Models\Admin;
 use App\Models\Conversation;
@@ -27,14 +28,42 @@ class ConversationController extends Controller
 
         $conversation = $user->conversation()->firstOrCreate([]);
 
+        $unreadCount = $conversation->messages()
+            ->where('sender_type', 'admin')
+            ->whereNull('read_at')
+            ->count();
+
         return response()->json([
             'conversation' => $conversation,
+            'unread_count' => $unreadCount,
         ]);
     }
 
     /**
-     * Called by the frontend periodically to mark the user as online/viewing their chat.
+     * Called when the user's session ends (logout, tab close, navigation away).
+     * Immediately clears the online cache and broadcasts the offline presence event.
+     */
+    public function goOffline(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return response()->json(['ok' => true]);
+        }
+
+        $cacheKey = "user_chat_online_{$user->id}";
+
+        if (Cache::has($cacheKey)) {
+            Cache::forget($cacheKey);
+            broadcast(new UserPresenceUpdated(userId: $user->id, online: false));
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Called by the frontend periodically to mark the user as online.
      * Stores a per-user cache key that expires in 2 minutes.
+     * On transition from offline → online, marks any "sent" admin messages as "delivered".
      */
     public function pingOnline(Request $request)
     {
@@ -43,7 +72,21 @@ class ConversationController extends Controller
             abort(401);
         }
 
-        Cache::put("user_chat_online_{$user->id}", true, now()->addMinutes(2));
+        $cacheKey = "user_chat_online_{$user->id}";
+        $wasOffline = ! Cache::has($cacheKey);
+
+        Cache::put($cacheKey, true, now()->addMinutes(2));
+
+        if ($wasOffline) {
+            // User just came online — upgrade any "sent" admin messages to "delivered"
+            $conversation = $user->conversation;
+            if ($conversation) {
+                $this->markIncomingMessagesAsDelivered($conversation, 'admin');
+            }
+        }
+
+        // Always broadcast so the admin sidebar green dot stays current
+        broadcast(new UserPresenceUpdated(userId: $user->id, online: true));
 
         return response()->json(['ok' => true]);
     }
@@ -54,8 +97,6 @@ class ConversationController extends Controller
         if (! $user || $conversation->user_id !== $user->id) {
             abort(403);
         }
-
-        $this->markIncomingMessagesAsDelivered($conversation, 'admin');
 
         $messages = $conversation->messages()
             ->latest()
@@ -89,12 +130,15 @@ class ConversationController extends Controller
             $type = explode('/', $file->getMimeType())[0] === 'image' ? 'image' : 'document';
         }
 
+        $anyAdminOnline = Cache::has('admin_online');
+
         $message = $conversation->messages()->create([
             'sender_type' => 'user',
             'sender_id' => $user->id,
             'message' => $request->message,
             'attachment_path' => $path,
             'attachment_type' => $type,
+            'delivered_at' => $anyAdminOnline ? now() : null,
         ]);
 
         $conversation->update([
@@ -107,8 +151,6 @@ class ConversationController extends Controller
 
         broadcast(new MessageSent($message))->toOthers();
 
-        // Check if any admin is currently online (active session in last 5 minutes)
-        $anyAdminOnline = Cache::has('admin_online');
         if (! $anyAdminOnline) {
             Admin::all()->each(function (Admin $admin) use ($message) {
                 Mail::to($admin->email)->queue(new AdminChatMessageReceivedMail($message));

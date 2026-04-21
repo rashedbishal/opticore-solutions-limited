@@ -31,6 +31,7 @@ interface Conversation {
     last_message: string | null;
     last_message_at: string | null;
     unread_count: number;
+    is_online: boolean;
 }
 
 interface Message {
@@ -51,6 +52,11 @@ interface MessageStatusPayload {
         delivered_at: string | null;
         read_at: string | null;
     }>;
+}
+
+interface UserPresencePayload {
+    user_id: number;
+    online: boolean;
 }
 
 function applyMessageStatuses(
@@ -113,6 +119,8 @@ export default function Index() {
     const [attachment, setAttachment] = useState<File | null>(null);
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
+    // userId → timestamp of last received presence ping (ms). Used for green dot.
+    const [onlineUsers, setOnlineUsers] = useState<Record<number, number>>({});
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     // Ref to always have the latest activeConv inside the Echo callback (avoids stale closure)
@@ -134,12 +142,44 @@ export default function Index() {
         return () => clearInterval(interval);
     }, []);
 
-    // Fetch initial conversations list
+    // Fetch initial conversations list and seed online status from server
     useEffect(() => {
         axios.get('/admin/api/customer-conversations').then((res) => {
-            setConversations(res.data.data);
-            setFilteredConversations(res.data.data);
+            const data: Conversation[] = res.data.data;
+            setConversations(data);
+            setFilteredConversations(data);
+
+            const initial: Record<number, number> = {};
+            data.forEach((conv) => {
+                if (conv.is_online) {
+                    initial[conv.user_id] = Date.now();
+                }
+            });
+            setOnlineUsers(initial);
         });
+    }, []);
+
+    // Sweep stale online entries every 30 s.
+    // A user is considered offline if no presence ping was received in the last 150 s
+    // (the client pings every 60 s so 150 s = 2.5× the ping interval).
+    useEffect(() => {
+        const THRESHOLD_MS = 150_000;
+        const sweep = () => {
+            const cutoff = Date.now() - THRESHOLD_MS;
+            setOnlineUsers((prev) => {
+                const next = { ...prev };
+                let changed = false;
+                for (const key in next) {
+                    if (next[key] < cutoff) {
+                        delete next[key];
+                        changed = true;
+                    }
+                }
+                return changed ? next : prev;
+            });
+        };
+        const interval = setInterval(sweep, 30_000);
+        return () => clearInterval(interval);
     }, []);
 
     // Search filter (client-side since list is paginated at 50)
@@ -313,6 +353,7 @@ export default function Index() {
                     setConversations={setConversations}
                     setFilteredConversations={setFilteredConversations}
                     setMessages={setMessages}
+                    setOnlineUsers={setOnlineUsers}
                 />
             )}
             {/* Sidebar List */}
@@ -349,8 +390,13 @@ export default function Index() {
                         >
                             <div className="min-w-0 flex-1">
                                 <div className="mb-1 flex items-center justify-between">
-                                    <span className="truncate font-medium text-slate-200">
-                                        {conv.user.name}
+                                    <span className="flex min-w-0 items-center gap-1.5">
+                                        {onlineUsers[conv.user_id] !== undefined && (
+                                            <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-green-500" />
+                                        )}
+                                        <span className="truncate font-medium text-slate-200">
+                                            {conv.user.name}
+                                        </span>
                                     </span>
                                     {conv.last_message_at && (
                                         <span className="ml-2 shrink-0 text-xs text-slate-500">
@@ -588,6 +634,9 @@ interface AdminConversationEchoListenerProps {
         React.SetStateAction<Conversation[]>
     >;
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    setOnlineUsers: React.Dispatch<
+        React.SetStateAction<Record<number, number>>
+    >;
 }
 
 function AdminConversationEchoListener({
@@ -596,6 +645,7 @@ function AdminConversationEchoListener({
     setConversations,
     setFilteredConversations,
     setMessages,
+    setOnlineUsers,
 }: AdminConversationEchoListenerProps) {
     useEcho(
         'admin.conversations',
@@ -706,6 +756,28 @@ function AdminConversationEchoListener({
                 setMessages((prev) => applyMessageStatuses(prev, e.messages));
             },
             [setMessages],
+        ),
+    );
+
+    useEcho<UserPresencePayload>(
+        'admin.conversations',
+        'UserPresenceUpdated',
+        useCallback(
+            (e) => {
+                if (e.online) {
+                    setOnlineUsers((prev) => ({
+                        ...prev,
+                        [e.user_id]: Date.now(),
+                    }));
+                } else {
+                    setOnlineUsers((prev) => {
+                        const next = { ...prev };
+                        delete next[e.user_id];
+                        return next;
+                    });
+                }
+            },
+            [setOnlineUsers],
         ),
     );
 

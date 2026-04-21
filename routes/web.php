@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
     Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
     Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
+    Route::post('/user-chat/offline', [ConversationController::class, 'goOffline'])->name('user.chat.offline');
 });
 
 Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])
