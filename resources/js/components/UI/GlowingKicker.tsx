@@ -73,8 +73,8 @@ const GlowingKicker: React.FC<GlowingKickerProps> = ({ children, className }) =>
                             repeat: Infinity,
                             delay: p.delay,
                             ease: "easeInOut",
-                        }}
-                    />
+                            times: [0, 0.5, 1]
+                        }}                    />
                 ))}
             </motion.div>
         </div>

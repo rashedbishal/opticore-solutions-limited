@@ -14,7 +14,7 @@ export default function AnimatedCounter({ value, suffix, label, variants }: Anim
     const isInView = useInView(ref, { once: true, margin: '-80px' });
 
     useEffect(() => {
-        if (!ref.current || !isInView) {
+        if (!ref.current || !isInView || typeof value !== 'number' || isNaN(value)) {
             return;
         }
 

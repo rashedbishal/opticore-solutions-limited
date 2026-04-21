@@ -14,17 +14,32 @@ jobs:
     name: Lint & Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: opticoresolutions_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # 1. Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install PHP 8.3
+      # 2. Install PHP 8.3 with pgsql extensions
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, pdo, pdo_sqlite, sqlite3, bcmath, ctype, fileinfo, json, tokenizer, xml
+          extensions: mbstring, pdo, pdo_pgsql, bcmath, ctype, fileinfo, json, tokenizer, xml
           coverage: none
 
       # 3. Install Node 22
@@ -67,16 +82,22 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-
-      # 11. Setup SQLite for testing
-      - name: Setup SQLite database
-        run: |
-          touch database/database.sqlite
-          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-          sed -i 's|# DB_DATABASE=.*|DB_DATABASE=database/database.sqlite|' .env
-          sed -i 's/CACHE_STORE=.*/CACHE_STORE=file/' .env
-          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=pgsql/' .env
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=.*/DB_PORT=5432/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=opticoresolutions_test/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=postgres/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=password/' .env
+          sed -i 's/DB_ADMIN_DATABASE=.*/DB_ADMIN_DATABASE=opticoresolutions_admin_test/' .env
+          sed -i 's/DB_ADMIN_USERNAME=.*/DB_ADMIN_USERNAME=postgres/' .env
+          sed -i 's/DB_ADMIN_PASSWORD=.*/DB_ADMIN_PASSWORD=password/' .env
+          sed -i 's/CACHE_STORE=.*/CACHE_STORE=array/' .env
+          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
           sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
+
+      # 11. Create admin test database
+      - name: Create admin test database
+        run: PGPASSWORD=password psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE opticoresolutions_admin_test;"
 
       # 12. Run migrations
       - name: Run migrations
@@ -94,6 +115,10 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      # 16. Run Pest tests
+      # 16. Bundle budget regression gate
+      - name: Check bundle budgets
+        run: npm run perf:bundle-check
+
+      # 17. Run Pest tests
       - name: Run tests
         run: ./vendor/bin/pest --ci

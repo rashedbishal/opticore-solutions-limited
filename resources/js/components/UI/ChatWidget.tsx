@@ -138,7 +138,7 @@ setSessionId(data.session_id);
     };
 
     return (
-        <div className="fixed right-6 bottom-6 z-50">
+        <div className="fixed right-2 bottom-2 z-50 sm:right-6 sm:bottom-6">
             {/* Teaser Bubble */}
             <AnimatePresence>
                 {showTeaser && !isOpen && (
@@ -146,12 +146,12 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="absolute bottom-20 sm:bottom-24 right-4 sm:right-8 mb-4 w-52 p-4 rounded-2xl bg-zinc-950/90 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-none"
+                        className="absolute right-2 bottom-18 mb-3 w-52 rounded-2xl border border-white/10 bg-zinc-950/90 p-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-xl pointer-events-none sm:right-8 sm:bottom-24 sm:mb-4"
                     >
                         <div className="relative">
                             <div className="flex items-center gap-1.5 mb-2">
                                 <Bot size={10} className="text-violet-400" />
-                                <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Opticore Assistant</span>
+                                    <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Opticore Assistant</span>
                             </div>
                             <p className="text-xs font-medium text-white/90 leading-relaxed">
                                 {teaserText}
@@ -164,7 +164,7 @@ setSessionId(data.session_id);
             </AnimatePresence>
 
             {/* Immersive Trigger Button */}
-            <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6">
+            <div className="absolute right-2 bottom-2 sm:right-6 sm:bottom-6">
                 <ImmersiveChatTrigger
                     onClick={() => setIsOpen(!isOpen)}
                     isOpen={isOpen}
@@ -180,7 +180,7 @@ setSessionId(data.session_id);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        className="absolute bottom-20 sm:bottom-24 right-2 sm:right-6 w-[calc(100vw-16px)] sm:w-[340px] max-w-[340px] overflow-hidden rounded-3xl border border-white/10 bg-[#0d1320]/95 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl max-h-[calc(100vh-120px)] sm:max-h-[500px] flex flex-col"
+                        className="absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0d1320]/95 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-6 sm:bottom-24"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
@@ -212,7 +212,7 @@ setSessionId(data.session_id);
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 backdrop-blur-md">
                                         <Sparkles size={10} className="text-yellow-300" />
-                                        <span className="text-[9px] font-bold text-white uppercase tracking-wider">AI Powered</span>
+                                        <span className="text-[10px] font-bold tracking-wider text-white uppercase">AI Powered</span>
                                     </div>
                                     <button
                                         onClick={() => setIsOpen(false)}
@@ -231,7 +231,7 @@ setSessionId(data.session_id);
                         >
                             {messages.length === 1 && (
                                 <div className="mb-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-sm">
-                                    <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">
+                                    <p className="mb-3 text-xs font-bold tracking-[0.15em] text-white/40 uppercase">
                                         Suggested Inquiries
                                     </p>
                                     <div className="space-y-2">
@@ -298,17 +298,31 @@ setSessionId(data.session_id);
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-400"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0,
+                                                    times: [0, 0.5, 1]
+                                                }}                                            />
+                                            <motion.div
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
+                                                animate={{ y: [0, -4, 0] }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0.2,
+                                                    times: [0, 0.5, 1]
+                                                }}
                                             />
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-400"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                                            />
-                                            <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
-                                                animate={{ y: [0, -4, 0] }}
-                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                                                transition={{ 
+                                                    duration: 0.6, 
+                                                    repeat: Infinity, 
+                                                    delay: 0.4,
+                                                    times: [0, 0.5, 1]
+                                                }}
                                             />
                                         </div>
                                     </motion.div>
@@ -330,7 +344,7 @@ setSessionId(data.session_id);
                                         placeholder="Type your message..."
                                         className="w-full rounded-2xl border border-white/10 bg-white/[0.04] pl-4 pr-16 py-3.5 text-sm text-white placeholder:text-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-white/[0.08] focus:ring-1 focus:ring-violet-500/20"
                                     />
-                                    <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-bold uppercase tracking-wider text-white/10 group-focus-within:text-violet-400/30 transition-colors">
+                                    <div className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold tracking-wider text-white/10 transition-colors group-focus-within:text-violet-400/30 uppercase">
                                         Enter
                                     </div>
                                 </div>
@@ -347,11 +361,11 @@ setSessionId(data.session_id);
 
                             {/* Trust indicators */}
                             <div className="mt-4 flex items-center justify-center gap-6">
-                                <div className="flex items-center gap-1.5 text-[10px] font-medium text-white/20">
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-white/20">
                                     <Shield size={12} className="text-violet-500/40" />
                                     <span>Encrypted Chat</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-[10px] font-medium text-white/20">
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-white/20">
                                     <Clock size={12} className="text-cyan-500/40" />
                                     <span>Instant Response</span>
                                 </div>

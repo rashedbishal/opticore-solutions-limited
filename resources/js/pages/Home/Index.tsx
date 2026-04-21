@@ -1,4 +1,5 @@
 import type { Variants } from 'framer-motion';
+import type { ReactNode } from 'react';
 
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
@@ -19,15 +20,12 @@ import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
 import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
-import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
-import Marquee from '@/components/UI/Marquee';
-
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { clientLogos } from '@/lib/site';
+import GradientOrb from '@/components/UI/GradientOrb';
 import { portfolio } from '@/routes';
-
-// Section2-5 lazy imports removed due to being unused
+import Marquee from '@/components/UI/Marquee';
+import { clientLogos } from '@/lib/site';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -54,30 +52,84 @@ const floatingIcons = [
         icon: PenTool,
         className: 'top-[10%] left-[4%]',
         animation: { x: [0, 8, 0], y: [0, -12, 0], rotate: [0, 4, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Globe,
         className: 'top-[14%] right-[5%]',
         animation: { x: [0, -10, 0], y: [0, 10, 0], rotate: [0, -4, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Film,
         className: 'bottom-[24%] left-[6%]',
         animation: { x: [0, 12, 0], y: [0, -8, 0], rotate: [0, 5, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Box,
         className: 'right-[8%] bottom-[20%]',
         animation: { x: [0, -12, 0], y: [0, 8, 0], rotate: [0, -5, 0] },
+        times: [0, 0.5, 1],
     },
     {
         icon: Code2,
         className: 'bottom-[8%] left-[14%]',
         animation: { x: [0, 10, 0], y: [0, -6, 0], rotate: [0, 3, 0] },
+        times: [0, 0.5, 1],
     },
 ];
 
 // duplicatedServices removed due to being unused
+
+function LazySection({
+    minHeightClassName = 'min-h-[60vh]',
+    children,
+}: {
+    minHeightClassName?: string;
+    children: ReactNode;
+}) {
+    const [isVisible, setIsVisible] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '400px 0px' },
+        );
+
+        if (sentinelRef.current) {
+            observer.observe(sentinelRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={sentinelRef}>
+            {isVisible ? (
+                <Suspense
+                    fallback={
+                        <div
+                            className={`flex ${minHeightClassName} items-center justify-center text-sm text-zinc-500`}
+                        >
+                            Loading section...
+                        </div>
+                    }
+                >
+                    {children}
+                </Suspense>
+            ) : (
+                <div className={minHeightClassName} aria-hidden="true" />
+            )}
+        </div>
+    );
+}
 
 function HeroHeadline() {
     const phrases = [
@@ -206,8 +258,6 @@ function HeroHeadline() {
     );
 }
 
-// CharmingStar removed due to being unused
-
 interface HomeIndexProps {
     brands?: string[];
 }
@@ -217,30 +267,40 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
-            entries.forEach((entry) => {
-                const card = entry.target as HTMLElement;
-                const rect = card.querySelector<SVGRectElement>('.trace-rect');
-                const beam = card.querySelector<SVGRectElement>('.beam-rect');
+            requestAnimationFrame(() => {
+                entries.forEach((entry) => {
+                    const card = entry.target as HTMLElement;
+                    const rect = card.querySelector<SVGRectElement>('.trace-rect');
+                    const beam = card.querySelector<SVGRectElement>('.beam-rect');
 
-                if (!rect) {
-                    return;
-                }
+                    if (!rect) {
+                        return;
+                    }
 
-                const box = card.getBoundingClientRect();
-                const w = box.width;
-                const h = box.height;
+                    const box = card.getBoundingClientRect();
+                    const w = Math.round(box.width);
+                    const h = Math.round(box.height);
 
-                const r = 26;
-                const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
+                    // Skip if dimensions haven't significantly changed
+                    if (card.dataset.lastW === `${w}` && card.dataset.lastH === `${h}`) {
+                        return;
+                    }
 
-                card.style.setProperty('--perim', `${perim}px`);
-                rect.setAttribute('width', `${w - 2.5}`);
-                rect.setAttribute('height', `${h - 2.5}`);
+                    card.dataset.lastW = `${w}`;
+                    card.dataset.lastH = `${h}`;
 
-                if (beam) {
-                    beam.setAttribute('width', `${w - 2.5}`);
-                    beam.setAttribute('height', `${h - 2.5}`);
-                }
+                    const r = 26;
+                    const perim = 2 * (w + h) - 8 * r + 2 * Math.PI * r;
+
+                    card.style.setProperty('--perim', `${perim}px`);
+                    rect.setAttribute('width', `${w - 2.5}`);
+                    rect.setAttribute('height', `${h - 2.5}`);
+
+                    if (beam) {
+                        beam.setAttribute('width', `${w - 2.5}`);
+                        beam.setAttribute('height', `${h - 2.5}`);
+                    }
+                });
             });
         });
 
@@ -414,11 +474,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                     <motion.div
                                         key={className}
                                         className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
-                                        animate={animation}
+                                        animate={animation.animation}
                                         transition={{
-                                            duration: 6,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                            ease: 'easeInOut',
+                                           duration: 6,
+                                           repeat: Number.POSITIVE_INFINITY,
+                                           ease: 'easeInOut',
+                                           times: animation.times,
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />
@@ -470,7 +531,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </p>
                     </div>
                 </section>
-                <PortalLoop />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <PortalLoop />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -485,7 +548,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </p>
                     </div>
                 </section>
-                <NebulaCluster />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <NebulaCluster />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -497,7 +562,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <KineticBento />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <KineticBento />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -509,7 +576,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <LiquidShuffle />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <LiquidShuffle />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -521,7 +590,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <OrbitingShowcase />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <OrbitingShowcase />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -533,7 +604,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <SpotlightCarousel />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <SpotlightCarousel />
+                </LazySection>
             </div>
 
             <section className="section-shell pt-0">

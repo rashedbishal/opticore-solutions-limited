@@ -39,8 +39,8 @@ export default function BlogIndex({ blogs }: Props) {
                 </Link>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50">
-                <table className="min-w-full divide-y divide-white/10">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+                <table className="min-w-[42rem] divide-y divide-white/10">
                     <thead className="bg-zinc-800/50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
@@ -63,13 +63,15 @@ export default function BlogIndex({ blogs }: Props) {
                                 key={blog.id}
                                 className="transition-colors hover:bg-white/5"
                             >
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-white">
-                                    {blog.title}
+                                <td className="px-6 py-4 text-sm text-white">
+                                    <p className="max-w-xs truncate sm:max-w-md">
+                                        {blog.title}
+                                    </p>
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
+                                <td className="px-6 py-4 text-sm text-zinc-400">
                                     {blog.category}
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
+                                <td className="px-6 py-4 text-sm text-zinc-400">
                                     {blog.author}
                                 </td>
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">

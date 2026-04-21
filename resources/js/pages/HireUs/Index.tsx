@@ -13,7 +13,6 @@ import {
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
-import AppLayout from '@/components/Layout/AppLayout';
 
 const services = [
     {
@@ -148,7 +147,7 @@ export default function HireUs() {
     const [activeTab, setActiveTab] = useState('graphic-design');
 
     return (
-        <AppLayout>
+        <>
             <Head title="Hire Opticore | Digital Services Marketplace" />
 
             <div className="relative min-h-screen overflow-hidden bg-black px-4 pt-32 pb-24">
@@ -306,6 +305,6 @@ export default function HireUs() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

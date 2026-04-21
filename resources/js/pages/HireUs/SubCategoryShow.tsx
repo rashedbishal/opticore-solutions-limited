@@ -14,7 +14,6 @@ import {
     Users,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import AppLayout from '@/components/Layout/AppLayout';
 import Modal from '@/components/UI/Modal';
 
 export default function SubCategoryShow({
@@ -127,7 +126,7 @@ export default function SubCategoryShow({
     ];
 
     return (
-        <AppLayout>
+        <>
             <Head title={`${subName} - Hire Opticore`} />
 
             <div className="relative min-h-screen bg-zinc-950 px-4 pt-32 pb-24">
@@ -478,6 +477,6 @@ export default function SubCategoryShow({
                     </div>
                 </div>
             </Modal>
-        </AppLayout>
+        </>
     );
 }

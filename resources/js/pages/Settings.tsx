@@ -1,9 +1,8 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/components/Layout/AppLayout';
 
 export default function Settings() {
     return (
-        <AppLayout>
+        <>
             <Head title="Settings" />
 
             <div className="py-24">
@@ -34,6 +33,6 @@ export default function Settings() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
