@@ -5,24 +5,53 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SocialController extends Controller
 {
+    /**
+     * @return array<int, string>
+     */
+    private function supportedProviders(): array
+    {
+        return ['google', 'facebook'];
+    }
+
     public function redirect(string $provider): RedirectResponse
     {
+        if (! in_array($provider, $this->supportedProviders(), true)) {
+            throw new NotFoundHttpException;
+        }
+
         return Socialite::driver($provider)->redirect();
     }
 
     public function callback(string $provider): RedirectResponse
     {
+        if (! in_array($provider, $this->supportedProviders(), true)) {
+            throw new NotFoundHttpException;
+        }
+
         try {
             $socialUser = Socialite::driver($provider)->user();
         } catch (\Exception $e) {
-            return redirect()->route('login')->withErrors(['social' => 'Social login failed.']);
+            Log::error('Social login callback failed.', [
+                'provider' => $provider,
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+            ]);
+
+            $message = App::isLocal()
+                ? sprintf('%s login failed: %s', Str::headline($provider), $e->getMessage())
+                : 'Social login failed. Please try again.';
+
+            return redirect()->route('login')->withErrors(['social' => $message]);
         }
 
         $user = User::where($provider.'_id', $socialUser->getId())

@@ -39,6 +39,12 @@ export default function Register() {
                 </p>
             </div>
 
+            {errors.social && (
+                <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-center text-sm font-bold text-red-400">
+                    {errors.social}
+                </div>
+            )}
+
             {/* Form */}
             <form onSubmit={submit} className="space-y-6">
                 <div className="space-y-4">

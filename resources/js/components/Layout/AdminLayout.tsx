@@ -1,6 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import adminRoutes from '@/routes/admin';
 import {
     LayoutDashboard,
     Image,
@@ -221,7 +222,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         </div>
                     </div>
                     <Link
-                        href="/logout"
+                        href={adminRoutes.logout.url()}
                         method="post"
                         as="button"
                         className="flex w-full items-center justify-center rounded-xl px-3 py-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-400"

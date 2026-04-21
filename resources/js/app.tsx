@@ -67,6 +67,9 @@ const initializeRealtime = async () => {
         },
     });
 
+    window.__echoConfigured = true;
+    window.dispatchEvent(new Event('echo:configured'));
+
     axios.interceptors.request.use((config) => {
         try {
             const socketId = echo().socketId();

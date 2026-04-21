@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import useEchoReady from '@/hooks/useEchoReady';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -43,6 +44,7 @@ interface Message {
 }
 
 export default function Index() {
+    const echoReady = useEchoReady();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [filteredConversations, setFilteredConversations] = useState<
         Conversation[]
@@ -122,103 +124,6 @@ export default function Index() {
                 });
         }
     }, [activeConv]);
-
-    // Admin Echo listener — uses ref to always read current activeConv without stale closure
-    useEcho(
-        'admin.conversations',
-        'MessageSent',
-        useCallback((e: any) => {
-            const incoming: Message = e.message;
-            const currentConv = activeConvRef.current;
-            const isActive = currentConv?.id === incoming.conversation_id;
-
-            setConversations((prev) => {
-                const exists = prev.some(
-                    (c) => c.id === incoming.conversation_id,
-                );
-                let updatedList = [];
-
-                if (exists) {
-                    // Update existing conversation preview
-                    updatedList = prev.map((c) => {
-                        if (c.id !== incoming.conversation_id) {
-                            return c;
-                        }
-
-                        return {
-                            ...c,
-                            last_message: incoming.attachment_path
-                                ? 'Sent an attachment'
-                                : incoming.message,
-                            last_message_at: incoming.created_at,
-                            unread_count: isActive
-                                ? 0
-                                : c.unread_count +
-                                  (incoming.sender_type === 'user' ? 1 : 0),
-                        };
-                    });
-                } else {
-                    // Brand-new conversation — build entry from embedded relation data
-                    const convData = (incoming as any).conversation;
-
-                    if (!convData) {
-                        // Fallback: re-fetch the full list
-                        axios
-                            .get('/admin/api/customer-conversations')
-                            .then((res) => {
-                                setConversations(res.data.data);
-                                setFilteredConversations(res.data.data);
-                            });
-
-                        return prev;
-                    }
-
-                    const newConv: Conversation = {
-                        id: convData.id,
-                        user_id: convData.user_id,
-                        user: convData.user,
-                        last_message: incoming.attachment_path
-                            ? 'Sent an attachment'
-                            : incoming.message,
-                        last_message_at: incoming.created_at,
-                        unread_count: incoming.sender_type === 'user' ? 1 : 0,
-                    };
-
-                    updatedList = [newConv, ...prev];
-                }
-
-                // Sort the list so latest messages are at the very top
-                return updatedList.sort((a, b) => {
-                    const timeA = a.last_message_at
-                        ? new Date(a.last_message_at).getTime()
-                        : 0;
-                    const timeB = b.last_message_at
-                        ? new Date(b.last_message_at).getTime()
-                        : 0;
-
-                    return timeB - timeA;
-                });
-            });
-
-            // If message belongs to currently open conversation, append to message list
-            if (isActive) {
-                setMessages((prev) => {
-                    if (prev.some((m) => m.id === incoming.id)) {
-                        return prev;
-                    }
-
-                    return [...prev, incoming];
-                });
-                scrollToBottom();
-
-                if (incoming.sender_type === 'user') {
-                    axios.post(
-                        `/admin/api/customer-conversations/${currentConv!.id}/read`,
-                    );
-                }
-            }
-        }, []),
-    );
 
     const scrollToBottom = () => {
         setTimeout(() => {
@@ -343,6 +248,15 @@ export default function Index() {
 
     return (
         <div className="flex h-[calc(100vh-12rem)] overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
+            {echoReady && (
+                <AdminConversationEchoListener
+                    activeConvRef={activeConvRef}
+                    scrollToBottom={scrollToBottom}
+                    setConversations={setConversations}
+                    setFilteredConversations={setFilteredConversations}
+                    setMessages={setMessages}
+                />
+            )}
             {/* Sidebar List */}
             <div className="flex w-1/3 flex-col border-r border-white/5 bg-slate-900/50">
                 <div className="border-b border-white/5 p-4">
@@ -597,6 +511,127 @@ export default function Index() {
             </div>
         </div>
     );
+}
+
+interface AdminConversationEchoListenerProps {
+    activeConvRef: React.MutableRefObject<Conversation | null>;
+    scrollToBottom: () => void;
+    setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
+    setFilteredConversations: React.Dispatch<
+        React.SetStateAction<Conversation[]>
+    >;
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+}
+
+function AdminConversationEchoListener({
+    activeConvRef,
+    scrollToBottom,
+    setConversations,
+    setFilteredConversations,
+    setMessages,
+}: AdminConversationEchoListenerProps) {
+    useEcho(
+        'admin.conversations',
+        'MessageSent',
+        useCallback(
+            (e: any) => {
+                const incoming: Message = e.message;
+                const currentConv = activeConvRef.current;
+                const isActive = currentConv?.id === incoming.conversation_id;
+
+                setConversations((prev) => {
+                    const exists = prev.some(
+                        (c) => c.id === incoming.conversation_id,
+                    );
+                    let updatedList = [];
+
+                    if (exists) {
+                        updatedList = prev.map((c) => {
+                            if (c.id !== incoming.conversation_id) {
+                                return c;
+                            }
+
+                            return {
+                                ...c,
+                                last_message: incoming.attachment_path
+                                    ? 'Sent an attachment'
+                                    : incoming.message,
+                                last_message_at: incoming.created_at,
+                                unread_count: isActive
+                                    ? 0
+                                    : c.unread_count +
+                                      (incoming.sender_type === 'user' ? 1 : 0),
+                            };
+                        });
+                    } else {
+                        const convData = (incoming as any).conversation;
+
+                        if (!convData) {
+                            axios
+                                .get('/admin/api/customer-conversations')
+                                .then((res) => {
+                                    setConversations(res.data.data);
+                                    setFilteredConversations(res.data.data);
+                                });
+
+                            return prev;
+                        }
+
+                        const newConv: Conversation = {
+                            id: convData.id,
+                            user_id: convData.user_id,
+                            user: convData.user,
+                            last_message: incoming.attachment_path
+                                ? 'Sent an attachment'
+                                : incoming.message,
+                            last_message_at: incoming.created_at,
+                            unread_count:
+                                incoming.sender_type === 'user' ? 1 : 0,
+                        };
+
+                        updatedList = [newConv, ...prev];
+                    }
+
+                    return updatedList.sort((a, b) => {
+                        const timeA = a.last_message_at
+                            ? new Date(a.last_message_at).getTime()
+                            : 0;
+                        const timeB = b.last_message_at
+                            ? new Date(b.last_message_at).getTime()
+                            : 0;
+
+                        return timeB - timeA;
+                    });
+                });
+
+                if (isActive) {
+                    setMessages((prev) => {
+                        if (prev.some((m) => m.id === incoming.id)) {
+                            return prev;
+                        }
+
+                        return [...prev, incoming];
+                    });
+                    scrollToBottom();
+
+                    if (incoming.sender_type === 'user') {
+                        axios.post(
+                            `/admin/api/customer-conversations/${currentConv!.id}/read`,
+                        );
+                    }
+                }
+            },
+            [
+                activeConvRef,
+                scrollToBottom,
+                setConversations,
+                setFilteredConversations,
+                setMessages,
+            ],
+        ),
+    );
+
+    return null;
 }
 
 Index.layout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;

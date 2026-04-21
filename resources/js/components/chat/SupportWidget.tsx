@@ -1,4 +1,5 @@
 import type { SharedPageProps } from '@/types';
+import useEchoReady from '@/hooks/useEchoReady';
 import { usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
@@ -33,6 +34,7 @@ interface Conversation {
 
 export default function SupportWidget() {
     const { auth } = usePage<SharedPageProps>().props;
+    const echoReady = useEchoReady();
     const [isOpen, setIsOpen] = useState(false);
     const [conversation, setConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -181,7 +183,7 @@ export default function SupportWidget() {
 
     return (
         <div className="fixed bottom-3 left-3 z-50 sm:bottom-6 sm:left-6">
-            {conversation && (
+            {conversation && echoReady && (
                 <SupportWidgetEchoListener
                     conversation={conversation}
                     setMessages={setMessages}
