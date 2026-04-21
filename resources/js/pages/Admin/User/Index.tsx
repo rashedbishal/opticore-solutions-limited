@@ -43,8 +43,8 @@ export default function UserIndex({ users, auth }: Props) {
                 </Link>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50">
-                <table className="min-w-full divide-y divide-white/10">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+                <table className="min-w-[40rem] divide-y divide-white/10">
                     <thead className="bg-zinc-800/50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
@@ -64,11 +64,13 @@ export default function UserIndex({ users, auth }: Props) {
                                 key={user.id}
                                 className="transition-colors hover:bg-white/5"
                             >
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-white">
+                                <td className="px-6 py-4 text-sm text-white">
                                     {user.name}
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
-                                    {user.email}
+                                <td className="px-6 py-4 text-sm text-zinc-400">
+                                    <p className="max-w-[14rem] truncate sm:max-w-[20rem]">
+                                        {user.email}
+                                    </p>
                                 </td>
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <Link

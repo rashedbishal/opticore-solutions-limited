@@ -43,12 +43,6 @@ if (typeof window !== 'undefined') {
         },
     });
 
-    // Debugging connection errors removed to avoid property undefined issues during initialization
-
-    // Attach the current Echo socket ID to every Axios request so that
-    // broadcast()->toOthers() can correctly exclude the sender's own tab.
-    // Without this header, Laravel cannot identify the sender and broadcasts
-    // back to them too, causing duplicate messages.
     axios.interceptors.request.use((config) => {
         try {
             const socketId = echo().socketId();
@@ -57,27 +51,12 @@ if (typeof window !== 'undefined') {
                 config.headers['X-Socket-ID'] = socketId;
             }
         } catch {
-            // Echo not yet connected — no socket ID available, skip
+            // Echo not yet connected — no socket ID available.
         }
 
         return config;
     });
-}
-
-const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';
-
-interface InertiaPageModule {
-    default: InertiaPageComponent;
-}
-
-interface InertiaPageComponent {
-    (props: Record<string, unknown>): ReactElement;
-    layout?: (page: ReactNode) => ReactNode;
-}
-
-const pages = import.meta.glob<InertiaPageModule>('./pages/**/*.tsx', {
-    eager: true,
-});
+};
 
 createInertiaApp({
     title: (title) => (title ? `${title} — ${appName}` : appName),
@@ -86,13 +65,14 @@ createInertiaApp({
         includeCSS: true,
         showSpinner: false,
     },
-    resolve: (name) => {
-        const page = pages[`./pages/${name}.tsx`];
+    resolve: async (name) => {
+        const loadPage = pages[`./pages/${name}.tsx`];
 
-        if (!page) {
+        if (!loadPage) {
             throw new Error(`Unknown Inertia page: ${name}`);
         }
 
+        const page = await loadPage();
         page.default.layout ??= (pageNode: ReactNode) => (
             <AppLayout>{pageNode}</AppLayout>
         );
@@ -102,6 +82,13 @@ createInertiaApp({
     setup({ el, App, props }) {
         if (import.meta.env.SSR) {
             return;
+        }
+
+        if ('requestIdleCallback' in window) {
+            (window as Window & { requestIdleCallback: Function })
+                .requestIdleCallback(() => void initializeRealtime());
+        } else {
+            setTimeout(() => void initializeRealtime(), 0);
         }
 
         createRoot(el).render(

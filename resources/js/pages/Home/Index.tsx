@@ -84,6 +84,55 @@ const floatingIcons = [
 
 // duplicatedServices removed due to being unused
 
+function LazySection({
+    minHeightClassName = 'min-h-[60vh]',
+    children,
+}: {
+    minHeightClassName?: string;
+    children: ReactNode;
+}) {
+    const [isVisible, setIsVisible] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '400px 0px' },
+        );
+
+        if (sentinelRef.current) {
+            observer.observe(sentinelRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={sentinelRef}>
+            {isVisible ? (
+                <Suspense
+                    fallback={
+                        <div
+                            className={`flex ${minHeightClassName} items-center justify-center text-sm text-zinc-500`}
+                        >
+                            Loading section...
+                        </div>
+                    }
+                >
+                    {children}
+                </Suspense>
+            ) : (
+                <div className={minHeightClassName} aria-hidden="true" />
+            )}
+        </div>
+    );
+}
+
 function HeroHeadline() {
     const phrases = [
         'deliver creative <br/> graphic design solutions <br/> for businesses',
@@ -485,7 +534,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </p>
                     </div>
                 </section>
-                <PortalLoop />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <PortalLoop />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -500,7 +551,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </p>
                     </div>
                 </section>
-                <NebulaCluster />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <NebulaCluster />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -512,7 +565,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <KineticBento />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <KineticBento />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -524,7 +579,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <LiquidShuffle />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <LiquidShuffle />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-black py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -536,7 +593,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <OrbitingShowcase />
+                <LazySection minHeightClassName="min-h-[90vh]">
+                    <OrbitingShowcase />
+                </LazySection>
 
                 <section className="border-t border-white/5 bg-zinc-950 py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -548,7 +607,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </h2>
                     </div>
                 </section>
-                <SpotlightCarousel />
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <SpotlightCarousel />
+                </LazySection>
             </div>
 
             <section className="section-shell pt-0">

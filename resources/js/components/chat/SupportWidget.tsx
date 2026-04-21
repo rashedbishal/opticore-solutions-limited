@@ -180,7 +180,7 @@ export default function SupportWidget() {
     }
 
     return (
-        <div className="fixed bottom-6 left-6 z-50">
+        <div className="fixed bottom-3 left-3 z-50 sm:bottom-6 sm:left-6">
             {conversation && (
                 <SupportWidgetEchoListener
                     conversation={conversation}
@@ -197,7 +197,7 @@ export default function SupportWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute bottom-16 left-0 mb-4 flex h-[520px] w-80 flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:w-96"
+                        className="absolute bottom-16 left-0 mb-2 flex max-h-[min(100dvh-90px,520px)] w-[min(100vw-24px,24rem)] flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:mb-4"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between bg-violet-600 px-4 py-3 text-white">

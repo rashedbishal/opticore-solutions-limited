@@ -35,8 +35,8 @@ export default function ContactIndex({ contacts }: Props) {
                 Contact & Feedback
             </h1>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50">
-                <table className="min-w-full divide-y divide-white/10">
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+                <table className="min-w-[48rem] divide-y divide-white/10">
                     <thead className="bg-zinc-800/50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
@@ -59,7 +59,7 @@ export default function ContactIndex({ contacts }: Props) {
                                 key={contact.id}
                                 className="transition-colors hover:bg-white/5"
                             >
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
+                                <td className="px-6 py-4 text-sm text-zinc-400">
                                     {new Date(
                                         contact.created_at,
                                     ).toLocaleDateString()}
@@ -78,7 +78,7 @@ export default function ContactIndex({ contacts }: Props) {
                                             {contact.subject}
                                         </p>
                                     )}
-                                    <p className="truncate">
+                                    <p className="line-clamp-2 break-words">
                                         {contact.message}
                                     </p>
                                 </td>
