@@ -36,8 +36,8 @@ function TestimonialsTitle({ text }: { text: string }) {
                     duration: 4,
                     repeat: Infinity,
                     ease: 'easeInOut',
-                }}
-                className="inline-block"
+                    times: [0, 0.5, 1],
+                }}                className="inline-block"
             >
                 <motion.span
                     animate={{
@@ -70,19 +70,19 @@ function CapabilitiesTitle({ text }: { text: string }) {
                             key={charIndex}
                             variants={{
                                 hidden: { scale: 0, opacity: 0, y: 20 },
-                                visible: { 
-                                    scale: [0, 1.25, 1], 
-                                    opacity: 1, 
-                                    y: 0 
+                                visible: {
+                                    scale: [0, 1.25, 1],
+                                    opacity: 1,
+                                    y: 0
                                 },
                             }}
-                            transition={{ 
-                                type: 'spring', 
-                                stiffness: 260, 
-                                damping: 20, 
-                                delay: (wordIndex * 5 + charIndex) * 0.02 
-                            }}
-                            className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-1.5"
+                            transition={{
+                                type: 'spring',
+                                stiffness: 260,
+                                damping: 20,
+                                delay: (wordIndex * 5 + charIndex) * 0.02,
+                                times: [0, 0.6, 1]
+                            }}                            className="inline-block bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent px-[0.03em] py-1.5"
                         >
                             {char}
                         </motion.span>

@@ -93,8 +93,8 @@ export default function OrbitingShowcase() {
                                 duration: 10 + i * 2,
                                 repeat: Infinity,
                                 ease: 'linear',
-                            }}
-                        >
+                                times: [0, 0.5, 1],
+                            }}                        >
                             <User
                                 className={`h-10 w-10 ${isActive ? 'text-cyan-400' : 'text-zinc-600'}`}
                             />

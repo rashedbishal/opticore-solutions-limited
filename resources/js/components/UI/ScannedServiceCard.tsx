@@ -660,7 +660,7 @@ function ScannedCarousel({
                                 className="ssc-ascii"
                                 style={{
                                     position:'absolute', inset:0, zIndex:1,
-                                    clipPath:'inset(0 0 0 0%)',
+                                    clipPath:'inset(0 0 0 100%)',
                                     borderRadius:'inherit', overflow:'hidden',
                                     background:'#0a0a0f',
                                 }}
