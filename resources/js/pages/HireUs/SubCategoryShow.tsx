@@ -17,6 +17,9 @@ import {
     ChevronRight,
     Film,
     ImageIcon,
+    Play,
+    Pause,
+    Maximize2,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -65,6 +68,75 @@ const stagger: Variants = {
 };
 
 const PLACEHOLDER = 'https://placehold.co/1200x675/0a0a0a/27272a?text=Opticore';
+
+// ─── Mock Portfolio Data ────────────────────────────────────────────────────
+
+const MOCK_PORTFOLIOS: PortfolioItem[] = [
+    {
+        id: 1,
+        title: 'Service Intro — Who We Are',
+        media_path:
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        media_type: 'video',
+        alt: 'Opticore service introduction video',
+    },
+    {
+        id: 2,
+        title: 'Brand Identity — TechFlow',
+        media_path:
+            'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'TechFlow brand identity project',
+    },
+    {
+        id: 3,
+        title: 'Motion Design — Product Demo',
+        media_path:
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        media_type: 'video',
+        alt: 'Product motion design demo',
+    },
+    {
+        id: 4,
+        title: 'Visual Campaign — NovaMark',
+        media_path:
+            'https://images.unsplash.com/photo-1558655146-d09347e92766?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'NovaMark visual campaign',
+    },
+    {
+        id: 5,
+        title: 'UI/UX Design — Fintech Dashboard',
+        media_path:
+            'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'Fintech dashboard UI design',
+    },
+    {
+        id: 6,
+        title: 'Photography — Apex Lifestyle',
+        media_path:
+            'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'Apex lifestyle photography',
+    },
+    {
+        id: 7,
+        title: 'Social Assets — Luminary Co.',
+        media_path:
+            'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'Luminary Co. social media assets',
+    },
+    {
+        id: 8,
+        title: '3D Renders — Arcadia Space',
+        media_path:
+            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=675&fit=crop',
+        media_type: 'image',
+        alt: 'Arcadia Space 3D renders',
+    },
+];
 
 // ─── Plans ─────────────────────────────────────────────────────────────────
 
@@ -154,44 +226,81 @@ const REVIEWS = [
 function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [direction, setDirection] = useState<1 | -1>(1);
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [videoProgress, setVideoProgress] = useState(0);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const lightboxVideoRef = useRef<HTMLVideoElement>(null);
 
     const slides = items.length > 0 ? items : null;
 
-    const goTo = useCallback((index: number, dir: 1 | -1) => {
-        setDirection(dir);
-        setActiveIndex(index);
-    }, []);
+    const goTo = useCallback(
+        (index: number, dir: 1 | -1) => {
+            setDirection(dir);
+            setActiveIndex(index);
+            setIsPlaying(true);
+            setVideoProgress(0);
+        },
+        [],
+    );
 
     const goPrev = useCallback(() => {
-        if (!slides) {
-            return;
-        }
-
+        if (!slides) return;
         goTo((activeIndex - 1 + slides.length) % slides.length, -1);
     }, [activeIndex, slides, goTo]);
 
     const goNext = useCallback(() => {
-        if (!slides) {
-            return;
-        }
-
+        if (!slides) return;
         goTo((activeIndex + 1) % slides.length, 1);
     }, [activeIndex, slides, goTo]);
+
+    const togglePlayPause = useCallback(() => {
+        const vid = videoRef.current;
+        if (!vid) return;
+        if (vid.paused) {
+            vid.play();
+            setIsPlaying(true);
+        } else {
+            vid.pause();
+            setIsPlaying(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        const vid = videoRef.current;
+        if (!vid) return;
+        const onTimeUpdate = () => {
+            if (vid.duration) {
+                setVideoProgress((vid.currentTime / vid.duration) * 100);
+            }
+        };
+        vid.addEventListener('timeupdate', onTimeUpdate);
+        return () => vid.removeEventListener('timeupdate', onTimeUpdate);
+    }, [activeIndex]);
 
     const slideVariants: Variants = {
         enter: (d: number) => ({
             x: d > 0 ? '100%' : '-100%',
             opacity: 0,
+            scale: 0.98,
         }),
         center: {
             x: 0,
             opacity: 1,
-            transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+            scale: 1,
+            transition: {
+                duration: 0.5,
+                ease: [0.22, 1, 0.36, 1],
+            },
         },
         exit: (d: number) => ({
             x: d > 0 ? '-100%' : '100%',
             opacity: 0,
-            transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+            scale: 0.98,
+            transition: {
+                duration: 0.4,
+                ease: [0.22, 1, 0.36, 1],
+            },
         }),
     };
 
@@ -209,129 +318,244 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const active = slides[activeIndex];
 
     return (
-        <div className="space-y-4">
-            {/* Main slide */}
-            <div className="group relative aspect-video w-full overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900">
-                <AnimatePresence
-                    initial={false}
-                    custom={direction}
-                    mode="popLayout"
-                >
-                    <motion.div
-                        key={activeIndex}
+        <>
+            <div className="space-y-4">
+                {/* Main slide */}
+                <div className="group relative aspect-video w-full overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900">
+                    <AnimatePresence
+                        initial={false}
                         custom={direction}
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        className="absolute inset-0"
+                        mode="popLayout"
                     >
-                        {active.media_type === 'video' ? (
-                            <video
-                                src={active.media_path ?? undefined}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                className="h-full w-full object-cover"
-                            />
-                        ) : (
-                            <img
-                                src={active.media_path ?? PLACEHOLDER}
-                                alt={active.alt}
-                                onError={(e) => {
-                                    e.currentTarget.src = PLACEHOLDER;
-                                }}
-                                className="h-full w-full object-cover"
-                            />
-                        )}
-                        {/* Caption */}
-                        <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent p-6">
-                            <p className="text-sm font-semibold text-white">
-                                {active.title}
-                            </p>
-                            {active.media_type === 'video' && (
-                                <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
-                                    <Film className="h-3 w-3" /> Video
-                                </span>
+                        <motion.div
+                            key={activeIndex}
+                            custom={direction}
+                            variants={slideVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            className="absolute inset-0"
+                        >
+                            {active.media_type === 'video' ? (
+                                <video
+                                    ref={videoRef}
+                                    src={active.media_path ?? undefined}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <img
+                                    src={active.media_path ?? PLACEHOLDER}
+                                    alt={active.alt}
+                                    onError={(e) => {
+                                        e.currentTarget.src = PLACEHOLDER;
+                                    }}
+                                    className="h-full w-full object-cover"
+                                />
                             )}
-                        </div>
-                    </motion.div>
-                </AnimatePresence>
 
-                {/* Navigation arrows */}
-                {slides.length > 1 && (
-                    <>
-                        <button
-                            onClick={goPrev}
-                            className="absolute top-1/2 left-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                            aria-label="Previous slide"
-                        >
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <button
-                            onClick={goNext}
-                            className="absolute top-1/2 right-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                            aria-label="Next slide"
-                        >
-                            <ChevronRight className="h-5 w-5" />
-                        </button>
-                    </>
-                )}
+                            {/* Caption */}
+                            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent p-6 pb-8">
+                                <p className="text-sm font-semibold text-white">
+                                    {active.title}
+                                </p>
+                                {active.media_type === 'video' && (
+                                    <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
+                                        <Film className="h-3 w-3" /> Video
+                                    </span>
+                                )}
+                            </div>
 
-                {/* Dot indicator */}
-                {slides.length > 1 && (
-                    <div className="absolute right-0 bottom-4 left-0 flex justify-center gap-1.5">
-                        {slides.map((_, i) => (
+                            {/* Video progress bar */}
+                            {active.media_type === 'video' && (
+                                <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
+                                    <motion.div
+                                        className="h-full bg-cyan-400"
+                                        style={{ width: `${videoProgress}%` }}
+                                        transition={{ duration: 0.1 }}
+                                    />
+                                </div>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Play/Pause overlay for video */}
+                    {active.media_type === 'video' && (
+                        <button
+                            type="button"
+                            onClick={togglePlayPause}
+                            className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                            aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                        >
+                            {isPlaying ? (
+                                <Pause className="h-4 w-4" />
+                            ) : (
+                                <Play className="h-4 w-4" />
+                            )}
+                        </button>
+                    )}
+
+                    {/* Fullscreen/zoom button */}
+                    <button
+                        type="button"
+                        onClick={() => setIsLightboxOpen(true)}
+                        className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                        aria-label="View fullscreen"
+                    >
+                        <Maximize2 className="h-4 w-4" />
+                    </button>
+
+                    {/* Navigation arrows */}
+                    {slides.length > 1 && (
+                        <>
                             <button
-                                key={i}
+                                onClick={goPrev}
+                                className="absolute top-1/2 left-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                                aria-label="Previous slide"
+                            >
+                                <ChevronLeft className="h-5 w-5" />
+                            </button>
+                            <button
+                                onClick={goNext}
+                                className="absolute top-1/2 right-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                                aria-label="Next slide"
+                            >
+                                <ChevronRight className="h-5 w-5" />
+                            </button>
+                        </>
+                    )}
+
+                    {/* Dot indicator */}
+                    {slides.length > 1 && (
+                        <div className="absolute right-0 bottom-4 left-0 flex justify-center gap-1.5">
+                            {slides.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() =>
+                                        goTo(i, i > activeIndex ? 1 : -1)
+                                    }
+                                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                                        i === activeIndex
+                                            ? 'w-6 bg-white'
+                                            : 'w-1.5 bg-white/30 hover:bg-white/60'
+                                    }`}
+                                    aria-label={`Go to slide ${i + 1}`}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Thumbnail strip */}
+                {slides.length > 1 && (
+                    <div className="flex gap-3 overflow-x-auto pb-1">
+                        {slides.map((item, i) => (
+                            <button
+                                key={item.id}
                                 onClick={() =>
                                     goTo(i, i > activeIndex ? 1 : -1)
                                 }
-                                className={`h-1.5 rounded-full transition-all duration-300 ${
+                                className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
                                     i === activeIndex
-                                        ? 'w-6 bg-white'
-                                        : 'w-1.5 bg-white/30 hover:bg-white/60'
+                                        ? 'border-cyan-400 opacity-100 shadow-[0_0_14px_rgba(34,211,238,0.45)]'
+                                        : 'border-white/10 opacity-50 hover:border-white/30 hover:opacity-80'
                                 }`}
-                                aria-label={`Go to slide ${i + 1}`}
-                            />
+                            >
+                                {item.media_type === 'video' ? (
+                                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
+                                        <Film className="h-4 w-4 text-zinc-400" />
+                                        {i === activeIndex &&
+                                            item.media_type === 'video' && (
+                                                <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
+                                                    <div
+                                                        className="h-full bg-cyan-400 transition-none"
+                                                        style={{
+                                                            width: `${videoProgress}%`,
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={item.media_path ?? PLACEHOLDER}
+                                        alt={item.alt}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => {
+                                            e.currentTarget.src = PLACEHOLDER;
+                                        }}
+                                    />
+                                )}
+                            </button>
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* Thumbnail strip */}
-            {slides.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-1">
-                    {slides.map((item, i) => (
-                        <button
-                            key={item.id}
-                            onClick={() => goTo(i, i > activeIndex ? 1 : -1)}
-                            className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                                i === activeIndex
-                                    ? 'border-cyan-400 opacity-100'
-                                    : 'border-white/10 opacity-50 hover:opacity-80'
-                            }`}
+            {/* Lightbox */}
+            <AnimatePresence>
+                {isLightboxOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+                        onClick={() => setIsLightboxOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{
+                                duration: 0.35,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900 shadow-2xl"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            {item.media_type === 'video' ? (
-                                <div className="flex h-full w-full items-center justify-center bg-zinc-800">
-                                    <Film className="h-4 w-4 text-zinc-400" />
-                                </div>
+                            {active.media_type === 'video' ? (
+                                <video
+                                    ref={lightboxVideoRef}
+                                    src={active.media_path ?? undefined}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    controls
+                                    className="aspect-video w-full object-cover"
+                                />
                             ) : (
                                 <img
-                                    src={item.media_path ?? PLACEHOLDER}
-                                    alt={item.alt}
-                                    className="h-full w-full object-cover"
+                                    src={active.media_path ?? PLACEHOLDER}
+                                    alt={active.alt}
+                                    className="aspect-video w-full object-contain"
                                     onError={(e) => {
                                         e.currentTarget.src = PLACEHOLDER;
                                     }}
                                 />
                             )}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
+                            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent px-6 py-5">
+                                <p className="font-semibold text-white">
+                                    {active.title}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsLightboxOpen(false)}
+                                className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/80"
+                                aria-label="Close lightbox"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }
 
@@ -343,6 +567,8 @@ export default function SubCategoryShow({
     portfolios,
     siblingSubCategories,
 }: Props) {
+    const displayPortfolios =
+        portfolios.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -502,7 +728,7 @@ export default function SubCategoryShow({
 
                             {/* Gallery */}
                             <motion.div variants={fadeUp}>
-                                <GallerySlider items={portfolios} />
+                                <GallerySlider items={displayPortfolios} />
                             </motion.div>
 
                             {/* Description */}
