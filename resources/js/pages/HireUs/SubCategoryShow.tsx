@@ -25,6 +25,10 @@ import {
     Globe,
     Languages,
     Info,
+    HelpCircle,
+    ChevronDown,
+    ChevronUp,
+    FilterX,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -37,11 +41,17 @@ interface PortfolioItem {
     alt: string;
 }
 
+interface FaqItem {
+    question: string;
+    answer: string;
+}
+
 interface SubCategory {
     id: number;
     name: string;
     slug: string;
     description: string | null;
+    faqs?: FaqItem[];
 }
 
 interface Category {
@@ -221,7 +231,66 @@ const REVIEWS = [
         review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
         rating: 5,
     },
+    {
+        user: 'John D.',
+        location: 'Canada',
+        review: 'Very good service, though the initial concept needed a bit of tweaking. Overall satisfied.',
+        rating: 4,
+    },
+    {
+        user: 'Elena P.',
+        location: 'France',
+        review: 'The design was great, but delivery was delayed by a day. Still recommended for the quality.',
+        rating: 4,
+    },
+    {
+        user: 'Mark T.',
+        location: 'Australia',
+        review: 'Decent work, but I expected more options in the basic package.',
+        rating: 3,
+    },
 ];
+
+// ─── FAQ Accordion Item ───────────────────────────────────────────────────
+
+function FaqAccordionItem({ faq }: { faq: FaqItem }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] transition-colors hover:bg-white/[0.04]">
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex w-full items-center justify-between p-5 text-left transition-colors"
+            >
+                <span className="text-sm font-bold text-zinc-200">
+                    {faq.question}
+                </span>
+                {isOpen ? (
+                    <ChevronUp className="h-4 w-4 text-zinc-500" />
+                ) : (
+                    <ChevronDown className="h-4 w-4 text-zinc-500" />
+                )}
+            </button>
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        <div className="border-t border-white/5 p-5 pt-0">
+                            <p className="text-sm leading-relaxed text-zinc-400">
+                                {faq.answer}
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
 
 // ─── Gallery Slider ─────────────────────────────────────────────────────────
 
@@ -586,8 +655,18 @@ export default function SubCategoryShow({
     ]);
     const [newMessage, setNewMessage] = useState('');
     const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+    const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
+
+    const ratingBreakdown = [5, 4, 3, 2, 1].map((star) => ({
+        star,
+        count: REVIEWS.filter((r) => r.rating === star).length,
+    }));
+
+    const filteredReviews = ratingFilter
+        ? REVIEWS.filter((r) => r.rating === ratingFilter)
+        : REVIEWS;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -940,22 +1019,101 @@ export default function SubCategoryShow({
                                         leave a lasting impact.
                                     </p>
                                 </div>
+
+                                {/* Service FAQ Section */}
+                                <div className="glass-panel space-y-6 rounded-[2rem] border border-white/5 p-8 md:p-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+                                            <HelpCircle className="h-5 w-5" />
+                                        </div>
+                                        <h2 className="text-xl font-bold text-white">
+                                            Service FAQs
+                                        </h2>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {(subCategory.faqs && subCategory.faqs.length > 0
+                                            ? subCategory.faqs
+                                            : [
+                                                  {
+                                                      question: '[DUMMY] How long does it take?',
+                                                      answer: 'This is placeholder data. Actual delivery times vary by project scope.',
+                                                  },
+                                                  {
+                                                      question: '[DUMMY] Can I request revisions?',
+                                                      answer: 'This is placeholder data. Revisions are typically included in our packages.',
+                                                  },
+                                                  {
+                                                      question: '[DUMMY] What files will I receive?',
+                                                      answer: 'This is placeholder data. Final deliverables usually include source files and high-res exports.',
+                                                  },
+                                              ]
+                                        ).map((faq, idx) => (
+                                            <FaqAccordionItem key={idx} faq={faq} />
+                                        ))}
+                                    </div>
+                                </div>
                             </motion.div>
 
                             {/* Reviews */}
-                            <motion.div ref={reviewsSectionRef} variants={fadeUp} className="space-y-6">
-                                <div className="flex items-end justify-between">
-                                    <h2 className="text-2xl font-bold text-white">
-                                        Client Reviews
-                                    </h2>
-                                    <div className="flex items-center gap-1.5 text-sm text-zinc-500">
-                                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                                        <span className="font-bold text-white">
-                                            5.0
-                                        </span>
-                                        <span>
-                                            ({REVIEWS.length * 41} reviews)
-                                        </span>
+                            <motion.div ref={reviewsSectionRef} variants={fadeUp} className="space-y-8">
+                                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                                    <div>
+                                        <h2 className="text-2xl font-bold text-white">
+                                            Client Reviews
+                                        </h2>
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <div className="flex text-amber-400">
+                                                {[1, 2, 3, 4, 5].map((s) => (
+                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                ))}
+                                            </div>
+                                            <span className="text-lg font-bold text-white">4.8</span>
+                                            <span className="text-sm text-zinc-500">({REVIEWS.length} verified reviews)</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Rating Breakdown */}
+                                    <div className="flex w-full flex-col gap-2 max-w-xs">
+                                        {ratingBreakdown.map((row) => (
+                                            <button
+                                                key={row.star}
+                                                onClick={() => setRatingFilter(ratingFilter === row.star ? null : row.star)}
+                                                className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
+                                            >
+                                                <span className="flex w-12 items-center gap-1 text-xs font-bold text-zinc-400">
+                                                    {row.star} <Star className="h-3 w-3 fill-current text-amber-400" />
+                                                </span>
+                                                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${(row.count / REVIEWS.length) * 100}%` }}
+                                                        className="absolute inset-y-0 left-0 bg-amber-400"
+                                                    />
+                                                </div>
+                                                <span className="w-6 text-right text-xs font-medium text-zinc-500">
+                                                    {row.count}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                                    <div className="text-sm text-zinc-400">
+                                        {ratingFilter ? (
+                                            <span className="flex items-center gap-2">
+                                                Showing {filteredReviews.length} reviews with <b>{ratingFilter} stars</b>
+                                                <button
+                                                    onClick={() => setRatingFilter(null)}
+                                                    className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] font-bold text-white transition-colors hover:bg-white/10"
+                                                >
+                                                    <FilterX className="h-3 w-3" /> Clear
+                                                </button>
+                                            </span>
+                                        ) : (
+                                            `Showing all ${REVIEWS.length} reviews`
+                                        )}
                                     </div>
                                 </div>
 
@@ -965,42 +1123,54 @@ export default function SubCategoryShow({
                                     animate="visible"
                                     className="space-y-4"
                                 >
-                                    {REVIEWS.map((review, i) => (
-                                        <motion.div
-                                            key={i}
-                                            variants={fadeUp}
-                                            className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-colors hover:border-white/10"
-                                        >
-                                            <div className="mb-4 flex items-center gap-4">
-                                                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800">
-                                                    <User className="h-5 w-5 text-zinc-500" />
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <h4 className="font-bold text-white">
-                                                            {review.user}
-                                                        </h4>
-                                                        <span className="text-xs text-zinc-600">
-                                                            {review.location}
-                                                        </span>
+                                    <AnimatePresence mode="popLayout">
+                                        {filteredReviews.length > 0 ? (
+                                            filteredReviews.map((review, i) => (
+                                                <motion.div
+                                                    key={review.user + i}
+                                                    layout
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.95 }}
+                                                    variants={fadeUp}
+                                                    className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-colors hover:border-white/10"
+                                                >
+                                                    <div className="mb-4 flex items-center gap-4">
+                                                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800">
+                                                            <User className="h-5 w-5 text-zinc-500" />
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <h4 className="font-bold text-white">
+                                                                    {review.user}
+                                                                </h4>
+                                                                <span className="text-xs text-zinc-600">
+                                                                    {review.location}
+                                                                </span>
+                                                            </div>
+                                                            <div className="mt-0.5 flex text-amber-400">
+                                                                {[1, 2, 3, 4, 5].map(
+                                                                    (s) => (
+                                                                        <Star
+                                                                            key={s}
+                                                                            className={`h-3 w-3 ${s <= review.rating ? 'fill-current' : 'text-zinc-700'}`}
+                                                                        />
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className="mt-0.5 flex text-amber-400">
-                                                        {[1, 2, 3, 4, 5].map(
-                                                            (s) => (
-                                                                <Star
-                                                                    key={s}
-                                                                    className="h-3 w-3 fill-current"
-                                                                />
-                                                            ),
-                                                        )}
-                                                    </div>
-                                                </div>
+                                                    <p className="text-sm leading-relaxed text-zinc-400 italic">
+                                                        "{review.review}"
+                                                    </p>
+                                                </motion.div>
+                                            ))
+                                        ) : (
+                                            <div className="py-12 text-center text-zinc-600">
+                                                No reviews found for this rating level.
                                             </div>
-                                            <p className="text-sm leading-relaxed text-zinc-400 italic">
-                                                "{review.review}"
-                                            </p>
-                                        </motion.div>
-                                    ))}
+                                        )}
+                                    </AnimatePresence>
                                 </motion.div>
                             </motion.div>
                         </motion.div>
