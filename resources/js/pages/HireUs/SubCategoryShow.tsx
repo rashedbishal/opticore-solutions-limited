@@ -218,6 +218,7 @@ const REVIEWS = [
     {
         user: 'Alex M.',
         location: 'United States',
+        flag: '🇺🇸',
         review: 'Exceptional work! Communication was smooth and the final result exceeded my expectations. Will definitely hire again.',
         rating: 5,
         priceRange: '$25 - $50',
@@ -234,6 +235,7 @@ const REVIEWS = [
     {
         user: 'Sarah K.',
         location: 'United Kingdom',
+        flag: '🇬🇧',
         review: 'The team really understood my vision. The deliverables were exactly what I needed to boost engagement.',
         rating: 5,
         priceRange: '$50+',
@@ -250,6 +252,7 @@ const REVIEWS = [
     {
         user: 'Rafi H.',
         location: 'Germany',
+        flag: '🇩🇪',
         review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
         rating: 5,
         priceRange: '$10 - $25',
@@ -260,6 +263,7 @@ const REVIEWS = [
     {
         user: 'John D.',
         location: 'Canada',
+        flag: '🇨🇦',
         review: 'Very good service, though the initial concept needed a bit of tweaking. Overall satisfied.',
         rating: 4,
         priceRange: '$25 - $50',
@@ -270,6 +274,7 @@ const REVIEWS = [
     {
         user: 'Elena P.',
         location: 'France',
+        flag: '🇫🇷',
         review: 'The design was great, but delivery was delayed by a day. Still recommended for the quality.',
         rating: 4,
         priceRange: '$50+',
@@ -286,6 +291,7 @@ const REVIEWS = [
     {
         user: 'Mark T.',
         location: 'Australia',
+        flag: '🇦🇺',
         review: 'Decent work, but I expected more options in the basic package.',
         rating: 3,
         priceRange: '$5 - $10',
@@ -943,22 +949,27 @@ export default function SubCategoryShow({
                                             <p className="text-lg font-medium italic leading-relaxed text-zinc-300">
                                                 "{REVIEWS[activeReviewIndex].review}"
                                             </p>
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800">
-                                                    <User className="h-5 w-5 text-zinc-500" />
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="font-bold text-white">
-                                                            {REVIEWS[activeReviewIndex].user}
-                                                        </span>
-                                                        <BadgeCheck className="h-4 w-4 text-cyan-400" />
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800">
+                                                            <User className="h-5 w-5 text-zinc-500" />
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <span className="font-bold text-white">
+                                                                    {REVIEWS[activeReviewIndex].user}
+                                                                </span>
+                                                                <BadgeCheck className="h-4 w-4 text-cyan-400" />
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                                                                <span className="flex items-center gap-1">
+                                                                    <span>{REVIEWS[activeReviewIndex].flag}</span>
+                                                                    {REVIEWS[activeReviewIndex].location}
+                                                                </span>
+                                                                <span>·</span>
+                                                                <span>{REVIEWS[activeReviewIndex].date}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <span className="text-xs text-zinc-500">
-                                                        {REVIEWS[activeReviewIndex].location}
-                                                    </span>
-                                                </div>
-                                            </div>
                                         </motion.div>
                                     </AnimatePresence>
                                 </div>
@@ -1250,6 +1261,7 @@ export default function SubCategoryShow({
                                                                             )}
                                                                         </div>
                                                                         <span className="text-xs text-zinc-500">
+                                                                            <span className="mr-1">{review.flag}</span>
                                                                             {review.location} · {review.date}
                                                                         </span>
                                                                     </div>
