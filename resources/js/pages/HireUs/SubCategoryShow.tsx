@@ -146,8 +146,7 @@ const PLANS = [
     {
         id: 'basic',
         name: 'Basic',
-        priceBDT: '500 BDT',
-        priceUSD: '~$4.5',
+        price: '$5',
         delivery: '2 Days',
         features: [
             '1 Initial Concept',
@@ -161,8 +160,7 @@ const PLANS = [
     {
         id: 'standard',
         name: 'Standard',
-        priceBDT: '1,000 BDT',
-        priceUSD: '~$9',
+        price: '$10',
         delivery: '4 Days',
         features: [
             '2 Initial Concepts',
@@ -178,8 +176,7 @@ const PLANS = [
     {
         id: 'premium',
         name: 'Premium',
-        priceBDT: '2,500 BDT',
-        priceUSD: '~$23',
+        price: '$25',
         delivery: '7 Days',
         features: [
             '4 Initial Concepts',
@@ -217,7 +214,7 @@ const REVIEWS = [
     },
     {
         user: 'Rafi H.',
-        location: 'Bangladesh',
+        location: 'Germany',
         review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
         rating: 5,
     },
@@ -989,12 +986,9 @@ export default function SubCategoryShow({
                                                 >
                                                     <activePlan.Icon className="h-5 w-5" />
                                                     <span className="text-2xl font-black text-white">
-                                                        {activePlan.priceBDT}
+                                                        {activePlan.price}
                                                     </span>
                                                 </div>
-                                                <span className="text-xs text-zinc-500">
-                                                    {activePlan.priceUSD} USD
-                                                </span>
                                             </div>
                                             <div className="flex items-center gap-1.5 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-xs text-zinc-400">
                                                 <Clock className="h-3.5 w-3.5" />
