@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\PortfolioSubCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class PortfolioSubCategorySeeder extends Seeder
 {
@@ -46,6 +47,8 @@ class PortfolioSubCategorySeeder extends Seeder
                     'reviews' => 156,
                     'image' => 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800',
                 ],
+                ['name' => 'UI/UX Design'],
+                ['name' => 'Social Media Creatives'],
             ],
             'digital-marketing' => [
                 [
@@ -72,6 +75,7 @@ class PortfolioSubCategorySeeder extends Seeder
                     'reviews' => 60,
                     'image' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800',
                 ],
+                ['name' => 'Content Marketing'],
             ],
             'video-editing' => [
                 [
@@ -90,6 +94,8 @@ class PortfolioSubCategorySeeder extends Seeder
                     'reviews' => 95,
                     'image' => 'https://images.unsplash.com/photo-1622737133809-d95047b9e673?q=80&w=800',
                 ],
+                ['name' => 'Corporate & Promo Videos'],
+                ['name' => 'Music Videos'],
             ],
             '3d-production' => [
                 [
@@ -108,6 +114,8 @@ class PortfolioSubCategorySeeder extends Seeder
                     'reviews' => 18,
                     'image' => 'https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=800',
                 ],
+                ['name' => 'Character Animation'],
+                ['name' => 'Architectural Visualization'],
             ],
             'web-development' => [
                 [
@@ -126,6 +134,8 @@ class PortfolioSubCategorySeeder extends Seeder
                     'reviews' => 29,
                     'image' => 'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=800',
                 ],
+                ['name' => 'Custom Web Applications'],
+                ['name' => 'Corporate Portfolios'],
             ],
         ];
 
@@ -133,16 +143,17 @@ class PortfolioSubCategorySeeder extends Seeder
 
         foreach ($subCategories as $categorySlug => $items) {
             foreach ($items as $item) {
+                $slug = $item['slug'] ?? Str::slug($item['name']);
                 PortfolioSubCategory::updateOrCreate(
-                    ['slug' => $item['slug']],
+                    ['slug' => $slug],
                     [
                         'category_slug' => $categorySlug,
                         'name' => $item['name'],
                         'description' => "Professional {$item['name']} services crafted for your needs.",
-                        'price' => $item['price'],
-                        'rating' => $item['rating'],
-                        'reviews_count' => $item['reviews'],
-                        'image' => $item['image'],
+                        'price' => $item['price'] ?? '$250+',
+                        'rating' => $item['rating'] ?? 4.9,
+                        'reviews_count' => $item['reviews'] ?? rand(15, 120),
+                        'image' => $item['image'] ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800',
                         'sort_order' => $sortOrder++,
                     ]
                 );
