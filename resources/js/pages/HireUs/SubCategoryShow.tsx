@@ -756,6 +756,7 @@ export default function SubCategoryShow({
     const [newMessage, setNewMessage] = useState('');
     const [activeReviewIndex, setActiveReviewIndex] = useState(0);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+    const [hasFilesFilter, setHasFilesFilter] = useState(false);
     const [reviewLightboxItem, setReviewLightboxItem] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
@@ -765,9 +766,11 @@ export default function SubCategoryShow({
         count: REVIEWS.filter((r) => r.rating === star).length,
     }));
 
-    const filteredReviews = ratingFilter
-        ? REVIEWS.filter((r) => r.rating === ratingFilter)
-        : REVIEWS;
+    const filteredReviews = REVIEWS.filter((r) => {
+        const matchesRating = ratingFilter ? r.rating === ratingFilter : true;
+        const matchesFiles = hasFilesFilter ? (r.files && r.files.length > 0) : true;
+        return matchesRating && matchesFiles;
+    });
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -1206,22 +1209,47 @@ export default function SubCategoryShow({
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                                <div className="flex flex-col gap-4 border-b border-white/5 pb-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="text-sm text-zinc-400">
-                                        {ratingFilter ? (
-                                            <span className="flex items-center gap-2">
-                                                Showing {filteredReviews.length} reviews with <b>{ratingFilter} stars</b>
+                                        {ratingFilter || hasFilesFilter ? (
+                                            <span className="flex flex-wrap items-center gap-2">
+                                                Showing {filteredReviews.length} reviews
+                                                {ratingFilter && (
+                                                    <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400 border border-amber-400/20">
+                                                        {ratingFilter} Stars
+                                                    </span>
+                                                )}
+                                                {hasFilesFilter && (
+                                                    <span className="inline-flex items-center gap-1 rounded-md bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-400 border border-cyan-400/20">
+                                                        With Media
+                                                    </span>
+                                                )}
                                                 <button
-                                                    onClick={() => setRatingFilter(null)}
+                                                    onClick={() => {
+                                                        setRatingFilter(null);
+                                                        setHasFilesFilter(false);
+                                                    }}
                                                     className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] font-bold text-white transition-colors hover:bg-white/10"
                                                 >
-                                                    <FilterX className="h-3 w-3" /> Clear
+                                                    <FilterX className="h-3 w-3" /> Clear All
                                                 </button>
                                             </span>
                                         ) : (
                                             `Showing all ${REVIEWS.length} reviews`
                                         )}
                                     </div>
+
+                                    <button
+                                        onClick={() => setHasFilesFilter(!hasFilesFilter)}
+                                        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
+                                            hasFilesFilter
+                                                ? 'border-cyan-400/50 bg-cyan-400/10 text-cyan-300'
+                                                : 'border-white/10 bg-white/5 text-zinc-500 hover:border-white/20 hover:text-zinc-300'
+                                        }`}
+                                    >
+                                        <ImageIcon className="h-3.5 w-3.5" />
+                                        With Photos/Videos
+                                    </button>
                                 </div>
 
                                 <motion.div
