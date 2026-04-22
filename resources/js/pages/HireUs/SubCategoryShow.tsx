@@ -29,6 +29,8 @@ import {
     ChevronDown,
     ChevronUp,
     FilterX,
+    DollarSign,
+    Repeat,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -218,38 +220,114 @@ const REVIEWS = [
         location: 'United States',
         review: 'Exceptional work! Communication was smooth and the final result exceeded my expectations. Will definitely hire again.',
         rating: 5,
+        priceRange: '$25 - $50',
+        duration: '4 days',
+        date: '2 weeks ago',
+        isRepeatClient: true,
+        files: [
+            {
+                type: 'image',
+                url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=800&fit=crop',
+            },
+        ],
     },
     {
         user: 'Sarah K.',
         location: 'United Kingdom',
         review: 'The team really understood my vision. The deliverables were exactly what I needed to boost engagement.',
         rating: 5,
+        priceRange: '$50+',
+        duration: '7 days',
+        date: '1 month ago',
+        isRepeatClient: false,
+        files: [
+            {
+                type: 'video',
+                url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            },
+        ],
     },
     {
         user: 'Rafi H.',
         location: 'Germany',
         review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
         rating: 5,
+        priceRange: '$10 - $25',
+        duration: '2 days',
+        date: '3 days ago',
+        isRepeatClient: true,
     },
     {
         user: 'John D.',
         location: 'Canada',
         review: 'Very good service, though the initial concept needed a bit of tweaking. Overall satisfied.',
         rating: 4,
+        priceRange: '$25 - $50',
+        duration: '5 days',
+        date: '3 weeks ago',
+        isRepeatClient: false,
     },
     {
         user: 'Elena P.',
         location: 'France',
         review: 'The design was great, but delivery was delayed by a day. Still recommended for the quality.',
         rating: 4,
+        priceRange: '$50+',
+        duration: '8 days',
+        date: '2 months ago',
+        isRepeatClient: true,
+        files: [
+            {
+                type: 'image',
+                url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&h=800&fit=crop',
+            },
+        ],
     },
     {
         user: 'Mark T.',
         location: 'Australia',
         review: 'Decent work, but I expected more options in the basic package.',
         rating: 3,
+        priceRange: '$5 - $10',
+        duration: '2 days',
+        date: '1 week ago',
+        isRepeatClient: false,
     },
 ];
+
+// ─── Review Media Preview ────────────────────────────────────────────────
+
+function ReviewMedia({ file }: { file: { type: 'image' | 'video'; url: string } }) {
+    return (
+        <div
+            className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 md:w-32"
+        >
+            {file.type === 'video' ? (
+                <video
+                    src={file.url}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                    className="h-full w-full object-cover"
+                />
+            ) : (
+                <img
+                    src={file.url}
+                    alt="Delivered work"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                {file.type === 'video' ? (
+                    <Play className="h-6 w-6 text-white" />
+                ) : (
+                    <Maximize2 className="h-6 w-6 text-white" />
+                )}
+            </div>
+        </div>
+    );
+}
 
 // ─── FAQ Accordion Item ───────────────────────────────────────────────────
 
@@ -316,18 +394,28 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     );
 
     const goPrev = useCallback(() => {
-        if (!slides) return;
+        if (!slides) {
+return;
+}
+
         goTo((activeIndex - 1 + slides.length) % slides.length, -1);
     }, [activeIndex, slides, goTo]);
 
     const goNext = useCallback(() => {
-        if (!slides) return;
+        if (!slides) {
+return;
+}
+
         goTo((activeIndex + 1) % slides.length, 1);
     }, [activeIndex, slides, goTo]);
 
     const togglePlayPause = useCallback(() => {
         const vid = videoRef.current;
-        if (!vid) return;
+
+        if (!vid) {
+return;
+}
+
         if (vid.paused) {
             vid.play();
             setIsPlaying(true);
@@ -339,13 +427,18 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     useEffect(() => {
         const vid = videoRef.current;
-        if (!vid) return;
+
+        if (!vid) {
+return;
+}
+
         const onTimeUpdate = () => {
             if (vid.duration) {
                 setVideoProgress((vid.currentTime / vid.duration) * 100);
             }
         };
         vid.addEventListener('timeupdate', onTimeUpdate);
+
         return () => vid.removeEventListener('timeupdate', onTimeUpdate);
     }, [activeIndex]);
 
@@ -626,6 +719,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                     </motion.div>
                 )}
             </AnimatePresence>
+
         </>
     );
 }
@@ -656,6 +750,7 @@ export default function SubCategoryShow({
     const [newMessage, setNewMessage] = useState('');
     const [activeReviewIndex, setActiveReviewIndex] = useState(0);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+    const [reviewLightboxItem, setReviewLightboxItem] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -672,6 +767,7 @@ export default function SubCategoryShow({
         const interval = setInterval(() => {
             setActiveReviewIndex((prev) => (prev + 1) % REVIEWS.length);
         }, 3500);
+
         return () => clearInterval(interval);
     }, []);
 
@@ -1135,34 +1231,70 @@ export default function SubCategoryShow({
                                                     variants={fadeUp}
                                                     className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-colors hover:border-white/10"
                                                 >
-                                                    <div className="mb-4 flex items-center gap-4">
-                                                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800">
-                                                            <User className="h-5 w-5 text-zinc-500" />
-                                                        </div>
-                                                        <div>
-                                                            <div className="flex items-center gap-2">
-                                                                <h4 className="font-bold text-white">
-                                                                    {review.user}
-                                                                </h4>
-                                                                <span className="text-xs text-zinc-600">
-                                                                    {review.location}
-                                                                </span>
-                                                            </div>
-                                                            <div className="mt-0.5 flex text-amber-400">
-                                                                {[1, 2, 3, 4, 5].map(
-                                                                    (s) => (
+                                                    <div className="flex flex-col gap-6 md:flex-row">
+                                                        <div className="flex-1">
+                                                            <div className="mb-4 flex items-center justify-between">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800 text-zinc-500">
+                                                                        <User className="h-5 w-5" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <h4 className="font-bold text-white">
+                                                                                {review.user}
+                                                                            </h4>
+                                                                            {review.isRepeatClient && (
+                                                                                <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-400 uppercase">
+                                                                                    <Repeat className="h-2.5 w-2.5" /> Repeat Client
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        <span className="text-xs text-zinc-500">
+                                                                            {review.location} · {review.date}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex text-amber-400">
+                                                                    {[1, 2, 3, 4, 5].map((s) => (
                                                                         <Star
                                                                             key={s}
-                                                                            className={`h-3 w-3 ${s <= review.rating ? 'fill-current' : 'text-zinc-700'}`}
+                                                                            className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-zinc-700'}`}
                                                                         />
-                                                                    ),
-                                                                )}
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+
+                                                            <p className="mb-6 text-sm leading-relaxed text-zinc-300 italic">
+                                                                "{review.review}"
+                                                            </p>
+
+                                                            <div className="flex flex-wrap items-center gap-4 border-t border-white/5 pt-4 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <DollarSign className="h-3 w-3 text-emerald-500" />
+                                                                    <span>Price: {review.priceRange}</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <Clock className="h-3 w-3 text-cyan-500" />
+                                                                    <span>Duration: {review.duration}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
+
+                                                        {/* Review Attachments */}
+                                                        {review.files && review.files.length > 0 && (
+                                                            <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
+                                                                {review.files.map((file, fIdx) => (
+                                                                    <button
+                                                                        key={fIdx}
+                                                                        onClick={() => setReviewLightboxItem(file)}
+                                                                        className="w-full text-left"
+                                                                    >
+                                                                        <ReviewMedia file={file} />
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <p className="text-sm leading-relaxed text-zinc-400 italic">
-                                                        "{review.review}"
-                                                    </p>
                                                 </motion.div>
                                             ))
                                         ) : (
@@ -1311,6 +1443,63 @@ export default function SubCategoryShow({
                     </div>
                 </div>
             </div>
+
+            {/* ── Review Attachment Lightbox ── */}
+            <AnimatePresence>
+                {reviewLightboxItem && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="fixed inset-0 z-[201] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+                        onClick={() => setReviewLightboxItem(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{
+                                duration: 0.35,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900 shadow-2xl"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {reviewLightboxItem.type === 'video' ? (
+                                <video
+                                    src={reviewLightboxItem.url}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    controls
+                                    className="aspect-video w-full object-cover"
+                                />
+                            ) : (
+                                <img
+                                    src={reviewLightboxItem.url}
+                                    alt="Delivered work"
+                                    className="aspect-video w-full object-contain"
+                                />
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent px-6 py-5">
+                                <p className="font-semibold text-white">
+                                    Client Delivery Result
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setReviewLightboxItem(null)}
+                                className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/80"
+                                aria-label="Close lightbox"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* ── Floating Chat ── */}
             <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
