@@ -715,6 +715,7 @@ function AdminConversationEchoListener({
                             unread_count:
                                 incoming.sender_type === 'user' ? 1 : 0,
                             is_online: convData.is_online ?? false,
+
                         };
 
                         updatedList = [newConv, ...prev];

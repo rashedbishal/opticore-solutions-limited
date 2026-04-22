@@ -1,4 +1,5 @@
 import type { SharedPageProps } from '@/types';
+import useEchoReady from '@/hooks/useEchoReady';
 import { usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';

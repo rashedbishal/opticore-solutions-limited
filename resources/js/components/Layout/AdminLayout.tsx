@@ -1,6 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import adminRoutes from '@/routes/admin';
 import {
     LayoutDashboard,
     Image,
