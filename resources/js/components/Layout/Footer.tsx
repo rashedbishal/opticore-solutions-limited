@@ -12,8 +12,6 @@ import {
     Play,
     Send,
 } from 'lucide-react';
-// Note: If some brand icons are still missing in v1.7.0, we use metaphorical fallbacks:
-// Facebook -> Globe, X/Twitter -> Send, etc.
 import { CursorSwitcher } from '@/components/UI/CursorSelector';
 import MagneticButton from '@/components/UI/MagneticButton';
 import {
@@ -73,14 +71,14 @@ const socialLinks = [
 
 export default function Footer() {
     return (
-        <footer className="relative z-10 border-t border-white/10 bg-black/40">
+        <footer className="relative z-10 border-t border-theme bg-theme-surface">
             <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
             <div className="section-shell pt-14 pb-8 md:pt-18 lg:pt-20">
                 <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-5">
                         <Link
                             href="/"
-                            className="inline-flex items-center text-white"
+                            className="inline-flex items-center text-theme"
                         >
                             <img
                                 src="/images/logo/opticore.png"
@@ -88,7 +86,7 @@ export default function Footer() {
                                 className="h-11 w-auto shrink-0 object-contain"
                             />
                         </Link>
-                        <p className="max-w-sm text-sm leading-7 text-zinc-400">
+                        <p className="max-w-sm text-sm leading-7 text-theme-muted">
                             Premium digital agency services spanning strategy,
                             design, motion, production, and high-performance web
                             experiences.
@@ -102,7 +100,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-zinc-300 uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
                             Services
                         </h3>
                         <div className="space-y-3">
@@ -110,7 +108,7 @@ export default function Footer() {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="block text-sm text-zinc-400 transition-colors hover:text-white"
+                                    className="block text-sm text-theme-muted transition-colors hover:text-theme"
                                 >
                                     {item.name}
                                 </Link>
@@ -119,7 +117,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-zinc-300 uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
                             Company
                         </h3>
                         <div className="space-y-3">
@@ -127,7 +125,7 @@ export default function Footer() {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="block text-sm text-zinc-400 transition-colors hover:text-white"
+                                    className="block text-sm text-theme-muted transition-colors hover:text-theme"
                                 >
                                     {item.label}
                                 </Link>
@@ -136,22 +134,22 @@ export default function Footer() {
                     </div>
 
                     <div className="lg:col-span-1">
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-zinc-300 uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
                             Contact
                         </h3>
-                        <div className="space-y-6 text-sm text-zinc-400">
+                        <div className="space-y-6 text-sm text-theme-muted">
                             <div className="space-y-3">
                                 <p className="flex items-center gap-3">
-                                    <Mail className="h-4 w-4 text-violet-300" />
+                                    <Mail className="h-4 w-4 text-violet-500 dark:text-violet-300" />
                                     <a
                                         href="mailto:osl@opticoresolutionsltd.com"
-                                        className="transition-colors hover:text-white"
+                                        className="transition-colors hover:text-theme"
                                     >
                                         osl@opticoresolutionsltd.com
                                     </a>
                                 </p>
                                 <p className="flex items-start gap-3">
-                                    <Phone className="mt-1 h-4 w-4 text-violet-300" />
+                                    <Phone className="mt-1 h-4 w-4 text-violet-500 dark:text-violet-300" />
                                     <span>
                                         +1 (575) 303-6925
                                         <br />
@@ -162,12 +160,12 @@ export default function Footer() {
 
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-start gap-3">
-                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-300" />
+                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-500 dark:text-violet-300" />
                                     <div>
-                                        <p className="font-bold text-zinc-200">
+                                        <p className="font-bold text-theme">
                                             USA Office
                                         </p>
-                                        <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
+                                        <p className="mt-1 text-[11px] leading-relaxed text-theme-subtle">
                                             Opticore Solutions LLC
                                             <br />
                                             1209 Mountain Road PL NE STE N
@@ -178,7 +176,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/Ghn2hcVHHid6FQwv6"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-400 uppercase transition-colors hover:text-cyan-300"
+                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>
@@ -186,12 +184,12 @@ export default function Footer() {
                                 </div>
 
                                 <div className="flex items-start gap-3 pt-2">
-                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-300" />
+                                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-500 dark:text-violet-300" />
                                     <div>
-                                        <p className="font-bold text-zinc-200">
+                                        <p className="font-bold text-theme">
                                             BD Office
                                         </p>
-                                        <p className="mt-1 text-[11px] text-zinc-500">
+                                        <p className="mt-1 text-[11px] text-theme-subtle">
                                             House # 1178, (1st Floor) Apt.- 2E
                                             <br />
                                             East Monipur, Mirpur, Dhaka-1216
@@ -200,7 +198,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/7zvqD4Lemwst7bEQ8"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-400 uppercase transition-colors hover:text-cyan-300"
+                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>
@@ -217,7 +215,7 @@ export default function Footer() {
                                     target="_blank"
                                     rel="noreferrer"
                                     aria-label={label}
-                                    className="group inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-zinc-400 transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-white"
+                                    className="group inline-flex h-9 w-9 items-center justify-center rounded-xl border border-theme bg-theme-surface text-theme-muted transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-theme"
                                 >
                                     <Icon className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                                 </a>
@@ -226,7 +224,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-sm text-zinc-500 sm:flex-row sm:text-left">
+                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-theme pt-6 text-center text-sm text-theme-subtle sm:flex-row sm:text-left">
                     <p>© 2026 Opticore Solutions Ltd. All rights reserved.</p>
                     <CursorSwitcher />
                     <p>

@@ -227,7 +227,7 @@ function HeroHeadline() {
             <motion.h1
                 layout
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="pb-4 text-[2rem] leading-[1.3] font-extrabold text-white sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
+                className="pb-4 text-[2rem] leading-[1.3] font-extrabold text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
                 <motion.span layout className="inline-block">
                     We
@@ -428,7 +428,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         variants={blurReveal}
                         initial="hidden"
                         animate="visible"
-                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-200 sm:text-sm"
+                        className="inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-3 py-1 text-xs font-semibold text-theme-muted sm:text-sm"
                     >
                         <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
                         <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))] bg-[length:200%_100%] bg-clip-text text-transparent">
@@ -445,7 +445,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         initial="hidden"
                         animate="visible"
                         transition={{ delay: 0.4 }}
-                        className="mx-auto mt-12 max-w-2xl text-base leading-8 text-zinc-300 sm:mt-8 sm:text-lg md:text-xl"
+                        className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl"
                     >
                         From stunning visuals to powerful digital strategies —
                         Opticore Solutions Ltd. turns your vision into results.
@@ -466,7 +466,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </MagneticButton>
                         <Link
                             href={portfolio.url()}
-                            className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                            className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme transition-colors hover:bg-theme-surface-hover"
                         >
                             See Our Work
                         </Link>
@@ -483,7 +483,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                 }) => (
                                     <motion.div
                                         key={className}
-                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
+                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-violet-500/80 backdrop-blur-md dark:text-violet-300/80`}
                                         animate={animation}
                                         transition={{
                                             duration: 6,
