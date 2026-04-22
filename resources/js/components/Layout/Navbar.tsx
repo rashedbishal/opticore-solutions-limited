@@ -127,7 +127,7 @@ export default function Navbar() {
                         href="/"
                         className={cn(
                             'touch-target inline-flex items-center rounded-full transition-all duration-300',
-                            'border border-black/10 bg-white/80 backdrop-blur-md xl:border-transparent xl:bg-transparent xl:backdrop-blur-none dark:border-white/10 dark:bg-black/40',
+                            'border border-black/10 bg-white/80 backdrop-blur-md xl:border-transparent xl:bg-transparent xl:backdrop-blur-none xl:p-0 dark:border-white/10 dark:bg-black/40 xl:dark:border-transparent xl:dark:bg-transparent',
                         )}
                         aria-label="Opticore Solutions home"
                     >
