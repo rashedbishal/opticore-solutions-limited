@@ -12,6 +12,7 @@ const formatKiB = (bytes) => `${(bytes / 1024).toFixed(2)} KiB`;
 const readAsset = async (filePath) => {
     const fullPath = path.join(buildDir, filePath);
     const content = await readFile(fullPath);
+
     return {
         name: filePath,
         rawBytes: content.length,
@@ -54,6 +55,7 @@ const main = async () => {
     );
 
     const errors = [];
+
     if (largestJs.gzipBytes > largestJsBudgetGzipBytes) {
         errors.push(
             `Largest JS chunk budget exceeded by ${formatKiB(largestJs.gzipBytes - largestJsBudgetGzipBytes)}.`,

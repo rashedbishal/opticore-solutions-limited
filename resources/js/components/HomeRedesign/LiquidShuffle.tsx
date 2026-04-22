@@ -78,7 +78,8 @@ export default function LiquidShuffle() {
                                         duration: 10,
                                         repeat: Infinity,
                                         times: [0, 0.5, 1],
-                                    }}                                />
+                                    }}
+                                />
 
                                 <p className="mb-12 text-3xl leading-tight font-bold text-white italic md:text-5xl">
                                     "{active.quote}"

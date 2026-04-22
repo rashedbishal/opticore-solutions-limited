@@ -1,6 +1,17 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, PenTool, Globe, Film, Box, Code2, Star, Zap, Users } from 'lucide-react';
+import {
+    Sparkles,
+    ArrowRight,
+    PenTool,
+    Globe,
+    Film,
+    Box,
+    Code2,
+    Star,
+    Zap,
+    Users,
+} from 'lucide-react';
 import { useState } from 'react';
 
 interface HireUsSubCategory {
@@ -186,17 +197,33 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     {/* Trust Section - kept as is */}
                     <div className="mt-32 grid grid-cols-1 gap-12 border-t border-white/5 pt-24 md:grid-cols-3">
                         {[
-                            { icon: Zap, title: 'Instant Start', desc: 'Projects kicked off immediately after purchase.' },
-                            { icon: Users, title: 'Direct Access', desc: 'Chat directly with the creative team working on your task.' },
-                            { icon: Star, title: 'Quality First', desc: 'Premium results guaranteed or your money back.' },
+                            {
+                                icon: Zap,
+                                title: 'Instant Start',
+                                desc: 'Projects kicked off immediately after purchase.',
+                            },
+                            {
+                                icon: Users,
+                                title: 'Direct Access',
+                                desc: 'Chat directly with the creative team working on your task.',
+                            },
+                            {
+                                icon: Star,
+                                title: 'Quality First',
+                                desc: 'Premium results guaranteed or your money back.',
+                            },
                         ].map((item, i) => (
                             <div key={i} className="flex gap-6">
                                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-cyan-400">
                                     <item.icon className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h4 className="mb-2 text-lg font-bold text-white">{item.title}</h4>
-                                    <p className="text-sm leading-relaxed text-zinc-500">{item.desc}</p>
+                                    <h4 className="mb-2 text-lg font-bold text-white">
+                                        {item.title}
+                                    </h4>
+                                    <p className="text-sm leading-relaxed text-zinc-500">
+                                        {item.desc}
+                                    </p>
                                 </div>
                             </div>
                         ))}

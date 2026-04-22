@@ -38,7 +38,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative z-10"
+                        className="relative z-20"
                     >
                         {children}
                     </motion.main>

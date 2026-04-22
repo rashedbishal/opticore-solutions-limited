@@ -111,7 +111,7 @@ export default function Navbar() {
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
-                className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 xl:px-4 2xl:px-8 will-change-transform"
+                className="fixed inset-x-0 top-0 z-50 px-4 pt-4 will-change-transform sm:px-6 xl:px-4 2xl:px-8"
                 style={{ transform: 'translateZ(0)' }}
             >
                 <nav

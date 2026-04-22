@@ -94,7 +94,8 @@ export default function OrbitingShowcase() {
                                 repeat: Infinity,
                                 ease: 'linear',
                                 times: [0, 0.5, 1],
-                            }}                        >
+                            }}
+                        >
                             <User
                                 className={`h-10 w-10 ${isActive ? 'text-cyan-400' : 'text-zinc-600'}`}
                             />
