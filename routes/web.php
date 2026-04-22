@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
+use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController as OriginalAppointmentController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -150,6 +151,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class);
+    Route::resource('tasks', TaskController::class);
 
     // Customer Support Chat Routes
     Route::get('/customer-conversations', [CustomerConversationController::class, 'index'])->name('customer-conversations.index');

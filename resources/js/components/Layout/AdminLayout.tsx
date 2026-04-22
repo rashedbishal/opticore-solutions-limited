@@ -61,6 +61,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
         { name: 'Brands', href: '/admin/brands', icon: Briefcase },
         { name: 'Users', href: '/admin/users', icon: Users },
+        {
+            name: 'Client Workflow',
+            href: '/admin/tasks',
+            icon: Briefcase,
+        },
     ];
 
     return (
