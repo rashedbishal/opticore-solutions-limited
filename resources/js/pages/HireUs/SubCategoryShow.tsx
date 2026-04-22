@@ -22,6 +22,9 @@ import {
     Maximize2,
     Quote,
     BadgeCheck,
+    Globe,
+    Languages,
+    Info,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -866,6 +869,77 @@ export default function SubCategoryShow({
                                         </li>
                                     ))}
                                 </ul>
+                            </motion.div>
+
+                            {/* Company Background & About Section */}
+                            <motion.div
+                                variants={fadeUp}
+                                className="flex flex-col gap-6"
+                            >
+                                <div className="glass-panel space-y-6 rounded-[2rem] border border-white/5 p-8 md:p-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-400">
+                                            <Globe className="h-5 w-5" />
+                                        </div>
+                                        <h2 className="text-xl font-bold text-white">
+                                            Background
+                                        </h2>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <p className="text-sm leading-relaxed text-zinc-400">
+                                            <span className="font-bold text-zinc-200">
+                                                Opticore Solutions LTD.
+                                            </span>{' '}
+                                            operates from{' '}
+                                            <span className="text-cyan-400">
+                                                New Mexico, USA
+                                            </span>{' '}
+                                            and{' '}
+                                            <span className="text-cyan-400">
+                                                Dhaka, Bangladesh
+                                            </span>
+                                            .
+                                        </p>
+                                        <div className="flex items-center gap-3 pt-2">
+                                            <Languages className="h-4 w-4 text-zinc-500" />
+                                            <div className="flex flex-wrap gap-2">
+                                                {[
+                                                    { name: 'English', flag: '🇺🇸' },
+                                                    { name: 'Bangla', flag: '🇧🇩' },
+                                                    { name: 'Hindi', flag: '🇮🇳' },
+                                                ].map((lang) => (
+                                                    <span
+                                                        key={lang.name}
+                                                        className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-bold tracking-widest text-zinc-400 uppercase"
+                                                    >
+                                                        <span>{lang.flag}</span>
+                                                        {lang.name}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="glass-panel space-y-6 rounded-[2rem] border border-white/5 p-8 md:p-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400">
+                                            <Info className="h-5 w-5" />
+                                        </div>
+                                        <h2 className="text-xl font-bold text-white">
+                                            About Us
+                                        </h2>
+                                    </div>
+                                    <p className="text-sm leading-relaxed text-zinc-400">
+                                        Opticore is a multidisciplinary creative
+                                        agency dedicated to bridging the gap
+                                        between high-end strategy and technical
+                                        execution. We empower brands with
+                                        cinematic motion, conversion-focused
+                                        design, and scalable web solutions that
+                                        leave a lasting impact.
+                                    </p>
+                                </div>
                             </motion.div>
 
                             {/* Reviews */}
