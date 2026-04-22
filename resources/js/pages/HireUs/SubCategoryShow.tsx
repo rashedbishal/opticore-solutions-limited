@@ -1,5 +1,6 @@
 import type { Variants } from 'framer-motion';
 import { Head, Link, router } from '@inertiajs/react';
+import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Check,
@@ -70,11 +71,25 @@ interface Category {
     label: string;
 }
 
+interface RecommendedService {
+    id: number;
+    name: string;
+    slug: string;
+    category_slug: string;
+    category_label: string;
+    description: string | null;
+    price: string | null;
+    rating: string | null;
+    reviews_count: number;
+    image: string | null;
+}
+
 interface Props {
     category: Category;
     subCategory: SubCategory;
     portfolios: PortfolioItem[];
     siblingSubCategories: Array<{ name: string; slug: string }>;
+    recommendedServices: RecommendedService[];
 }
 
 // ─── Animation Variants ────────────────────────────────────────────────────
@@ -746,6 +761,7 @@ export default function SubCategoryShow({
     subCategory,
     portfolios,
     siblingSubCategories,
+    recommendedServices,
 }: Props) {
     const displayPortfolios =
         portfolios.length > 0 ? portfolios : MOCK_PORTFOLIOS;
@@ -893,6 +909,7 @@ export default function SubCategoryShow({
 
                     {/* Two-column layout */}
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_0.6fr]">
+
                         {/* ── LEFT COLUMN ── */}
                         <motion.div
                             variants={stagger}
@@ -1490,6 +1507,104 @@ export default function SubCategoryShow({
                             </motion.div>
                         </div>
                     </div>
+
+                    {/* Other Recommended Services */}
+                    {recommendedServices.length > 0 && (
+                        <motion.div
+                            variants={stagger}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            className="mt-20 space-y-8"
+                        >
+                            <motion.div variants={fadeUp}>
+                                <h2 className="text-2xl font-bold text-white">
+                                    Other Recommended Services
+                                </h2>
+                                <p className="mt-1 text-sm text-zinc-500">
+                                    Explore more of what Opticore has to offer
+                                </p>
+                            </motion.div>
+
+                            <motion.div
+                                variants={fadeUp}
+                                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                            >
+                                {recommendedServices.map((service) => (
+                                    <Link
+                                        key={service.id}
+                                        href={showSubCategory.url({
+                                            category: service.category_slug,
+                                            subcategory: service.slug,
+                                        })}
+                                        className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] transition-all duration-300 hover:border-white/10 hover:bg-white/[0.06] hover:-translate-y-1"
+                                    >
+                                        {/* Thumbnail */}
+                                        <div className="relative aspect-video w-full overflow-hidden bg-zinc-900">
+                                            {service.image ? (
+                                                <img
+                                                    src={service.image}
+                                                    alt={service.name}
+                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
+                                                    <ImageIcon className="h-8 w-8 text-zinc-700" />
+                                                </div>
+                                            )}
+                                            {/* Category badge */}
+                                            <div className="absolute top-3 left-3">
+                                                <span className="rounded-full border border-cyan-500/30 bg-black/60 px-2.5 py-1 text-[10px] font-bold tracking-widest text-cyan-400 uppercase backdrop-blur-sm">
+                                                    {service.category_label}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="flex flex-1 flex-col gap-3 p-5">
+                                            <h3 className="text-sm font-bold text-white leading-snug group-hover:text-cyan-300 transition-colors">
+                                                {service.name}
+                                            </h3>
+
+                                            {service.description && (
+                                                <p className="text-xs leading-relaxed text-zinc-500 line-clamp-2">
+                                                    {service.description}
+                                                </p>
+                                            )}
+
+                                            <div className="mt-auto flex items-center justify-between pt-3 border-t border-white/5">
+                                                {service.rating ? (
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Star className="h-3 w-3 fill-current text-amber-400" />
+                                                        <span className="text-xs font-bold text-white">
+                                                            {service.rating}
+                                                        </span>
+                                                        {service.reviews_count > 0 && (
+                                                            <span className="text-[10px] text-zinc-600">
+                                                                ({service.reviews_count})
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div />
+                                                )}
+                                                {service.price && (
+                                                    <span className="text-xs font-black text-emerald-400">
+                                                        From ${service.price}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <ArrowRight className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 text-cyan-400 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1" />
+                                    </Link>
+                                ))}
+                            </motion.div>
+                        </motion.div>
+                    )}
                 </div>
             </div>
 
