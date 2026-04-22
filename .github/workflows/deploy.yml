@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: |
           cd /var/www/opticore-solutions-limited
+          sudo chown -R rashed:www-data storage bootstrap/cache
+          sudo chmod -R 775 storage bootstrap/cache
+          sudo chmod -R g+s storage bootstrap/cache
           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
           npm ci
           npm run build
