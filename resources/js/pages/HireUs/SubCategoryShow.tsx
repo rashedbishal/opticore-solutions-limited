@@ -20,6 +20,8 @@ import {
     Play,
     Pause,
     Maximize2,
+    Quote,
+    BadgeCheck,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -583,7 +585,16 @@ export default function SubCategoryShow({
         },
     ]);
     const [newMessage, setNewMessage] = useState('');
+    const [activeReviewIndex, setActiveReviewIndex] = useState(0);
     const chatEndRef = useRef<HTMLDivElement>(null);
+    const reviewsSectionRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveReviewIndex((prev) => (prev + 1) % REVIEWS.length);
+        }, 3500);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -731,6 +742,101 @@ export default function SubCategoryShow({
                                 <GallerySlider items={displayPortfolios} />
                             </motion.div>
 
+                            {/* Featured Trust Section */}
+                            <motion.div
+                                variants={fadeUp}
+                                className="relative overflow-hidden rounded-[2rem] border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-transparent p-8 backdrop-blur-sm transition-transform duration-300 hover:scale-[1.01]"
+                            >
+                                <Quote className="absolute -top-4 -right-4 h-32 w-32 rotate-180 text-cyan-400/5" />
+
+                                {/* Auto-sliding review carousel */}
+                                <div className="relative min-h-[120px]">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={activeReviewIndex}
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -12 }}
+                                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                            className="space-y-5"
+                                        >
+                                            <div className="flex gap-1 text-amber-400">
+                                                {[1, 2, 3, 4, 5].map((s) => (
+                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                ))}
+                                            </div>
+                                            <p className="text-lg font-medium italic leading-relaxed text-zinc-300">
+                                                "{REVIEWS[activeReviewIndex].review}"
+                                            </p>
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800">
+                                                    <User className="h-5 w-5 text-zinc-500" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="font-bold text-white">
+                                                            {REVIEWS[activeReviewIndex].user}
+                                                        </span>
+                                                        <BadgeCheck className="h-4 w-4 text-cyan-400" />
+                                                    </div>
+                                                    <span className="text-xs text-zinc-500">
+                                                        {REVIEWS[activeReviewIndex].location}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Dot indicators */}
+                                <div className="mt-5 flex gap-1.5">
+                                    {REVIEWS.map((_, i) => (
+                                        <button
+                                            key={i}
+                                            type="button"
+                                            onClick={() => setActiveReviewIndex(i)}
+                                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                                                i === activeReviewIndex
+                                                    ? 'w-6 bg-cyan-400'
+                                                    : 'w-1.5 bg-white/20 hover:bg-white/40'
+                                            }`}
+                                            aria-label={`Go to review ${i + 1}`}
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Trust banner + View All button */}
+                                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/5 pt-5">
+                                    <div className="flex flex-wrap items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex text-amber-400">
+                                                {[1, 2, 3, 4, 5].map((s) => (
+                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                ))}
+                                            </div>
+                                            <span className="text-sm font-bold text-white">
+                                                5.0/5.0 Overall Rating
+                                            </span>
+                                        </div>
+                                        <span className="hidden text-zinc-700 sm:inline">·</span>
+                                        <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                                            <Shield className="h-4 w-4 text-cyan-400" />
+                                            <span>Verified Opticore Clients</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+                                        }
+                                        className="flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold text-cyan-400 transition-all hover:border-cyan-400/60 hover:bg-cyan-500/20"
+                                    >
+                                        View All Reviews
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                            </motion.div>
+
                             {/* Description */}
                             <motion.div
                                 variants={fadeUp}
@@ -766,7 +872,7 @@ export default function SubCategoryShow({
                             </motion.div>
 
                             {/* Reviews */}
-                            <motion.div variants={fadeUp} className="space-y-6">
+                            <motion.div ref={reviewsSectionRef} variants={fadeUp} className="space-y-6">
                                 <div className="flex items-end justify-between">
                                     <h2 className="text-2xl font-bold text-white">
                                         Client Reviews
