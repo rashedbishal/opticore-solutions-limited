@@ -41,7 +41,9 @@ jobs:
           rm -rf public/storage
           ln -sfn ../storage/app/public public/storage
 
-          chmod -R 775 storage bootstrap/cache
+          sudo chown -R rashed:www-data storage bootstrap/cache
+          sudo chmod -R 775 storage bootstrap/cache
+          sudo chmod -R g+s storage bootstrap/cache
 
           php artisan queue:restart
           php artisan reverb:restart
