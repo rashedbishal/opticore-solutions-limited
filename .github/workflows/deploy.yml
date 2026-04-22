@@ -26,8 +26,6 @@ jobs:
         run: |
           cd /var/www/opticore-solutions-limited
           
-          chmod -R 775 storage bootstrap/cache
-          chmod -R g+s storage bootstrap/cache
           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
           npm ci
           npm run build
@@ -43,9 +41,6 @@ jobs:
 
           rm -rf public/storage
           ln -sfn ../storage/app/public public/storage
-
-          chmod -R 775 storage bootstrap/cache
-          chmod -R g+s storage bootstrap/cache
 
           php artisan queue:restart
           php artisan reverb:restart
