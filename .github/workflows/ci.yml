@@ -1,4 +1,5 @@
 # CI Pipeline — Laravel + Inertia + React
+# Fast CI: SQLite (in-memory style). No DB service needed.
 # Runs on every push and PR to main. Fails fast on any error.
 
 name: CI
@@ -11,35 +12,20 @@ on:
 
 jobs:
   test:
-    name: Lint & Test
+    name: Lint & Test (SQLite)
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: opticoresolutions_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       # 1. Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install PHP 8.3 with pgsql extensions
+      # 2. Install PHP 8.3
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, pdo, pdo_pgsql, bcmath, ctype, fileinfo, json, tokenizer, xml
+          extensions: mbstring, pdo, pdo_sqlite, bcmath, ctype, fileinfo, json, tokenizer, xml
           coverage: none
 
       # 3. Install Node 22
@@ -77,48 +63,38 @@ jobs:
       - name: Run Prettier check
         run: npm run format:check
 
-      # 10. Prepare Laravel environment for testing
+      # 10. Prepare Laravel environment
+      #     Tests override DB settings via phpunit.xml (SQLite).
+      #     We only need a valid APP_KEY and sane defaults for pre-test steps.
       - name: Prepare environment
         run: |
           cp .env.example .env
           php artisan key:generate
-          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=pgsql/' .env
-          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_PORT=.*/DB_PORT=5432/' .env
-          sed -i 's/DB_DATABASE=.*/DB_DATABASE=opticoresolutions_test/' .env
-          sed -i 's/DB_USERNAME=.*/DB_USERNAME=postgres/' .env
-          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=password/' .env
-          sed -i 's/DB_ADMIN_DATABASE=.*/DB_ADMIN_DATABASE=opticoresolutions_admin_test/' .env
-          sed -i 's/DB_ADMIN_USERNAME=.*/DB_ADMIN_USERNAME=postgres/' .env
-          sed -i 's/DB_ADMIN_PASSWORD=.*/DB_ADMIN_PASSWORD=password/' .env
-          sed -i 's/CACHE_STORE=.*/CACHE_STORE=array/' .env
-          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
-          sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
+          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env
+          sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=database\/testing.sqlite/' .env
+          sed -i 's/^CACHE_STORE=.*/CACHE_STORE=array/' .env
+          sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
+          sed -i 's/^QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
+          touch database/testing.sqlite database/testing_admin.sqlite
 
-      # 11. Create admin test database
-      - name: Create admin test database
-        run: PGPASSWORD=password psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE opticoresolutions_admin_test;"
-
-      # 12. Run migrations
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      # 13. Generate Wayfinder Routes & Types
+      # 11. Generate Wayfinder Routes & Types
       - name: Generate Wayfinder Routes
         run: php artisan wayfinder:generate
 
-      # 14. TypeScript Check
+      # 12. TypeScript Check
       - name: Run Type Check
         run: npm run types:check
 
-      # 15. Build frontend assets
+      # 13. Build frontend assets
       - name: Build frontend
         run: npm run build
 
-      # 16. Bundle budget regression gate
+      # 14. Bundle budget regression gate
       - name: Check bundle budgets
         run: npm run perf:bundle-check
 
-      # 17. Run Pest tests
+      # 15. Run Pest tests (phpunit.xml → SQLite, RefreshDatabase handles migrations)
       - name: Run tests
         run: ./vendor/bin/pest --ci

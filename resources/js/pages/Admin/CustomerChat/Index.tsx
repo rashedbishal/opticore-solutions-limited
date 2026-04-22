@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import useEchoReady from '@/hooks/useEchoReady';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,6 +14,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
+import useEchoReady from '@/hooks/useEchoReady';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -31,7 +31,7 @@ interface Conversation {
     last_message: string | null;
     last_message_at: string | null;
     unread_count: number;
-    is_online: boolean;
+    is_online?: boolean;
 }
 
 interface Message {
@@ -94,7 +94,9 @@ function getLatestOutgoingMessageId(messages: Message[]): number | null {
     return null;
 }
 
-function getMessageStatusLabel(message: Message): 'Sent' | 'Delivered' | 'Seen' {
+function getMessageStatusLabel(
+    message: Message,
+): 'Sent' | 'Delivered' | 'Seen' {
     if (message.read_at) {
         return 'Seen';
     }
@@ -169,16 +171,19 @@ export default function Index() {
             setOnlineUsers((prev) => {
                 const next = { ...prev };
                 let changed = false;
+
                 for (const key in next) {
                     if (next[key] < cutoff) {
                         delete next[key];
                         changed = true;
                     }
                 }
+
                 return changed ? next : prev;
             });
         };
         const interval = setInterval(sweep, 30_000);
+
         return () => clearInterval(interval);
     }, []);
 
@@ -391,7 +396,8 @@ export default function Index() {
                             <div className="min-w-0 flex-1">
                                 <div className="mb-1 flex items-center justify-between">
                                     <span className="flex min-w-0 items-center gap-1.5">
-                                        {onlineUsers[conv.user_id] !== undefined && (
+                                        {onlineUsers[conv.user_id] !==
+                                            undefined && (
                                             <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-green-500" />
                                         )}
                                         <span className="truncate font-medium text-slate-200">
@@ -472,9 +478,13 @@ export default function Index() {
                                                     <span className="shrink-0">
                                                         {msg.attachment_type ===
                                                         'image' ? (
-                                                            <ImageIcon size={15} />
+                                                            <ImageIcon
+                                                                size={15}
+                                                            />
                                                         ) : (
-                                                            <FileText size={15} />
+                                                            <FileText
+                                                                size={15}
+                                                            />
                                                         )}
                                                     </span>
                                                     <span className="flex-1 truncate text-xs underline underline-offset-2">
@@ -704,6 +714,7 @@ function AdminConversationEchoListener({
                             last_message_at: incoming.created_at,
                             unread_count:
                                 incoming.sender_type === 'user' ? 1 : 0,
+                            is_online: convData.is_online ?? false,
                         };
 
                         updatedList = [newConv, ...prev];
@@ -773,6 +784,7 @@ function AdminConversationEchoListener({
                     setOnlineUsers((prev) => {
                         const next = { ...prev };
                         delete next[e.user_id];
+
                         return next;
                     });
                 }

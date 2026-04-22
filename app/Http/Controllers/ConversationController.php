@@ -98,6 +98,8 @@ class ConversationController extends Controller
             abort(403);
         }
 
+        $this->markIncomingMessagesAsDelivered($conversation, 'admin');
+
         $messages = $conversation->messages()
             ->latest()
             ->paginate(20);

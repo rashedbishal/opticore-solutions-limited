@@ -157,28 +157,24 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     const slides = items.length > 0 ? items : null;
 
-    const goTo = useCallback(
-        (index: number, dir: 1 | -1) => {
-            setDirection(dir);
-            setActiveIndex(index);
-        },
-        [],
-    );
+    const goTo = useCallback((index: number, dir: 1 | -1) => {
+        setDirection(dir);
+        setActiveIndex(index);
+    }, []);
 
     const goPrev = useCallback(() => {
         if (!slides) {
             return;
         }
-        goTo(
-            (activeIndex - 1 + slides.length) % slides.length,
-            -1,
-        );
+
+        goTo((activeIndex - 1 + slides.length) % slides.length, -1);
     }, [activeIndex, slides, goTo]);
 
     const goNext = useCallback(() => {
         if (!slides) {
             return;
         }
+
         goTo((activeIndex + 1) % slides.length, 1);
     }, [activeIndex, slides, goTo]);
 
@@ -216,7 +212,11 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         <div className="space-y-4">
             {/* Main slide */}
             <div className="group relative aspect-video w-full overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900">
-                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                <AnimatePresence
+                    initial={false}
+                    custom={direction}
+                    mode="popLayout"
+                >
                     <motion.div
                         key={activeIndex}
                         custom={direction}
@@ -285,7 +285,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                         {slides.map((_, i) => (
                             <button
                                 key={i}
-                                onClick={() => goTo(i, i > activeIndex ? 1 : -1)}
+                                onClick={() =>
+                                    goTo(i, i > activeIndex ? 1 : -1)
+                                }
                                 className={`h-1.5 rounded-full transition-all duration-300 ${
                                     i === activeIndex
                                         ? 'w-6 bg-white'
@@ -363,6 +365,7 @@ export default function SubCategoryShow({
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!newMessage.trim()) {
             return;
         }
@@ -740,7 +743,7 @@ export default function SubCategoryShow({
             </div>
 
             {/* ── Floating Chat ── */}
-            <div className="fixed left-6 bottom-6 z-[100] flex flex-col items-start sm:left-8 sm:bottom-8">
+            <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
                 <AnimatePresence>
                     {isChatOpen && (
                         <motion.div
@@ -837,7 +840,7 @@ export default function SubCategoryShow({
                 <button
                     type="button"
                     onClick={() => setIsChatOpen((v) => !v)}
-                    className={`relative flex h-16 w-16 items-center justify-center rounded-full shadow-[0_0_20px_rgba(6,182,212,0.3)] border-2 border-cyan-500/30 transition-all duration-300 ${
+                    className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 ${
                         isChatOpen
                             ? 'rotate-90 bg-zinc-800 text-white'
                             : 'bg-white text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]'

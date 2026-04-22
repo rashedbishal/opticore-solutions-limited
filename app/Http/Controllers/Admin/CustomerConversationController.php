@@ -50,6 +50,8 @@ class CustomerConversationController extends Controller
 
     public function fetchMessages(Conversation $conversation)
     {
+        $this->markIncomingMessagesAsDelivered($conversation, 'user');
+
         $messages = $conversation->messages()
             ->latest()
             ->paginate(20);

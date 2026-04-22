@@ -22,8 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin*') ? route('admin.login') : '/login');
-        $middleware->redirectUsersTo(fn (Request $request) => $request->is('admin*') ? route('admin.dashboard') : route('home'));
+        $middleware->redirectTo(
+            guests: fn (Request $request) => $request->is('admin*') ? route('admin.login') : '/login',
+            users: fn (Request $request) => $request->is('admin*') ? route('admin.dashboard') : route('home'),
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {

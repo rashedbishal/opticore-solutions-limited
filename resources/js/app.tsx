@@ -1,6 +1,6 @@
 import '../css/app.css';
 
-import type { ReactElement, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -8,13 +8,12 @@ import AppLayout from '@/components/Layout/AppLayout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';
 
+type InertiaPageComponent = ComponentType<any> & {
+    layout?: (page: ReactNode) => ReactNode;
+};
+
 interface InertiaPageModule {
     default: InertiaPageComponent;
-}
-
-interface InertiaPageComponent {
-    (props: Record<string, unknown>): ReactElement;
-    layout?: (page: ReactNode) => ReactNode;
 }
 
 const pages = import.meta.glob<InertiaPageModule>('./pages/**/*.tsx');
@@ -104,7 +103,7 @@ createInertiaApp({
             <AppLayout>{pageNode}</AppLayout>
         );
 
-        return page;
+        return page.default;
     },
     setup({ el, App, props }) {
         if (import.meta.env.SSR) {

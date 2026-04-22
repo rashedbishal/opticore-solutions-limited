@@ -1,5 +1,4 @@
 import type { SharedPageProps } from '@/types';
-import useEchoReady from '@/hooks/useEchoReady';
 import { usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
@@ -14,6 +13,7 @@ import {
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import useEchoReady from '@/hooks/useEchoReady';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -77,7 +77,9 @@ function getLatestOutgoingMessageId(messages: Message[]): number | null {
     return null;
 }
 
-function getMessageStatusLabel(message: Message): 'Sent' | 'Delivered' | 'Seen' {
+function getMessageStatusLabel(
+    message: Message,
+): 'Sent' | 'Delivered' | 'Seen' {
     if (message.read_at) {
         return 'Seen';
     }
@@ -135,7 +137,9 @@ export default function SupportWidget() {
                 setUnread(0);
                 scrollToBottom();
                 // Always call markAsRead; server is idempotent (no-ops if nothing to mark).
-                axios.post(`/user-chat/${conversation.id}/read`).catch(() => {});
+                axios
+                    .post(`/user-chat/${conversation.id}/read`)
+                    .catch(() => {});
             });
         }
     }, [isOpen, conversation, scrollToBottom]);
@@ -329,9 +333,13 @@ export default function SupportWidget() {
                                                     <span className="shrink-0">
                                                         {msg.attachment_type ===
                                                         'image' ? (
-                                                            <ImageIcon size={15} />
+                                                            <ImageIcon
+                                                                size={15}
+                                                            />
                                                         ) : (
-                                                            <FileText size={15} />
+                                                            <FileText
+                                                                size={15}
+                                                            />
                                                         )}
                                                     </span>
                                                     <span className="flex-1 truncate text-xs underline underline-offset-2">

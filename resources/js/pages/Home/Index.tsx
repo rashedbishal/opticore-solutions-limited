@@ -20,12 +20,12 @@ import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
 import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
-import MagneticButton from '@/components/UI/MagneticButton';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import GradientOrb from '@/components/UI/GradientOrb';
-import { portfolio } from '@/routes';
+import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { clientLogos } from '@/lib/site';
+import { portfolio } from '@/routes';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -270,8 +270,10 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
             requestAnimationFrame(() => {
                 entries.forEach((entry) => {
                     const card = entry.target as HTMLElement;
-                    const rect = card.querySelector<SVGRectElement>('.trace-rect');
-                    const beam = card.querySelector<SVGRectElement>('.beam-rect');
+                    const rect =
+                        card.querySelector<SVGRectElement>('.trace-rect');
+                    const beam =
+                        card.querySelector<SVGRectElement>('.beam-rect');
 
                     if (!rect) {
                         return;
@@ -282,7 +284,10 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     const h = Math.round(box.height);
 
                     // Skip if dimensions haven't significantly changed
-                    if (card.dataset.lastW === `${w}` && card.dataset.lastH === `${h}`) {
+                    if (
+                        card.dataset.lastW === `${w}` &&
+                        card.dataset.lastH === `${h}`
+                    ) {
                         return;
                     }
 
@@ -470,16 +475,16 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     {desktop ? (
                         <div className="pointer-events-none absolute inset-0 hidden xl:block">
                             {floatingIcons.map(
-                                ({ icon: Icon, className, animation }) => (
+                                ({ icon: Icon, className, animation, times }) => (
                                     <motion.div
                                         key={className}
                                         className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
-                                        animate={animation.animation}
+                                        animate={animation}
                                         transition={{
-                                           duration: 6,
-                                           repeat: Number.POSITIVE_INFINITY,
-                                           ease: 'easeInOut',
-                                           times: animation.times,
+                                            duration: 6,
+                                            repeat: Number.POSITIVE_INFINITY,
+                                            ease: 'easeInOut',
+                                            times: times,
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />

@@ -43,9 +43,9 @@ export default function Login({ status }: { status?: string }) {
                 </div>
             )}
 
-            {errors.social && (
+            {(errors as Record<string, string | undefined>).social && (
                 <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-center text-sm font-bold text-red-400">
-                    {errors.social}
+                    {(errors as Record<string, string | undefined>).social}
                 </div>
             )}
 

@@ -20,12 +20,6 @@ export default function useEchoReady(): boolean {
             return;
         }
 
-        if (window.__echoConfigured) {
-            setIsReady(true);
-
-            return;
-        }
-
         const handleConfigured = () => setIsReady(true);
 
         window.addEventListener('echo:configured', handleConfigured);

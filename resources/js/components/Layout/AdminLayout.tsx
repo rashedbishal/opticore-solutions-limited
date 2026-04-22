@@ -1,7 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import adminRoutes from '@/routes/admin';
 import {
     LayoutDashboard,
     Image,
@@ -20,6 +19,7 @@ import React, { useState, useEffect } from 'react';
 import CursorSelector, {
     useCursorPreference,
 } from '@/components/UI/CursorSelector';
+import adminRoutes from '@/routes/admin';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
