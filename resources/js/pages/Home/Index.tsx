@@ -475,7 +475,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     {desktop ? (
                         <div className="pointer-events-none absolute inset-0 hidden xl:block">
                             {floatingIcons.map(
-                                ({ icon: Icon, className, animation, times }) => (
+                                ({
+                                    icon: Icon,
+                                    className,
+                                    animation,
+                                    times,
+                                }) => (
                                     <motion.div
                                         key={className}
                                         className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-white/8 bg-white/4 text-violet-300/80 backdrop-blur-md`}
