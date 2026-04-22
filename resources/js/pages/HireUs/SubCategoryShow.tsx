@@ -31,6 +31,15 @@ import {
     FilterX,
     DollarSign,
     Repeat,
+    Palette,
+    FileText,
+    CheckCircle,
+    RotateCcw,
+    FileCode,
+    Headset,
+    Crown,
+    Infinity,
+    Layers,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Modal from '@/components/UI/Modal';
@@ -164,10 +173,10 @@ const PLANS = [
         price: '$5',
         delivery: '2 Days',
         features: [
-            '1 Initial Concept',
-            '2 Revisions',
-            'High-Res JPG/PNG',
-            'Commercial Use',
+            { label: '1 Initial Concept', Icon: Zap },
+            { label: '2 Revisions', Icon: RotateCcw },
+            { label: 'High-Res JPG/PNG', Icon: ImageIcon },
+            { label: 'Commercial Use', Icon: Shield },
         ],
         Icon: Zap,
         accentClass: 'text-zinc-400',
@@ -178,11 +187,11 @@ const PLANS = [
         price: '$10',
         delivery: '4 Days',
         features: [
-            '2 Initial Concepts',
-            '5 Revisions',
-            'Source Files',
-            'Commercial Use',
-            'Priority Support',
+            { label: '2 Initial Concepts', Icon: Zap },
+            { label: '5 Revisions', Icon: RotateCcw },
+            { label: 'Source Files', Icon: FileCode },
+            { label: 'Commercial Use', Icon: Shield },
+            { label: 'Priority Support', Icon: Headset },
         ],
         Icon: Star,
         accentClass: 'text-cyan-400',
@@ -194,12 +203,12 @@ const PLANS = [
         price: '$25',
         delivery: '7 Days',
         features: [
-            '4 Initial Concepts',
-            'Unlimited Revisions',
-            'Full Brand Kit',
-            'Source Files',
-            'Commercial Use',
-            'VIP Support',
+            { label: '4 Initial Concepts', Icon: Zap },
+            { label: 'Unlimited Revisions', Icon: Infinity },
+            { label: 'Full Brand Kit', Icon: Layers },
+            { label: 'Source Files', Icon: FileCode },
+            { label: 'Commercial Use', Icon: Shield },
+            { label: 'VIP Support', Icon: Crown },
         ],
         Icon: Shield,
         accentClass: 'text-violet-400',
@@ -1040,21 +1049,21 @@ export default function SubCategoryShow({
                                 </p>
                                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {[
-                                        'Custom Designs',
-                                        'Fast Turnaround',
-                                        'Expert Consultation',
-                                        'Source Files Included',
-                                        'Commercial License',
-                                        'Revisions Guaranteed',
+                                        { label: 'Custom Designs', Icon: Palette },
+                                        { label: 'Fast Turnaround', Icon: Clock },
+                                        { label: 'Expert Consultation', Icon: MessageSquare },
+                                        { label: 'Source Files Included', Icon: FileText },
+                                        { label: 'Commercial License', Icon: Shield },
+                                        { label: 'Revisions Guaranteed', Icon: CheckCircle },
                                     ].map((item) => (
                                         <li
-                                            key={item}
+                                            key={item.label}
                                             className="flex items-center gap-3 text-sm text-zinc-300"
                                         >
                                             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
-                                                <Check className="h-3 w-3 text-cyan-400" />
+                                                <item.Icon className="h-3 w-3 text-cyan-400" />
                                             </span>
-                                            {item}
+                                            {item.label}
                                         </li>
                                     ))}
                                 </ul>
@@ -1426,13 +1435,13 @@ export default function SubCategoryShow({
                                         <ul className="space-y-2.5">
                                             {activePlan.features.map((f) => (
                                                 <li
-                                                    key={f}
+                                                    key={f.label}
                                                     className="flex items-center gap-3 text-xs text-zinc-300"
                                                 >
                                                     <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
-                                                        <Check className="h-2.5 w-2.5 text-cyan-400" />
+                                                        <f.Icon className="h-2.5 w-2.5 text-cyan-400" />
                                                     </span>
-                                                    {f}
+                                                    {f.label}
                                                 </li>
                                             ))}
                                         </ul>
