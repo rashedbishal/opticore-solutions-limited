@@ -38,6 +38,26 @@ class HireUsController extends Controller
             ->get(['name', 'slug'])
             ->toArray();
 
+        $recommendedServices = PortfolioSubCategory::query()
+            ->where('id', '!=', $subcategory->id)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get(['id', 'name', 'slug', 'category_slug', 'description', 'price', 'rating', 'reviews_count', 'image'])
+            ->map(fn (PortfolioSubCategory $s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'slug' => $s->slug,
+                'category_slug' => $s->category_slug,
+                'category_label' => $configCategories[$s->category_slug]['label'] ?? $s->category_slug,
+                'description' => $s->description,
+                'price' => $s->price,
+                'rating' => $s->rating,
+                'reviews_count' => $s->reviews_count,
+                'image' => $s->image ? asset('storage/'.$s->image) : null,
+            ])
+            ->values()
+            ->toArray();
+
         return Inertia::render('HireUs/SubCategoryShow', [
             'category' => [
                 'slug' => $category,
@@ -51,6 +71,7 @@ class HireUsController extends Controller
             ],
             'portfolios' => $portfolios,
             'siblingSubCategories' => $siblingSubCategories,
+            'recommendedServices' => $recommendedServices,
         ]);
     }
 }

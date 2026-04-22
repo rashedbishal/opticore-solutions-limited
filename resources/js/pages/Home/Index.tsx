@@ -489,7 +489,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                             duration: 6,
                                             repeat: Number.POSITIVE_INFINITY,
                                             ease: 'easeInOut',
-                                            times: times,
+                                            times: animation.times,
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />
