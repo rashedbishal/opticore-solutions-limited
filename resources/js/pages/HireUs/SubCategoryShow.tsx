@@ -1,9 +1,7 @@
 import type { Variants } from 'framer-motion';
 import { Head, Link, router } from '@inertiajs/react';
-import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Check,
     MessageSquare,
     Star,
     Zap,
@@ -39,10 +37,10 @@ import {
     FileCode,
     Headset,
     Crown,
-    Infinity,
     Layers,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import Modal from '@/components/UI/Modal';
 
 interface PortfolioItem {
@@ -219,7 +217,7 @@ const PLANS = [
         delivery: '7 Days',
         features: [
             { label: '4 Initial Concepts', Icon: Zap },
-            { label: 'Unlimited Revisions', Icon: Infinity },
+            { label: 'Unlimited Revisions', Icon: Repeat },
             { label: 'Full Brand Kit', Icon: Layers },
             { label: 'Source Files', Icon: FileCode },
             { label: 'Commercial Use', Icon: Shield },
@@ -238,7 +236,20 @@ type ChatMessage = { role: 'team' | 'user'; content: string; time: string };
 
 // ─── Static Reviews ─────────────────────────────────────────────────────────
 
-const REVIEWS = [
+type Review = {
+    user: string;
+    location: string;
+    flag: string;
+    review: string;
+    rating: number;
+    priceRange: string;
+    duration: string;
+    date: string;
+    isRepeatClient: boolean;
+    files?: { type: 'image' | 'video'; url: string }[];
+};
+
+const REVIEWS: Review[] = [
     {
         user: 'Alex M.',
         location: 'United States',
@@ -327,11 +338,13 @@ const REVIEWS = [
 
 // ─── Review Media Preview ────────────────────────────────────────────────
 
-function ReviewMedia({ file }: { file: { type: 'image' | 'video'; url: string } }) {
+function ReviewMedia({
+    file,
+}: {
+    file: { type: 'image' | 'video'; url: string };
+}) {
     return (
-        <div
-            className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 md:w-32"
-        >
+        <div className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 md:w-32">
             {file.type === 'video' ? (
                 <video
                     src={file.url}
@@ -413,20 +426,17 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     const slides = items.length > 0 ? items : null;
 
-    const goTo = useCallback(
-        (index: number, dir: 1 | -1) => {
-            setDirection(dir);
-            setActiveIndex(index);
-            setIsPlaying(true);
-            setVideoProgress(0);
-        },
-        [],
-    );
+    const goTo = useCallback((index: number, dir: 1 | -1) => {
+        setDirection(dir);
+        setActiveIndex(index);
+        setIsPlaying(true);
+        setVideoProgress(0);
+    }, []);
 
     const goPrev = useCallback(() => {
         if (!slides) {
-return;
-}
+            return;
+        }
 
         goTo((activeIndex - 1 + slides.length) % slides.length, -1);
     }, [activeIndex, slides, goTo]);
@@ -443,8 +453,8 @@ return;
         const vid = videoRef.current;
 
         if (!vid) {
-return;
-}
+            return;
+        }
 
         if (vid.paused) {
             vid.play();
@@ -459,8 +469,8 @@ return;
         const vid = videoRef.current;
 
         if (!vid) {
-return;
-}
+            return;
+        }
 
         const onTimeUpdate = () => {
             if (vid.duration) {
@@ -582,7 +592,9 @@ return;
                             type="button"
                             onClick={togglePlayPause}
                             className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                            aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                            aria-label={
+                                isPlaying ? 'Pause video' : 'Play video'
+                            }
                         >
                             {isPlaying ? (
                                 <Pause className="h-4 w-4" />
@@ -749,7 +761,6 @@ return;
                     </motion.div>
                 )}
             </AnimatePresence>
-
         </>
     );
 }
@@ -782,7 +793,10 @@ export default function SubCategoryShow({
     const [activeReviewIndex, setActiveReviewIndex] = useState(0);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
-    const [reviewLightboxItem, setReviewLightboxItem] = useState<{ type: string; url: string } | null>(null);
+    const [reviewLightboxItem, setReviewLightboxItem] = useState<{
+        type: string;
+        url: string;
+    } | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -793,7 +807,10 @@ export default function SubCategoryShow({
 
     const filteredReviews = REVIEWS.filter((r) => {
         const matchesRating = ratingFilter ? r.rating === ratingFilter : true;
-        const matchesFiles = hasFilesFilter ? (r.files && r.files.length > 0) : true;
+        const matchesFiles = hasFilesFilter
+            ? r.files && r.files.length > 0
+            : true;
+
         return matchesRating && matchesFiles;
     });
 
@@ -909,7 +926,6 @@ export default function SubCategoryShow({
 
                     {/* Two-column layout */}
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_0.6fr]">
-
                         {/* ── LEFT COLUMN ── */}
                         <motion.div
                             variants={stagger}
@@ -967,38 +983,69 @@ export default function SubCategoryShow({
                                             initial={{ opacity: 0, y: 12 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -12 }}
-                                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                            transition={{
+                                                duration: 0.4,
+                                                ease: [0.22, 1, 0.36, 1],
+                                            }}
                                             className="space-y-5"
                                         >
                                             <div className="flex gap-1 text-amber-400">
                                                 {[1, 2, 3, 4, 5].map((s) => (
-                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                    <Star
+                                                        key={s}
+                                                        className="h-4 w-4 fill-current"
+                                                    />
                                                 ))}
                                             </div>
-                                            <p className="text-lg font-medium italic leading-relaxed text-zinc-300">
-                                                "{REVIEWS[activeReviewIndex].review}"
+                                            <p className="text-lg leading-relaxed font-medium text-zinc-300 italic">
+                                                "
+                                                {
+                                                    REVIEWS[activeReviewIndex]
+                                                        .review
+                                                }
+                                                "
                                             </p>
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800">
-                                                            <User className="h-5 w-5 text-zinc-500" />
-                                                        </div>
-                                                        <div>
-                                                            <div className="flex items-center gap-1.5">
-                                                                <span className="font-bold text-white">
-                                                                    {REVIEWS[activeReviewIndex].user}
-                                                                </span>
-                                                                <BadgeCheck className="h-4 w-4 text-cyan-400" />
-                                                            </div>
-                                                            <div className="flex items-center gap-1.5 text-xs text-zinc-500">
-                                                                <span className="flex items-center gap-1">
-                                                                    <span>{REVIEWS[activeReviewIndex].flag}</span>
-                                                                    {REVIEWS[activeReviewIndex].location}
-                                                                </span>
-                                                                <span>·</span>
-                                                                <span>{REVIEWS[activeReviewIndex].date}</span>
-                                                            </div>
-                                                        </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800">
+                                                    <User className="h-5 w-5 text-zinc-500" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="font-bold text-white">
+                                                            {
+                                                                REVIEWS[
+                                                                    activeReviewIndex
+                                                                ].user
+                                                            }
+                                                        </span>
+                                                        <BadgeCheck className="h-4 w-4 text-cyan-400" />
                                                     </div>
+                                                    <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                                                        <span className="flex items-center gap-1">
+                                                            <span>
+                                                                {
+                                                                    REVIEWS[
+                                                                        activeReviewIndex
+                                                                    ].flag
+                                                                }
+                                                            </span>
+                                                            {
+                                                                REVIEWS[
+                                                                    activeReviewIndex
+                                                                ].location
+                                                            }
+                                                        </span>
+                                                        <span>·</span>
+                                                        <span>
+                                                            {
+                                                                REVIEWS[
+                                                                    activeReviewIndex
+                                                                ].date
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </motion.div>
                                     </AnimatePresence>
                                 </div>
@@ -1009,7 +1056,9 @@ export default function SubCategoryShow({
                                         <button
                                             key={i}
                                             type="button"
-                                            onClick={() => setActiveReviewIndex(i)}
+                                            onClick={() =>
+                                                setActiveReviewIndex(i)
+                                            }
                                             className={`h-1.5 rounded-full transition-all duration-300 ${
                                                 i === activeReviewIndex
                                                     ? 'w-6 bg-cyan-400'
@@ -1026,23 +1075,32 @@ export default function SubCategoryShow({
                                         <div className="flex items-center gap-2">
                                             <div className="flex text-amber-400">
                                                 {[1, 2, 3, 4, 5].map((s) => (
-                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                    <Star
+                                                        key={s}
+                                                        className="h-4 w-4 fill-current"
+                                                    />
                                                 ))}
                                             </div>
                                             <span className="text-sm font-bold text-white">
                                                 5.0/5.0 Overall Rating
                                             </span>
                                         </div>
-                                        <span className="hidden text-zinc-700 sm:inline">·</span>
+                                        <span className="hidden text-zinc-700 sm:inline">
+                                            ·
+                                        </span>
                                         <div className="flex items-center gap-1.5 text-sm text-zinc-400">
                                             <Shield className="h-4 w-4 text-cyan-400" />
-                                            <span>Verified Opticore Clients</span>
+                                            <span>
+                                                Verified Opticore Clients
+                                            </span>
                                         </div>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+                                            reviewsSectionRef.current?.scrollIntoView(
+                                                { behavior: 'smooth' },
+                                            )
                                         }
                                         className="flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold text-cyan-400 transition-all hover:border-cyan-400/60 hover:bg-cyan-500/20"
                                     >
@@ -1066,12 +1124,30 @@ export default function SubCategoryShow({
                                 </p>
                                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {[
-                                        { label: 'Custom Designs', Icon: Palette },
-                                        { label: 'Fast Turnaround', Icon: Clock },
-                                        { label: 'Expert Consultation', Icon: MessageSquare },
-                                        { label: 'Source Files Included', Icon: FileText },
-                                        { label: 'Commercial License', Icon: Shield },
-                                        { label: 'Revisions Guaranteed', Icon: CheckCircle },
+                                        {
+                                            label: 'Custom Designs',
+                                            Icon: Palette,
+                                        },
+                                        {
+                                            label: 'Fast Turnaround',
+                                            Icon: Clock,
+                                        },
+                                        {
+                                            label: 'Expert Consultation',
+                                            Icon: MessageSquare,
+                                        },
+                                        {
+                                            label: 'Source Files Included',
+                                            Icon: FileText,
+                                        },
+                                        {
+                                            label: 'Commercial License',
+                                            Icon: Shield,
+                                        },
+                                        {
+                                            label: 'Revisions Guaranteed',
+                                            Icon: CheckCircle,
+                                        },
                                     ].map((item) => (
                                         <li
                                             key={item.label}
@@ -1119,9 +1195,18 @@ export default function SubCategoryShow({
                                             <Languages className="h-4 w-4 text-zinc-500" />
                                             <div className="flex flex-wrap gap-2">
                                                 {[
-                                                    { name: 'English', flag: '🇺🇸' },
-                                                    { name: 'Bangla', flag: '🇧🇩' },
-                                                    { name: 'Hindi', flag: '🇮🇳' },
+                                                    {
+                                                        name: 'English',
+                                                        flag: '🇺🇸',
+                                                    },
+                                                    {
+                                                        name: 'Bangla',
+                                                        flag: '🇧🇩',
+                                                    },
+                                                    {
+                                                        name: 'Hindi',
+                                                        flag: '🇮🇳',
+                                                    },
                                                 ].map((lang) => (
                                                     <span
                                                         key={lang.name}
@@ -1168,31 +1253,42 @@ export default function SubCategoryShow({
                                     </div>
 
                                     <div className="space-y-4">
-                                        {(subCategory.faqs && subCategory.faqs.length > 0
+                                        {(subCategory.faqs &&
+                                        subCategory.faqs.length > 0
                                             ? subCategory.faqs
                                             : [
                                                   {
-                                                      question: '[DUMMY] How long does it take?',
+                                                      question:
+                                                          '[DUMMY] How long does it take?',
                                                       answer: 'This is placeholder data. Actual delivery times vary by project scope.',
                                                   },
                                                   {
-                                                      question: '[DUMMY] Can I request revisions?',
+                                                      question:
+                                                          '[DUMMY] Can I request revisions?',
                                                       answer: 'This is placeholder data. Revisions are typically included in our packages.',
                                                   },
                                                   {
-                                                      question: '[DUMMY] What files will I receive?',
+                                                      question:
+                                                          '[DUMMY] What files will I receive?',
                                                       answer: 'This is placeholder data. Final deliverables usually include source files and high-res exports.',
                                                   },
                                               ]
                                         ).map((faq, idx) => (
-                                            <FaqAccordionItem key={idx} faq={faq} />
+                                            <FaqAccordionItem
+                                                key={idx}
+                                                faq={faq}
+                                            />
                                         ))}
                                     </div>
                                 </div>
                             </motion.div>
 
                             {/* Reviews */}
-                            <motion.div ref={reviewsSectionRef} variants={fadeUp} className="space-y-8">
+                            <motion.div
+                                ref={reviewsSectionRef}
+                                variants={fadeUp}
+                                className="space-y-8"
+                            >
                                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                                     <div>
                                         <h2 className="text-2xl font-bold text-white">
@@ -1201,29 +1297,47 @@ export default function SubCategoryShow({
                                         <div className="mt-2 flex items-center gap-2">
                                             <div className="flex text-amber-400">
                                                 {[1, 2, 3, 4, 5].map((s) => (
-                                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                                    <Star
+                                                        key={s}
+                                                        className="h-4 w-4 fill-current"
+                                                    />
                                                 ))}
                                             </div>
-                                            <span className="text-lg font-bold text-white">4.8</span>
-                                            <span className="text-sm text-zinc-500">({REVIEWS.length} verified reviews)</span>
+                                            <span className="text-lg font-bold text-white">
+                                                4.8
+                                            </span>
+                                            <span className="text-sm text-zinc-500">
+                                                ({REVIEWS.length} verified
+                                                reviews)
+                                            </span>
                                         </div>
                                     </div>
 
                                     {/* Rating Breakdown */}
-                                    <div className="flex w-full flex-col gap-2 max-w-xs">
+                                    <div className="flex w-full max-w-xs flex-col gap-2">
                                         {ratingBreakdown.map((row) => (
                                             <button
                                                 key={row.star}
-                                                onClick={() => setRatingFilter(ratingFilter === row.star ? null : row.star)}
+                                                onClick={() =>
+                                                    setRatingFilter(
+                                                        ratingFilter ===
+                                                            row.star
+                                                            ? null
+                                                            : row.star,
+                                                    )
+                                                }
                                                 className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
                                             >
                                                 <span className="flex w-12 items-center gap-1 text-xs font-bold text-zinc-400">
-                                                    {row.star} <Star className="h-3 w-3 fill-current text-amber-400" />
+                                                    {row.star}{' '}
+                                                    <Star className="h-3 w-3 fill-current text-amber-400" />
                                                 </span>
                                                 <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
                                                     <motion.div
                                                         initial={{ width: 0 }}
-                                                        animate={{ width: `${(row.count / REVIEWS.length) * 100}%` }}
+                                                        animate={{
+                                                            width: `${(row.count / REVIEWS.length) * 100}%`,
+                                                        }}
                                                         className="absolute inset-y-0 left-0 bg-amber-400"
                                                     />
                                                 </div>
@@ -1239,25 +1353,29 @@ export default function SubCategoryShow({
                                     <div className="text-sm text-zinc-400">
                                         {ratingFilter || hasFilesFilter ? (
                                             <span className="flex flex-wrap items-center gap-2">
-                                                Showing {filteredReviews.length} reviews
+                                                Showing {filteredReviews.length}{' '}
+                                                reviews
                                                 {ratingFilter && (
-                                                    <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400 border border-amber-400/20">
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/20 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
                                                         {ratingFilter} Stars
                                                     </span>
                                                 )}
                                                 {hasFilesFilter && (
-                                                    <span className="inline-flex items-center gap-1 rounded-md bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-400 border border-cyan-400/20">
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
                                                         With Media
                                                     </span>
                                                 )}
                                                 <button
                                                     onClick={() => {
                                                         setRatingFilter(null);
-                                                        setHasFilesFilter(false);
+                                                        setHasFilesFilter(
+                                                            false,
+                                                        );
                                                     }}
                                                     className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] font-bold text-white transition-colors hover:bg-white/10"
                                                 >
-                                                    <FilterX className="h-3 w-3" /> Clear All
+                                                    <FilterX className="h-3 w-3" />{' '}
+                                                    Clear All
                                                 </button>
                                             </span>
                                         ) : (
@@ -1266,7 +1384,9 @@ export default function SubCategoryShow({
                                     </div>
 
                                     <button
-                                        onClick={() => setHasFilesFilter(!hasFilesFilter)}
+                                        onClick={() =>
+                                            setHasFilesFilter(!hasFilesFilter)
+                                        }
                                         className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
                                             hasFilesFilter
                                                 ? 'border-cyan-400/50 bg-cyan-400/10 text-cyan-300'
@@ -1290,9 +1410,18 @@ export default function SubCategoryShow({
                                                 <motion.div
                                                     key={review.user + i}
                                                     layout
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: 10,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        scale: 0.95,
+                                                    }}
                                                     variants={fadeUp}
                                                     className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-colors hover:border-white/10"
                                                 >
@@ -1306,66 +1435,116 @@ export default function SubCategoryShow({
                                                                     <div>
                                                                         <div className="flex items-center gap-2">
                                                                             <h4 className="font-bold text-white">
-                                                                                {review.user}
+                                                                                {
+                                                                                    review.user
+                                                                                }
                                                                             </h4>
                                                                             {review.isRepeatClient && (
                                                                                 <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-400 uppercase">
-                                                                                    <Repeat className="h-2.5 w-2.5" /> Repeat Client
+                                                                                    <Repeat className="h-2.5 w-2.5" />{' '}
+                                                                                    Repeat
+                                                                                    Client
                                                                                 </span>
                                                                             )}
                                                                         </div>
                                                                         <span className="text-xs text-zinc-500">
-                                                                            <span className="mr-1">{review.flag}</span>
-                                                                            {review.location} · {review.date}
+                                                                            <span className="mr-1">
+                                                                                {
+                                                                                    review.flag
+                                                                                }
+                                                                            </span>
+                                                                            {
+                                                                                review.location
+                                                                            }{' '}
+                                                                            ·{' '}
+                                                                            {
+                                                                                review.date
+                                                                            }
                                                                         </span>
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex text-amber-400">
-                                                                    {[1, 2, 3, 4, 5].map((s) => (
-                                                                        <Star
-                                                                            key={s}
-                                                                            className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-zinc-700'}`}
-                                                                        />
-                                                                    ))}
+                                                                    {[
+                                                                        1, 2, 3,
+                                                                        4, 5,
+                                                                    ].map(
+                                                                        (s) => (
+                                                                            <Star
+                                                                                key={
+                                                                                    s
+                                                                                }
+                                                                                className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-zinc-700'}`}
+                                                                            />
+                                                                        ),
+                                                                    )}
                                                                 </div>
                                                             </div>
 
                                                             <p className="mb-6 text-sm leading-relaxed text-zinc-300 italic">
-                                                                "{review.review}"
+                                                                "{review.review}
+                                                                "
                                                             </p>
 
                                                             <div className="flex flex-wrap items-center gap-4 border-t border-white/5 pt-4 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
                                                                 <div className="flex items-center gap-1.5">
                                                                     <DollarSign className="h-3 w-3 text-emerald-500" />
-                                                                    <span>Price: {review.priceRange}</span>
+                                                                    <span>
+                                                                        Price:{' '}
+                                                                        {
+                                                                            review.priceRange
+                                                                        }
+                                                                    </span>
                                                                 </div>
                                                                 <div className="flex items-center gap-1.5">
                                                                     <Clock className="h-3 w-3 text-cyan-500" />
-                                                                    <span>Duration: {review.duration}</span>
+                                                                    <span>
+                                                                        Duration:{' '}
+                                                                        {
+                                                                            review.duration
+                                                                        }
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>
 
                                                         {/* Review Attachments */}
-                                                        {review.files && review.files.length > 0 && (
-                                                            <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
-                                                                {review.files.map((file, fIdx) => (
-                                                                    <button
-                                                                        key={fIdx}
-                                                                        onClick={() => setReviewLightboxItem(file)}
-                                                                        className="w-full text-left"
-                                                                    >
-                                                                        <ReviewMedia file={file} />
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        )}
+                                                        {review.files &&
+                                                            review.files
+                                                                .length > 0 && (
+                                                                <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
+                                                                    {review.files.map(
+                                                                        (
+                                                                            file,
+                                                                            fIdx,
+                                                                        ) => (
+                                                                            <button
+                                                                                key={
+                                                                                    fIdx
+                                                                                }
+                                                                                onClick={() =>
+                                                                                    setReviewLightboxItem(
+                                                                                        file,
+                                                                                    )
+                                                                                }
+                                                                                className="w-full text-left"
+                                                                            >
+                                                                                <ReviewMedia
+                                                                                    file={
+                                                                                        file
+                                                                                    }
+                                                                                />
+                                                                            </button>
+                                                                        ),
+                                                                    )}
+                                                                </div>
+                                                            )}
                                                     </div>
                                                 </motion.div>
                                             ))
                                         ) : (
                                             <div className="py-12 text-center text-zinc-600">
-                                                No reviews found for this rating level.
+                                                No reviews found for this rating
+                                                level.
                                             </div>
                                         )}
                                     </AnimatePresence>
@@ -1537,7 +1716,7 @@ export default function SubCategoryShow({
                                             category: service.category_slug,
                                             subcategory: service.slug,
                                         })}
-                                        className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] transition-all duration-300 hover:border-white/10 hover:bg-white/[0.06] hover:-translate-y-1"
+                                        className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 hover:border-white/10 hover:bg-white/[0.06]"
                                     >
                                         {/* Thumbnail */}
                                         <div className="relative aspect-video w-full overflow-hidden bg-zinc-900">
@@ -1547,7 +1726,8 @@ export default function SubCategoryShow({
                                                     alt={service.name}
                                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                     onError={(e) => {
-                                                        e.currentTarget.style.display = 'none';
+                                                        e.currentTarget.style.display =
+                                                            'none';
                                                     }}
                                                 />
                                             ) : (
@@ -1565,26 +1745,31 @@ export default function SubCategoryShow({
 
                                         {/* Content */}
                                         <div className="flex flex-1 flex-col gap-3 p-5">
-                                            <h3 className="text-sm font-bold text-white leading-snug group-hover:text-cyan-300 transition-colors">
+                                            <h3 className="text-sm leading-snug font-bold text-white transition-colors group-hover:text-cyan-300">
                                                 {service.name}
                                             </h3>
 
                                             {service.description && (
-                                                <p className="text-xs leading-relaxed text-zinc-500 line-clamp-2">
+                                                <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">
                                                     {service.description}
                                                 </p>
                                             )}
 
-                                            <div className="mt-auto flex items-center justify-between pt-3 border-t border-white/5">
+                                            <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-3">
                                                 {service.rating ? (
                                                     <div className="flex items-center gap-1.5">
                                                         <Star className="h-3 w-3 fill-current text-amber-400" />
                                                         <span className="text-xs font-bold text-white">
                                                             {service.rating}
                                                         </span>
-                                                        {service.reviews_count > 0 && (
+                                                        {service.reviews_count >
+                                                            0 && (
                                                             <span className="text-[10px] text-zinc-600">
-                                                                ({service.reviews_count})
+                                                                (
+                                                                {
+                                                                    service.reviews_count
+                                                                }
+                                                                )
                                                             </span>
                                                         )}
                                                     </div>
@@ -1599,7 +1784,7 @@ export default function SubCategoryShow({
                                             </div>
                                         </div>
 
-                                        <ArrowRight className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 text-cyan-400 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1" />
+                                        <ArrowRight className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 text-cyan-400 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100" />
                                     </Link>
                                 ))}
                             </motion.div>

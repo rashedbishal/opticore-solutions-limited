@@ -221,10 +221,12 @@ export default function CreateTask({
                             <select
                                 name="state"
                                 value={data.state}
-                                onChange={(e) => setData('state', e.target.value as any)}
+                                onChange={(e) =>
+                                    setData('state', e.target.value as any)
+                                }
                                 className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
                                 required
-                                >
+                            >
                                 <option value="pending">Pending</option>
                                 <option value="in progress">In Progress</option>
                                 <option value="delivered">Delivered</option>
