@@ -78,36 +78,36 @@ export default function PortfolioSubCategoryShow({
                     >
                         {/* Breadcrumb */}
                         <nav
-                            className="mb-5 flex items-center gap-2 text-sm text-zinc-500"
+                            className="mb-5 flex items-center gap-2 text-sm text-theme-subtle"
                             aria-label="Breadcrumb"
                         >
                             <Link
                                 href="/portfolio/graphic-design"
-                                className="transition-colors hover:text-zinc-300"
+                                className="transition-colors hover:text-theme"
                             >
                                 Portfolio
                             </Link>
                             <span>/</span>
                             <Link
                                 href={`/portfolio/${category.slug}`}
-                                className="transition-colors hover:text-zinc-300"
+                                className="transition-colors hover:text-theme"
                             >
                                 {category.label}
                             </Link>
                             <span>/</span>
-                            <span className="text-zinc-300">
+                            <span className="text-theme-muted">
                                 {subCategory.name}
                             </span>
                         </nav>
 
                         <span className="section-kicker">{category.label}</span>
-                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
                                 {subCategory.name}
                             </span>
                         </h1>
                         {subCategory.description && (
-                            <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
+                            <p className="mt-6 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                                 {subCategory.description}
                             </p>
                         )}
@@ -126,8 +126,8 @@ export default function PortfolioSubCategoryShow({
                                 aria-label={`View ${cat.label} portfolio`}
                                 className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                                     cat.slug === category.slug
-                                        ? 'border-violet-400/50 bg-violet-500/15 text-white'
-                                        : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
+                                        ? 'border-violet-500/50 bg-violet-500/15 text-theme dark:border-violet-400/50'
+                                        : 'border-theme bg-theme-surface text-theme-muted hover:text-theme'
                                 }`}
                                 onClick={() => handleCategoryClick(cat.slug)}
                             >
@@ -141,7 +141,7 @@ export default function PortfolioSubCategoryShow({
                         <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
                             <Link
                                 href={`/portfolio/${category.slug}`}
-                                className="touch-target shrink-0 rounded-full border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-500 transition-all hover:text-zinc-300"
+                                className="touch-target shrink-0 rounded-full border border-theme bg-theme-surface px-3 py-1.5 text-xs font-medium text-theme-subtle transition-all hover:text-theme"
                                 aria-label={`Back to ${category.label} sub-categories`}
                             >
                                 <ArrowLeft className="mr-1 inline h-3 w-3" />
@@ -154,8 +154,8 @@ export default function PortfolioSubCategoryShow({
                                     aria-label={`View ${s.name}`}
                                     className={`touch-target shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                                         s.slug === subCategory.slug
-                                            ? 'border-cyan-400/40 bg-cyan-500/10 text-cyan-300'
-                                            : 'border-white/5 bg-white/5 text-zinc-500 hover:text-zinc-300'
+                                            ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:border-cyan-400/40 dark:text-cyan-300'
+                                            : 'border-theme bg-theme-surface text-theme-subtle hover:text-theme'
                                     }`}
                                     onClick={() =>
                                         handleSubCategoryClick(s.slug)
@@ -240,11 +240,11 @@ export default function PortfolioSubCategoryShow({
                         </motion.div>
                     ) : (
                         <div className="glass-panel mt-10 flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
-                            <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
-                            <p className="text-lg font-medium text-zinc-300">
+                            <FolderOpen className="mb-4 h-10 w-10 text-theme-subtle" />
+                            <p className="text-lg font-medium text-theme-muted">
                                 No portfolio items in this sub-category yet.
                             </p>
-                            <p className="mt-2 text-sm text-zinc-500">
+                            <p className="mt-2 text-sm text-theme-subtle">
                                 Check back later for new projects and updates.
                             </p>
                         </div>
@@ -256,10 +256,10 @@ export default function PortfolioSubCategoryShow({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Want work like this for your brand?
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             We create premium identities, campaign systems, and
                             presentation-ready visual assets designed to move
                             perception and performance.
@@ -273,7 +273,7 @@ export default function PortfolioSubCategoryShow({
                             </MagneticButton>
                             <Link
                                 href="/contact"
-                                className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white"
+                                className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme"
                             >
                                 Contact Us
                             </Link>
