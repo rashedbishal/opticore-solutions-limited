@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HireUsController;
@@ -114,6 +115,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', function () {
         return Inertia::render('Settings');
     })->name('settings');
+
+    // Profile
+    Route::get('/profile', function () {
+        return Inertia::render('Profile');
+    })->name('profile');
+
+    // Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
     // User Chat Routes
     Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init');

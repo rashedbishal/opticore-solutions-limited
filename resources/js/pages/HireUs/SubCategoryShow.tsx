@@ -1,5 +1,6 @@
 import type { Variants } from 'framer-motion';
-import { Head, Link, router } from '@inertiajs/react';
+import type { SharedPageProps } from '@/types';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     MessageSquare,
@@ -774,6 +775,7 @@ export default function SubCategoryShow({
     siblingSubCategories,
     recommendedServices,
 }: Props) {
+    const { auth } = usePage<SharedPageProps>().props;
     const displayPortfolios =
         portfolios.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
@@ -1646,7 +1648,26 @@ export default function SubCategoryShow({
 
                                         {/* CTA buttons */}
                                         <div className="space-y-3 pt-2">
-                                            <button className="bg-foreground text-background hover:bg-cyan-500 hover:text-white group flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black tracking-widest uppercase transition-all">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (!auth.user) {
+                                                        router.visit('/login');
+                                                        return;
+                                                    }
+                                                    router.visit('/checkout', {
+                                                        data: {
+                                                            service: subCategory.name,
+                                                            plan: activePlan.name,
+                                                            price: activePlan.price,
+                                                            delivery: activePlan.delivery,
+                                                            category: category.slug,
+                                                            subcategory: subCategory.slug,
+                                                        },
+                                                    });
+                                                }}
+                                                className="bg-foreground text-background hover:bg-cyan-500 hover:text-white group flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black tracking-widest uppercase transition-all"
+                                            >
                                                 Hire Now
                                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                             </button>
