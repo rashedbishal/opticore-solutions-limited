@@ -13,26 +13,38 @@ function applyTheme(theme: Theme): void {
 }
 
 function resolveTheme(): Theme {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    const stored =
+        typeof window !== 'undefined'
+            ? (localStorage.getItem(STORAGE_KEY) as Theme | null)
+            : null;
+
     if (stored === 'dark' || stored === 'light') {
         return stored;
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+    return typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
 }
 
 export function useTheme() {
-    const [theme, setTheme] = useState<Theme>('dark');
+    const [theme, setTheme] = useState<Theme>(resolveTheme);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        const resolved = resolveTheme();
-        setTheme(resolved);
-        applyTheme(resolved);
-        setMounted(true);
+        queueMicrotask(() => {
+            setMounted(true);
+        });
     }, []);
+
+    useEffect(() => {
+        applyTheme(theme);
+    }, [theme]);
 
     const toggle = () => {
         const next: Theme = theme === 'dark' ? 'light' : 'dark';
+
         setTheme(next);
         localStorage.setItem(STORAGE_KEY, next);
         applyTheme(next);

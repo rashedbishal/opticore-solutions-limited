@@ -45,10 +45,10 @@ return [
         ],
 
         'admin' => [
-            'driver' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_CONNECTION') === 'sqlite') ? 'sqlite' : 'pgsql',
+            'driver' => 'pgsql',
             'host' => env('DB_ADMIN_HOST', '127.0.0.1'),
             'port' => env('DB_ADMIN_PORT', '5432'),
-            'database' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_ADMIN_DRIVER') === 'sqlite') ? database_path('testing_admin.sqlite') : env('DB_ADMIN_DATABASE', 'opticoresolutions_admin'),
+            'database' => env('DB_ADMIN_DATABASE', 'opticoresolutions_admin'),
             'username' => env('DB_ADMIN_USERNAME', 'postgres'),
             'password' => env('DB_ADMIN_PASSWORD', 'password'),
             'charset' => 'utf8',
@@ -99,11 +99,11 @@ return [
         ],
 
         'pgsql' => [
-            'driver' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_CONNECTION') === 'sqlite') ? 'sqlite' : 'pgsql',
+            'driver' => 'pgsql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
-            'database' => (defined('PHPUNIT_COMPOSER_INSTALL') || env('APP_ENV') === 'testing' || env('DB_CONNECTION') === 'sqlite') ? database_path('testing.sqlite') : env('DB_DATABASE', 'laravel'),
+            'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'postgres'),
             'password' => env('DB_PASSWORD', 'password'),
             'charset' => env('DB_CHARSET', 'utf8'),

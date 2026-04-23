@@ -1,7 +1,3 @@
-# CI Pipeline — Laravel + Inertia + React
-# Fast CI: SQLite (in-memory style). No DB service needed.
-# Runs on every push and PR to main. Fails fast on any error.
-
 name: CI
 
 on:
@@ -12,30 +8,41 @@ on:
 
 jobs:
   test:
-    name: Lint & Test (SQLite)
+    name: Lint & Test (PostgreSQL)
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: opticoresolutions_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      # 1. Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install PHP 8.3
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, pdo, pdo_sqlite, bcmath, ctype, fileinfo, json, tokenizer, xml
+          extensions: mbstring, pdo, pdo_pgsql, bcmath, ctype, fileinfo, json, tokenizer, xml
           coverage: none
 
-      # 3. Install Node 22
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      # 4. Cache Composer packages
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
@@ -43,58 +50,45 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      # 5. Install PHP dependencies
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      # 6. Install Node dependencies
       - name: Install Node dependencies
         run: npm ci
 
-      # 7. PHP Linting (Pint)
       - name: Run Pint (PHP Lint)
         run: ./vendor/bin/pint --test
 
-      # 8. JS/TS Linting (ESLint)
       - name: Run ESLint
         run: npm run lint:check
 
-      # 9. Prettier Check
       - name: Run Prettier check
         run: npm run format:check
 
-      # 10. Prepare Laravel environment
-      #     Tests override DB settings via phpunit.xml (SQLite).
-      #     We only need a valid APP_KEY and sane defaults for pre-test steps.
       - name: Prepare environment
         run: |
           cp .env.example .env
           php artisan key:generate
           sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env
           sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' .env
-          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=database\/testing.sqlite/' .env
           sed -i 's/^CACHE_STORE=.*/CACHE_STORE=array/' .env
           sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
           sed -i 's/^QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
-          touch database/testing.sqlite database/testing_admin.sqlite
 
-      # 11. Generate Wayfinder Routes & Types
+      - name: Create admin test database
+        run: PGPASSWORD=password psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE opticoresolutions_admin_test;"
+
       - name: Generate Wayfinder Routes
         run: php artisan wayfinder:generate
 
-      # 12. TypeScript Check
       - name: Run Type Check
         run: npm run types:check
 
-      # 13. Build frontend assets
       - name: Build frontend
         run: npm run build
 
-      # 14. Bundle budget regression gate
       - name: Check bundle budgets
         run: npm run perf:bundle-check
 
-      # 15. Run Pest tests (phpunit.xml → SQLite, RefreshDatabase handles migrations)
       - name: Run tests
         run: ./vendor/bin/pest --ci
