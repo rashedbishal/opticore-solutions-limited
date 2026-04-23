@@ -68,13 +68,13 @@ export default function PortalLoop() {
     });
 
     return (
-        <div ref={containerRef} className="relative h-[800vh] bg-black">
+        <div ref={containerRef} className="relative h-[800vh] bg-background">
             <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
-                {/* Background Grid - Extremely light SVG pattern */}
+                {/* Background Grid - Extremely light pattern */}
                 <div
-                    className="pointer-events-none absolute inset-0 opacity-10"
+                    className="pointer-events-none absolute inset-0 opacity-15"
                     style={{
-                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+                        backgroundImage: `radial-gradient(circle at 2px 2px, var(--theme-border) 1px, transparent 0)`,
                         backgroundSize: '40px 40px',
                     }}
                 />
@@ -95,10 +95,10 @@ export default function PortalLoop() {
                     }}
                     className="pointer-events-none absolute z-50 text-center"
                 >
-                    <span className="mb-2 block text-xs font-bold tracking-[0.4em] text-cyan-400 uppercase">
+                    <span className="mb-2 block text-xs font-bold tracking-[0.4em] text-cyan-500 uppercase">
                         Universe
                     </span>
-                    <h2 className="text-5xl font-black tracking-tighter text-white uppercase md:text-8xl">
+                    <h2 className="text-theme text-5xl font-black tracking-tighter uppercase md:text-8xl">
                         Showcase
                     </h2>
                 </motion.div>
@@ -114,7 +114,7 @@ export default function PortalLoop() {
                 ))}
 
                 {/* Constant Vignette */}
-                <div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_0%,black_90%)]" />
+                <div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_0%,var(--background)_90%)]" />
             </div>
         </div>
     );
@@ -160,7 +160,7 @@ function PortalCard({
             }}
             className="pointer-events-none absolute inset-0 flex items-center justify-center p-4"
         >
-            <div className="pointer-events-auto relative aspect-video w-full max-w-4xl overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900 shadow-2xl">
+            <div className="pointer-events-auto border-theme bg-theme-surface relative aspect-video w-full max-w-4xl overflow-hidden rounded-[2rem] border shadow-2xl">
                 <img
                     src={item.src}
                     alt={item.title}

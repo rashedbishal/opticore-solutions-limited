@@ -35,12 +35,12 @@ export default function OrbitingShowcase() {
     const active = testimonials[index];
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-zinc-950 py-32">
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background py-32">
             <div className="relative flex aspect-square w-full max-w-4xl items-center justify-center">
                 {/* Orbiting Circles */}
-                <div className="absolute inset-0 scale-100 rounded-full border border-white/5 opacity-20" />
-                <div className="absolute inset-0 scale-75 rounded-full border border-white/5 opacity-40" />
-                <div className="absolute inset-0 scale-50 rounded-full border border-white/5 opacity-60" />
+                <div className="border-theme absolute inset-0 scale-100 rounded-full border opacity-20" />
+                <div className="border-theme absolute inset-0 scale-75 rounded-full border opacity-40" />
+                <div className="border-theme absolute inset-0 scale-50 rounded-full border opacity-60" />
 
                 {/* Central Content */}
                 <div className="relative z-10 max-w-2xl px-12 text-center">
@@ -52,14 +52,14 @@ export default function OrbitingShowcase() {
                             exit={{ opacity: 0, y: -20 }}
                             className="space-y-6"
                         >
-                            <p className="text-2xl leading-relaxed font-medium text-white md:text-3xl">
+                            <p className="text-foreground text-2xl leading-relaxed font-medium md:text-3xl">
                                 "{active.quote}"
                             </p>
                             <div>
-                                <h4 className="font-black tracking-widest text-cyan-400 uppercase">
+                                <h4 className="font-black tracking-widest text-cyan-500 uppercase">
                                     {active.name}
                                 </h4>
-                                <p className="text-sm font-bold text-zinc-500 uppercase">
+                                <p className="text-theme-muted text-sm font-bold uppercase">
                                     {active.role}
                                 </p>
                             </div>
@@ -83,7 +83,7 @@ export default function OrbitingShowcase() {
                             className={`absolute flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 transition-colors duration-500 ${
                                 isActive
                                     ? 'border-cyan-400 bg-cyan-400/10 shadow-[0_0_30px_rgba(34,211,238,0.3)]'
-                                    : 'border-white/10 bg-zinc-900 grayscale hover:grayscale-0'
+                                    : 'border-theme bg-theme-surface grayscale hover:grayscale-0'
                             }`}
                             animate={{
                                 x: [x, Math.cos(angle + 0.1) * radius, x],
@@ -97,7 +97,7 @@ export default function OrbitingShowcase() {
                             }}
                         >
                             <User
-                                className={`h-10 w-10 ${isActive ? 'text-cyan-400' : 'text-zinc-600'}`}
+                                className={`h-10 w-10 ${isActive ? 'text-cyan-500' : 'text-theme-text-subtle'}`}
                             />
                         </motion.button>
                     );

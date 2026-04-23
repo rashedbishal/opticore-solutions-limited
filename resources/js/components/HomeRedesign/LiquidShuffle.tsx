@@ -38,10 +38,10 @@ export default function LiquidShuffle() {
     const active = testimonials[index];
 
     return (
-        <div className="relative overflow-hidden bg-black py-32">
+        <div className="relative overflow-hidden bg-background py-32">
             <div className="relative z-10 mx-auto max-w-5xl px-4">
                 <div className="flex flex-col items-center text-center">
-                    <Quote className="mb-12 h-16 w-16 text-cyan-400 opacity-50" />
+                    <Quote className="mb-12 h-16 w-16 text-cyan-500/50" />
 
                     <div className="relative flex h-[400px] w-full items-center justify-center">
                         <AnimatePresence mode="wait">
@@ -69,7 +69,7 @@ export default function LiquidShuffle() {
                                 className="absolute inset-0 flex flex-col items-center justify-center"
                             >
                                 <motion.div
-                                    className={`absolute inset-0 bg-linear-to-br ${active.color} -z-10 rounded-full blur-[100px]`}
+                                    className={`absolute inset-0 bg-linear-to-br ${active.color} -z-10 rounded-full blur-[100px] opacity-40`}
                                     animate={{
                                         scale: [1, 1.2, 1],
                                         rotate: [0, 90, 0],
@@ -81,15 +81,15 @@ export default function LiquidShuffle() {
                                     }}
                                 />
 
-                                <p className="mb-12 text-3xl leading-tight font-bold text-white italic md:text-5xl">
+                                <p className="text-foreground mb-12 text-3xl leading-tight font-bold italic md:text-5xl">
                                     "{active.quote}"
                                 </p>
 
                                 <div>
-                                    <h4 className="text-xl font-black tracking-widest text-cyan-400 uppercase">
+                                    <h4 className="text-xl font-black tracking-widest text-cyan-500 uppercase">
                                         {active.name}
                                     </h4>
-                                    <p className="mt-1 text-sm font-bold text-zinc-500 uppercase">
+                                    <p className="text-theme-muted mt-1 text-sm font-bold uppercase">
                                         {active.role}
                                     </p>
                                 </div>
@@ -100,13 +100,13 @@ export default function LiquidShuffle() {
                     <div className="mt-12 flex gap-4">
                         <button
                             onClick={prev}
-                            className="rounded-full border border-white/10 p-4 text-white transition-colors hover:bg-white/5"
+                            className="border-theme text-foreground hover:bg-theme-surface rounded-full border p-4 transition-colors"
                         >
                             <ChevronLeft className="h-6 w-6" />
                         </button>
                         <button
                             onClick={next}
-                            className="rounded-full border border-white/10 p-4 text-white transition-colors hover:bg-white/5"
+                            className="border-theme text-foreground hover:bg-theme-surface rounded-full border p-4 transition-colors"
                         >
                             <ChevronRight className="h-6 w-6" />
                         </button>

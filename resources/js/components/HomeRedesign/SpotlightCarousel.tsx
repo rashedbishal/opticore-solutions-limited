@@ -26,7 +26,7 @@ export default function SpotlightCarousel() {
     const [index, setIndex] = useState(0);
 
     return (
-        <div className="relative overflow-hidden bg-black py-40">
+        <div className="relative overflow-hidden bg-background py-40">
             <div className="mx-auto max-w-7xl px-4">
                 <div className="grid grid-cols-1 items-center gap-20 md:grid-cols-2">
                     {/* Active Quote */}
@@ -43,17 +43,17 @@ export default function SpotlightCarousel() {
                                 }}
                                 className="absolute inset-0 flex flex-col justify-center"
                             >
-                                <span className="mb-8 text-sm font-black tracking-[0.3em] text-cyan-400 uppercase">
+                                <span className="mb-8 text-sm font-black tracking-[0.3em] text-cyan-500 uppercase">
                                     Client Success
                                 </span>
-                                <p className="mb-12 text-4xl leading-tight font-black tracking-tighter text-white uppercase md:text-6xl">
+                                <p className="text-foreground mb-12 text-4xl leading-tight font-black tracking-tighter uppercase md:text-6xl">
                                     "{testimonials[index].quote}"
                                 </p>
                                 <div>
-                                    <h4 className="text-2xl font-bold text-white">
+                                    <h4 className="text-foreground text-2xl font-bold">
                                         {testimonials[index].name}
                                     </h4>
-                                    <p className="mt-1 text-sm font-medium tracking-widest text-zinc-500 uppercase">
+                                    <p className="text-theme-muted mt-1 text-sm font-medium tracking-widest uppercase">
                                         {testimonials[index].role}
                                     </p>
                                 </div>
@@ -67,10 +67,10 @@ export default function SpotlightCarousel() {
                             <button
                                 key={t.id}
                                 onClick={() => setIndex(i)}
-                                className={`group relative w-full overflow-hidden rounded-[2rem] border p-8 text-left transition-all duration-500 ${
+                                className={`group border-theme relative w-full overflow-hidden rounded-[2rem] border p-8 text-left transition-all duration-500 ${
                                     index === i
-                                        ? 'border-white/20 bg-white/5'
-                                        : 'border-white/5 bg-transparent hover:border-white/10'
+                                        ? 'bg-theme-surface border-cyan-500/30'
+                                        : 'bg-transparent hover:bg-theme-surface/50'
                                 }`}
                             >
                                 {index === i && (
@@ -82,19 +82,19 @@ export default function SpotlightCarousel() {
                                 <div className="relative z-10 flex items-center justify-between">
                                     <div>
                                         <h4
-                                            className={`text-xl font-bold transition-colors ${index === i ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'}`}
+                                            className={`text-xl font-bold transition-colors ${index === i ? 'text-foreground' : 'text-theme-muted group-hover:text-foreground'}`}
                                         >
                                             {t.name}
                                         </h4>
-                                        <p className="mt-1 text-sm font-medium tracking-widest text-zinc-500 uppercase">
+                                        <p className="text-theme-muted mt-1 text-sm font-medium tracking-widest uppercase">
                                             {t.role}
                                         </p>
                                     </div>
                                     <div
                                         className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all duration-500 ${
                                             index === i
-                                                ? 'border-cyan-400 bg-cyan-400 text-black'
-                                                : 'border-white/10 text-white'
+                                                ? 'border-cyan-500 bg-cyan-500 text-white'
+                                                : 'border-theme text-theme-muted'
                                         }`}
                                     >
                                         {i + 1}

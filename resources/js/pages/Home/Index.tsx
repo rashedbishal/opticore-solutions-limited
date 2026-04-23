@@ -528,15 +528,15 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
             </Suspense>
 
             <div className="relative z-10">
-                <section className="bg-black py-20">
+                <section className="bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
                             Portfolio Concept 1
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Portal Loop
                         </h2>
-                        <p className="mt-4 text-zinc-500">
+                        <p className="mt-4 text-theme-muted">
                             Scroll down to experience the zoom motion
                         </p>
                     </div>
@@ -545,15 +545,15 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <PortalLoop />
                 </LazySection>
 
-                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                <section className="border-theme bg-background border-t py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Portfolio Concept 2
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Nebula Cluster
                         </h2>
-                        <p className="mt-4 text-zinc-500">
+                        <p className="mt-4 text-theme-muted">
                             Move your mouse to interact with the cluster
                         </p>
                     </div>
@@ -562,12 +562,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <NebulaCluster />
                 </LazySection>
 
-                <section className="border-t border-white/5 bg-black py-20">
+                <section className="border-theme bg-background border-t py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
                             Portfolio Concept 3
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Kinetic Bento
                         </h2>
                     </div>
@@ -576,12 +576,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <KineticBento />
                 </LazySection>
 
-                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                <section className="border-theme bg-background border-t py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-pink-400 uppercase">
                             Testimonial Concept 1
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Liquid Shuffle
                         </h2>
                     </div>
@@ -590,12 +590,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <LiquidShuffle />
                 </LazySection>
 
-                <section className="border-t border-white/5 bg-black py-20">
+                <section className="border-theme bg-background border-t py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
                             Testimonial Concept 2
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Orbiting Showcase
                         </h2>
                     </div>
@@ -604,12 +604,12 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <OrbitingShowcase />
                 </LazySection>
 
-                <section className="border-t border-white/5 bg-zinc-950 py-20">
+                <section className="border-theme bg-background border-t py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Testimonial Concept 3
                         </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Spotlight Carousel
                         </h2>
                     </div>
