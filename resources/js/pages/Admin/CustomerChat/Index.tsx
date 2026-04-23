@@ -25,8 +25,6 @@ import AdminLayout from '@/components/Layout/AdminLayout';
 import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
-import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
-import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -149,12 +147,18 @@ function OfferCard({
     const totalPrice =
         offer.payment_type === 'single'
             ? parseFloat(offer.price ?? '0')
-            : offer.milestones.reduce((sum: number, m: any) => sum + parseFloat(m.price), 0);
+            : offer.milestones.reduce(
+                  (sum: number, m: any) => sum + parseFloat(m.price),
+                  0,
+              );
 
     const totalDays =
         offer.payment_type === 'single'
             ? (offer.delivery_days ?? 0)
-            : offer.milestones.reduce((sum: number, m: any) => sum + m.delivery_days, 0);
+            : offer.milestones.reduce(
+                  (sum: number, m: any) => sum + m.delivery_days,
+                  0,
+              );
 
     const badge = STATUS_BADGE[offer.status];
 

@@ -1,4 +1,8 @@
 <?php
-$seeder = new Database\Seeders\PortfolioSubCategorySeeder();
+
+use App\Models\PortfolioSubCategory;
+use Database\Seeders\PortfolioSubCategorySeeder;
+
+$seeder = new PortfolioSubCategorySeeder;
 $seeder->run();
-echo "Seeded. Count: " . App\Models\PortfolioSubCategory::count() . "\n";
+echo 'Seeded. Count: '.PortfolioSubCategory::count()."\n";

@@ -33,12 +33,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        if (flash?.success) {
-            setShowToast(true);
-            const timer = setTimeout(() => setShowToast(false), 4000);
-
-            return () => clearTimeout(timer);
+        if (!flash?.success) {
+            return;
         }
+
+        const showTimer = setTimeout(() => setShowToast(true), 0);
+        const hideTimer = setTimeout(() => setShowToast(false), 4000);
+
+        return () => {
+            clearTimeout(showTimer);
+            clearTimeout(hideTimer);
+        };
     }, [flash]);
 
     const navigation = [
