@@ -24,7 +24,7 @@ export default function GuestLayout({
 
     return (
         <div
-            className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black px-4 py-24 sm:pt-0"
+            className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4 py-24 sm:pt-0"
             data-cursor={cursorType}
         >
             <CursorSelector cursorType={cursorType} />
@@ -38,12 +38,12 @@ export default function GuestLayout({
                 color="#7c3aed"
             />
 
-            <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03]">
+            <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]">
                 <div
                     className="h-full w-full"
                     style={{
                         backgroundImage:
-                            'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                            'radial-gradient(circle at 2px 2px, var(--foreground) 1px, transparent 0)',
                         backgroundSize: '40px 40px',
                     }}
                 />
@@ -58,9 +58,14 @@ export default function GuestLayout({
                 <div className="relative mb-8 flex justify-center">
                     <Link href="/">
                         <img
+                            src="/images/logo/opticore.webp"
+                            alt="Opticore Solutions"
+                            className="block h-20 w-auto dark:hidden"
+                        />
+                        <img
                             src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="h-20 w-auto"
+                            className="hidden h-20 w-auto dark:block"
                         />
                     </Link>
                 </div>
@@ -69,7 +74,7 @@ export default function GuestLayout({
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="glass-panel relative w-full overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900/40 p-8 shadow-2xl backdrop-blur-3xl sm:p-12"
+                    className="glass-panel relative w-full overflow-hidden rounded-[3rem] p-8 shadow-2xl backdrop-blur-3xl sm:p-12"
                 >
                     {children}
                 </motion.div>

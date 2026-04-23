@@ -27,10 +27,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 >
                     <KeyRound className="h-10 w-10 text-white" />
                 </motion.div>
-                <h1 className="mb-4 text-4xl font-black tracking-tighter text-white uppercase">
+                <h1 className="mb-4 text-4xl font-black tracking-tighter text-foreground uppercase">
                     Recover Access
                 </h1>
-                <p className="font-medium text-zinc-500">
+                <p className="font-medium text-theme-muted">
                     Enter your email and we'll send you a secure reset link.
                 </p>
             </div>
@@ -45,7 +45,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <form onSubmit={submit} className="space-y-6">
                 <div className="space-y-4">
                     <div className="group relative">
-                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-cyan-400">
+                        <div className="absolute top-1/2 left-5 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
                             <Mail className="h-5 w-5" />
                         </div>
                         <input
@@ -54,7 +54,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             placeholder="Email Address"
-                            className="w-full rounded-2xl border border-white/5 bg-black/40 py-5 pr-6 pl-14 text-white transition-all placeholder:text-zinc-600 focus:border-cyan-500/50 focus:outline-none"
+                            className="w-full rounded-2xl border border-theme bg-theme-surface py-5 pr-6 pl-14 text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none"
                             required
                             autoFocus
                         />
@@ -69,7 +69,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
+                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-5 font-black tracking-widest text-background uppercase shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all hover:bg-cyan-400 hover:text-white"
                 >
                     {processing ? 'Sending Link...' : 'Send Reset Link'}{' '}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -77,11 +77,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
             </form>
 
             <div className="mt-12 text-center">
-                <p className="text-zinc-500">
+                <p className="text-theme-muted">
                     Remembered your password?{' '}
                     <Link
                         href="/login"
-                        className="font-bold text-white transition-colors hover:text-cyan-400"
+                        className="font-bold text-foreground transition-colors hover:text-cyan-400"
                     >
                         Go back to login
                     </Link>

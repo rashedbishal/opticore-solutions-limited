@@ -39,7 +39,7 @@ export default function TermsConditions() {
                                     .getElementById(event.target.value)
                                     ?.scrollIntoView({ behavior: 'smooth' });
                             }}
-                            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+                            className="rounded-2xl border border-theme bg-theme-surface px-4 py-3 text-foreground outline-none"
                         >
                             {termsSections.map((section) => (
                                 <option
@@ -52,8 +52,8 @@ export default function TermsConditions() {
                             ))}
                         </select>
                     ) : (
-                        <aside className="sticky top-28 h-fit rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-                            <p className="text-sm font-semibold tracking-[0.24em] text-zinc-400 uppercase">
+                        <aside className="sticky top-28 h-fit rounded-[2rem] border border-theme bg-theme-surface p-5 backdrop-blur-md">
+                            <p className="text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
                                 Contents
                             </p>
                             <div className="mt-4 space-y-2">
@@ -61,7 +61,7 @@ export default function TermsConditions() {
                                     <a
                                         key={section.id}
                                         href={`#${section.id}`}
-                                        className="block rounded-xl px-3 py-2 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                                        className="block rounded-xl px-3 py-2 text-sm text-theme-muted transition-colors hover:bg-theme-surface hover:text-foreground"
                                     >
                                         {section.title}
                                     </a>
@@ -71,7 +71,7 @@ export default function TermsConditions() {
                     )}
 
                     <div className="glass-panel rounded-[2rem] p-8 sm:p-10">
-                        <h1 className="text-4xl font-extrabold text-white sm:text-5xl">
+                        <h1 className="text-4xl font-extrabold text-foreground sm:text-5xl">
                             Terms & Conditions
                         </h1>
                         <div className="legal-content mt-10">

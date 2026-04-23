@@ -73,10 +73,10 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
         <>
             <Head title="Hire Opticore | Digital Services Marketplace" />
 
-            <div className="relative min-h-screen overflow-hidden bg-black px-4 pt-32 pb-24">
+            <div className="relative min-h-screen overflow-hidden bg-background px-4 pt-32 pb-24">
                 {/* Background Glows */}
-                <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
-                <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/5 blur-[120px]" />
+                <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[120px]" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px]" />
 
                 <div className="relative z-10 mx-auto max-w-7xl">
                     {/* Hero Section */}
@@ -86,17 +86,17 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             animate={{ opacity: 1, y: 0 }}
                             className="mx-auto max-w-4xl"
                         >
-                            <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold tracking-widest text-cyan-400 uppercase">
+                            <span className="border-theme bg-theme-surface mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-widest text-cyan-600 uppercase dark:text-cyan-400">
                                 <Zap className="h-4 w-4 fill-current" /> Premium
                                 Solutions
                             </span>
-                            <h1 className="mb-8 text-5xl leading-tight font-bold tracking-tighter text-white uppercase md:text-8xl">
+                            <h1 className="text-theme mb-8 text-5xl leading-tight font-black tracking-tighter uppercase md:text-8xl">
                                 Expert{' '}
-                                <span className="bg-gradient-to-r from-cyan-400 to-violet-600 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-cyan-500 to-violet-600 bg-clip-text text-transparent">
                                     On Demand
                                 </span>
                             </h1>
-                            <p className="mx-auto mb-12 max-w-2xl text-xl leading-relaxed text-zinc-400">
+                            <p className="text-theme-muted mx-auto mb-12 max-w-2xl text-xl leading-relaxed">
                                 Select a category to explore our professional
                                 sub-categories and start your project with the
                                 industry's finest talent.
@@ -104,7 +104,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                         </motion.div>
                     </section>
 
-                    {/* Service Tabs - Using the consolidated 'services' array */}
+                    {/* Service Tabs */}
                     <div className="mb-20 flex flex-wrap justify-center gap-4">
                         {services.map((service) => (
                             <button
@@ -112,12 +112,12 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                 onClick={() => setActiveTab(service.id)}
                                 className={`flex items-center gap-3 rounded-2xl border px-6 py-4 font-bold transition-all duration-300 ${
                                     activeTab === service.id
-                                        ? `border-white bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.2)]`
-                                        : 'border-white/5 bg-zinc-900/50 text-zinc-400 hover:border-white/20'
+                                        ? 'bg-foreground text-background border-foreground shadow-xl'
+                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50 hover:text-theme shadow-sm'
                                 }`}
                             >
                                 <service.icon
-                                    className={`h-5 w-5 ${activeTab === service.id ? 'text-black' : service.color}`}
+                                    className={`h-5 w-5 ${activeTab === service.id ? 'text-background' : service.color}`}
                                 />
                                 {service.name}
                             </button>
@@ -137,9 +137,8 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             {subCategories[activeTab]?.map((sub) => (
                                 <Link
                                     key={sub.slug}
-                                    // Navigation using Inertia's Link component
                                     href={`/hire-us/${activeTab}/${sub.slug}`}
-                                    className="group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/40 transition-all duration-500 hover:border-cyan-500/50"
+                                    className="group bg-theme-surface border-theme hover:bg-theme-surface-hover relative overflow-hidden rounded-[2.5rem] border shadow-sm transition-all duration-500 hover:border-cyan-500/50 hover:shadow-2xl"
                                 >
                                     <div className="aspect-[4/3] overflow-hidden">
                                         <img
@@ -150,26 +149,26 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                     </div>
                                     <div className="p-8">
                                         <div className="mb-4 flex items-start justify-between">
-                                            <h3 className="text-2xl leading-tight font-black tracking-tight text-white uppercase transition-colors group-hover:text-cyan-400">
+                                            <h3 className="text-theme text-2xl leading-tight font-black tracking-tight uppercase transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
                                                 {sub.name}
                                             </h3>
-                                            <div className="flex items-center gap-1 font-bold text-amber-400">
+                                            <div className="flex items-center gap-1 font-bold text-amber-500">
                                                 <Star className="h-4 w-4 fill-current" />
                                                 <span className="text-sm">
                                                     {sub.rating}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
+                                        <div className="border-theme mt-8 flex items-center justify-between border-t pt-6">
                                             <div>
-                                                <p className="mb-1 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+                                                <p className="text-theme-subtle mb-1 text-[10px] font-bold tracking-widest uppercase">
                                                     Starting At
                                                 </p>
-                                                <p className="text-xl font-black text-white">
+                                                <p className="text-theme text-xl font-black">
                                                     {sub.price}
                                                 </p>
                                             </div>
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-white transition-all group-hover:bg-cyan-500 group-hover:text-white">
+                                            <div className="bg-theme-surface text-theme-muted flex h-12 w-12 items-center justify-center rounded-2xl border border-theme transition-all group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500">
                                                 <ArrowRight className="h-5 w-5" />
                                             </div>
                                         </div>
@@ -180,12 +179,12 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             {/* Display "Coming Soon" if no sub-categories for the active tab */}
                             {(!subCategories[activeTab] ||
                                 subCategories[activeTab].length === 0) && (
-                                <div className="glass-panel col-span-full rounded-[3rem] border-white/5 py-24 text-center">
-                                    <Sparkles className="mx-auto mb-6 h-12 w-12 text-zinc-700" />
-                                    <h3 className="text-2xl font-bold tracking-widest text-zinc-500 uppercase">
+                                <div className="glass-panel col-span-full rounded-[3rem] py-24 text-center">
+                                    <Sparkles className="text-theme-subtle mx-auto mb-6 h-12 w-12" />
+                                    <h3 className="text-theme-muted text-2xl font-bold tracking-widest uppercase">
                                         Coming Soon
                                     </h3>
-                                    <p className="mt-2 text-zinc-600">
+                                    <p className="text-theme-subtle mt-2">
                                         We're onboarding expert talent for this
                                         category.
                                     </p>
@@ -194,8 +193,8 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Trust Section - kept as is */}
-                    <div className="mt-32 grid grid-cols-1 gap-12 border-t border-white/5 pt-24 md:grid-cols-3">
+                    {/* Trust Section */}
+                    <div className="border-theme mt-32 grid grid-cols-1 gap-12 border-t pt-24 md:grid-cols-3">
                         {[
                             {
                                 icon: Zap,
@@ -214,14 +213,14 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             },
                         ].map((item, i) => (
                             <div key={i} className="flex gap-6">
-                                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-cyan-400">
+                                <div className="border-theme bg-theme-surface flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border text-cyan-600 dark:text-cyan-400">
                                     <item.icon className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h4 className="mb-2 text-lg font-bold text-white">
+                                    <h4 className="text-theme mb-2 text-lg font-bold">
                                         {item.title}
                                     </h4>
-                                    <p className="text-sm leading-relaxed text-zinc-500">
+                                    <p className="text-theme-subtle text-sm leading-relaxed">
                                         {item.desc}
                                     </p>
                                 </div>

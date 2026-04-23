@@ -40,12 +40,12 @@ const items = [
 
 export default function KineticBento() {
     return (
-        <div className="bg-black px-4 py-24">
+        <div className="bg-background px-4 py-24">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-16">
-                    <h2 className="text-5xl font-black tracking-tighter text-white uppercase md:text-7xl">
+                    <h2 className="text-5xl font-black tracking-tighter text-foreground uppercase md:text-7xl">
                         Selected <br />{' '}
-                        <span className="text-zinc-600">Masterpieces</span>
+                        <span className="text-theme-muted">Masterpieces</span>
                     </h2>
                 </div>
 
@@ -61,7 +61,7 @@ export default function KineticBento() {
                                 ease: [0.22, 1, 0.36, 1],
                             }}
                             viewport={{ once: true }}
-                            className={`${item.size} group relative overflow-hidden rounded-[2.5rem] border border-white/10`}
+                            className={`${item.size} group border-theme relative overflow-hidden rounded-[2.5rem] border`}
                         >
                             <img
                                 src={item.src}

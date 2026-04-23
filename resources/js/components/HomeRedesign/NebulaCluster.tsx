@@ -62,11 +62,11 @@ function NebulaItem({ item, index, dx, dy }: NebulaItemProps) {
                 rotateX,
                 rotateY,
             }}
-            className="preserve-3d absolute aspect-[4/3] overflow-hidden rounded-3xl border border-white/5 shadow-2xl"
+            className="preserve-3d border-theme absolute aspect-[4/3] overflow-hidden rounded-3xl border shadow-2xl"
             whileHover={{
                 scale: 1.1,
                 z: 50,
-                borderColor: 'rgba(255,255,255,0.2)',
+                borderColor: 'var(--color-accent)',
             }}
         >
             <img
@@ -96,10 +96,10 @@ export default function NebulaCluster() {
     return (
         <div
             onMouseMove={handleMouseMove}
-            className="relative h-screen w-full cursor-none overflow-hidden bg-zinc-950"
+            className="relative h-screen w-full cursor-none overflow-hidden bg-background"
         >
             <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-                <h2 className="text-7xl font-black tracking-tighter text-white/10 uppercase md:text-9xl">
+                <h2 className="text-7xl font-black tracking-tighter text-foreground opacity-5 uppercase md:text-9xl">
                     The Nebula
                 </h2>
             </div>
