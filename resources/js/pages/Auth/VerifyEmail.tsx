@@ -25,10 +25,10 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 >
                     <MailCheck className="h-10 w-10 text-white" />
                 </motion.div>
-                <h1 className="mb-4 text-4xl font-black tracking-tighter text-white uppercase">
+                <h1 className="mb-4 text-4xl font-black tracking-tighter text-foreground uppercase">
                     Verify Email
                 </h1>
-                <p className="font-medium text-zinc-500">
+                <p className="font-medium text-theme-muted">
                     Please check your inbox for a verification link to activate
                     your account.
                 </p>
@@ -45,7 +45,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-5 font-black tracking-widest text-black uppercase shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-400"
+                    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-5 font-black tracking-widest text-background uppercase shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all hover:bg-cyan-400 hover:text-white"
                 >
                     {processing
                         ? 'Sending Link...'
@@ -59,7 +59,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     href="/logout"
                     method="post"
                     as="button"
-                    className="mx-auto flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-zinc-500 uppercase transition-colors hover:text-white"
+                    className="mx-auto flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-theme-muted uppercase transition-colors hover:text-foreground"
                 >
                     <LogOut className="h-4 w-4" />
                     Sign Out
