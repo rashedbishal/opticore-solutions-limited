@@ -146,18 +146,18 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="absolute right-0 bottom-20 mb-3 w-52 rounded-2xl border border-white/10 bg-zinc-950/90 p-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-xl pointer-events-none sm:right-0 sm:bottom-24 sm:mb-4"
+                        className="border-theme bg-theme-surface/90 absolute right-0 bottom-20 mb-3 w-52 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none sm:right-0 sm:bottom-24 sm:mb-4"
                     >
                         <div className="relative">
                             <div className="flex items-center gap-1.5 mb-2">
-                                <Bot size={10} className="text-violet-400" />
-                                    <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase">Opticore Assistant</span>
+                                <Bot size={10} className="text-violet-500 dark:text-violet-400" />
+                                    <span className="text-theme-subtle text-[10px] font-bold tracking-widest uppercase">Opticore Assistant</span>
                             </div>
-                            <p className="text-xs font-medium text-white/90 leading-relaxed">
+                            <p className="text-theme text-xs font-medium leading-relaxed">
                                 {teaserText}
                             </p>
                             {/* Arrow */}
-                            <div className="absolute top-full right-6 w-2 h-2 bg-zinc-950/90 border-r border-b border-white/10 rotate-45 -translate-y-1" />
+                            <div className="border-theme bg-theme-surface absolute top-full right-6 w-2 h-2 border-r border-b rotate-45 -translate-y-1" />
                         </div>
                     </motion.div>
                 )}
@@ -176,10 +176,10 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, x: 8 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 8 }}
-                        className="hidden sm:flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-zinc-950/90 px-3 py-1.5 shadow-[0_0_20px_rgba(124,58,237,0.2)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
+                        className="border-theme bg-theme-surface/90 hidden sm:flex items-center gap-1.5 rounded-full border px-3 py-1.5 shadow-[0_0_20px_rgba(124,58,237,0.1)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
                     >
-                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
-                        <span className="text-[11px] font-semibold text-white/80 whitespace-nowrap">Chat with AI</span>
+                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                        <span className="text-theme text-[11px] font-semibold whitespace-nowrap">Chat with AI</span>
                     </motion.div>
                 )}
             </div>
@@ -192,7 +192,7 @@ setSessionId(data.session_id);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        className="absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0d1320]/95 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-0 sm:bottom-24"
+                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-0 sm:bottom-24"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
@@ -207,7 +207,7 @@ setSessionId(data.session_id);
                                             <Bot size={22} className="text-white" />
                                         </div>
                                         {/* Status indicator */}
-                                        <div className="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full border-2 border-[#0d1320] bg-green-400 shadow-lg" />
+                                        <div className="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full border-2 border-violet-600 bg-green-400 shadow-lg" />
                                     </div>
 
                                     <div className="flex flex-col">
@@ -239,11 +239,11 @@ setSessionId(data.session_id);
                         {/* Messages Area */}
                         <div 
                             data-lenis-prevent
-                            className="flex-1 overflow-y-auto bg-black/20 p-4 space-y-4 scroll-smooth"
+                            className="flex-1 overflow-y-auto bg-theme-surface/20 p-4 space-y-4 scroll-smooth"
                         >
                             {messages.length === 1 && (
-                                <div className="mb-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-sm">
-                                    <p className="mb-3 text-xs font-bold tracking-[0.15em] text-white/40 uppercase">
+                                <div className="border-theme bg-theme-surface/30 mb-4 rounded-2xl border p-4 backdrop-blur-sm">
+                                    <p className="text-theme-subtle mb-3 text-xs font-bold tracking-[0.15em] uppercase">
                                         Suggested Inquiries
                                     </p>
                                     <div className="space-y-2">
@@ -251,11 +251,11 @@ setSessionId(data.session_id);
                                             <button
                                                 key={i}
                                                 onClick={() => handleSend(q)}
-                                                className="w-full rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-xs text-white/80 transition-all hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-white group"
+                                                className="border-theme bg-theme-surface w-full rounded-xl border px-4 py-3 text-left text-xs text-theme transition-all hover:border-violet-500/50 hover:bg-violet-500/10 dark:hover:bg-violet-500/10 group"
                                             >
                                                 <span className="flex items-center justify-between">
                                                     {q}
-                                                    <Send size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-violet-400" />
+                                                    <Send size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-violet-500" />
                                                 </span>
                                             </button>
                                         ))}
@@ -273,25 +273,25 @@ setSessionId(data.session_id);
                                         className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}
                                     >
                                         {msg.role === "assistant" && (
-                                            <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-500/20">
-                                                <Bot size={16} className="text-violet-400" />
+                                            <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
+                                                <Bot size={16} className="text-violet-500" />
                                             </div>
                                         )}
 
                                         <div
                                             className={cn(
-                                                "max-w-[85%] rounded-[20px] px-4 py-3 text-sm leading-relaxed shadow-lg",
+                                                "max-w-[85%] rounded-[20px] px-4 py-3 text-sm leading-relaxed shadow-sm",
                                                 msg.role === "user"
-                                                    ? "bg-linear-to-br from-violet-600 to-indigo-600 text-white rounded-tr-none"
-                                                    : "border border-white/10 bg-zinc-900/50 text-white/90 backdrop-blur-xl rounded-tl-none"
+                                                    ? "bg-linear-to-br from-violet-600 to-indigo-600 text-white rounded-tr-none shadow-violet-500/10"
+                                                    : "border border-theme bg-background text-theme backdrop-blur-xl rounded-tl-none"
                                             )}
                                         >
                                             {msg.content}
                                         </div>
 
                                         {msg.role === "user" && (
-                                            <div className="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 border border-white/10">
-                                                <User size={16} className="text-zinc-400" />
+                                            <div className="border-theme bg-theme-surface ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border">
+                                                <User size={16} className="text-theme-subtle" />
                                             </div>
                                         )}
                                     </motion.div>
@@ -303,12 +303,12 @@ setSessionId(data.session_id);
                                         animate={{ opacity: 1 }}
                                         className="flex justify-start"
                                     >
-                                        <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-500/20">
-                                            <Bot size={16} className="text-violet-400" />
+                                        <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
+                                            <Bot size={16} className="text-violet-500" />
                                         </div>
-                                        <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-zinc-900/50 px-5 py-4 backdrop-blur-xl">
+                                        <div className="border-theme bg-background flex items-center gap-1.5 rounded-2xl border px-5 py-4 backdrop-blur-xl shadow-sm">
                                             <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}
                                                 transition={{ 
                                                     duration: 0.6, 
@@ -317,7 +317,7 @@ setSessionId(data.session_id);
                                                     times: [0, 0.5, 1]
                                                 }}                                            />
                                             <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}
                                                 transition={{ 
                                                     duration: 0.6, 
@@ -327,7 +327,7 @@ setSessionId(data.session_id);
                                                 }}
                                             />
                                             <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-400"
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}
                                                 transition={{ 
                                                     duration: 0.6, 
@@ -344,7 +344,7 @@ setSessionId(data.session_id);
                         </div>
 
                         {/* Input Area */}
-                        <div className="border-t border-white/10 bg-[#0d1320] p-4 shrink-0">
+                        <div className="border-theme bg-background border-t p-4 shrink-0">
                             <div className="flex gap-2">
                                 <div className="relative flex-1 group">
                                     <input
@@ -354,9 +354,9 @@ setSessionId(data.session_id);
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
                                         placeholder="Type your message..."
-                                        className="w-full rounded-2xl border border-white/10 bg-white/[0.04] pl-4 pr-16 py-3.5 text-sm text-white placeholder:text-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-white/[0.08] focus:ring-1 focus:ring-violet-500/20"
+                                        className="border-theme bg-theme-surface text-theme placeholder:text-theme-subtle w-full rounded-2xl border pl-4 pr-16 py-3.5 text-sm outline-none transition-all focus:border-violet-500/50 focus:bg-theme-surface-hover focus:ring-1 focus:ring-violet-500/10"
                                     />
-                                    <div className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold tracking-wider text-white/10 transition-colors group-focus-within:text-violet-400/30 uppercase">
+                                    <div className="text-theme-subtle/30 pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold tracking-wider transition-colors group-focus-within:text-violet-500/50 uppercase">
                                         Enter
                                     </div>
                                 </div>
@@ -373,11 +373,11 @@ setSessionId(data.session_id);
 
                             {/* Trust indicators */}
                             <div className="mt-4 flex items-center justify-center gap-6">
-                                <div className="flex items-center gap-1.5 text-xs font-medium text-white/20">
+                                <div className="text-theme-subtle/40 flex items-center gap-1.5 text-xs font-medium">
                                     <Shield size={12} className="text-violet-500/40" />
                                     <span>Encrypted Chat</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-xs font-medium text-white/20">
+                                <div className="text-theme-subtle/40 flex items-center gap-1.5 text-xs font-medium">
                                     <Clock size={12} className="text-cyan-500/40" />
                                     <span>Instant Response</span>
                                 </div>

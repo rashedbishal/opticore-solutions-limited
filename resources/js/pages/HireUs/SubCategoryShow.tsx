@@ -1902,7 +1902,7 @@ export default function SubCategoryShow({
                                             className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
                                                 msg.role === 'user'
                                                     ? 'bg-foreground text-background rounded-tr-none'
-                                                    : 'border-theme bg-theme-surface-hover text-theme-muted rounded-tl-none border'
+                                                    : 'border-theme bg-theme-surface-hover text-theme rounded-tl-none border'
                                             }`}
                                         >
                                             {msg.content}
@@ -1928,7 +1928,7 @@ export default function SubCategoryShow({
                                             setNewMessage(e.target.value)
                                         }
                                         placeholder="Ask about this service…"
-                                        className="border-theme bg-theme-surface text-theme placeholder-theme-muted focus:border-cyan-500/50 w-full rounded-xl border py-3 pr-12 pl-4 text-sm focus:outline-none"
+                                        className="border-theme bg-theme-surface text-theme placeholder-theme-subtle focus:border-cyan-500/50 w-full rounded-xl border py-3 pr-12 pl-4 text-sm focus:outline-none"
                                     />
                                     <button
                                         type="submit"
@@ -1950,10 +1950,10 @@ export default function SubCategoryShow({
                 <button
                     type="button"
                     onClick={() => setIsChatOpen((v) => !v)}
-                    className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 ${
+                    className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 ${
                         isChatOpen
-                            ? 'rotate-90 bg-zinc-800 text-white dark:bg-zinc-200 dark:text-black'
-                            : 'bg-white text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] dark:bg-zinc-900'
+                            ? 'rotate-90 bg-foreground text-background'
+                            : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
                     }`}
                     aria-label={isChatOpen ? 'Close chat' : 'Open chat'}
                 >

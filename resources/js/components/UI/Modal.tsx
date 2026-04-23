@@ -28,11 +28,13 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="mb-6 flex items-center justify-between">
-                            <h3 className="text-xl font-semibold text-white">{title}</h3>
+                            <h3 className="text-theme text-xl font-bold tracking-tight uppercase">
+                                {title}
+                            </h3>
                             <button
                                 type="button"
                                 aria-label="Close modal"
-                                className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-200"
+                                className="border-theme bg-theme-surface text-theme-muted hover:bg-theme-surface-hover flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
                                 onClick={onClose}
                             >
                                 <X className="h-5 w-5" />
