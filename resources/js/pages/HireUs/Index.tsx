@@ -152,8 +152,8 @@ export default function HireUs() {
 
             <div className="relative min-h-screen overflow-hidden bg-background px-4 pt-32 pb-24">
                 {/* Background Glows */}
-                <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
-                <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/5 blur-[120px]" />
+                <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[120px]" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px]" />
 
                 <div className="relative z-10 mx-auto max-w-7xl">
                     {/* Hero Section */}
@@ -163,17 +163,17 @@ export default function HireUs() {
                             animate={{ opacity: 1, y: 0 }}
                             className="mx-auto max-w-4xl"
                         >
-                            <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-4 py-2 text-sm font-bold tracking-widest text-cyan-600 uppercase dark:text-cyan-400">
+                            <span className="border-theme bg-theme-surface mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-widest text-cyan-600 uppercase dark:text-cyan-400">
                                 <Zap className="h-4 w-4 fill-current" /> Premium
                                 Solutions
                             </span>
-                            <h1 className="mb-8 text-5xl leading-tight font-black tracking-tighter text-theme uppercase md:text-8xl">
+                            <h1 className="text-theme mb-8 text-5xl leading-tight font-black tracking-tighter uppercase md:text-8xl">
                                 Expert{' '}
-                                <span className="bg-gradient-to-r from-cyan-400 to-violet-600 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-cyan-500 to-violet-600 bg-clip-text text-transparent">
                                     On Demand
                                 </span>
                             </h1>
-                            <p className="mx-auto mb-12 max-w-2xl text-xl leading-relaxed text-theme-muted">
+                            <p className="text-theme-muted mx-auto mb-12 max-w-2xl text-xl leading-relaxed">
                                 Select a category to explore our professional
                                 sub-categories and start your project with the
                                 industry's finest talent.
@@ -189,8 +189,8 @@ export default function HireUs() {
                                 onClick={() => setActiveTab(service.id)}
                                 className={`flex items-center gap-3 rounded-2xl border px-6 py-4 font-bold transition-all duration-300 ${
                                     activeTab === service.id
-                                        ? 'bg-foreground text-background border-foreground shadow-lg'
-                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50'
+                                        ? 'bg-foreground text-background border-foreground shadow-xl'
+                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50 hover:text-theme shadow-sm'
                                 }`}
                             >
                                 <service.icon
@@ -215,7 +215,7 @@ export default function HireUs() {
                                 <Link
                                     key={idx}
                                     href={`/hire-us/${activeTab}/${sub.slug}`}
-                                    className="group bg-theme-surface border-theme relative overflow-hidden rounded-[2.5rem] border transition-all duration-500 hover:border-cyan-500/50"
+                                    className="group bg-theme-surface border-theme hover:bg-theme-surface-hover relative overflow-hidden rounded-[2.5rem] border shadow-sm transition-all duration-500 hover:border-cyan-500/50 hover:shadow-2xl"
                                 >
                                     <div className="aspect-[4/3] overflow-hidden">
                                         <img
@@ -245,7 +245,7 @@ export default function HireUs() {
                                                     {sub.price}
                                                 </p>
                                             </div>
-                                            <div className="bg-theme-surface text-theme-muted flex h-12 w-12 items-center justify-center rounded-2xl transition-all group-hover:bg-cyan-500 group-hover:text-white">
+                                            <div className="bg-theme-surface text-theme-muted flex h-12 w-12 items-center justify-center rounded-2xl border border-theme transition-all group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500">
                                                 <ArrowRight className="h-5 w-5" />
                                             </div>
                                         </div>
