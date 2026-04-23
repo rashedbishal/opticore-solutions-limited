@@ -24,4 +24,9 @@ class Conversation extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
 }

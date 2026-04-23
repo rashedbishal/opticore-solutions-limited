@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
+import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
+import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
 import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';

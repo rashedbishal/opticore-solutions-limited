@@ -101,6 +101,7 @@ class ConversationController extends Controller
         $this->markIncomingMessagesAsDelivered($conversation, 'admin');
 
         $messages = $conversation->messages()
+            ->with(['offer.subCategory', 'offer.milestones'])
             ->latest()
             ->paginate(20);
 

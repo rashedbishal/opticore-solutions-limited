@@ -4,18 +4,60 @@ import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+    Clock,
+    CreditCard,
+    DollarSign,
     Download,
+    ExternalLink,
     FileText,
     Image as ImageIcon,
+    Layers,
     MessageSquare,
+    Package,
     Paperclip,
     Send,
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
+
+export interface OfferMilestone {
+    id: number;
+    offer_id: number;
+    name: string;
+    description: string | null;
+    revisions: number;
+    delivery_days: number;
+    price: string;
+    sort_order: number;
+}
+
+export interface Offer {
+    id: number;
+    conversation_id: number;
+    sub_category_id: number | null;
+    category_slug: string | null;
+    payment_type: 'single' | 'milestone';
+    description: string;
+    request_requirements: boolean;
+    price: string | null;
+    delivery_days: number | null;
+    revisions: number | null;
+    expires_at: string | null;
+    status: 'pending' | 'accepted' | 'declined' | 'expired';
+    offer_token: string;
+    sub_category: {
+        id: number;
+        name: string;
+        image: string | null;
+        category_slug: string;
+    } | null;
+    milestones: OfferMilestone[];
+    created_at: string;
+}
 
 interface Message {
     id: number;
@@ -24,9 +66,119 @@ interface Message {
     attachment_path: string | null;
     attachment_name: string | null;
     attachment_type: string | null;
+    offer_id: number | null;
+    offer: Offer | null;
     delivered_at: string | null;
     read_at: string | null;
     created_at: string;
+}
+
+const STATUS_BADGE: Record<
+    Offer['status'],
+    { label: string; className: string }
+> = {
+    pending: {
+        label: 'Pending',
+        className: 'bg-yellow-500/15 text-yellow-400',
+    },
+    accepted: {
+        label: 'Accepted',
+        className: 'bg-green-500/15 text-green-400',
+    },
+    declined: {
+        label: 'Declined',
+        className: 'bg-red-500/15 text-red-400',
+    },
+    expired: {
+        label: 'Expired',
+        className: 'bg-slate-500/15 text-slate-400',
+    },
+};
+
+function OfferCard({ offer }: { offer: Offer }) {
+    const totalPrice =
+        offer.payment_type === 'single'
+            ? parseFloat(offer.price ?? '0')
+            : offer.milestones.reduce((sum, m) => sum + parseFloat(m.price), 0);
+
+    const totalDays =
+        offer.payment_type === 'single'
+            ? (offer.delivery_days ?? 0)
+            : offer.milestones.reduce((sum, m) => sum + m.delivery_days, 0);
+
+    const badge = STATUS_BADGE[offer.status];
+
+    return (
+        <div className="mb-2 w-full max-w-[280px] overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-lg sm:max-w-[300px]">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
+                <div className="flex items-center gap-1.5">
+                    <Package size={12} className="text-violet-400" />
+                    <span className="text-[10px] font-semibold tracking-wide text-violet-400 uppercase">
+                        Service Offer
+                    </span>
+                </div>
+                <span
+                    className={`rounded-full px-2 py-0.5 text-[9px] font-semibold ${badge.className}`}
+                >
+                    {badge.label}
+                </span>
+            </div>
+
+            {/* Body */}
+            <div className="p-3">
+                {/* Category / sub-category */}
+                {(offer.sub_category || offer.category_slug) && (
+                    <p className="mb-1 text-sm font-semibold text-white">
+                        {offer.sub_category?.name ??
+                            CATEGORY_LABELS[offer.category_slug ?? ''] ??
+                            offer.category_slug}
+                    </p>
+                )}
+
+                {/* Description preview */}
+                <p className="mb-3 line-clamp-2 text-xs text-slate-400">
+                    {offer.description}
+                </p>
+
+                {/* Stats */}
+                <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-400">
+                    <span className="flex items-center gap-1">
+                        <DollarSign size={10} className="text-green-400" />
+                        <span className="font-semibold text-white">
+                            ${totalPrice.toFixed(2)}
+                        </span>
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px]">
+                        <Clock size={10} />
+                        {totalDays}d
+                    </span>
+                    {offer.payment_type === 'milestone' ? (
+                        <span className="flex items-center gap-1 text-[10px]">
+                            <Layers size={10} />
+                            {offer.milestones.length}m
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-1 text-[10px]">
+                            <CreditCard size={10} />
+                            Full
+                        </span>
+                    )}
+                </div>
+
+                {/* CTA */}
+                <a
+                    href={`/offer/${offer.offer_token}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-violet-600 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-500"
+                >
+                    View Offer
+                    <ExternalLink size={10} />
+                </a>
+            </div>
+        </div>
+    );
 }
 
 interface Conversation {
@@ -314,49 +466,53 @@ export default function SupportWidget() {
                                     key={msg.id}
                                     className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div className="max-w-[78%]">
-                                        <div
-                                            className={`rounded-2xl px-4 py-2.5 text-sm ${
-                                                msg.sender_type === 'user'
-                                                    ? 'rounded-br-none bg-violet-600 text-white'
-                                                    : 'rounded-bl-none bg-slate-800 text-slate-200'
-                                            }`}
-                                        >
-                                            {msg.attachment_path && (
-                                                <a
-                                                    href={`/chat/attachments/${msg.id}/download`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    download
-                                                    className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
-                                                >
-                                                    <span className="shrink-0">
-                                                        {msg.attachment_type ===
-                                                        'image' ? (
-                                                            <ImageIcon
-                                                                size={15}
-                                                            />
-                                                        ) : (
-                                                            <FileText
-                                                                size={15}
-                                                            />
-                                                        )}
-                                                    </span>
-                                                    <span className="flex-1 truncate text-xs underline underline-offset-2">
-                                                        Download Attachment
-                                                    </span>
-                                                    <Download
-                                                        size={13}
-                                                        className="shrink-0 opacity-60 group-hover:opacity-100"
-                                                    />
-                                                </a>
-                                            )}
-                                            {msg.message && (
-                                                <p className="break-words whitespace-pre-wrap">
-                                                    {msg.message}
-                                                </p>
-                                            )}
-                                        </div>
+                                    <div className="max-w-[85%]">
+                                        {msg.offer ? (
+                                            <OfferCard offer={msg.offer} />
+                                        ) : (
+                                            <div
+                                                className={`rounded-2xl px-4 py-2.5 text-sm ${
+                                                    msg.sender_type === 'user'
+                                                        ? 'rounded-br-none bg-violet-600 text-white'
+                                                        : 'rounded-bl-none bg-slate-800 text-slate-200'
+                                                }`}
+                                            >
+                                                {msg.attachment_path && (
+                                                    <a
+                                                        href={`/chat/attachments/${msg.id}/download`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        download
+                                                        className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
+                                                    >
+                                                        <span className="shrink-0">
+                                                            {msg.attachment_type ===
+                                                            'image' ? (
+                                                                <ImageIcon
+                                                                    size={15}
+                                                                />
+                                                            ) : (
+                                                                <FileText
+                                                                    size={15}
+                                                                />
+                                                            )}
+                                                        </span>
+                                                        <span className="flex-1 truncate text-xs underline underline-offset-2">
+                                                            Download Attachment
+                                                        </span>
+                                                        <Download
+                                                            size={13}
+                                                            className="shrink-0 opacity-60 group-hover:opacity-100"
+                                                        />
+                                                    </a>
+                                                )}
+                                                {msg.message && (
+                                                    <p className="break-words whitespace-pre-wrap">
+                                                        {msg.message}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
                                         {msg.sender_type === 'user' &&
                                             msg.id ===
                                                 latestOutgoingMessageId && (
@@ -550,6 +706,43 @@ function SupportWidgetEchoListener({
         useCallback(
             (e) => {
                 setMessages((prev) => applyMessageStatuses(prev, e.messages));
+            },
+            [setMessages],
+        ),
+    );
+
+    useEcho<{
+        offer_id: number;
+        status: Offer['status'];
+        conversation_id: number;
+    }>(
+        `conversations.${conversation.id}`,
+        'OfferStatusChanged',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.offer?.id === e.offer_id
+                            ? {
+                                  ...msg,
+                                  offer: { ...msg.offer!, status: e.status },
+                              }
+                            : msg,
+                    ),
+                );
+            },
+            [setMessages],
+        ),
+    );
+
+    useEcho<{ message_id: number; conversation_id: number }>(
+        `conversations.${conversation.id}`,
+        'OfferDeleted',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.filter((m) => m.id !== e.message_id),
+                );
             },
             [setMessages],
         ),

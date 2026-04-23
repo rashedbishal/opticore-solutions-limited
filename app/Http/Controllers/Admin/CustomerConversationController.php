@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class CustomerConversationController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Admin/CustomerChat/Index');
     }
@@ -53,6 +54,7 @@ class CustomerConversationController extends Controller
         $this->markIncomingMessagesAsDelivered($conversation, 'user');
 
         $messages = $conversation->messages()
+            ->with(['offer.subCategory', 'offer.milestones'])
             ->latest()
             ->paginate(20);
 

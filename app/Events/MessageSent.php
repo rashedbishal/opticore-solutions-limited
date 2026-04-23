@@ -21,7 +21,7 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function __construct(Message $message)
     {
-        $this->message = $message->load('conversation.user');
+        $this->message = $message->load(['conversation.user', 'offer.subCategory', 'offer.milestones']);
     }
 
     /**
