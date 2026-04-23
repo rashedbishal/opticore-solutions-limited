@@ -189,12 +189,12 @@ export default function HireUs() {
                                 onClick={() => setActiveTab(service.id)}
                                 className={`flex items-center gap-3 rounded-2xl border px-6 py-4 font-bold transition-all duration-300 ${
                                     activeTab === service.id
-                                        ? 'border-zinc-900 bg-zinc-900 text-white shadow-[0_0_30px_rgba(0,0,0,0.2)] dark:border-white dark:bg-white dark:text-black dark:shadow-[0_0_30px_rgba(255,255,255,0.2)]'
-                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-zinc-400 dark:hover:border-white/20'
+                                        ? 'bg-foreground text-background border-foreground shadow-lg'
+                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50'
                                 }`}
                             >
                                 <service.icon
-                                    className={`h-5 w-5 ${activeTab === service.id ? 'text-white dark:text-black' : service.color}`}
+                                    className={`h-5 w-5 ${activeTab === service.id ? 'text-background' : service.color}`}
                                 />
                                 {service.name}
                             </button>
@@ -215,7 +215,7 @@ export default function HireUs() {
                                 <Link
                                     key={idx}
                                     href={`/hire-us/${activeTab}/${sub.slug}`}
-                                    className="group relative overflow-hidden rounded-[2.5rem] border border-theme bg-zinc-50 transition-all duration-500 hover:border-cyan-500/50 dark:bg-zinc-900/40"
+                                    className="group bg-theme-surface border-theme relative overflow-hidden rounded-[2.5rem] border transition-all duration-500 hover:border-cyan-500/50"
                                 >
                                     <div className="aspect-[4/3] overflow-hidden">
                                         <img
@@ -226,26 +226,26 @@ export default function HireUs() {
                                     </div>
                                     <div className="p-8">
                                         <div className="mb-4 flex items-start justify-between">
-                                            <h3 className="text-2xl leading-tight font-black tracking-tight text-theme uppercase transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
+                                            <h3 className="text-theme text-2xl leading-tight font-black tracking-tight uppercase transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
                                                 {sub.name}
                                             </h3>
-                                            <div className="flex items-center gap-1 font-bold text-amber-500 dark:text-amber-400">
+                                            <div className="flex items-center gap-1 font-bold text-amber-500">
                                                 <Star className="h-4 w-4 fill-current" />
                                                 <span className="text-sm">
                                                     {sub.rating}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex items-center justify-between border-t border-theme pt-6">
+                                        <div className="border-theme mt-8 flex items-center justify-between border-t pt-6">
                                             <div>
-                                                <p className="mb-1 text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
+                                                <p className="text-theme-subtle mb-1 text-[10px] font-bold tracking-widest uppercase">
                                                     Starting At
                                                 </p>
-                                                <p className="text-xl font-black text-theme">
+                                                <p className="text-theme text-xl font-black">
                                                     {sub.price}
                                                 </p>
                                             </div>
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-theme-surface text-theme-muted transition-all group-hover:bg-cyan-500 group-hover:text-white">
+                                            <div className="bg-theme-surface text-theme-muted flex h-12 w-12 items-center justify-center rounded-2xl transition-all group-hover:bg-cyan-500 group-hover:text-white">
                                                 <ArrowRight className="h-5 w-5" />
                                             </div>
                                         </div>
@@ -256,11 +256,11 @@ export default function HireUs() {
                             {(!subCategories[activeTab] ||
                                 subCategories[activeTab].length === 0) && (
                                 <div className="glass-panel col-span-full rounded-[3rem] py-24 text-center">
-                                    <Sparkles className="mx-auto mb-6 h-12 w-12 text-theme-subtle" />
-                                    <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
+                                    <Sparkles className="text-theme-subtle mx-auto mb-6 h-12 w-12" />
+                                    <h3 className="text-theme-muted text-2xl font-bold tracking-widest uppercase">
                                         Coming Soon
                                     </h3>
-                                    <p className="mt-2 text-theme-subtle">
+                                    <p className="text-theme-subtle mt-2">
                                         We're onboarding expert talent for this
                                         category.
                                     </p>
@@ -270,7 +270,7 @@ export default function HireUs() {
                     </AnimatePresence>
 
                     {/* Trust Section */}
-                    <div className="mt-32 grid grid-cols-1 gap-12 border-t border-theme pt-24 md:grid-cols-3">
+                    <div className="border-theme mt-32 grid grid-cols-1 gap-12 border-t pt-24 md:grid-cols-3">
                         {[
                             {
                                 icon: Zap,
@@ -289,14 +289,14 @@ export default function HireUs() {
                             },
                         ].map((item, i) => (
                             <div key={i} className="flex gap-6">
-                                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-cyan-600 dark:text-cyan-400">
+                                <div className="border-theme bg-theme-surface flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border text-cyan-600 dark:text-cyan-400">
                                     <item.icon className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h4 className="mb-2 text-lg font-bold text-theme">
+                                    <h4 className="text-theme mb-2 text-lg font-bold">
                                         {item.title}
                                     </h4>
-                                    <p className="text-sm leading-relaxed text-theme-subtle">
+                                    <p className="text-theme-subtle text-sm leading-relaxed">
                                         {item.desc}
                                     </p>
                                 </div>
