@@ -126,6 +126,15 @@ class TaskController extends Controller
             'state' => ['sometimes', 'required', 'string', 'in:pending,in progress,delivered'],
         ]);
 
+        // Open the 24-hour review window when first marking a task as delivered.
+        if (
+            isset($validated['state']) &&
+            $validated['state'] === 'delivered' &&
+            $task->state !== 'delivered'
+        ) {
+            $validated['review_eligible_until'] = now()->addHours(24);
+        }
+
         $task->update($validated);
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');

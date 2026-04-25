@@ -14,6 +14,7 @@ import {
     Bell,
     Briefcase,
     Layers,
+    Star,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import CursorSelector, {
@@ -68,6 +69,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             name: 'Client Workflow',
             href: '/admin/tasks',
             icon: Briefcase,
+        },
+        {
+            name: 'Client Review Control',
+            href: '/admin/client-reviews',
+            icon: Star,
         },
     ];
 

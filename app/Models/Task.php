@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Task extends Model
 {
@@ -18,6 +19,7 @@ class Task extends Model
         'task_name',
         'date',
         'state',
+        'review_eligible_until',
     ];
 
     /**
@@ -29,6 +31,7 @@ class Task extends Model
     {
         return [
             'date' => 'date',
+            'review_eligible_until' => 'datetime',
         ];
     }
 
@@ -46,5 +49,13 @@ class Task extends Model
     public function subCategory(): BelongsTo
     {
         return $this->belongsTo(PortfolioSubCategory::class, 'sub_category_id');
+    }
+
+    /**
+     * Get the client review for this task.
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(ClientReview::class);
     }
 }

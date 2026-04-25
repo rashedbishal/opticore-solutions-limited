@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClientReview;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
+use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -58,6 +61,41 @@ class HireUsController extends Controller
             ->values()
             ->toArray();
 
+        // Load real reviews sorted by admin-defined sort_order then newest first.
+        $reviews = ClientReview::where('sub_category_id', $subcategory->id)
+            ->orderBy('sort_order')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(fn (ClientReview $r) => [
+                'id' => $r->id,
+                'username' => $r->username,
+                'client_type' => $r->client_type,
+                'rating' => $r->rating,
+                'comment' => $r->comment,
+                'image_url' => $r->image_path ? asset('storage/'.$r->image_path) : null,
+                'price_range' => $r->price_range,
+                'work_duration' => $r->work_duration,
+                'created_at' => $r->created_at?->diffForHumans(),
+            ])
+            ->values()
+            ->toArray();
+
+        // Check if the authenticated user has an eligible task for this subcategory.
+        $reviewEligibleTask = null;
+
+        if (Auth::check()) {
+            $eligibleTask = Task::where('user_id', Auth::id())
+                ->where('sub_category_id', $subcategory->id)
+                ->where('state', 'delivered')
+                ->where('review_eligible_until', '>', now())
+                ->whereDoesntHave('review')
+                ->first(['id']);
+
+            if ($eligibleTask) {
+                $reviewEligibleTask = ['id' => $eligibleTask->id];
+            }
+        }
+
         return Inertia::render('HireUs/SubCategoryShow', [
             'category' => [
                 'slug' => $category,
@@ -72,6 +110,8 @@ class HireUsController extends Controller
             'portfolios' => $portfolios,
             'siblingSubCategories' => $siblingSubCategories,
             'recommendedServices' => $recommendedServices,
+            'reviews' => $reviews,
+            'reviewEligibleTask' => $reviewEligibleTask,
         ]);
     }
 }
