@@ -1885,7 +1885,7 @@ export default function SubCategoryShow({
                                 duration: 0.3,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="glass-panel border-theme bg-theme-surface mb-4 flex h-[480px] w-[320px] flex-col overflow-hidden rounded-[2rem] border shadow-2xl sm:w-[360px]"
+                            className="glass-panel border-theme bg-theme-surface mb-4 flex h-[480px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border shadow-2xl sm:w-[360px]"
                         >
                             {/* Header */}
                             <div className="border-theme bg-theme-surface-hover flex items-center justify-between border-b px-5 py-4">

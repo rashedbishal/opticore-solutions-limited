@@ -69,8 +69,9 @@ export default function OrbitingShowcase() {
 
                 {/* Orbiting Avatars */}
                 {testimonials.map((t, i) => {
+                    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
                     const angle = (i / testimonials.length) * (2 * Math.PI);
-                    const radius = 350; // pixels
+                    const radius = isMobile ? window.innerWidth * 0.35 : 350; // responsive radius
                     const x = Math.cos(angle) * radius;
                     const y = Math.sin(angle) * radius;
 
@@ -80,7 +81,7 @@ export default function OrbitingShowcase() {
                         <motion.button
                             key={t.id}
                             onClick={() => setIndex(i)}
-                            className={`absolute flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 transition-colors duration-500 ${
+                            className={`absolute flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 transition-colors duration-500 sm:h-20 sm:w-20 ${
                                 isActive
                                     ? 'border-cyan-400 bg-cyan-400/10 shadow-[0_0_30px_rgba(34,211,238,0.3)]'
                                     : 'border-theme bg-theme-surface grayscale hover:grayscale-0'
@@ -97,7 +98,7 @@ export default function OrbitingShowcase() {
                             }}
                         >
                             <User
-                                className={`h-10 w-10 ${isActive ? 'text-cyan-500' : 'text-theme-text-subtle'}`}
+                                className={`h-8 w-8 sm:h-10 sm:w-10 ${isActive ? 'text-cyan-500' : 'text-theme-text-subtle'}`}
                             />
                         </motion.button>
                     );

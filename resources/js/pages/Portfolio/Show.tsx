@@ -52,7 +52,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
-                        className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14"
+                        className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14"
                     >
                         <span className="section-kicker">Portfolio</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">

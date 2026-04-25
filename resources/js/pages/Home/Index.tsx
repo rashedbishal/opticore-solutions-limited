@@ -631,7 +631,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-8 text-center sm:p-10 lg:p-14">
+                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-6 text-center sm:p-10 lg:p-14">
                         <p className="section-kicker">Ready to Scale?</p>
                         <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
                             Hire the Industry's Finest Talent
