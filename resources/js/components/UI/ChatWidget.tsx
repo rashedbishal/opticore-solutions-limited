@@ -138,7 +138,7 @@ setSessionId(data.session_id);
     };
 
     return (
-        <div className="fixed right-2 bottom-2 z-50 sm:right-6 sm:bottom-6">
+        <div className="fixed right-4 bottom-4 z-50 sm:right-8 sm:bottom-8">
             {/* Teaser Bubble */}
             <AnimatePresence>
                 {showTeaser && !isOpen && (
@@ -146,7 +146,7 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="border-theme bg-theme-surface/90 absolute right-0 bottom-20 mb-3 w-52 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none sm:right-0 sm:bottom-24 sm:mb-4"
+                        className="border-theme bg-theme-surface/90 absolute right-0 bottom-14 mb-4 w-56 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none sm:bottom-16"
                     >
                         <div className="relative">
                             <div className="flex items-center gap-1.5 mb-2">
@@ -176,10 +176,10 @@ setSessionId(data.session_id);
                         initial={{ opacity: 0, x: 8 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 8 }}
-                        className="border-theme bg-theme-surface/90 hidden sm:flex items-center gap-1.5 rounded-full border px-3 py-1.5 shadow-[0_0_20px_rgba(124,58,237,0.1)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
+                        className="border-theme bg-theme-surface/90 hidden sm:flex items-center gap-1.5 rounded-full border px-4 py-2 shadow-[0_0_20px_rgba(124,58,237,0.1)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
                     >
                         <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                        <span className="text-theme text-[11px] font-semibold whitespace-nowrap">Chat with AI</span>
+                        <span className="text-theme text-xs font-semibold whitespace-nowrap">Chat with AI</span>
                     </motion.div>
                 )}
             </div>
@@ -192,7 +192,7 @@ setSessionId(data.session_id);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(100dvh-90px,560px)] w-[min(100vw-16px,340px)] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:right-0 sm:bottom-24"
+                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(calc(100dvh-120px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:bottom-18"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
