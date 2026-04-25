@@ -111,11 +111,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])->middleware('signed')->name('verification.verify');
     Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
 
-    // Settings
-    Route::get('/settings', function () {
-        return Inertia::render('Settings');
-    })->name('settings');
-
     // Profile
     Route::get('/profile', function () {
         return Inertia::render('Profile');
