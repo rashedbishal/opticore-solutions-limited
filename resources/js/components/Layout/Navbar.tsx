@@ -10,7 +10,7 @@ import {
     Box,
     Code2,
     Mail,
-    Settings,
+    User,
     LogOut,
     LogIn,
 } from 'lucide-react';
@@ -28,7 +28,7 @@ const IconMap: Record<string, any> = {
     Box,
     Code2,
     Mail,
-    Settings,
+    User,
 };
 
 function NavLink({
@@ -106,9 +106,9 @@ export default function Navbar() {
 
     if (user) {
         navItems.push({
-            label: 'Settings',
-            href: '/settings',
-            icon: 'Settings',
+            label: 'Profile',
+            href: '/profile',
+            icon: 'User',
         });
     }
 
