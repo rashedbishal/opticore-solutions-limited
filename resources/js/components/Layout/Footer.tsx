@@ -163,7 +163,7 @@ export default function Footer() {
                                     <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-500 dark:text-violet-300" />
                                     <div>
                                         <p className="font-bold text-theme">
-                                            USA Office
+                                            USA
                                         </p>
                                         <p className="mt-1 text-[11px] leading-relaxed text-theme-subtle">
                                             Opticore Solutions LLC
@@ -187,7 +187,7 @@ export default function Footer() {
                                     <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet-500 dark:text-violet-300" />
                                     <div>
                                         <p className="font-bold text-theme">
-                                            BD Office
+                                            Bangladesh
                                         </p>
                                         <p className="mt-1 text-[11px] text-theme-subtle">
                                             House # 1178, (1st Floor) Apt.- 2E
