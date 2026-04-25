@@ -528,7 +528,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
             </Suspense>
 
             <div className="relative z-10">
-                <section className="bg-background py-20">
+                {/* <section className="bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
                             Portfolio Concept 1
@@ -543,7 +543,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[90vh]">
                     <PortalLoop />
-                </LazySection>
+                </LazySection> */}
 
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -562,7 +562,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <NebulaCluster />
                 </LazySection>
 
-                <section className="border-t border-theme bg-background py-20">
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
                             Portfolio Concept 3
@@ -574,7 +574,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[90vh]">
                     <KineticBento />
-                </LazySection>
+                </LazySection> */}
 
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
