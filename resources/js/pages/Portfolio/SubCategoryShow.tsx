@@ -74,7 +74,7 @@ export default function PortfolioSubCategoryShow({
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
-                        className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14"
+                        className="glass-panel rounded-[2rem] p-5 sm:p-10 lg:p-14"
                     >
                         {/* Breadcrumb */}
                         <nav
@@ -255,7 +255,7 @@ export default function PortfolioSubCategoryShow({
             {/* CTA */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">
+                    <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-6 text-center sm:p-10 lg:p-14">
                         <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Want work like this for your brand?
                         </h2>

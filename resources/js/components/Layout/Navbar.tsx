@@ -134,7 +134,7 @@ export default function Navbar() {
                         <img
                             src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="h-16 w-auto shrink-0 object-contain md:h-20"
+                            className="h-12 w-auto shrink-0 object-contain md:h-20"
                         />
                     </Link>
 
@@ -211,7 +211,7 @@ export default function Navbar() {
                                         <img
                                             src="/images/logo/opticore-white.webp"
                                             alt="Opticore Solutions"
-                                            className="h-16 w-auto shrink-0 object-contain md:h-20"
+                                            className="h-12 w-auto shrink-0 object-contain md:h-20"
                                         />
                                     </Link>
                                     <div className="flex items-center gap-2">

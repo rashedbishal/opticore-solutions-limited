@@ -86,7 +86,7 @@ export default function PortfolioCategoryShow({
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
-                        className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14"
+                        className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14"
                     >
                         <nav
                             className="mb-5 flex items-center gap-2 text-sm text-zinc-500"

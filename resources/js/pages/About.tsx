@@ -64,7 +64,7 @@ export default function About() {
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14">
+                    <div className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14">
                         <span className="section-kicker">About Us</span>
                         <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
@@ -99,7 +99,7 @@ export default function About() {
                                     duration: 0.8,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className={`glass-panel rounded-[2rem] p-7 sm:p-8 ${index % 2 === 1 ? 'lg:order-2' : ''}`}
+                                className={`glass-panel rounded-[2rem] p-5 sm:p-8 ${index % 2 === 1 ? 'lg:order-2' : ''}`}
                             >
                                 <span className="section-kicker">
                                     0{index + 1}
@@ -122,7 +122,7 @@ export default function About() {
                                     duration: 0.8,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className={`glass-panel rounded-[2rem] bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.2),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-8 ${index % 2 === 1 ? 'lg:order-1' : ''}`}
+                                className={`glass-panel rounded-[2rem] bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.2),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5 sm:p-8 ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                             >
                                 <div className="flex h-full min-h-[18rem] flex-col justify-between">
                                     <p className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
@@ -189,7 +189,7 @@ export default function About() {
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-8 text-center sm:p-10 lg:p-14">
+                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-6 text-center sm:p-10 lg:p-14">
                         <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
                             Let’s shape the next version of your brand.
                         </h2>

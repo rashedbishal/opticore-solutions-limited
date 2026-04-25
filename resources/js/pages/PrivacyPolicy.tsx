@@ -70,7 +70,7 @@ export default function PrivacyPolicy() {
                         </aside>
                     )}
 
-                    <div className="glass-panel rounded-[2rem] p-8 sm:p-10">
+                    <div className="glass-panel rounded-[2rem] p-6 sm:p-10">
                         <h1 className="text-4xl font-extrabold text-foreground sm:text-5xl">
                             Privacy Policy
                         </h1>
