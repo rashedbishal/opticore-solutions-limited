@@ -12,7 +12,7 @@ Broadcast::channel('conversations.{id}', function ($user, $id) {
         return true;
     }
 
-    return $user->conversation && (int) $user->conversation->id === (int) $id;
+    return $user->conversations()->where('id', $id)->exists();
 }, ['guards' => ['web', 'admin']]);
 
 Broadcast::channel('admin.conversations', function ($user) {
