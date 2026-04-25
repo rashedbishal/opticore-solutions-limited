@@ -187,5 +187,3 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
     Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
 });
-
-require __DIR__.'/../routes/channels.php';
