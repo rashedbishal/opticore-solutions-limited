@@ -270,18 +270,25 @@ class ChatController extends Controller
     private function getAiFallbackReply(string $message, array $knowledgeBase): string
     {
         $attempts = 0;
-        $maxAttempts = 2;
+        $maxAttempts = 3;
+        $apiKey = config('services.gemini.key');
+
+        if (empty($apiKey)) {
+            Log::error('Gemini API key is missing.');
+
+            return "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
+        }
 
         while ($attempts < $maxAttempts) {
             try {
                 $client = Gemini::factory()
                     ->withHttpClient(new Client(['verify' => false]))
-                    ->withApiKey(config('services.gemini.key'))
+                    ->withApiKey($apiKey)
                     ->make();
 
                 // Prepare a system-like prompt with knowledge base
                 $prompt = 'You are an AI assistant for Opticore Solutions Ltd., a digital agency.
-                
+
 Company Info: '.$knowledgeBase['company']['description'].'
 Tone: '.$knowledgeBase['company']['tone'].'
 
@@ -298,19 +305,24 @@ Instructions:
 
 User Message: {$message}";
 
-                $result = $client->generativeModel('gemini-3.1-flash-lite-preview')->generateContent($prompt);
+                $result = $client->generativeModel('gemini-2.0-flash')->generateContent($prompt);
 
                 return $result->text();
             } catch (\Exception $e) {
                 $attempts++;
 
-                if (Str::contains($e->getMessage(), ['high demand', 'quota', 'Rate limit']) && $attempts < $maxAttempts) {
-                    sleep(1);
+                if (Str::contains($e->getMessage(), ['high demand', 'quota', 'Rate limit', '429']) && $attempts < $maxAttempts) {
+                    Log::warning("Gemini AI Rate Limited (Attempt $attempts): ".$e->getMessage());
+                    sleep($attempts * 2);
 
                     continue;
                 }
 
-                Log::error('Gemini AI Fallback Error ['.get_class($e).']: '.$e->getMessage());
+                Log::error('Gemini AI Fallback Error ['.get_class($e).']: '.$e->getMessage(), [
+                    'attempt' => $attempts,
+                    'message' => $message,
+                    'exception' => $e,
+                ]);
                 break;
             }
         }
