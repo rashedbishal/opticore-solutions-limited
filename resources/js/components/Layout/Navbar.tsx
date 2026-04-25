@@ -48,15 +48,20 @@ function NavLink({
             href={item.href}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className="group text-md relative flex items-center gap-1 py-2 font-medium text-zinc-700 transition-colors hover:text-zinc-900 dark:text-white/70 dark:hover:text-white"
+            className={cn(
+                'group relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300',
+                active
+                    ? 'border-violet-500/30 bg-violet-500/10 shadow-lg shadow-violet-500/5'
+                    : 'border-black/10 bg-white/80 backdrop-blur-md hover:border-black/20 hover:bg-white/95 dark:border-white/10 dark:bg-black/40 dark:hover:border-white/20 dark:hover:bg-black/60',
+            )}
         >
             {Icon && (
                 <Icon
                     className={cn(
                         'h-4 w-4 transition-colors duration-300',
                         active
-                            ? 'text-cyan-600 dark:text-cyan-400'
-                            : 'text-zinc-400 group-hover:text-violet-600 dark:text-zinc-500 dark:group-hover:text-violet-400',
+                            ? 'text-violet-600 dark:text-violet-400'
+                            : 'text-zinc-500 group-hover:text-violet-600 dark:text-zinc-400 dark:group-hover:text-violet-400',
                     )}
                 />
             )}
@@ -64,17 +69,16 @@ function NavLink({
                 duration={0.6}
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                className="font-[family-name:var(--font-geist-mono)] text-[13px] tracking-normal xl:text-[13.5px] xl:tracking-wide 2xl:text-[14px]"
+                className={cn(
+                    'font-[family-name:var(--font-geist-mono)] text-[13px] font-medium tracking-normal transition-colors xl:text-[13.5px] xl:tracking-wide',
+                    active
+                        ? 'text-violet-700 dark:text-violet-300'
+                        : 'text-zinc-700 dark:text-white/70',
+                )}
                 trigger={hovered}
             >
                 {item.label}
             </HoverScramble>
-            <span
-                className={cn(
-                    'absolute -bottom-1 left-0 h-px bg-linear-to-r from-violet-500 to-cyan-400 transition-all duration-300',
-                    active ? 'w-full' : 'w-0 group-hover:w-full',
-                )}
-            />
         </Link>
     );
 }
@@ -115,58 +119,57 @@ export default function Navbar() {
                 className="fixed inset-x-0 top-0 z-50 px-4 pt-4 will-change-transform sm:px-6 xl:px-4 2xl:px-8"
                 style={{ transform: 'translateZ(0)' }}
             >
-                <nav
-                    className={cn(
-                        'mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4',
-                        scrolled
-                            ? 'xl:rounded-full xl:border xl:border-black/10 xl:bg-white/85 xl:shadow-2xl xl:shadow-black/10 xl:backdrop-blur-xl dark:xl:border-white/10 dark:xl:bg-black/60 dark:xl:shadow-black/30'
-                            : 'border-transparent bg-transparent',
-                    )}
-                >
+                <nav className="mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4">
                     <Link
                         href="/"
                         className={cn(
-                            'touch-target inline-flex items-center rounded-full transition-all duration-300',
-                            'border border-black/10 bg-white/80 backdrop-blur-md xl:border-transparent xl:bg-transparent xl:p-0 xl:backdrop-blur-none dark:border-white/10 dark:bg-black/40 xl:dark:border-transparent xl:dark:bg-transparent',
+                            'touch-target inline-flex items-center rounded-full border border-black/10 bg-white/80 backdrop-blur-md transition-all duration-300 dark:border-white/10 dark:bg-black/40',
                         )}
                         aria-label="Opticore Solutions home"
                     >
                         <img
+                            src="/images/logo/opticore.webp"
+                            alt="Opticore Solutions"
+                            className="block h-12 w-auto shrink-0 object-contain dark:hidden md:h-20"
+                        />
+                        <img
                             src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="h-12 w-auto shrink-0 object-contain md:h-20"
+                            className="hidden h-12 w-auto shrink-0 object-contain dark:block md:h-20"
                         />
                     </Link>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-3 2xl:gap-4">
+                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-2 2xl:gap-3">
                         {navItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
                     </div>
 
                     <div className="hidden items-center gap-3 xl:flex">
-                        <ThemeSwitcher />
-                        {user ? (
-                            <Link
-                                href="/logout"
-                                method="post"
-                                as="button"
-                                className="group relative flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-6 py-2.5 text-sm font-medium text-zinc-800 transition-all hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-                            >
-                                <LogOut className="h-4 w-4 text-violet-400" />
-                                Sign out
-                            </Link>
-                        ) : (
-                            <MagneticButton
-                                href="/login"
-                                ariaLabel="Sign in to your account"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <LogIn className="h-4 w-4" />
-                                    Sign in
-                                </div>
-                            </MagneticButton>
-                        )}
+                        <div className="flex items-center gap-3 rounded-full border border-black/10 bg-white/80 p-1.5 backdrop-blur-md dark:border-white/10 dark:bg-black/40">
+                            <ThemeSwitcher />
+                            {user ? (
+                                <Link
+                                    href="/logout"
+                                    method="post"
+                                    as="button"
+                                    className="group relative flex items-center gap-2 rounded-full bg-black/5 px-6 py-2.5 text-sm font-medium text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                >
+                                    <LogOut className="h-4 w-4 text-violet-400" />
+                                    Sign out
+                                </Link>
+                            ) : (
+                                <MagneticButton
+                                    href="/login"
+                                    ariaLabel="Sign in to your account"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <LogIn className="h-4 w-4" />
+                                        Sign in
+                                    </div>
+                                </MagneticButton>
+                            )}
+                        </div>
                     </div>
 
                     <button
@@ -209,9 +212,14 @@ export default function Navbar() {
                                         onClick={() => setOpen(false)}
                                     >
                                         <img
+                                            src="/images/logo/opticore.webp"
+                                            alt="Opticore Solutions"
+                                            className="block h-12 w-auto shrink-0 object-contain dark:hidden md:h-20"
+                                        />
+                                        <img
                                             src="/images/logo/opticore-white.webp"
                                             alt="Opticore Solutions"
-                                            className="h-12 w-auto shrink-0 object-contain md:h-20"
+                                            className="hidden h-12 w-auto shrink-0 object-contain dark:block md:h-20"
                                         />
                                     </Link>
                                     <div className="flex items-center gap-2">
