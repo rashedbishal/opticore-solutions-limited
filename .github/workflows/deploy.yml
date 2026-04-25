@@ -44,3 +44,6 @@ jobs:
 
           php artisan queue:restart
           php artisan reverb:restart
+
+      - name: Reload PHP-FPM
+        run: sudo systemctl reload php8.3-fpm
