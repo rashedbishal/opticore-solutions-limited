@@ -77,7 +77,7 @@ return null;
     return (
         <motion.div
             aria-hidden="true"
-            className="pointer-events-none fixed top-0 left-0 z-[9999]"
+            className="pointer-events-none fixed top-0 left-0 z-[10000]"
             style={{
                 x,
                 y,

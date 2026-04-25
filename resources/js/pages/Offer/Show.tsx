@@ -1233,3 +1233,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
         </>
     );
 }
+
+// The component renders its own layout (AdminLayout or AppLayout) based on
+// isAdmin, so prevent app.tsx from double-wrapping it with AppLayout.
+OfferShow.layout = (page: React.ReactNode) => <>{page}</>;
