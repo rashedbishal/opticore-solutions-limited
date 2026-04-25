@@ -49,7 +49,7 @@ export default function KineticBento() {
                     </h2>
                 </div>
 
-                <div className="grid h-[1000px] grid-cols-1 grid-rows-4 gap-6 md:h-[800px] md:grid-cols-4 md:grid-rows-3">
+                <div className="grid h-auto grid-cols-1 gap-6 md:h-[800px] md:grid-cols-4 md:grid-rows-3 lg:grid-rows-3">
                     {items.map((item, index) => (
                         <motion.div
                             key={item.id}
@@ -61,7 +61,7 @@ export default function KineticBento() {
                                 ease: [0.22, 1, 0.36, 1],
                             }}
                             viewport={{ once: true }}
-                            className={`${item.size} group relative overflow-hidden rounded-[2.5rem] border border-theme`}
+                            className={`${item.size} group border-theme relative min-h-[300px] overflow-hidden rounded-[2.5rem] border md:min-h-0`}
                         >
                             <img
                                 src={item.src}
