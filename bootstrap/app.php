@@ -17,6 +17,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust all proxies so nginx-terminated TLS is recognised correctly.
+        // Without this, Laravel sees HTTP instead of HTTPS, session/cookie
+        // Secure flags are wrong, and broadcast channel auth returns 403.
+        $middleware->trustProxies(at: '*');
+
+        // Exclude the broadcasting auth endpoint from CSRF so the Pusher.js
+        // authorizer (which sends JSON, not a form) is never blocked by CSRF.
+        $middleware->validateCsrfTokens(except: [
+            'broadcasting/auth',
+        ]);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,

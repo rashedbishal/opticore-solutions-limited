@@ -36,22 +36,18 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Broadcasting Auth
+// Broadcasting Auth — accessible by web users and admins.
+// CSRF is excluded for this route in bootstrap/app.php because the Pusher.js
+// authorizer sends JSON (not a form post with _token).
 Route::post('/broadcasting/auth', function (Request $request) {
+    // Promote the admin guard to default so Broadcast::auth() resolves
+    // the admin user when an admin is the one subscribing to a channel.
     if (auth('admin')->check()) {
         auth()->shouldUse('admin');
     }
 
-    try {
-        $response = Broadcast::auth($request);
-        Log::info('Broadcast auth success for user: '.optional(auth()->user())->id.' on channel: '.$request->channel_name);
-
-        return $response;
-    } catch (Exception $e) {
-        Log::error('Broadcast auth failed for channel: '.$request->channel_name.' Error: '.$e->getMessage());
-        throw $e;
-    }
-})->middleware(['web']);
+    return Broadcast::auth($request);
+})->middleware(['web', 'auth:web,admin']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs');
