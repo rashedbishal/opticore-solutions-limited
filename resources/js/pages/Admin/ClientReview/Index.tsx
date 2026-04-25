@@ -218,18 +218,9 @@ function CategorySection({
             return;
         }
 
-        // Swap sort_orders and send to server
-        const order = reviews.map((r, i) => {
-            if (i === idx) {
-                return { id: r.id, sort_order: reviews[swapIdx].sort_order };
-            }
-
-            if (i === swapIdx) {
-                return { id: r.id, sort_order: reviews[idx].sort_order };
-            }
-
-            return { id: r.id, sort_order: r.sort_order };
-        });
+        // Swap the two items in the array, then assign sequential sort_orders.
+        [reviews[idx], reviews[swapIdx]] = [reviews[swapIdx], reviews[idx]];
+        const order = reviews.map((r, i) => ({ id: r.id, sort_order: i }));
 
         router.post(
             adminRoutes.clientReviews.reorder.url(),
