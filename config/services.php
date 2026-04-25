@@ -48,4 +48,8 @@ return [
         'version' => 'v1',
     ],
 
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+    ],
+
 ];

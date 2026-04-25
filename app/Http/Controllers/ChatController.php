@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatSession;
-use Gemini;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -269,25 +268,15 @@ class ChatController extends Controller
 
     private function getAiFallbackReply(string $message, array $knowledgeBase): string
     {
-        $attempts = 0;
-        $maxAttempts = 3;
-        $apiKey = config('services.gemini.key');
+        $apiKey = config('services.groq.key');
 
         if (empty($apiKey)) {
-            Log::error('Gemini API key is missing.');
+            Log::error('Groq API key is missing.');
 
             return "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
         }
 
-        while ($attempts < $maxAttempts) {
-            try {
-                $client = Gemini::factory()
-                    ->withHttpClient(new Client(['verify' => false]))
-                    ->withApiKey($apiKey)
-                    ->make();
-
-                // Prepare a system-like prompt with knowledge base
-                $prompt = 'You are an AI assistant for Opticore Solutions Ltd., a digital agency.
+        $systemPrompt = 'You are an AI assistant for Opticore Solutions Ltd., a digital agency.
 
 Company Info: '.$knowledgeBase['company']['description'].'
 Tone: '.$knowledgeBase['company']['tone'].'
@@ -295,38 +284,40 @@ Tone: '.$knowledgeBase['company']['tone'].'
 Website Knowledge:
 Services: '.json_encode($knowledgeBase['services']).'
 Portfolio: '.$knowledgeBase['portfolio']['summary'].'
-FAQ Handling: '.$knowledgeBase['faq']['handling']."
+FAQ Handling: '.$knowledgeBase['faq']['handling'].'
 
 Instructions:
 1. Use the knowledge above to answer.
-2. If you don't know the answer, be helpful and guide them to contact us at hello@opticoresolutions.com.
+2. If you don\'t know the answer, be helpful and guide them to contact us at hello@opticoresolutions.com.
 3. Keep answers short, clear, and professional.
-4. Don't mention that you are an AI model; act as the Opticore Assistant.
+4. Don\'t mention that you are an AI model; act as the Opticore Assistant.';
 
-User Message: {$message}";
+        try {
+            $client = new Client(['verify' => false]);
 
-                $result = $client->generativeModel('gemini-2.0-flash')->generateContent($prompt);
+            $response = $client->post('https://api.groq.com/openai/v1/chat/completions', [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$apiKey,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'model' => 'llama-3.3-70b-versatile',
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $message],
+                    ],
+                    'max_tokens' => 512,
+                    'temperature' => 0.7,
+                ],
+            ]);
 
-                return $result->text();
-            } catch (\Exception $e) {
-                $attempts++;
+            $data = json_decode($response->getBody()->getContents(), true);
 
-                if (Str::contains($e->getMessage(), ['high demand', 'quota', 'Rate limit', '429']) && $attempts < $maxAttempts) {
-                    Log::warning("Gemini AI Rate Limited (Attempt $attempts): ".$e->getMessage());
-                    sleep($attempts * 2);
+            return $data['choices'][0]['message']['content'] ?? "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
+        } catch (\Exception $e) {
+            Log::error('Groq AI Error: '.$e->getMessage());
 
-                    continue;
-                }
-
-                Log::error('Gemini AI Fallback Error ['.get_class($e).']: '.$e->getMessage(), [
-                    'attempt' => $attempts,
-                    'message' => $message,
-                    'exception' => $e,
-                ]);
-                break;
-            }
+            return "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
         }
-
-        return "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
     }
 }
