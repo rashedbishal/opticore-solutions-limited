@@ -59,12 +59,6 @@ jobs:
       - name: Run Pint (PHP Lint)
         run: ./vendor/bin/pint --test
 
-      - name: Run ESLint
-        run: npm run lint:check
-
-      - name: Run Prettier check
-        run: npm run format:check
-
       - name: Prepare environment
         run: |
           cp .env.example .env
@@ -80,6 +74,12 @@ jobs:
 
       - name: Generate Wayfinder Routes
         run: php artisan wayfinder:generate
+
+      - name: Run ESLint
+        run: npm run lint:check
+
+      - name: Run Prettier check
+        run: npm run format:check
 
       - name: Run Type Check
         run: npm run types:check
