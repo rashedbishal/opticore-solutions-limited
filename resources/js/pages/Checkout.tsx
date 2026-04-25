@@ -100,12 +100,12 @@ export default function Checkout({ item }: Props) {
                         <div className="mb-2 text-xs font-bold tracking-[0.2em] text-cyan-500 uppercase">
                             Secure Checkout
                         </div>
-                        <h1 className="text-theme text-4xl font-black tracking-tight">
+                        <h1 className="text-4xl font-black tracking-tight text-theme">
                             Complete Your Order
                         </h1>
-                        <p className="text-theme-muted mt-2 text-sm">
+                        <p className="mt-2 text-sm text-theme-muted">
                             Logged in as{' '}
-                            <span className="text-theme font-semibold">
+                            <span className="font-semibold text-theme">
                                 {auth.user?.name}
                             </span>
                         </p>
@@ -123,8 +123,8 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-6"
                         >
-                            <div className="glass-panel border-theme rounded-[2rem] p-8">
-                                <h2 className="text-theme mb-6 text-xl font-bold">
+                            <div className="glass-panel rounded-[2rem] border-theme p-8">
+                                <h2 className="mb-6 text-xl font-bold text-theme">
                                     Payment Method
                                 </h2>
 
@@ -148,10 +148,10 @@ export default function Checkout({ item }: Props) {
                                                 <method.icon className="h-5 w-5" />
                                             </div>
                                             <div className="flex-1">
-                                                <div className="text-theme text-sm font-bold">
+                                                <div className="text-sm font-bold text-theme">
                                                     {method.label}
                                                 </div>
-                                                <div className="text-theme-muted text-xs">
+                                                <div className="text-xs text-theme-muted">
                                                     {method.description}
                                                 </div>
                                             </div>
@@ -173,9 +173,10 @@ export default function Checkout({ item }: Props) {
                                     ))}
                                 </div>
 
-                                <p className="text-theme-subtle mt-5 flex items-center gap-2 text-xs">
+                                <p className="mt-5 flex items-center gap-2 text-xs text-theme-subtle">
                                     <Lock className="h-3.5 w-3.5" /> This is a
-                                    mock checkout — no real payment is processed.
+                                    mock checkout — no real payment is
+                                    processed.
                                 </p>
                             </div>
                         </motion.div>
@@ -191,35 +192,35 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-4"
                         >
-                            <div className="glass-panel border-theme rounded-[2rem] p-6">
-                                <h2 className="text-theme mb-5 text-lg font-bold">
+                            <div className="glass-panel rounded-[2rem] border-theme p-6">
+                                <h2 className="mb-5 text-lg font-bold text-theme">
                                     Order Summary
                                 </h2>
 
-                                <div className="border-theme space-y-4 border-b pb-5">
+                                <div className="space-y-4 border-b border-theme pb-5">
                                     <div>
-                                        <div className="text-theme-muted text-[10px] font-bold tracking-widest uppercase">
+                                        <div className="text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                             Service
                                         </div>
-                                        <div className="text-theme mt-1 text-sm font-bold">
+                                        <div className="mt-1 text-sm font-bold text-theme">
                                             {item.service}
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <div className="text-theme-muted text-[10px] font-bold tracking-widest uppercase">
+                                            <div className="text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                 Plan
                                             </div>
-                                            <div className="text-theme mt-1 flex items-center gap-1.5 text-sm font-bold">
+                                            <div className="mt-1 flex items-center gap-1.5 text-sm font-bold text-theme">
                                                 <Zap className="h-3.5 w-3.5 text-cyan-500" />
                                                 {item.plan}
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-theme-muted text-[10px] font-bold tracking-widest uppercase">
+                                            <div className="text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                 Delivery
                                             </div>
-                                            <div className="text-theme mt-1 flex items-center gap-1.5 text-sm font-bold">
+                                            <div className="mt-1 flex items-center gap-1.5 text-sm font-bold text-theme">
                                                 <Clock className="h-3.5 w-3.5 text-cyan-500" />
                                                 {item.delivery}
                                             </div>
@@ -228,10 +229,10 @@ export default function Checkout({ item }: Props) {
                                 </div>
 
                                 <div className="flex items-center justify-between pt-5">
-                                    <span className="text-theme-muted text-sm font-bold">
+                                    <span className="text-sm font-bold text-theme-muted">
                                         Total
                                     </span>
-                                    <span className="text-theme text-2xl font-black">
+                                    <span className="text-2xl font-black text-theme">
                                         {item.price}
                                     </span>
                                 </div>
@@ -246,8 +247,14 @@ export default function Checkout({ item }: Props) {
                                         {isDone ? (
                                             <motion.span
                                                 key="done"
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
+                                                initial={{
+                                                    opacity: 0,
+                                                    scale: 0.8,
+                                                }}
+                                                animate={{
+                                                    opacity: 1,
+                                                    scale: 1,
+                                                }}
                                                 className="flex items-center gap-2"
                                             >
                                                 <CheckCircle className="h-4 w-4" />
@@ -278,12 +285,12 @@ export default function Checkout({ item }: Props) {
                                 </button>
                             </div>
 
-                            <div className="border-cyan-500/20 bg-cyan-500/5 rounded-[2rem] border p-5">
+                            <div className="rounded-[2rem] border border-cyan-500/20 bg-cyan-500/5 p-5">
                                 <h4 className="mb-1.5 flex items-center gap-2 text-sm font-bold text-cyan-500">
                                     <Shield className="h-4 w-4" /> Secure
                                     Purchase
                                 </h4>
-                                <p className="text-theme-muted text-xs leading-relaxed">
+                                <p className="text-xs leading-relaxed text-theme-muted">
                                     Your payment is held securely and released
                                     only when you're satisfied with the final
                                     delivery.

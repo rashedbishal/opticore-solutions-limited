@@ -34,7 +34,10 @@ interface Props {
     };
 }
 
-const PAYMENT_LABELS: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
+const PAYMENT_LABELS: Record<
+    string,
+    { label: string; icon: React.ComponentType<{ className?: string }> }
+> = {
     bkash: { label: 'bKash', icon: Smartphone },
     nagad: { label: 'Nagad', icon: Smartphone },
     card: { label: 'Visa / Mastercard', icon: CreditCard },
@@ -48,7 +51,9 @@ const DEMO_INVOICES: Invoice[] = [
         price: '$25',
         delivery: '7 Days',
         payment_method: 'card',
-        ordered_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        ordered_at: new Date(
+            Date.now() - 7 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
     },
 ];
 
@@ -57,7 +62,10 @@ const fadeUp = {
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as number[] },
+        transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+        },
     },
 };
 
@@ -66,7 +74,13 @@ const stagger = {
     visible: { transition: { staggerChildren: 0.1 } },
 };
 
-function InvoiceCard({ invoice, isNew }: { invoice: Invoice; isNew?: boolean }) {
+function InvoiceCard({
+    invoice,
+    isNew,
+}: {
+    invoice: Invoice;
+    isNew?: boolean;
+}) {
     const payment = PAYMENT_LABELS[invoice.payment_method] ?? {
         label: invoice.payment_method,
         icon: CreditCard,
@@ -81,7 +95,7 @@ function InvoiceCard({ invoice, isNew }: { invoice: Invoice; isNew?: boolean }) 
     return (
         <motion.div
             variants={fadeUp}
-            className={`border-theme bg-theme-surface/40 relative overflow-hidden rounded-3xl border p-6 transition-colors hover:bg-theme-surface/60 ${
+            className={`bg-theme-surface/40 hover:bg-theme-surface/60 relative overflow-hidden rounded-3xl border border-theme p-6 transition-colors ${
                 isNew ? 'border-cyan-500/40 ring-1 ring-cyan-500/20' : ''
             }`}
         >
@@ -98,24 +112,24 @@ function InvoiceCard({ invoice, isNew }: { invoice: Invoice; isNew?: boolean }) 
 
                 <div className="flex-1 space-y-3">
                     <div>
-                        <div className="text-theme text-base font-bold">
+                        <div className="text-base font-bold text-theme">
                             {invoice.service}
                         </div>
-                        <div className="text-theme-muted text-sm">
+                        <div className="text-sm text-theme-muted">
                             {invoice.plan} Plan
                         </div>
                     </div>
 
                     <div className="flex flex-wrap gap-4 text-xs">
-                        <div className="text-theme-muted flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 text-theme-muted">
                             <Clock className="h-3.5 w-3.5 text-cyan-500" />
                             Delivery: {invoice.delivery}
                         </div>
-                        <div className="text-theme-muted flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 text-theme-muted">
                             <PayIcon className="h-3.5 w-3.5 text-cyan-500" />
                             {payment.label}
                         </div>
-                        <div className="text-theme-muted flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 text-theme-muted">
                             <Calendar className="h-3.5 w-3.5 text-cyan-500" />
                             {orderedDate}
                         </div>
@@ -123,14 +137,14 @@ function InvoiceCard({ invoice, isNew }: { invoice: Invoice; isNew?: boolean }) 
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                    <span className="text-theme text-xl font-black">
+                    <span className="text-xl font-black text-theme">
                         {invoice.price}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold text-emerald-500">
                         <CheckCircle className="h-3 w-3" />
                         Paid
                     </span>
-                    <div className="text-theme-subtle text-[10px] font-mono">
+                    <div className="font-mono text-[10px] text-theme-subtle">
                         #{invoice.invoice_id}
                     </div>
                 </div>
@@ -173,7 +187,7 @@ export default function Profile() {
                                     <div className="text-sm font-bold text-emerald-500">
                                         Payment Successful!
                                     </div>
-                                    <div className="text-theme-muted text-xs">
+                                    <div className="text-xs text-theme-muted">
                                         Your order for{' '}
                                         <span className="font-semibold">
                                             {newInvoice.service}
@@ -188,7 +202,7 @@ export default function Profile() {
                         {/* Profile Overview */}
                         <motion.div
                             variants={fadeUp}
-                            className="glass-panel border-theme flex flex-col items-start gap-6 rounded-[2rem] p-8 sm:flex-row sm:items-center"
+                            className="glass-panel flex flex-col items-start gap-6 rounded-[2rem] border-theme p-8 sm:flex-row sm:items-center"
                         >
                             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-cyan-500/10 text-cyan-500">
                                 <User className="h-10 w-10" />
@@ -196,12 +210,12 @@ export default function Profile() {
 
                             <div className="flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <h1 className="text-theme text-2xl font-black">
+                                    <h1 className="text-2xl font-black text-theme">
                                         {auth.user?.name}
                                     </h1>
                                     <BadgeCheck className="h-5 w-5 text-cyan-500" />
                                 </div>
-                                <div className="text-theme-muted mt-1 flex items-center gap-2 text-sm">
+                                <div className="mt-1 flex items-center gap-2 text-sm text-theme-muted">
                                     <Mail className="h-4 w-4" />
                                     {auth.user?.email}
                                 </div>
@@ -209,7 +223,7 @@ export default function Profile() {
                                     <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-cyan-500 uppercase">
                                         Verified Client
                                     </span>
-                                    <span className="text-theme-muted rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+                                    <span className="rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                         Member since{' '}
                                         {new Date(
                                             auth.user?.created_at as string,
@@ -220,10 +234,10 @@ export default function Profile() {
 
                             <div className="flex flex-row gap-4 sm:flex-col sm:items-end">
                                 <div className="text-center">
-                                    <div className="text-theme text-2xl font-black">
+                                    <div className="text-2xl font-black text-theme">
                                         {allInvoices.length}
                                     </div>
-                                    <div className="text-theme-muted text-xs font-bold">
+                                    <div className="text-xs font-bold text-theme-muted">
                                         Orders
                                     </div>
                                 </div>
@@ -247,10 +261,10 @@ export default function Profile() {
                                     <FileText className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <h2 className="text-theme text-xl font-bold">
+                                    <h2 className="text-xl font-bold text-theme">
                                         My Invoices
                                     </h2>
-                                    <p className="text-theme-muted text-xs">
+                                    <p className="text-xs text-theme-muted">
                                         {allInvoices.length} order
                                         {allInvoices.length !== 1 ? 's' : ''}
                                     </p>
@@ -259,7 +273,7 @@ export default function Profile() {
 
                             <Link
                                 href="/hire-us"
-                                className="border-theme bg-theme-surface hover:bg-theme-surface-hover text-theme-muted flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all hover:text-theme"
+                                className="flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme-muted transition-all hover:bg-theme-surface-hover hover:text-theme"
                             >
                                 <ShoppingBag className="h-3.5 w-3.5" />
                                 Order More

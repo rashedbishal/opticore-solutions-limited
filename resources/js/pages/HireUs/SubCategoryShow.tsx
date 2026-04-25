@@ -1,5 +1,5 @@
-import type { Variants } from 'framer-motion';
 import type { SharedPageProps } from '@/types';
+import type { Variants } from 'framer-motion';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -41,8 +41,8 @@ import {
     Layers,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Modal from '@/components/UI/Modal';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
+import Modal from '@/components/UI/Modal';
 
 interface PortfolioItem {
     id: number;
@@ -345,7 +345,7 @@ function ReviewMedia({
     file: { type: 'image' | 'video'; url: string };
 }) {
     return (
-        <div className="group border-theme bg-theme-surface relative aspect-square w-full overflow-hidden rounded-2xl border md:w-32">
+        <div className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-theme bg-theme-surface md:w-32">
             {file.type === 'video' ? (
                 <video
                     src={file.url}
@@ -379,19 +379,19 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="border-theme bg-theme-surface overflow-hidden rounded-2xl border transition-colors hover:bg-theme-surface-hover">
+        <div className="overflow-hidden rounded-2xl border border-theme bg-theme-surface transition-colors hover:bg-theme-surface-hover">
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex w-full items-center justify-between p-5 text-left transition-colors"
             >
-                <span className="text-theme text-sm font-bold">
+                <span className="text-sm font-bold text-theme">
                     {faq.question}
                 </span>
                 {isOpen ? (
-                    <ChevronUp className="text-theme-muted h-4 w-4" />
+                    <ChevronUp className="h-4 w-4 text-theme-muted" />
                 ) : (
-                    <ChevronDown className="text-theme-muted h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 text-theme-muted" />
                 )}
             </button>
             <AnimatePresence initial={false}>
@@ -402,8 +402,8 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <div className="border-theme border-t p-5 pt-0">
-                            <p className="text-theme-muted text-sm leading-relaxed">
+                        <div className="border-t border-theme p-5 pt-0">
+                            <p className="text-sm leading-relaxed text-theme-muted">
                                 {faq.answer}
                             </p>
                         </div>
@@ -511,9 +511,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     if (!slides) {
         return (
-            <div className="border-theme bg-theme-surface flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[2rem] border">
-                <ImageIcon className="text-theme-subtle h-10 w-10" />
-                <p className="text-theme-muted text-sm font-medium">
+            <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[2rem] border border-theme bg-theme-surface">
+                <ImageIcon className="h-10 w-10 text-theme-subtle" />
+                <p className="text-sm font-medium text-theme-muted">
                     Portfolio coming soon
                 </p>
             </div>
@@ -526,7 +526,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         <>
             <div className="space-y-4">
                 {/* Main slide */}
-                <div className="group border-theme bg-theme-surface relative aspect-video w-full overflow-hidden rounded-[2rem] border">
+                <div className="group relative aspect-video w-full overflow-hidden rounded-[2rem] border border-theme bg-theme-surface">
                     <AnimatePresence
                         initial={false}
                         custom={direction}
@@ -668,12 +668,12 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
                                     i === activeIndex
                                         ? 'border-cyan-400 opacity-100 shadow-[0_0_14px_rgba(34,211,238,0.45)]'
-                                        : 'border-theme opacity-50 hover:border-theme-muted/50 hover:opacity-80'
+                                        : 'hover:border-theme-muted/50 border-theme opacity-50 hover:opacity-80'
                                 }`}
                             >
                                 {item.media_type === 'video' ? (
-                                    <div className="bg-theme-surface flex h-full w-full items-center justify-center">
-                                        <Film className="text-theme-subtle h-4 w-4" />
+                                    <div className="flex h-full w-full items-center justify-center bg-theme-surface">
+                                        <Film className="h-4 w-4 text-theme-subtle" />
                                         {i === activeIndex &&
                                             item.media_type === 'video' && (
                                                 <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
@@ -721,7 +721,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 duration: 0.35,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="border-theme bg-theme-surface relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border shadow-2xl"
+                            className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {active.media_type === 'video' ? (
@@ -879,12 +879,12 @@ export default function SubCategoryShow({
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="text-theme-muted mb-10 flex flex-wrap items-center gap-2 text-sm"
+                        className="mb-10 flex flex-wrap items-center gap-2 text-sm text-theme-muted"
                         aria-label="Breadcrumb"
                     >
                         <Link
                             href="/hire-us"
-                            className="hover:text-theme transition-colors"
+                            className="transition-colors hover:text-theme"
                         >
                             Hire Us
                         </Link>
@@ -893,7 +893,7 @@ export default function SubCategoryShow({
                             {category.label}
                         </span>
                         <span>/</span>
-                        <span className="text-theme font-semibold">
+                        <span className="font-semibold text-theme">
                             {subCategory.name}
                         </span>
                     </motion.nav>
@@ -919,7 +919,7 @@ export default function SubCategoryShow({
                                     className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
                                         s.slug === subCategory.slug
                                             ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
-                                            : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50 hover:text-theme'
+                                            : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
                                     }`}
                                 >
                                     {s.name}
@@ -942,7 +942,7 @@ export default function SubCategoryShow({
                                 <div className="mb-2 text-xs font-bold tracking-[0.2em] text-cyan-500 uppercase">
                                     {category.label}
                                 </div>
-                                <h1 className="text-theme mb-5 text-4xl font-black tracking-tight md:text-5xl">
+                                <h1 className="mb-5 text-4xl font-black tracking-tight text-theme md:text-5xl">
                                     {subCategory.name}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-5 text-sm">
@@ -953,10 +953,10 @@ export default function SubCategoryShow({
                                                 className="h-4 w-4 fill-current"
                                             />
                                         ))}
-                                        <span className="text-theme ml-1">
+                                        <span className="ml-1 text-theme">
                                             5.0
                                         </span>
-                                        <span className="text-theme-muted font-normal">
+                                        <span className="font-normal text-theme-muted">
                                             ({REVIEWS.length * 41} Reviews)
                                         </span>
                                     </div>
@@ -975,7 +975,7 @@ export default function SubCategoryShow({
                             {/* Featured Trust Section */}
                             <motion.div
                                 variants={fadeUp}
-                                className="border-theme bg-theme-surface relative overflow-hidden rounded-[2rem] border p-8 backdrop-blur-sm transition-transform duration-300 hover:scale-[1.01]"
+                                className="relative overflow-hidden rounded-[2rem] border border-theme bg-theme-surface p-8 backdrop-blur-sm transition-transform duration-300 hover:scale-[1.01]"
                             >
                                 <Quote className="absolute -top-4 -right-4 h-32 w-32 rotate-180 text-cyan-500/5" />
 
@@ -1001,7 +1001,7 @@ export default function SubCategoryShow({
                                                     />
                                                 ))}
                                             </div>
-                                            <p className="text-theme-muted text-lg leading-relaxed font-medium italic">
+                                            <p className="text-lg leading-relaxed font-medium text-theme-muted italic">
                                                 "
                                                 {
                                                     REVIEWS[activeReviewIndex]
@@ -1010,12 +1010,12 @@ export default function SubCategoryShow({
                                                 "
                                             </p>
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-theme-surface-hover flex h-10 w-10 items-center justify-center rounded-full">
-                                                    <User className="text-theme-subtle h-5 w-5" />
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                    <User className="h-5 w-5 text-theme-subtle" />
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-theme font-bold">
+                                                        <span className="font-bold text-theme">
                                                             {
                                                                 REVIEWS[
                                                                     activeReviewIndex
@@ -1024,7 +1024,7 @@ export default function SubCategoryShow({
                                                         </span>
                                                         <BadgeCheck className="h-4 w-4 text-cyan-500" />
                                                     </div>
-                                                    <div className="text-theme-muted flex items-center gap-1.5 text-xs">
+                                                    <div className="flex items-center gap-1.5 text-xs text-theme-muted">
                                                         <span className="flex items-center gap-1">
                                                             <span>
                                                                 {
@@ -1074,7 +1074,7 @@ export default function SubCategoryShow({
                                 </div>
 
                                 {/* Trust banner + View All button */}
-                                <div className="border-theme mt-6 flex flex-wrap items-center justify-between gap-4 border-t pt-5">
+                                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-theme pt-5">
                                     <div className="flex flex-wrap items-center gap-4">
                                         <div className="flex items-center gap-2">
                                             <div className="flex text-amber-400">
@@ -1085,14 +1085,14 @@ export default function SubCategoryShow({
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-theme text-sm font-bold">
+                                            <span className="text-sm font-bold text-theme">
                                                 5.0/5.0 Overall Rating
                                             </span>
                                         </div>
-                                        <span className="text-theme-subtle hidden sm:inline">
+                                        <span className="hidden text-theme-subtle sm:inline">
                                             ·
                                         </span>
-                                        <div className="text-theme-muted flex items-center gap-1.5 text-sm">
+                                        <div className="flex items-center gap-1.5 text-sm text-theme-muted">
                                             <Shield className="h-4 w-4 text-cyan-500" />
                                             <span>
                                                 Verified Opticore Clients
@@ -1106,7 +1106,7 @@ export default function SubCategoryShow({
                                                 { behavior: 'smooth' },
                                             )
                                         }
-                                        className="border-theme bg-theme-surface hover:bg-theme-surface-hover text-theme-muted flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-all"
+                                        className="flex items-center gap-1.5 rounded-full border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme-muted transition-all hover:bg-theme-surface-hover"
                                     >
                                         View All Reviews
                                         <ArrowRight className="h-3.5 w-3.5" />
@@ -1117,12 +1117,12 @@ export default function SubCategoryShow({
                             {/* Description */}
                             <motion.div
                                 variants={fadeUp}
-                                className="glass-panel border-theme space-y-6 rounded-[2rem] p-8 md:p-10"
+                                className="glass-panel space-y-6 rounded-[2rem] border-theme p-8 md:p-10"
                             >
-                                <h2 className="text-theme text-2xl font-bold">
+                                <h2 className="text-2xl font-bold text-theme">
                                     Service Description
                                 </h2>
-                                <p className="text-theme-muted text-base leading-relaxed">
+                                <p className="text-base leading-relaxed text-theme-muted">
                                     {subCategory.description ??
                                         `We provide high-quality, professional ${subCategory.name.toLowerCase()} tailored specifically to your brand's voice and goals. Our team of experts focuses on delivering visually stunning and commercially effective results that stand out in today's crowded digital landscape.`}
                                 </p>
@@ -1155,7 +1155,7 @@ export default function SubCategoryShow({
                                     ].map((item) => (
                                         <li
                                             key={item.label}
-                                            className="text-theme-muted flex items-center gap-3 text-sm"
+                                            className="flex items-center gap-3 text-sm text-theme-muted"
                                         >
                                             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
                                                 <item.Icon className="h-3 w-3 text-cyan-500" />
@@ -1171,18 +1171,18 @@ export default function SubCategoryShow({
                                 variants={fadeUp}
                                 className="flex flex-col gap-6"
                             >
-                                <div className="glass-panel border-theme space-y-6 rounded-[2rem] p-8 md:p-10">
+                                <div className="glass-panel space-y-6 rounded-[2rem] border-theme p-8 md:p-10">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-500">
                                             <Globe className="h-5 w-5" />
                                         </div>
-                                        <h2 className="text-theme text-xl font-bold">
+                                        <h2 className="text-xl font-bold text-theme">
                                             Background
                                         </h2>
                                     </div>
                                     <div className="space-y-4">
-                                        <p className="text-theme-muted text-sm leading-relaxed">
-                                            <span className="text-theme font-bold">
+                                        <p className="text-sm leading-relaxed text-theme-muted">
+                                            <span className="font-bold text-theme">
                                                 Opticore Solutions LTD.
                                             </span>{' '}
                                             operates from{' '}
@@ -1196,7 +1196,7 @@ export default function SubCategoryShow({
                                             .
                                         </p>
                                         <div className="flex items-center gap-3 pt-2">
-                                            <Languages className="text-theme-subtle h-4 w-4" />
+                                            <Languages className="h-4 w-4 text-theme-subtle" />
                                             <div className="flex flex-wrap gap-2">
                                                 {[
                                                     {
@@ -1214,7 +1214,7 @@ export default function SubCategoryShow({
                                                 ].map((lang) => (
                                                     <span
                                                         key={lang.name}
-                                                        className="border-theme bg-theme-surface text-theme-muted flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold tracking-widest uppercase"
+                                                        className="flex items-center gap-1.5 rounded-full border border-theme bg-theme-surface px-3 py-1 text-[10px] font-bold tracking-widest text-theme-muted uppercase"
                                                     >
                                                         <span>{lang.flag}</span>
                                                         {lang.name}
@@ -1225,16 +1225,16 @@ export default function SubCategoryShow({
                                     </div>
                                 </div>
 
-                                <div className="glass-panel border-theme space-y-6 rounded-[2rem] p-8 md:p-10">
+                                <div className="glass-panel space-y-6 rounded-[2rem] border-theme p-8 md:p-10">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
                                             <Info className="h-5 w-5" />
                                         </div>
-                                        <h2 className="text-theme text-xl font-bold">
+                                        <h2 className="text-xl font-bold text-theme">
                                             About Us
                                         </h2>
                                     </div>
-                                    <p className="text-theme-muted text-sm leading-relaxed">
+                                    <p className="text-sm leading-relaxed text-theme-muted">
                                         Opticore is a multidisciplinary creative
                                         agency dedicated to bridging the gap
                                         between high-end strategy and technical
@@ -1246,12 +1246,12 @@ export default function SubCategoryShow({
                                 </div>
 
                                 {/* Service FAQ Section */}
-                                <div className="glass-panel border-theme space-y-6 rounded-[2rem] p-8 md:p-10">
+                                <div className="glass-panel space-y-6 rounded-[2rem] border-theme p-8 md:p-10">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
                                             <HelpCircle className="h-5 w-5" />
                                         </div>
-                                        <h2 className="text-theme text-xl font-bold">
+                                        <h2 className="text-xl font-bold text-theme">
                                             Service FAQs
                                         </h2>
                                     </div>
@@ -1295,7 +1295,7 @@ export default function SubCategoryShow({
                             >
                                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                                     <div>
-                                        <h2 className="text-theme text-2xl font-bold">
+                                        <h2 className="text-2xl font-bold text-theme">
                                             Client Reviews
                                         </h2>
                                         <div className="mt-2 flex items-center gap-2">
@@ -1307,10 +1307,10 @@ export default function SubCategoryShow({
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-theme text-lg font-bold">
+                                            <span className="text-lg font-bold text-theme">
                                                 4.8
                                             </span>
-                                            <span className="text-theme-subtle text-sm">
+                                            <span className="text-sm text-theme-subtle">
                                                 ({REVIEWS.length} verified
                                                 reviews)
                                             </span>
@@ -1332,11 +1332,11 @@ export default function SubCategoryShow({
                                                 }
                                                 className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
                                             >
-                                                <span className="text-theme-subtle flex w-12 items-center gap-1 text-xs font-bold">
+                                                <span className="flex w-12 items-center gap-1 text-xs font-bold text-theme-subtle">
                                                     {row.star}{' '}
                                                     <Star className="h-3 w-3 fill-current text-amber-500" />
                                                 </span>
-                                                <div className="bg-theme-surface relative h-1.5 flex-1 overflow-hidden rounded-full">
+                                                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
                                                     <motion.div
                                                         initial={{ width: 0 }}
                                                         animate={{
@@ -1345,7 +1345,7 @@ export default function SubCategoryShow({
                                                         className="absolute inset-y-0 left-0 bg-amber-500"
                                                     />
                                                 </div>
-                                                <span className="text-theme-subtle w-6 text-right text-xs font-medium">
+                                                <span className="w-6 text-right text-xs font-medium text-theme-subtle">
                                                     {row.count}
                                                 </span>
                                             </button>
@@ -1353,8 +1353,8 @@ export default function SubCategoryShow({
                                     </div>
                                 </div>
 
-                                <div className="border-theme flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
-                                    <div className="text-theme-muted text-sm">
+                                <div className="flex flex-col gap-4 border-b border-theme pb-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="text-sm text-theme-muted">
                                         {ratingFilter || hasFilesFilter ? (
                                             <span className="flex flex-wrap items-center gap-2">
                                                 Showing {filteredReviews.length}{' '}
@@ -1376,7 +1376,7 @@ export default function SubCategoryShow({
                                                             false,
                                                         );
                                                     }}
-                                                    className="bg-theme-surface text-theme hover:bg-theme-surface-hover inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold transition-colors"
+                                                    className="inline-flex items-center gap-1 rounded-md bg-theme-surface px-2 py-1 text-[10px] font-bold text-theme transition-colors hover:bg-theme-surface-hover"
                                                 >
                                                     <FilterX className="h-3 w-3" />{' '}
                                                     Clear All
@@ -1394,7 +1394,7 @@ export default function SubCategoryShow({
                                         className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
                                             hasFilesFilter
                                                 ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
-                                                : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50 hover:text-theme'
+                                                : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
                                         }`}
                                     >
                                         <ImageIcon className="h-3.5 w-3.5" />
@@ -1427,18 +1427,18 @@ export default function SubCategoryShow({
                                                         scale: 0.95,
                                                     }}
                                                     variants={fadeUp}
-                                                    className="border-theme bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border p-6 transition-colors"
+                                                    className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
                                                 >
                                                     <div className="flex flex-col gap-6 md:flex-row">
                                                         <div className="flex-1">
                                                             <div className="mb-4 flex items-center justify-between">
                                                                 <div className="flex items-center gap-4">
-                                                                    <div className="bg-theme-surface-hover flex h-11 w-11 items-center justify-center rounded-full">
-                                                                        <User className="text-theme-subtle h-5 w-5" />
+                                                                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                                        <User className="h-5 w-5 text-theme-subtle" />
                                                                     </div>
                                                                     <div>
                                                                         <div className="flex items-center gap-2">
-                                                                            <h4 className="text-theme font-bold">
+                                                                            <h4 className="font-bold text-theme">
                                                                                 {
                                                                                     review.user
                                                                                 }
@@ -1451,7 +1451,7 @@ export default function SubCategoryShow({
                                                                                 </span>
                                                                             )}
                                                                         </div>
-                                                                        <span className="text-theme-muted text-xs">
+                                                                        <span className="text-xs text-theme-muted">
                                                                             <span className="mr-1">
                                                                                 {
                                                                                     review.flag
@@ -1484,12 +1484,12 @@ export default function SubCategoryShow({
                                                                 </div>
                                                             </div>
 
-                                                            <p className="text-theme-muted mb-6 text-sm leading-relaxed italic">
+                                                            <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
                                                                 "{review.review}
                                                                 "
                                                             </p>
 
-                                                            <div className="border-theme text-theme-muted flex flex-wrap items-center gap-4 border-t pt-4 text-[10px] font-bold tracking-widest uppercase">
+                                                            <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                                 <div className="flex items-center gap-1.5">
                                                                     <DollarSign className="h-3 w-3 text-emerald-500" />
                                                                     <span>
@@ -1546,7 +1546,7 @@ export default function SubCategoryShow({
                                                 </motion.div>
                                             ))
                                         ) : (
-                                            <div className="text-theme-subtle py-12 text-center">
+                                            <div className="py-12 text-center text-theme-subtle">
                                                 No reviews found for this rating
                                                 level.
                                             </div>
@@ -1567,10 +1567,10 @@ export default function SubCategoryShow({
                                     delay: 0.25,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="glass-panel border-theme bg-theme-surface/60 rounded-[2.5rem] p-6 backdrop-blur-xl"
+                                className="glass-panel bg-theme-surface/60 rounded-[2.5rem] border-theme p-6 backdrop-blur-xl"
                             >
                                 {/* Plan switcher tabs */}
-                                <div className="bg-theme-surface-hover mb-6 flex rounded-2xl p-1.5">
+                                <div className="mb-6 flex rounded-2xl bg-theme-surface-hover p-1.5">
                                     {PLANS.map((plan) => (
                                         <button
                                             key={plan.id}
@@ -1610,19 +1610,19 @@ export default function SubCategoryShow({
                                                     className={`flex items-center gap-2 ${activePlan.accentClass}`}
                                                 >
                                                     <activePlan.Icon className="h-5 w-5" />
-                                                    <span className="text-theme text-2xl font-black">
+                                                    <span className="text-2xl font-black text-theme">
                                                         {activePlan.price}
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="border-theme bg-theme-surface text-theme-muted flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs">
+                                            <div className="flex items-center gap-1.5 rounded-xl border border-theme bg-theme-surface px-3 py-2 text-xs text-theme-muted">
                                                 <Clock className="h-3.5 w-3.5" />
                                                 {activePlan.delivery}
                                             </div>
                                         </div>
 
                                         {/* Description */}
-                                        <p className="text-theme-subtle text-xs leading-relaxed">
+                                        <p className="text-xs leading-relaxed text-theme-subtle">
                                             Professional{' '}
                                             {activePlan.name.toLowerCase()}{' '}
                                             package for{' '}
@@ -1636,7 +1636,7 @@ export default function SubCategoryShow({
                                             {activePlan.features.map((f) => (
                                                 <li
                                                     key={f.label}
-                                                    className="text-theme-muted flex items-center gap-3 text-xs"
+                                                    className="flex items-center gap-3 text-xs text-theme-muted"
                                                 >
                                                     <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
                                                         <f.Icon className="h-2.5 w-2.5 text-cyan-500" />
@@ -1653,20 +1653,26 @@ export default function SubCategoryShow({
                                                 onClick={() => {
                                                     if (!auth.user) {
                                                         router.visit('/login');
+
                                                         return;
                                                     }
+
                                                     router.visit('/checkout', {
                                                         data: {
-                                                            service: subCategory.name,
+                                                            service:
+                                                                subCategory.name,
                                                             plan: activePlan.name,
                                                             price: activePlan.price,
-                                                            delivery: activePlan.delivery,
-                                                            category: category.slug,
-                                                            subcategory: subCategory.slug,
+                                                            delivery:
+                                                                activePlan.delivery,
+                                                            category:
+                                                                category.slug,
+                                                            subcategory:
+                                                                subCategory.slug,
                                                         },
                                                     });
                                                 }}
-                                                className="bg-foreground text-background hover:bg-cyan-500 hover:text-white group flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black tracking-widest uppercase transition-all"
+                                                className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
                                             >
                                                 Hire Now
                                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1676,7 +1682,7 @@ export default function SubCategoryShow({
                                                 onClick={() =>
                                                     setIsContactModalOpen(true)
                                                 }
-                                                className="border-theme text-theme hover:bg-theme-surface flex w-full items-center justify-center gap-2 rounded-2xl border py-3.5 text-sm font-bold transition-colors"
+                                                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-theme py-3.5 text-sm font-bold text-theme transition-colors hover:bg-theme-surface"
                                             >
                                                 <MessageSquare className="h-4 w-4" />
                                                 Custom Quote
@@ -1695,13 +1701,13 @@ export default function SubCategoryShow({
                                     delay: 0.35,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="border-cyan-500/20 bg-cyan-500/5 rounded-[2rem] border p-5"
+                                className="rounded-[2rem] border border-cyan-500/20 bg-cyan-500/5 p-5"
                             >
                                 <h4 className="mb-1.5 flex items-center gap-2 text-sm font-bold text-cyan-500">
                                     <Shield className="h-4 w-4" /> Secure
                                     Purchase
                                 </h4>
-                                <p className="text-theme-muted text-xs leading-relaxed">
+                                <p className="text-xs leading-relaxed text-theme-muted">
                                     Your payment is held securely and released
                                     only when you're satisfied with the final
                                     delivery.
@@ -1720,10 +1726,10 @@ export default function SubCategoryShow({
                             className="mt-20 space-y-8"
                         >
                             <motion.div variants={fadeUp}>
-                                <h2 className="text-theme text-2xl font-bold">
+                                <h2 className="text-2xl font-bold text-theme">
                                     Other Recommended Services
                                 </h2>
-                                <p className="text-theme-muted mt-1 text-sm">
+                                <p className="mt-1 text-sm text-theme-muted">
                                     Explore more of what Opticore has to offer
                                 </p>
                             </motion.div>
@@ -1739,10 +1745,10 @@ export default function SubCategoryShow({
                                             category: service.category_slug,
                                             subcategory: service.slug,
                                         })}
-                                        className="border-theme bg-theme-surface/30 hover:bg-theme-surface/50 group relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1"
+                                        className="bg-theme-surface/30 hover:bg-theme-surface/50 group relative flex flex-col overflow-hidden rounded-3xl border border-theme transition-all duration-300 hover:-translate-y-1"
                                     >
                                         {/* Thumbnail */}
-                                        <div className="bg-theme-surface relative aspect-video w-full overflow-hidden">
+                                        <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
                                             {service.image ? (
                                                 <img
                                                     src={service.image}
@@ -1768,26 +1774,26 @@ export default function SubCategoryShow({
 
                                         {/* Content */}
                                         <div className="flex flex-1 flex-col gap-3 p-5">
-                                            <h3 className="text-theme text-sm leading-snug font-bold transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
+                                            <h3 className="text-sm leading-snug font-bold text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
                                                 {service.name}
                                             </h3>
 
                                             {service.description && (
-                                                <p className="text-theme-muted line-clamp-2 text-xs leading-relaxed">
+                                                <p className="line-clamp-2 text-xs leading-relaxed text-theme-muted">
                                                     {service.description}
                                                 </p>
                                             )}
 
-                                            <div className="border-theme mt-auto flex items-center justify-between border-t pt-3">
+                                            <div className="mt-auto flex items-center justify-between border-t border-theme pt-3">
                                                 {service.rating ? (
                                                     <div className="flex items-center gap-1.5">
                                                         <Star className="h-3 w-3 fill-current text-amber-500" />
-                                                        <span className="text-theme text-xs font-bold">
+                                                        <span className="text-xs font-bold text-theme">
                                                             {service.rating}
                                                         </span>
                                                         {service.reviews_count >
                                                             0 && (
-                                                            <span className="text-theme-subtle text-[10px]">
+                                                            <span className="text-[10px] text-theme-subtle">
                                                                 (
                                                                 {
                                                                     service.reviews_count
@@ -1835,7 +1841,7 @@ export default function SubCategoryShow({
                                 duration: 0.35,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="border-theme bg-theme-surface relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border shadow-2xl"
+                            className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {reviewLightboxItem.type === 'video' ? (
@@ -1885,16 +1891,16 @@ export default function SubCategoryShow({
                                 duration: 0.3,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="glass-panel border-theme bg-theme-surface mb-4 flex h-[480px] w-[320px] flex-col overflow-hidden rounded-[2rem] border shadow-2xl sm:w-[360px]"
+                            className="glass-panel mb-4 flex h-[480px] w-[320px] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
                         >
                             {/* Header */}
-                            <div className="border-theme bg-theme-surface-hover flex items-center justify-between border-b px-5 py-4">
+                            <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-500">
                                         <Users className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <p className="text-theme text-sm font-bold">
+                                        <p className="text-sm font-bold text-theme">
                                             {category.label} Team
                                         </p>
                                         <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">
@@ -1905,7 +1911,7 @@ export default function SubCategoryShow({
                                 <button
                                     type="button"
                                     onClick={() => setIsChatOpen(false)}
-                                    className="text-theme-muted hover:text-theme transition-colors"
+                                    className="text-theme-muted transition-colors hover:text-theme"
                                     aria-label="Close chat"
                                 >
                                     <X className="h-5 w-5" />
@@ -1922,13 +1928,13 @@ export default function SubCategoryShow({
                                         <div
                                             className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
                                                 msg.role === 'user'
-                                                    ? 'bg-foreground text-background rounded-tr-none'
-                                                    : 'border-theme bg-theme-surface-hover text-theme rounded-tl-none border'
+                                                    ? 'rounded-tr-none bg-foreground text-background'
+                                                    : 'rounded-tl-none border border-theme bg-theme-surface-hover text-theme'
                                             }`}
                                         >
                                             {msg.content}
                                         </div>
-                                        <span className="text-theme-subtle mt-1.5 text-[10px]">
+                                        <span className="mt-1.5 text-[10px] text-theme-subtle">
                                             {msg.time}
                                         </span>
                                     </div>
@@ -1939,7 +1945,7 @@ export default function SubCategoryShow({
                             {/* Input */}
                             <form
                                 onSubmit={handleSendMessage}
-                                className="border-theme bg-theme-surface-hover border-t p-4"
+                                className="border-t border-theme bg-theme-surface-hover p-4"
                             >
                                 <div className="relative">
                                     <input
@@ -1949,7 +1955,7 @@ export default function SubCategoryShow({
                                             setNewMessage(e.target.value)
                                         }
                                         placeholder="Ask about this service…"
-                                        className="border-theme bg-theme-surface text-theme placeholder-theme-subtle focus:border-cyan-500/50 w-full rounded-xl border py-3 pr-12 pl-4 text-sm focus:outline-none"
+                                        className="placeholder-theme-subtle w-full rounded-xl border border-theme bg-theme-surface py-3 pr-12 pl-4 text-sm text-theme focus:border-cyan-500/50 focus:outline-none"
                                     />
                                     <button
                                         type="submit"
@@ -1959,7 +1965,7 @@ export default function SubCategoryShow({
                                         <Send className="h-4 w-4" />
                                     </button>
                                 </div>
-                                <p className="text-theme-subtle mt-2.5 text-center text-[9px] font-bold tracking-[0.2em] uppercase">
+                                <p className="mt-2.5 text-center text-[9px] font-bold tracking-[0.2em] text-theme-subtle uppercase">
                                     Direct Team Chat
                                 </p>
                             </form>
@@ -1996,16 +2002,16 @@ export default function SubCategoryShow({
                 title="Discuss Your Project"
             >
                 <div className="space-y-5 p-6">
-                    <p className="text-theme-muted text-sm">
+                    <p className="text-sm text-theme-muted">
                         Tell us more about your custom requirements for{' '}
-                        <span className="text-theme font-bold">
+                        <span className="font-bold text-theme">
                             {subCategory.name}
                         </span>
                         .
                     </p>
                     <textarea
                         placeholder="Describe what you need — scope, timeline, budget…"
-                        className="border-theme bg-theme-surface text-theme placeholder-theme-muted focus:border-cyan-500 h-32 w-full rounded-2xl border p-4 text-sm transition-colors focus:outline-none"
+                        className="placeholder-theme-muted h-32 w-full rounded-2xl border border-theme bg-theme-surface p-4 text-sm text-theme transition-colors focus:border-cyan-500 focus:outline-none"
                     />
                     <button
                         type="button"
