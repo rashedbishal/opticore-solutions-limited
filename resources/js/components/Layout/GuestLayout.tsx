@@ -24,11 +24,10 @@ export default function GuestLayout({
 
     return (
         <div
-            className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4 py-24 sm:pt-0"
+            className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-4"
             data-cursor={cursorType}
         >
             <CursorSelector cursorType={cursorType} />
-            {/* Background Decor */}
             <GradientOrb
                 className="top-[-10%] left-[-10%] h-[600px] w-[600px] blur-[120px]"
                 color="#06b6d4"
@@ -55,27 +54,26 @@ export default function GuestLayout({
                     maxWidthClasses[maxWidth],
                 )}
             >
-                <div className="relative mb-8 flex justify-center">
-                    <Link href="/">
-                        <img
-                            src="/images/logo/opticore.webp"
-                            alt="Opticore Solutions"
-                            className="block h-20 w-auto dark:hidden"
-                        />
-                        <img
-                            src="/images/logo/opticore-white.webp"
-                            alt="Opticore Solutions"
-                            className="hidden h-20 w-auto dark:block"
-                        />
-                    </Link>
-                </div>
-
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="glass-panel relative w-full overflow-hidden rounded-[3rem] p-8 shadow-2xl backdrop-blur-3xl sm:p-12"
+                    className="glass-panel relative w-full overflow-hidden rounded-[2rem] p-[min(5vh,1.5rem)] shadow-2xl backdrop-blur-3xl sm:rounded-[3rem] sm:p-[min(6vh,2.5rem)] [@media(max-height:400px)]:p-3"
                 >
+                    <div className="mb-[min(3vh,0.75rem)] flex justify-center [@media(max-height:400px)]:mb-2">
+                        <Link href="/">
+                            <img
+                                src="/images/logo/opticore.webp"
+                                alt="Opticore Solutions"
+                                className="block h-10 w-auto dark:hidden sm:h-14 [@media(max-height:600px)]:h-8 [@media(max-height:400px)]:h-6"
+                            />
+                            <img
+                                src="/images/logo/opticore-white.webp"
+                                alt="Opticore Solutions"
+                                className="hidden h-10 w-auto dark:block sm:h-14 [@media(max-height:600px)]:h-8 [@media(max-height:400px)]:h-6"
+                            />
+                        </Link>
+                    </div>
                     {children}
                 </motion.div>
             </div>
