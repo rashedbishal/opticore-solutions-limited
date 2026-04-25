@@ -1,5 +1,5 @@
-import { router, useForm } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { router } from '@inertiajs/react';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import {
     Star,
     Trash2,
@@ -11,7 +11,7 @@ import {
     ArrowDown,
     User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -75,31 +75,37 @@ function ReviewCard({
         <>
             <motion.div
                 layout
+                layoutId={`review-${review.id}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{
+                    layout: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+                }}
                 className="flex items-start gap-4 rounded-2xl border border-white/10 bg-zinc-900/60 p-4"
             >
                 {/* Sort controls */}
                 <div className="flex shrink-0 flex-col gap-1">
-                    <button
+                    <motion.button
                         type="button"
                         disabled={isFirst}
                         onClick={() => onMoveUp(review.id)}
                         title="Move up"
-                        className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                        whileTap={{ scale: 0.85 }}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-25"
                     >
                         <ArrowUp className="h-3.5 w-3.5" />
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                         type="button"
                         disabled={isLast}
                         onClick={() => onMoveDown(review.id)}
                         title="Move down"
-                        className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                        whileTap={{ scale: 0.85 }}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-25"
                     >
                         <ArrowDown className="h-3.5 w-3.5" />
-                    </button>
+                    </motion.button>
                 </div>
 
                 {/* Avatar */}
@@ -110,19 +116,29 @@ function ReviewCard({
                 {/* Content */}
                 <div className="min-w-0 flex-1 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-semibold text-white">{review.username}</span>
+                        <span className="font-semibold text-white">
+                            {review.username}
+                        </span>
                         {review.client_type === 'repeat' && (
                             <span className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold tracking-widest text-cyan-400 uppercase">
                                 Repeat Client
                             </span>
                         )}
                         <StarRating rating={review.rating} />
-                        <span className="text-xs text-slate-500">{review.created_at}</span>
+                        <span className="text-xs text-slate-500">
+                            {review.created_at}
+                        </span>
                     </div>
-                    <p className="text-sm leading-relaxed text-slate-300 italic">"{review.comment}"</p>
+                    <p className="text-sm leading-relaxed text-slate-300 italic">
+                        "{review.comment}"
+                    </p>
                     <div className="flex flex-wrap gap-4 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-                        {review.price_range && <span>Price: {review.price_range}</span>}
-                        {review.work_duration && <span>Duration: {review.work_duration}</span>}
+                        {review.price_range && (
+                            <span>Price: {review.price_range}</span>
+                        )}
+                        {review.work_duration && (
+                            <span>Duration: {review.work_duration}</span>
+                        )}
                         <span>Task #{review.task_id}</span>
                     </div>
                 </div>
@@ -182,34 +198,30 @@ function ReviewCard({
     );
 }
 
-function CategorySection({
-    categorySlug,
-    subCategoryGroups,
-}: {
-    categorySlug: string;
-    subCategoryGroups: SubCategoryGroup[];
-}) {
-    const [expanded, setExpanded] = useState(true);
-    const label = categorySlug
-        .split('-')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-    const totalReviews = subCategoryGroups.reduce((n, g) => n + g.reviews.length, 0);
+export default function ClientReviewIndex({ grouped: serverGrouped }: Props) {
+    // Local state drives immediate animation; server call persists the order.
+    const [grouped, setGrouped] = useState(serverGrouped);
 
-    const handleDelete = (reviewId: number) => {
-        if (!confirm('Delete this review? This cannot be undone.')) {
-            return;
-        }
-        router.delete(adminRoutes.clientReviews.destroy.url(reviewId), {
-            preserveScroll: true,
-        });
-    };
+    // Keep in sync when Inertia refreshes props (e.g. after delete).
+    useEffect(() => {
+        setGrouped(serverGrouped);
+    }, [serverGrouped]);
 
     const handleMove = (
-        subGroup: SubCategoryGroup,
+        catSlug: string,
+        subCategoryId: number,
         reviewId: number,
         direction: 'up' | 'down',
     ) => {
+        const catGroups = grouped[catSlug];
+        const subGroup = catGroups?.find(
+            (sg) => sg.sub_category_id === subCategoryId,
+        );
+
+        if (!subGroup) {
+            return;
+        }
+
         const reviews = [...subGroup.reviews];
         const idx = reviews.findIndex((r) => r.id === reviewId);
         const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
@@ -218,16 +230,127 @@ function CategorySection({
             return;
         }
 
-        // Swap the two items in the array, then assign sequential sort_orders.
+        // Swap positions.
         [reviews[idx], reviews[swapIdx]] = [reviews[swapIdx], reviews[idx]];
-        const order = reviews.map((r, i) => ({ id: r.id, sort_order: i }));
 
+        // Update local state immediately — triggers layout animation.
+        setGrouped((prev) => ({
+            ...prev,
+            [catSlug]: prev[catSlug].map((sg) =>
+                sg.sub_category_id === subCategoryId ? { ...sg, reviews } : sg,
+            ),
+        }));
+
+        // Persist new order to the server.
+        const order = reviews.map((r, i) => ({ id: r.id, sort_order: i }));
+        // Use `only: ['flash']` so Inertia doesn't refresh `grouped` props after the
+        // server responds — the local state is already optimistically updated and we
+        // don't want the `useEffect(setGrouped)` to interrupt the layout animation.
         router.post(
             adminRoutes.clientReviews.reorder.url(),
             { order },
-            { preserveScroll: true },
+            {
+                preserveScroll: true,
+                only: ['flash'],
+            },
         );
     };
+
+    const handleDelete = (
+        catSlug: string,
+        subCategoryId: number,
+        reviewId: number,
+    ) => {
+        if (!confirm('Delete this review? This cannot be undone.')) {
+            return;
+        }
+
+        // Optimistic removal for instant feedback.
+        setGrouped((prev) => ({
+            ...prev,
+            [catSlug]: prev[catSlug].map((sg) =>
+                sg.sub_category_id === subCategoryId
+                    ? {
+                          ...sg,
+                          reviews: sg.reviews.filter((r) => r.id !== reviewId),
+                      }
+                    : sg,
+            ),
+        }));
+
+        router.delete(adminRoutes.clientReviews.destroy.url(reviewId), {
+            preserveScroll: true,
+        });
+    };
+
+    const categoryKeys = Object.keys(grouped);
+
+    return (
+        <AdminLayout title="Client Review Control">
+            <div className="space-y-6">
+                <p className="text-sm text-slate-400">
+                    Manage, sort, and delete client reviews per service. Order
+                    changes are reflected immediately on the public pages.
+                </p>
+
+                {categoryKeys.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/40 py-20 text-center">
+                        <Star className="h-10 w-10 text-slate-600" />
+                        <p className="font-semibold text-slate-400">
+                            No reviews yet
+                        </p>
+                        <p className="text-sm text-slate-500">
+                            Reviews appear here once clients submit them after
+                            task delivery.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {categoryKeys.map((catSlug) => (
+                            <CategorySection
+                                key={catSlug}
+                                categorySlug={catSlug}
+                                subCategoryGroups={grouped[catSlug]}
+                                onMove={(subId, reviewId, dir) =>
+                                    handleMove(catSlug, subId, reviewId, dir)
+                                }
+                                onDelete={(subId, reviewId) =>
+                                    handleDelete(catSlug, subId, reviewId)
+                                }
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </AdminLayout>
+    );
+}
+
+function CategorySection({
+    categorySlug,
+    subCategoryGroups,
+    onMove,
+    onDelete,
+}: {
+    categorySlug: string;
+    subCategoryGroups: SubCategoryGroup[];
+    onMove: (
+        subCategoryId: number,
+        reviewId: number,
+        direction: 'up' | 'down',
+    ) => void;
+    onDelete: (subCategoryId: number, reviewId: number) => void;
+}) {
+    const [expanded, setExpanded] = useState(true);
+
+    const label = categorySlug
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    const totalReviews = subCategoryGroups.reduce(
+        (n, g) => n + g.reviews.length,
+        0,
+    );
 
     return (
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0A1222]/60 backdrop-blur-sm">
@@ -263,8 +386,10 @@ function CategorySection({
                     >
                         <div className="space-y-6 border-t border-white/10 p-6">
                             {subCategoryGroups.map((group) => (
-                                <div key={group.sub_category_id} className="space-y-3">
-                                    {/* Sub-category label */}
+                                <div
+                                    key={group.sub_category_id}
+                                    className="space-y-3"
+                                >
                                     <div className="flex items-center gap-2">
                                         <MessageSquare className="h-4 w-4 text-slate-500" />
                                         <h3 className="text-sm font-semibold text-slate-300">
@@ -275,19 +400,47 @@ function CategorySection({
                                         </span>
                                     </div>
 
-                                    <AnimatePresence mode="popLayout">
-                                        {group.reviews.map((review, idx) => (
-                                            <ReviewCard
-                                                key={review.id}
-                                                review={review}
-                                                isFirst={idx === 0}
-                                                isLast={idx === group.reviews.length - 1}
-                                                onDelete={handleDelete}
-                                                onMoveUp={(id) => handleMove(group, id, 'up')}
-                                                onMoveDown={(id) => handleMove(group, id, 'down')}
-                                            />
-                                        ))}
-                                    </AnimatePresence>
+                                    <LayoutGroup
+                                        id={`sub-${group.sub_category_id}`}
+                                    >
+                                        <AnimatePresence mode="popLayout">
+                                            {group.reviews.map(
+                                                (review, idx) => (
+                                                    <ReviewCard
+                                                        key={review.id}
+                                                        review={review}
+                                                        isFirst={idx === 0}
+                                                        isLast={
+                                                            idx ===
+                                                            group.reviews
+                                                                .length -
+                                                                1
+                                                        }
+                                                        onMoveUp={(id) =>
+                                                            onMove(
+                                                                group.sub_category_id,
+                                                                id,
+                                                                'up',
+                                                            )
+                                                        }
+                                                        onMoveDown={(id) =>
+                                                            onMove(
+                                                                group.sub_category_id,
+                                                                id,
+                                                                'down',
+                                                            )
+                                                        }
+                                                        onDelete={(id) =>
+                                                            onDelete(
+                                                                group.sub_category_id,
+                                                                id,
+                                                            )
+                                                        }
+                                                    />
+                                                ),
+                                            )}
+                                        </AnimatePresence>
+                                    </LayoutGroup>
 
                                     {group.reviews.length === 0 && (
                                         <p className="py-4 text-center text-sm text-slate-500">
@@ -301,43 +454,5 @@ function CategorySection({
                 )}
             </AnimatePresence>
         </div>
-    );
-}
-
-export default function ClientReviewIndex({ grouped }: Props) {
-    const categoryKeys = Object.keys(grouped);
-
-    return (
-        <AdminLayout title="Client Review Control">
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="mt-1 text-sm text-slate-400">
-                            Manage, sort, and delete client reviews per service.
-                        </p>
-                    </div>
-                </div>
-
-                {categoryKeys.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/40 py-20 text-center">
-                        <Star className="h-10 w-10 text-slate-600" />
-                        <p className="font-semibold text-slate-400">No reviews yet</p>
-                        <p className="text-sm text-slate-500">
-                            Reviews will appear here once clients submit them after task delivery.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {categoryKeys.map((cat) => (
-                            <CategorySection
-                                key={cat}
-                                categorySlug={cat}
-                                subCategoryGroups={grouped[cat]}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </AdminLayout>
     );
 }
