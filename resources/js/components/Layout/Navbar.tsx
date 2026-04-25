@@ -49,10 +49,10 @@ function NavLink({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'group relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300',
+                'group relative flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-md transition-all duration-300',
                 active
-                    ? 'border-violet-500/30 bg-violet-500/10 shadow-lg shadow-violet-500/5'
-                    : 'border-black/10 bg-white/80 backdrop-blur-md hover:border-black/20 hover:bg-white/95 dark:border-white/10 dark:bg-black/40 dark:hover:border-white/20 dark:hover:bg-black/60',
+                    ? 'border-violet-500/50 bg-violet-500/20 shadow-lg shadow-violet-500/10 dark:border-violet-400/50 dark:bg-violet-400/20'
+                    : 'border-black/10 bg-white/80 hover:border-black/20 hover:bg-white/95 dark:border-white/10 dark:bg-black/40 dark:hover:border-white/20 dark:hover:bg-black/60',
             )}
         >
             {Icon && (
@@ -70,9 +70,9 @@ function NavLink({
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                 className={cn(
-                    'font-[family-name:var(--font-geist-mono)] text-[13px] font-medium tracking-normal transition-colors xl:text-[13.5px] xl:tracking-wide',
+                    'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors xl:text-[13.5px] xl:tracking-wide',
                     active
-                        ? 'text-violet-700 dark:text-violet-300'
+                        ? 'text-violet-900 dark:text-violet-100'
                         : 'text-zinc-700 dark:text-white/70',
                 )}
                 trigger={hovered}
