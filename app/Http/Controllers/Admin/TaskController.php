@@ -90,6 +90,10 @@ class TaskController extends Controller
             $validated['state'] = 'pending';
         }
 
+        if ($validated['state'] === 'delivered') {
+            $validated['review_eligible_until'] = now()->addHours(24);
+        }
+
         Task::create($validated);
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
