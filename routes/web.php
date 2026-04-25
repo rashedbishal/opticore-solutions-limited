@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\TaskController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HireUsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ServiceController;
@@ -138,6 +140,22 @@ Route::get('/chat/attachments/{message}/download', [ConversationController::clas
     ->name('chat.attachment.download')
     ->middleware('auth:web,admin');
 
+// Offer view — accessible by the offer's client (web) or any admin
+Route::get('/offer/{token}', [OfferController::class, 'show'])
+    ->name('offer.show')
+    ->middleware('auth:web,admin');
+
+// Offer accept / decline — client only
+Route::middleware('auth')->group(function () {
+    Route::post('/offer/{token}/accept', [OfferController::class, 'accept'])->name('offer.accept');
+    Route::post('/offer/{token}/decline', [OfferController::class, 'decline'])->name('offer.decline');
+});
+
+// Offer edit — admin only
+Route::put('/offer/{token}', [OfferController::class, 'update'])
+    ->name('offer.update')
+    ->middleware('auth:admin');
+
 // Admin Auth Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
@@ -170,6 +188,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/api/customer-conversations/{conversation}/message', [CustomerConversationController::class, 'sendMessage'])->name('customer-conversations.send');
     Route::post('/api/customer-conversations/{conversation}/read', [CustomerConversationController::class, 'markAsRead'])->name('customer-conversations.read');
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
+    Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
+    Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
 });
 
 require __DIR__.'/../routes/channels.php';

@@ -97,7 +97,7 @@ class OfferController extends Controller
         // Delete the offer and its milestones.
         $conversation->offers()->where('id', $offerId)->delete();
 
-        broadcast(new OfferDeleted($messageId, $conversationId));
+        broadcast(new OfferDeleted($messageId, $conversationId, $offerId));
 
         return response()->json(['message_id' => $messageId]);
     }

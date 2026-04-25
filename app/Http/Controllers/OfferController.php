@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\OfferStatusChanged;
+use App\Events\OfferUpdated;
 use App\Models\Offer;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -42,7 +43,7 @@ class OfferController extends Controller
         ]);
     }
 
-    public function accept(string $token): RedirectResponse
+    public function accept(string $token): JsonResponse
     {
         $offer = Offer::where('offer_token', $token)
             ->with('conversation')
@@ -54,10 +55,10 @@ class OfferController extends Controller
         $offer->update(['status' => 'accepted']);
         broadcast(new OfferStatusChanged($offer));
 
-        return back()->with('success', 'Offer accepted! We will be in touch shortly.');
+        return response()->json(['status' => 'accepted', 'offer_id' => $offer->id]);
     }
 
-    public function decline(string $token): RedirectResponse
+    public function decline(string $token): JsonResponse
     {
         $offer = Offer::where('offer_token', $token)
             ->with('conversation')
@@ -69,10 +70,10 @@ class OfferController extends Controller
         $offer->update(['status' => 'declined']);
         broadcast(new OfferStatusChanged($offer));
 
-        return back()->with('success', 'Offer declined.');
+        return response()->json(['status' => 'declined', 'offer_id' => $offer->id]);
     }
 
-    public function update(string $token, Request $request): RedirectResponse
+    public function update(string $token, Request $request): JsonResponse
     {
         $offer = Offer::where('offer_token', $token)
             ->with(['milestones', 'conversation'])
@@ -87,7 +88,6 @@ class OfferController extends Controller
             'delivery_days' => 'required_if:payment_type,single|nullable|integer|min:1|max:365',
             'revisions' => 'nullable|integer|min:0|max:999',
             'expires_at' => 'nullable|date|after:today',
-            'status' => 'required|in:pending,accepted,declined,expired',
             'milestones' => 'required_if:payment_type,milestone|array|min:1|max:20',
             'milestones.*.name' => 'required|string|max:255',
             'milestones.*.description' => 'nullable|string|max:2000',
@@ -105,7 +105,7 @@ class OfferController extends Controller
             'delivery_days' => $validated['payment_type'] === 'single' ? $validated['delivery_days'] : null,
             'revisions' => $validated['revisions'] ?? null,
             'expires_at' => $validated['expires_at'] ?? null,
-            'status' => $validated['status'],
+            'status' => 'pending',
         ]);
 
         if ($validated['payment_type'] === 'milestone') {
@@ -124,8 +124,11 @@ class OfferController extends Controller
             $offer->milestones()->delete();
         }
 
-        broadcast(new OfferStatusChanged($offer->fresh()));
+        $fresh = $offer->fresh()->load(['subCategory', 'milestones', 'conversation.user']);
 
-        return back()->with('success', 'Offer updated successfully.');
+        broadcast(new OfferUpdated($fresh));
+        broadcast(new OfferStatusChanged($fresh));
+
+        return response()->json($fresh);
     }
 }

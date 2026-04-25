@@ -15,6 +15,7 @@ class OfferDeleted implements ShouldBroadcastNow
     public function __construct(
         public readonly int $messageId,
         public readonly int $conversationId,
+        public readonly int $offerId,
     ) {}
 
     public function broadcastOn(): array
@@ -30,6 +31,7 @@ class OfferDeleted implements ShouldBroadcastNow
         return [
             'message_id' => $this->messageId,
             'conversation_id' => $this->conversationId,
+            'offer_id' => $this->offerId,
         ];
     }
 }
