@@ -40,7 +40,7 @@ export default function Register() {
                 onSubmit={submit}
                 className="space-y-2.5 sm:space-y-3 [@media(max-height:500px)]:space-y-1.5"
             >
-                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-1.5">
                     <div className="group relative">
                         <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
                             <User className="h-4 w-4" />

@@ -86,12 +86,12 @@ function NavLink({
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    // const [scrolled, setScrolled] = useState(false);
     const { user } = props.auth;
 
     useEffect(() => {
         const onScroll = () => {
-            setScrolled(window.scrollY > 24);
+            // setScrolled(window.scrollY > 24);
         };
 
         onScroll();
@@ -130,12 +130,12 @@ export default function Navbar() {
                         <img
                             src="/images/logo/opticore.webp"
                             alt="Opticore Solutions"
-                            className="block h-12 w-auto shrink-0 object-contain dark:hidden md:h-20"
+                            className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
                         />
                         <img
                             src="/images/logo/opticore-white.webp"
                             alt="Opticore Solutions"
-                            className="hidden h-12 w-auto shrink-0 object-contain dark:block md:h-20"
+                            className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
                         />
                     </Link>
 
@@ -214,12 +214,12 @@ export default function Navbar() {
                                         <img
                                             src="/images/logo/opticore.webp"
                                             alt="Opticore Solutions"
-                                            className="block h-12 w-auto shrink-0 object-contain dark:hidden md:h-20"
+                                            className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
                                         />
                                         <img
                                             src="/images/logo/opticore-white.webp"
                                             alt="Opticore Solutions"
-                                            className="hidden h-12 w-auto shrink-0 object-contain dark:block md:h-20"
+                                            className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
                                         />
                                     </Link>
                                     <div className="flex items-center gap-2">

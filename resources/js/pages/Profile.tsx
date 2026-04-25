@@ -24,10 +24,10 @@ import {
     ToggleRight,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
+import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
 import { Label } from '@/components/UI/label';
-import { Button } from '@/components/UI/Button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
 
 interface Invoice {
     invoice_id: string;
@@ -217,17 +217,21 @@ export default function Profile() {
                                     <CheckCircle className="h-6 w-6 shrink-0 text-emerald-500" />
                                     <div>
                                         <div className="text-sm font-bold text-emerald-500">
-                                            {successMsg ? 'Success' : 'Payment Successful!'}
+                                            {successMsg
+                                                ? 'Success'
+                                                : 'Payment Successful!'}
                                         </div>
                                         <div className="text-xs text-theme-muted">
-                                            {successMsg ? successMsg : (
+                                            {successMsg ? (
+                                                successMsg
+                                            ) : (
                                                 <>
                                                     Your order for{' '}
                                                     <span className="font-semibold">
                                                         {newInvoice?.service}
                                                     </span>{' '}
-                                                    has been confirmed. Invoice #
-                                                    {newInvoice?.invoice_id}
+                                                    has been confirmed. Invoice
+                                                    #{newInvoice?.invoice_id}
                                                 </>
                                             )}
                                         </div>
@@ -237,23 +241,39 @@ export default function Profile() {
                         </AnimatePresence>
 
                         <Tabs defaultValue="overview" className="w-full">
-                            <TabsList className="mb-8 flex w-full justify-start overflow-x-auto rounded-[2rem] border border-theme bg-theme-surface/50 p-2 backdrop-blur-md hide-scrollbar">
-                                <TabsTrigger value="overview" className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500 transition-colors">
+                            <TabsList className="bg-theme-surface/50 hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto rounded-[2rem] border border-theme p-2 backdrop-blur-md">
+                                <TabsTrigger
+                                    value="overview"
+                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
+                                >
                                     <User className="h-4 w-4" /> Overview
                                 </TabsTrigger>
-                                <TabsTrigger value="settings" className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500 transition-colors">
-                                    <Settings className="h-4 w-4" /> Account Settings
+                                <TabsTrigger
+                                    value="settings"
+                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
+                                >
+                                    <Settings className="h-4 w-4" /> Account
+                                    Settings
                                 </TabsTrigger>
-                                <TabsTrigger value="security" className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500 transition-colors">
+                                <TabsTrigger
+                                    value="security"
+                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
+                                >
                                     <Shield className="h-4 w-4" /> Security
                                 </TabsTrigger>
-                                <TabsTrigger value="preferences" className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500 transition-colors">
+                                <TabsTrigger
+                                    value="preferences"
+                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
+                                >
                                     <Bell className="h-4 w-4" /> Preferences
                                 </TabsTrigger>
                             </TabsList>
 
                             {/* Overview Tab */}
-                            <TabsContent value="overview" className="space-y-10 outline-none">
+                            <TabsContent
+                                value="overview"
+                                className="space-y-10 outline-none"
+                            >
                                 {/* Profile Overview */}
                                 <motion.div
                                     variants={fadeUp}
@@ -281,7 +301,8 @@ export default function Profile() {
                                             <span className="rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                 Member since{' '}
                                                 {new Date(
-                                                    auth.user?.created_at as string,
+                                                    auth.user
+                                                        ?.created_at as string,
                                                 ).getFullYear()}
                                             </span>
                                         </div>
@@ -315,7 +336,9 @@ export default function Profile() {
                                                 </h2>
                                                 <p className="text-xs text-theme-muted">
                                                     {allInvoices.length} order
-                                                    {allInvoices.length !== 1 ? 's' : ''}
+                                                    {allInvoices.length !== 1
+                                                        ? 's'
+                                                        : ''}
                                                 </p>
                                             </div>
                                         </div>
@@ -348,107 +371,243 @@ export default function Profile() {
                             </TabsContent>
 
                             {/* Settings Tab */}
-                            <TabsContent value="settings" className="outline-none">
+                            <TabsContent
+                                value="settings"
+                                className="outline-none"
+                            >
                                 <motion.form
                                     variants={fadeUp}
-                                    onSubmit={(e) => handleMockSubmit(e, 'Profile information updated successfully.')}
+                                    onSubmit={(e) =>
+                                        handleMockSubmit(
+                                            e,
+                                            'Profile information updated successfully.',
+                                        )
+                                    }
                                     className="glass-panel space-y-8 rounded-[2rem] border-theme p-8"
                                 >
                                     <div>
-                                        <h2 className="text-xl font-bold text-theme">Account Settings</h2>
-                                        <p className="text-sm text-theme-muted">Update your personal information and profile picture.</p>
+                                        <h2 className="text-xl font-bold text-theme">
+                                            Account Settings
+                                        </h2>
+                                        <p className="text-sm text-theme-muted">
+                                            Update your personal information and
+                                            profile picture.
+                                        </p>
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-6">
-                                        <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl bg-theme-surface border border-theme border-dashed group cursor-pointer overflow-hidden">
-                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-theme bg-theme-surface">
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <Camera className="h-6 w-6 text-white" />
                                             </div>
                                             <User className="h-10 w-10 text-theme-muted" />
                                         </div>
                                         <div>
-                                            <Button type="button" variant="outline" className="rounded-xl border-theme bg-theme-surface hover:bg-theme-surface-hover hover:text-theme">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="rounded-xl border-theme bg-theme-surface hover:bg-theme-surface-hover hover:text-theme"
+                                            >
                                                 Upload Avatar
                                             </Button>
-                                            <p className="mt-2 text-xs text-theme-muted">JPG, GIF or PNG. Max size of 800K</p>
+                                            <p className="mt-2 text-xs text-theme-muted">
+                                                JPG, GIF or PNG. Max size of
+                                                800K
+                                            </p>
                                         </div>
                                     </div>
 
                                     <div className="grid gap-6 sm:grid-cols-2">
                                         <div className="space-y-2">
-                                            <Label htmlFor="name" className="text-theme">Full Name</Label>
-                                            <Input id="name" defaultValue={auth.user?.name} className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                            <Label
+                                                htmlFor="name"
+                                                className="text-theme"
+                                            >
+                                                Full Name
+                                            </Label>
+                                            <Input
+                                                id="name"
+                                                defaultValue={auth.user?.name}
+                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                            />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="username" className="text-theme">Username</Label>
-                                            <Input id="username" defaultValue={auth.user?.name?.toLowerCase().replace(/\s+/g, '')} className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                            <Label
+                                                htmlFor="username"
+                                                className="text-theme"
+                                            >
+                                                Username
+                                            </Label>
+                                            <Input
+                                                id="username"
+                                                defaultValue={auth.user?.name
+                                                    ?.toLowerCase()
+                                                    .replace(/\s+/g, '')}
+                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                            />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="email" className="text-theme">Email Address</Label>
-                                            <Input id="email" type="email" defaultValue={auth.user?.email} className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                            <Label
+                                                htmlFor="email"
+                                                className="text-theme"
+                                            >
+                                                Email Address
+                                            </Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                defaultValue={auth.user?.email}
+                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                            />
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-end pt-4 border-t border-theme">
-                                        <Button type="submit" disabled={isSaving} className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white min-w-[140px]">
-                                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+                                    <div className="flex justify-end border-t border-theme pt-4">
+                                        <Button
+                                            type="submit"
+                                            disabled={isSaving}
+                                            className="min-w-[140px] rounded-xl bg-violet-600 text-white hover:bg-violet-700"
+                                        >
+                                            {isSaving ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                'Save Changes'
+                                            )}
                                         </Button>
                                     </div>
                                 </motion.form>
                             </TabsContent>
 
                             {/* Security Tab */}
-                            <TabsContent value="security" className="outline-none">
-                                <motion.div variants={stagger} className="space-y-8">
+                            <TabsContent
+                                value="security"
+                                className="outline-none"
+                            >
+                                <motion.div
+                                    variants={stagger}
+                                    className="space-y-8"
+                                >
                                     <motion.form
                                         variants={fadeUp}
-                                        onSubmit={(e) => handleMockSubmit(e, 'Password changed successfully.')}
+                                        onSubmit={(e) =>
+                                            handleMockSubmit(
+                                                e,
+                                                'Password changed successfully.',
+                                            )
+                                        }
                                         className="glass-panel space-y-8 rounded-[2rem] border-theme p-8"
                                     >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">Change Password</h2>
-                                            <p className="text-sm text-theme-muted">Ensure your account is using a long, random password to stay secure.</p>
+                                            <h2 className="text-xl font-bold text-theme">
+                                                Change Password
+                                            </h2>
+                                            <p className="text-sm text-theme-muted">
+                                                Ensure your account is using a
+                                                long, random password to stay
+                                                secure.
+                                            </p>
                                         </div>
 
-                                        <div className="space-y-6 max-w-md">
+                                        <div className="max-w-md space-y-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="current_password" className="text-theme">Current Password</Label>
-                                                <Input id="current_password" type="password" className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                                <Label
+                                                    htmlFor="current_password"
+                                                    className="text-theme"
+                                                >
+                                                    Current Password
+                                                </Label>
+                                                <Input
+                                                    id="current_password"
+                                                    type="password"
+                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="new_password" className="text-theme">New Password</Label>
-                                                <Input id="new_password" type="password" className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                                <Label
+                                                    htmlFor="new_password"
+                                                    className="text-theme"
+                                                >
+                                                    New Password
+                                                </Label>
+                                                <Input
+                                                    id="new_password"
+                                                    type="password"
+                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="confirm_password" className="text-theme">Confirm New Password</Label>
-                                                <Input id="confirm_password" type="password" className="rounded-xl bg-theme-surface/50 border-theme text-theme" />
+                                                <Label
+                                                    htmlFor="confirm_password"
+                                                    className="text-theme"
+                                                >
+                                                    Confirm New Password
+                                                </Label>
+                                                <Input
+                                                    id="confirm_password"
+                                                    type="password"
+                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                />
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-start pt-4 border-t border-theme">
-                                            <Button type="submit" disabled={isSaving} className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white min-w-[160px]">
-                                                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Update Password'}
+                                        <div className="flex justify-start border-t border-theme pt-4">
+                                            <Button
+                                                type="submit"
+                                                disabled={isSaving}
+                                                className="min-w-[160px] rounded-xl bg-violet-600 text-white hover:bg-violet-700"
+                                            >
+                                                {isSaving ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    'Update Password'
+                                                )}
                                             </Button>
                                         </div>
                                     </motion.form>
 
-                                    <motion.div variants={fadeUp} className="glass-panel space-y-6 rounded-[2rem] border-theme p-8">
+                                    <motion.div
+                                        variants={fadeUp}
+                                        className="glass-panel space-y-6 rounded-[2rem] border-theme p-8"
+                                    >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">Two-Factor Authentication</h2>
-                                            <p className="text-sm text-theme-muted">Add additional security to your account using two-factor authentication.</p>
+                                            <h2 className="text-xl font-bold text-theme">
+                                                Two-Factor Authentication
+                                            </h2>
+                                            <p className="text-sm text-theme-muted">
+                                                Add additional security to your
+                                                account using two-factor
+                                                authentication.
+                                            </p>
                                         </div>
 
-                                        <div className="flex items-center justify-between rounded-2xl border border-theme bg-theme-surface/30 p-6">
+                                        <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-6">
                                             <div>
-                                                <div className="font-bold text-theme">Secure your account</div>
-                                                <div className="text-sm text-theme-muted mt-1">Two-factor authentication is currently {twoFactorEnabled ? 'enabled' : 'disabled'}.</div>
+                                                <div className="font-bold text-theme">
+                                                    Secure your account
+                                                </div>
+                                                <div className="mt-1 text-sm text-theme-muted">
+                                                    Two-factor authentication is
+                                                    currently{' '}
+                                                    {twoFactorEnabled
+                                                        ? 'enabled'
+                                                        : 'disabled'}
+                                                    .
+                                                </div>
                                             </div>
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setTwoFactorEnabled(
+                                                        !twoFactorEnabled,
+                                                    )
+                                                }
                                                 className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
                                             >
-                                                {twoFactorEnabled ? <ToggleRight className="h-10 w-10" /> : <ToggleLeft className="h-10 w-10" />}
+                                                {twoFactorEnabled ? (
+                                                    <ToggleRight className="h-10 w-10" />
+                                                ) : (
+                                                    <ToggleLeft className="h-10 w-10" />
+                                                )}
                                             </button>
                                         </div>
                                     </motion.div>
@@ -456,65 +615,116 @@ export default function Profile() {
                             </TabsContent>
 
                             {/* Preferences Tab */}
-                            <TabsContent value="preferences" className="outline-none">
-                                <motion.div variants={stagger} className="space-y-8">
-                                    <motion.div variants={fadeUp} className="glass-panel space-y-6 rounded-[2rem] border-theme p-8">
+                            <TabsContent
+                                value="preferences"
+                                className="outline-none"
+                            >
+                                <motion.div
+                                    variants={stagger}
+                                    className="space-y-8"
+                                >
+                                    <motion.div
+                                        variants={fadeUp}
+                                        className="glass-panel space-y-6 rounded-[2rem] border-theme p-8"
+                                    >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">Notifications</h2>
-                                            <p className="text-sm text-theme-muted">Manage how you receive communications from Opticore.</p>
+                                            <h2 className="text-xl font-bold text-theme">
+                                                Notifications
+                                            </h2>
+                                            <p className="text-sm text-theme-muted">
+                                                Manage how you receive
+                                                communications from Opticore.
+                                            </p>
                                         </div>
 
                                         <div className="space-y-4">
-                                            <div className="flex items-center justify-between rounded-2xl border border-theme bg-theme-surface/30 p-4">
+                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
                                                 <div>
-                                                    <div className="font-bold text-theme text-sm">Order Updates</div>
-                                                    <div className="text-xs text-theme-muted mt-0.5">Receive emails about your order status.</div>
+                                                    <div className="text-sm font-bold text-theme">
+                                                        Order Updates
+                                                    </div>
+                                                    <div className="mt-0.5 text-xs text-theme-muted">
+                                                        Receive emails about
+                                                        your order status.
+                                                    </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 text-emerald-500 cursor-not-allowed" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500" />
                                             </div>
-                                            
-                                            <div className="flex items-center justify-between rounded-2xl border border-theme bg-theme-surface/30 p-4">
+
+                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
                                                 <div>
-                                                    <div className="font-bold text-theme text-sm">Promotional Emails</div>
-                                                    <div className="text-xs text-theme-muted mt-0.5">Receive offers, updates, and marketing emails.</div>
+                                                    <div className="text-sm font-bold text-theme">
+                                                        Promotional Emails
+                                                    </div>
+                                                    <div className="mt-0.5 text-xs text-theme-muted">
+                                                        Receive offers, updates,
+                                                        and marketing emails.
+                                                    </div>
                                                 </div>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => setPromoEmails(!promoEmails)}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setPromoEmails(
+                                                            !promoEmails,
+                                                        )
+                                                    }
                                                     className={`transition-colors ${promoEmails ? 'text-emerald-500' : 'text-theme-muted'}`}
                                                 >
-                                                    {promoEmails ? <ToggleRight className="h-8 w-8" /> : <ToggleLeft className="h-8 w-8" />}
+                                                    {promoEmails ? (
+                                                        <ToggleRight className="h-8 w-8" />
+                                                    ) : (
+                                                        <ToggleLeft className="h-8 w-8" />
+                                                    )}
                                                 </button>
                                             </div>
-                                            
-                                            <div className="flex items-center justify-between rounded-2xl border border-theme bg-theme-surface/30 p-4">
+
+                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
                                                 <div>
-                                                    <div className="font-bold text-theme text-sm">Security Alerts</div>
-                                                    <div className="text-xs text-theme-muted mt-0.5">Receive notifications for logins and password changes.</div>
+                                                    <div className="text-sm font-bold text-theme">
+                                                        Security Alerts
+                                                    </div>
+                                                    <div className="mt-0.5 text-xs text-theme-muted">
+                                                        Receive notifications
+                                                        for logins and password
+                                                        changes.
+                                                    </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 text-emerald-500 cursor-not-allowed" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500" />
                                             </div>
                                         </div>
                                     </motion.div>
 
-                                    <motion.div variants={fadeUp} className="rounded-[2rem] border border-red-500/20 bg-red-500/5 p-8 relative overflow-hidden">
+                                    <motion.div
+                                        variants={fadeUp}
+                                        className="relative overflow-hidden rounded-[2rem] border border-red-500/20 bg-red-500/5 p-8"
+                                    >
                                         <div className="absolute top-0 right-0 p-8 opacity-10">
                                             <Trash2 className="h-32 w-32 text-red-500" />
                                         </div>
                                         <div className="relative z-10">
-                                            <h2 className="text-xl font-bold text-red-500">Danger Zone</h2>
-                                            <p className="text-sm text-red-500/70 max-w-xl mt-2 mb-6">
-                                                Permanently delete your account and all of your data. This action cannot be undone. All your current active orders will be cancelled.
+                                            <h2 className="text-xl font-bold text-red-500">
+                                                Danger Zone
+                                            </h2>
+                                            <p className="mt-2 mb-6 max-w-xl text-sm text-red-500/70">
+                                                Permanently delete your account
+                                                and all of your data. This
+                                                action cannot be undone. All
+                                                your current active orders will
+                                                be cancelled.
                                             </p>
-                                            <Button type="button" variant="destructive" className="rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 hover:border-red-500 transition-all">
-                                                <Trash2 className="h-4 w-4 mr-2" /> Delete Account
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                className="rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 transition-all hover:border-red-500 hover:bg-red-500 hover:text-white"
+                                            >
+                                                <Trash2 className="mr-2 h-4 w-4" />{' '}
+                                                Delete Account
                                             </Button>
                                         </div>
                                     </motion.div>
                                 </motion.div>
                             </TabsContent>
                         </Tabs>
-
                     </motion.div>
                 </div>
             </div>

@@ -69,7 +69,9 @@ export default function OrbitingShowcase() {
 
                 {/* Orbiting Avatars */}
                 {testimonials.map((t, i) => {
-                    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                    const isMobile =
+                        typeof window !== 'undefined' &&
+                        window.innerWidth < 768;
                     const angle = (i / testimonials.length) * (2 * Math.PI);
                     const radius = isMobile ? window.innerWidth * 0.35 : 350; // responsive radius
                     const x = Math.cos(angle) * radius;
