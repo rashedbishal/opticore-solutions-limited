@@ -416,6 +416,8 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
             return;
         }
 
+        vid.play().catch(() => {});
+
         const onTimeUpdate = () => {
             if (vid.duration) {
                 setVideoProgress((vid.currentTime / vid.duration) * 100);
@@ -437,7 +439,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         const thumb = strip.children[activeIndex] as HTMLElement | undefined;
 
         if (thumb) {
-            thumb.scrollIntoView({ inline: 'nearest', behavior: 'smooth' });
+            thumb.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
         }
     }, [activeIndex]);
 
