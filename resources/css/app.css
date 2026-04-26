@@ -362,7 +362,7 @@
     }
 
     .section-kicker {
-        @apply mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold tracking-[0.24em] uppercase;
+        @apply mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[13px] font-semibold tracking-wider uppercase;
         border: 1px solid var(--theme-border);
         background-color: var(--theme-surface);
         color: var(--theme-text-muted);

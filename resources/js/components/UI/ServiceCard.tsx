@@ -71,7 +71,7 @@ export default function ServiceCard({
                             <Icon className="h-6 w-6" />
                         </span>
 
-                        <span className="rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                        <span className="rounded-full border border-white/10 px-2.5 py-0.5 text-[12px] font-medium text-zinc-400 uppercase tracking-wider">
                             {service.tagline}
                         </span>
                     </div>
@@ -80,7 +80,7 @@ export default function ServiceCard({
                         {service.name}
                     </h3>
 
-                    <p className="mt-1.5 text-xs leading-5 text-zinc-400 line-clamp-2">
+                    <p className="mt-1.5 text-sm leading-6 text-zinc-400 line-clamp-2">
                         {service.description}
                     </p>
                 </div>
@@ -178,7 +178,7 @@ export default function ServiceCard({
                                 <div className="absolute inset-2 rounded-full border border-violet-500/20" />
                                 <Icon className="relative h-6 w-6 text-violet-400/50" />
                             </div>
-                            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
+                            <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider">
                                 Data Pending
                             </span>
                             <div className="mt-2 h-0.5 w-8 rounded-full bg-violet-500/10" />
@@ -188,7 +188,7 @@ export default function ServiceCard({
 
                 {/* CTA */}
                 <div className="mt-auto inline-flex items-center justify-between">
-                    <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase">
+                    <span className="text-[13px] font-bold tracking-wider text-cyan-400 uppercase">
                         Explore System
                     </span>
                     <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-white/5 text-cyan-400 transition-all duration-300 group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">

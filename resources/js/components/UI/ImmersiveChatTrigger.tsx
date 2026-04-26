@@ -93,7 +93,7 @@ export default function ImmersiveChatTrigger({
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="absolute -top-3 -right-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-white text-[7px] sm:text-[8px] font-black text-violet-600 shadow-lg border border-violet-100 z-20"
+                                className="absolute -top-3.5 -right-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white text-[10px] sm:text-[11px] font-black text-violet-600 shadow-lg border border-violet-100 z-20"
                             >
                                 AI
                             </motion.div>

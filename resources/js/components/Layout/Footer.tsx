@@ -100,7 +100,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                             Services
                         </h3>
                         <div className="space-y-3">
@@ -117,7 +117,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                             Company
                         </h3>
                         <div className="space-y-3">
@@ -134,7 +134,7 @@ export default function Footer() {
                     </div>
 
                     <div className="lg:col-span-1">
-                        <h3 className="mb-5 text-sm font-semibold tracking-[0.24em] text-theme-muted uppercase">
+                        <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                             Contact
                         </h3>
                         <div className="space-y-6 text-sm text-theme-muted">
@@ -165,7 +165,7 @@ export default function Footer() {
                                         <p className="font-bold text-theme">
                                             USA
                                         </p>
-                                        <p className="mt-1 text-[11px] leading-relaxed text-theme-subtle">
+                                        <p className="mt-1 text-[13px] leading-relaxed text-theme-subtle">
                                             Opticore Solutions LLC
                                             <br />
                                             1209 Mountain Road PL NE STE N
@@ -176,7 +176,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/Ghn2hcVHHid6FQwv6"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                            className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>
@@ -189,7 +189,7 @@ export default function Footer() {
                                         <p className="font-bold text-theme">
                                             Bangladesh
                                         </p>
-                                        <p className="mt-1 text-[11px] text-theme-subtle">
+                                        <p className="mt-1 text-[13px] text-theme-subtle">
                                             House # 1178, (1st Floor) Apt.- 2E
                                             <br />
                                             East Monipur, Mirpur, Dhaka-1216
@@ -198,7 +198,7 @@ export default function Footer() {
                                             href="https://maps.app.goo.gl/7zvqD4Lemwst7bEQ8"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[10px] font-bold tracking-widest text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                            className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
                                         >
                                             View on Map
                                         </a>

@@ -150,10 +150,10 @@ setSessionId(data.session_id);
                     >
                         <div className="relative">
                             <div className="flex items-center gap-1.5 mb-2">
-                                <Bot size={10} className="text-violet-500 dark:text-violet-400" />
-                                    <span className="text-theme-subtle text-[10px] font-bold tracking-widest uppercase">Opticore Assistant</span>
+                                <Bot size={12} className="text-violet-500 dark:text-violet-400" />
+                                    <span className="text-theme-subtle text-[11px] font-bold tracking-wider uppercase">Opticore Assistant</span>
                             </div>
-                            <p className="text-theme text-xs font-medium leading-relaxed">
+                            <p className="text-theme text-[13px] font-medium leading-relaxed">
                                 {teaserText}
                             </p>
                             {/* Arrow */}
@@ -216,15 +216,15 @@ setSessionId(data.session_id);
                                         </h3>
                                         <div className="flex items-center gap-1.5">
                                             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
-                                            <span className="text-[10px] font-medium text-white/80">Online now</span>
+                                            <span className="text-[11px] font-medium text-white/90">Online now</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 backdrop-blur-md">
-                                        <Sparkles size={10} className="text-yellow-300" />
-                                        <span className="text-[10px] font-bold tracking-wider text-white uppercase">AI Powered</span>
+                                        <Sparkles size={11} className="text-yellow-300" />
+                                        <span className="text-[11px] font-bold tracking-wider text-white uppercase">AI Powered</span>
                                     </div>
                                     <button
                                         onClick={() => setIsOpen(false)}
@@ -243,7 +243,7 @@ setSessionId(data.session_id);
                         >
                             {messages.length === 1 && (
                                 <div className="border-theme bg-theme-surface/30 mb-4 rounded-2xl border p-4 backdrop-blur-sm">
-                                    <p className="text-theme-subtle mb-3 text-xs font-bold tracking-[0.15em] uppercase">
+                                    <p className="text-theme-subtle mb-3 text-[11px] font-bold tracking-wider uppercase">
                                         Suggested Inquiries
                                     </p>
                                     <div className="space-y-2">
@@ -356,7 +356,7 @@ setSessionId(data.session_id);
                                         placeholder="Type your message..."
                                         className="border-theme bg-theme-surface text-theme placeholder:text-theme-subtle w-full rounded-2xl border pl-4 pr-16 py-3.5 text-sm outline-none transition-all focus:border-violet-500/50 focus:bg-theme-surface-hover focus:ring-1 focus:ring-violet-500/10"
                                     />
-                                    <div className="text-theme-subtle/30 pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold tracking-wider transition-colors group-focus-within:text-violet-500/50 uppercase">
+                                    <div className="text-theme-subtle/40 pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[11px] font-bold tracking-wider transition-colors group-focus-within:text-violet-500/60 uppercase">
                                         Enter
                                     </div>
                                 </div>
@@ -373,12 +373,12 @@ setSessionId(data.session_id);
 
                             {/* Trust indicators */}
                             <div className="mt-4 flex items-center justify-center gap-6">
-                                <div className="text-theme-subtle/40 flex items-center gap-1.5 text-xs font-medium">
-                                    <Shield size={12} className="text-violet-500/40" />
+                                <div className="text-theme-subtle/70 flex items-center gap-1.5 text-[11px] font-semibold">
+                                    <Shield size={12} className="text-violet-500/60" />
                                     <span>Encrypted Chat</span>
                                 </div>
-                                <div className="text-theme-subtle/40 flex items-center gap-1.5 text-xs font-medium">
-                                    <Clock size={12} className="text-cyan-500/40" />
+                                <div className="text-theme-subtle/70 flex items-center gap-1.5 text-[11px] font-semibold">
+                                    <Clock size={12} className="text-cyan-500/60" />
                                     <span>Instant Response</span>
                                 </div>
                             </div>
