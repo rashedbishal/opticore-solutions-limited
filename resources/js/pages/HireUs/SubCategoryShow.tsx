@@ -38,7 +38,6 @@ import {
     Headset,
     Crown,
     Layers,
-    Upload,
     PenLine,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
@@ -738,39 +737,23 @@ function ReviewForm({
         task_id: number;
         rating: number;
         comment: string;
-        image: File | null;
         price_range: string;
         work_duration: string;
     }>({
         task_id: taskId,
         rating: 0,
         comment: '',
-        image: null,
         price_range: '',
         work_duration: '',
     });
 
     const [hoverRating, setHoverRating] = useState(0);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] ?? null;
-        setData('image', file);
-
-        if (file) {
-            setImagePreview(URL.createObjectURL(file));
-        } else {
-            setImagePreview(null);
-        }
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post('/reviews', {
-            forceFormData: true,
             onSuccess: () => {
                 reset();
-                setImagePreview(null);
                 onSuccess();
             },
         });
@@ -889,51 +872,6 @@ function ReviewForm({
                             ))}
                         </select>
                     </div>
-                </div>
-
-                {/* Image upload */}
-                <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                        Work Proof (optional image)
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-theme bg-theme-surface p-4 transition-colors hover:border-cyan-500/50 hover:bg-theme-surface-hover">
-                        <Upload className="h-5 w-5 shrink-0 text-theme-subtle" />
-                        <span className="text-sm text-theme-muted">
-                            {imagePreview
-                                ? 'Change image'
-                                : 'Upload image (max 4 MB)'}
-                        </span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                        />
-                    </label>
-                    {imagePreview && (
-                        <div className="relative mt-2 h-24 w-24 overflow-hidden rounded-xl border border-theme">
-                            <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="h-full w-full object-cover"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setData('image', null);
-                                    setImagePreview(null);
-                                }}
-                                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
-                            >
-                                <X className="h-3 w-3" />
-                            </button>
-                        </div>
-                    )}
-                    {errors.image && (
-                        <p className="mt-1 text-xs text-red-400">
-                            {errors.image}
-                        </p>
-                    )}
                 </div>
 
                 <button
@@ -1117,11 +1055,19 @@ export default function SubCategoryShow({
             <Head title={`${subCategory.name} — Hire Opticore`} />
 
             <div className="relative min-h-screen bg-background pb-36 lg:pb-24">
-                {/* Background glows */}
-                <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-cyan-500/5 blur-[140px]" />
-                <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] rounded-full bg-violet-600/5 blur-[140px]" />
 
-                <div className="relative mx-auto max-w-7xl px-4 pt-32">
+                {/* ── CINEMATIC HERO GALLERY (full-width) ── */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.7 }}
+                    className="relative w-full pt-20 md:pt-[72px]"
+                >
+                    <GallerySlider items={displayPortfolios} />
+                </motion.div>
+
+                {/* ── PAGE HEADER + NAVIGATION ── */}
+                <div className="mx-auto max-w-7xl px-4 pt-8">
                     {/* Breadcrumb */}
                     <motion.nav
                         initial={{ opacity: 0, y: -8 }}
@@ -1146,7 +1092,7 @@ export default function SubCategoryShow({
                         </span>
                     </motion.nav>
 
-                    {/* Sibling sub-category tabs — underline style */}
+                    {/* Sibling sub-category tabs */}
                     {siblingSubCategories.length > 1 && (
                         <motion.div
                             initial={{ opacity: 0, y: 8 }}
@@ -1181,7 +1127,7 @@ export default function SubCategoryShow({
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-8"
+                        className="mb-10"
                     >
                         <div className="mb-2 text-xs font-bold tracking-[0.2em] text-cyan-500 uppercase">
                             {category.label}
@@ -1208,31 +1154,20 @@ export default function SubCategoryShow({
                             </span>
                         </div>
                     </motion.div>
+                </div>
 
-                    {/* ── GALLERY (full width) ── */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.55,
-                            ease: [0.22, 1, 0.36, 1],
-                        }}
-                    >
-                        <GallerySlider items={displayPortfolios} />
-                    </motion.div>
-
-                    {/* ── PRICING MODULE (full width, below gallery) ── */}
-                    <motion.div
-                        ref={pricingSectionRef}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.55,
-                            delay: 0.15,
-                            ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className="mt-10 scroll-mt-32"
-                    >
+                {/* ── PRICING MODULE ── */}
+                <motion.div
+                    ref={pricingSectionRef}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                        duration: 0.55,
+                        delay: 0.15,
+                        ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="mx-auto max-w-7xl px-4 scroll-mt-32"
+                >
                         <p className="mb-6 text-[10px] font-bold tracking-[0.2em] text-theme-muted uppercase">
                             Choose Your Plan
                         </p>
@@ -1317,15 +1252,16 @@ export default function SubCategoryShow({
                                 you're satisfied
                             </div>
                         </div>
-                    </motion.div>
+                </motion.div>
 
-                    {/* ── TRUST METRIC STRIPE ── */}
+                {/* ── TRUST METRICS (full-width section) ── */}
+                <div className="mt-16 w-full border-y border-theme bg-theme-surface/50">
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="my-16 border-y border-theme py-12"
+                        className="mx-auto max-w-7xl px-4 py-16"
                     >
                         <div className="mb-8 grid grid-cols-2 gap-y-8 sm:grid-cols-4">
                             {[
@@ -1377,19 +1313,20 @@ export default function SubCategoryShow({
                             </button>
                         </div>
                     </motion.div>
+                </div>
 
-                    {/* ── CONTENT ZONE ── */}
-                    <div className="mx-auto max-w-4xl space-y-16">
-                        {/* Description — editorial layout */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 24 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-60px' }}
-                            transition={{
-                                duration: 0.6,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
+                {/* ── SERVICE DESCRIPTION (full-width) ── */}
+                <div className="w-full py-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{
+                            duration: 0.6,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="mx-auto max-w-4xl px-4"
+                    >
                             <div className="mb-6 flex items-start gap-4">
                                 <div className="mt-1 w-1 self-stretch rounded-full bg-cyan-500" />
                                 <div>
@@ -1427,19 +1364,22 @@ export default function SubCategoryShow({
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </button>
                             </div>
-                        </motion.div>
+                    </motion.div>
+                </div>
 
-                        {/* About + Background — merged horizontal card */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 24 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-60px' }}
-                            transition={{
-                                duration: 0.6,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="bg-theme-surface/50 overflow-hidden rounded-[2rem] border border-theme"
-                        >
+                {/* ── ABOUT + BACKGROUND (full-width with bg) ── */}
+                <div className="w-full bg-theme-surface/30 py-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{
+                            duration: 0.6,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="mx-auto max-w-4xl px-4"
+                    >
+                        <div className="overflow-hidden rounded-[2rem] border border-theme">
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
                                 <div className="space-y-5 p-8 md:p-10">
@@ -1516,18 +1456,22 @@ export default function SubCategoryShow({
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
+                    </motion.div>
+                </div>
 
-                        {/* FAQs — two-column grid */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 24 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-60px' }}
-                            transition={{
-                                duration: 0.6,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
+                {/* ── FAQs (full-width with border) ── */}
+                <div className="w-full border-y border-theme py-20">
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{
+                            duration: 0.6,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="mx-auto max-w-4xl px-4"
+                    >
                             <div className="mb-6 flex items-start gap-4">
                                 <div className="mt-1 w-1 self-stretch rounded-full bg-amber-500" />
                                 <div className="flex items-center gap-3">
@@ -1554,14 +1498,15 @@ export default function SubCategoryShow({
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </button>
                             </div>
-                        </motion.div>
-                    </div>
+                    </motion.div>
+                </div>
 
-                    {/* Reviews */}
+                {/* ── REVIEWS (full-width, high-contrast bg) ── */}
+                <div className="w-full bg-theme-surface/40 py-20">
                     <motion.div
                         ref={reviewsSectionRef}
                         variants={fadeUp}
-                        className="space-y-8"
+                        className="mx-auto max-w-7xl px-4 space-y-8"
                     >
                         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                             <div>
@@ -1836,16 +1781,17 @@ export default function SubCategoryShow({
                             </AnimatePresence>
                         </motion.div>
                     </motion.div>
+                </div>
 
-                    {/* ── RECOMMENDED SERVICES (unchanged) ── */}
-                    {recommendedServices.length > 0 && (
-                        <motion.div
-                            variants={stagger}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: '-80px' }}
-                            className="mt-20 space-y-8"
-                        >
+                {/* ── RECOMMENDED SERVICES ── */}
+                {recommendedServices.length > 0 && (
+                    <motion.div
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: '-80px' }}
+                        className="mx-auto max-w-7xl px-4 py-20 space-y-8"
+                    >
                             <motion.div variants={fadeUp}>
                                 <h2 className="text-2xl font-bold text-theme">
                                     Other Recommended Services
@@ -1935,9 +1881,8 @@ export default function SubCategoryShow({
                                     </Link>
                                 ))}
                             </motion.div>
-                        </motion.div>
-                    )}
-                </div>
+                    </motion.div>
+                )}
             </div>
 
             {/* ── Mobile Sticky Bottom Bar ── */}
