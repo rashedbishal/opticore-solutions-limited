@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
-import { useRef } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
+import { useRef } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -267,10 +267,7 @@ export default function CreateTask({
                             type="file"
                             accept="image/*"
                             onChange={(e) =>
-                                setData(
-                                    'image',
-                                    e.target.files?.[0] ?? null,
-                                )
+                                setData('image', e.target.files?.[0] ?? null)
                             }
                             className="w-full rounded-lg border border-white/10 bg-zinc-800 px-4 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
                         />

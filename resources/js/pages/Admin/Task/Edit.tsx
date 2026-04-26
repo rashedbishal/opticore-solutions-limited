@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
-import { useRef, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
+import { useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -293,9 +293,11 @@ export default function EditTask({
                                     onClick={() => {
                                         setData('remove_image', true);
                                         setPreviewUrl(null);
+
                                         if (imageInputRef.current) {
                                             imageInputRef.current.value = '';
                                         }
+
                                         setData('image', null);
                                     }}
                                     className="text-sm text-red-400 hover:text-red-300"

@@ -1,5 +1,5 @@
 import type { FormEventHandler } from 'react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Package,
@@ -52,12 +52,15 @@ function stateClass(task: Task): string {
     if (task.state === 'delivered' && task.can_review) {
         return 'bg-amber-500/20 text-amber-500';
     }
+
     if (task.state === 'in progress') {
         return 'bg-cyan-500/20 text-cyan-500';
     }
+
     if (task.state === 'delivered') {
         return 'bg-zinc-800 text-zinc-400';
     }
+
     return 'bg-zinc-800 text-zinc-500';
 }
 
@@ -65,24 +68,23 @@ function stateLabel(task: Task): string {
     if (task.state === 'delivered' && task.can_review) {
         return 'Review Required';
     }
+
     return STATE_LABELS[task.state] ?? task.state;
 }
 
 export default function UserDashboard({ tasks }: Props) {
-    const { auth } = usePage<{ auth: { user: { name: string } } }>().props;
     const [activeTab, setActiveTab] = useState('active');
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [hoverRating, setHoverRating] = useState(0);
 
-    const { data, setData, post, processing, errors, reset, wasSuccessful } =
-        useForm({
-            task_id: 0,
-            rating: 0,
-            comment: '',
-            price_range: '',
-            work_duration: '',
-        });
+    const { data, setData, post, processing, errors, reset } = useForm({
+        task_id: 0,
+        rating: 0,
+        comment: '',
+        price_range: '',
+        work_duration: '',
+    });
 
     const openReview = (task: Task) => {
         setSelectedTask(task);
@@ -108,16 +110,25 @@ export default function UserDashboard({ tasks }: Props) {
 
     const filteredTasks = tasks.filter((t) => {
         if (activeTab === 'active') {
-            return t.state === 'pending' || t.state === 'in progress' || (t.state === 'delivered' && t.can_review);
+            return (
+                t.state === 'pending' ||
+                t.state === 'in progress' ||
+                (t.state === 'delivered' && t.can_review)
+            );
         }
+
         if (activeTab === 'completed') {
             return t.state === 'delivered' && !t.can_review;
         }
+
         return true;
     });
 
     const activeCount = tasks.filter(
-        (t) => t.state === 'pending' || t.state === 'in progress' || (t.state === 'delivered' && t.can_review),
+        (t) =>
+            t.state === 'pending' ||
+            t.state === 'in progress' ||
+            (t.state === 'delivered' && t.can_review),
     ).length;
     const reviewCount = tasks.filter((t) => t.can_review).length;
 
@@ -402,10 +413,7 @@ export default function UserDashboard({ tasks }: Props) {
                                 )}
                             </div>
 
-                            <form
-                                onSubmit={submitReview}
-                                className="space-y-8"
-                            >
+                            <form onSubmit={submitReview} className="space-y-8">
                                 <div className="flex flex-col items-center rounded-3xl border border-white/5 bg-white/5 py-6">
                                     <p className="mb-6 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
                                         Your Rating
@@ -481,7 +489,7 @@ export default function UserDashboard({ tasks }: Props) {
                                     <div>
                                         <p className="mb-2 px-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
                                             Price Range{' '}
-                                            <span className="normal-case text-zinc-600">
+                                            <span className="text-zinc-600 normal-case">
                                                 (optional)
                                             </span>
                                         </p>
@@ -501,7 +509,7 @@ export default function UserDashboard({ tasks }: Props) {
                                     <div>
                                         <p className="mb-2 px-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
                                             Work Duration{' '}
-                                            <span className="normal-case text-zinc-600">
+                                            <span className="text-zinc-600 normal-case">
                                                 (optional)
                                             </span>
                                         </p>
