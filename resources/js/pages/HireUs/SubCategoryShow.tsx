@@ -20,7 +20,7 @@ import {
     Play,
     Pause,
     Maximize2,
-    BadgeCheck,
+    // BadgeCheck,
     Globe,
     Languages,
     Info,
@@ -275,7 +275,6 @@ const PLANS = [
 ] as const;
 
 type PlanId = (typeof PLANS)[number]['id'];
-
 
 // ─── Chat Message Type ──────────────────────────────────────────────────────
 
@@ -979,18 +978,21 @@ export default function SubCategoryShow({
     const [newMessage, setNewMessage] = useState('');
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
-    const [reviewPage, setReviewPage] = useState(1);
+    // const [reviewPage, setReviewPage] = useState(1);
     const [reviewLightboxItem, setReviewLightboxItem] = useState<{
         type: 'image' | 'video';
         url: string;
     } | null>(null);
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
-    const mappedReviews = useMemo(() => (dbReviews || []).map(mapDbReview), [dbReviews]);
+    const mappedReviews = useMemo(
+        () => (dbReviews || []).map(mapDbReview),
+        [dbReviews],
+    );
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
     const pricingSectionRef = useRef<HTMLDivElement>(null);
 
-    const REVIEWS_PER_PAGE = 4;
+    // const REVIEWS_PER_PAGE = 4;
 
     const ratingBreakdown = [5, 4, 3, 2, 1].map((star) => ({
         star,
@@ -1006,13 +1008,13 @@ export default function SubCategoryShow({
         return matchesRating && matchesFiles;
     });
 
-    const totalReviewPages = Math.ceil(
-        filteredReviews.length / REVIEWS_PER_PAGE,
-    );
-    const pagedReviews = filteredReviews.slice(
-        (reviewPage - 1) * REVIEWS_PER_PAGE,
-        reviewPage * REVIEWS_PER_PAGE,
-    );
+    // const totalReviewPages = Math.ceil(
+    //     filteredReviews.length / REVIEWS_PER_PAGE,
+    // );
+    // const pagedReviews = filteredReviews.slice(
+    //     (reviewPage - 1) * REVIEWS_PER_PAGE,
+    //     reviewPage * REVIEWS_PER_PAGE,
+    // );
 
     const scrollToPricing = () =>
         pricingSectionRef.current?.scrollIntoView({
@@ -1555,288 +1557,285 @@ export default function SubCategoryShow({
                         </motion.div>
                     </div>
 
-                                            {/* Reviews */}
-                        <motion.div
-                            ref={reviewsSectionRef}
-                            variants={fadeUp}
-                            className="space-y-8"
-                        >
-                            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-theme">
-                                        Client Reviews
-                                    </h2>
-                                    <div className="mt-2 flex items-center gap-2">
-                                        <div className="flex text-amber-400">
-                                            {[1, 2, 3, 4, 5].map((s) => (
-                                                <Star
-                                                    key={s}
-                                                    className="h-4 w-4 fill-current"
-                                                />
-                                            ))}
-                                        </div>
-                                        <span className="text-lg font-bold text-theme">
-                                            {mappedReviews.length > 0
-                                                ? (
-                                                      mappedReviews.reduce(
-                                                          (sum, r) =>
-                                                              sum + r.rating,
-                                                          0,
-                                                      ) / mappedReviews.length
-                                                  ).toFixed(1)
-                                                : '—'}
-                                        </span>
-                                        <span className="text-sm text-theme-subtle">
-                                            ({mappedReviews.length} verified
-                                            {mappedReviews.length === 1
-                                                ? ' review'
-                                                : ' reviews'}
-                                            )
-                                        </span>
+                    {/* Reviews */}
+                    <motion.div
+                        ref={reviewsSectionRef}
+                        variants={fadeUp}
+                        className="space-y-8"
+                    >
+                        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                            <div>
+                                <h2 className="text-2xl font-bold text-theme">
+                                    Client Reviews
+                                </h2>
+                                <div className="mt-2 flex items-center gap-2">
+                                    <div className="flex text-amber-400">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                            <Star
+                                                key={s}
+                                                className="h-4 w-4 fill-current"
+                                            />
+                                        ))}
                                     </div>
-                                </div>
-
-                                {/* Rating Breakdown */}
-                                <div className="flex w-full max-w-xs flex-col gap-2">
-                                    {ratingBreakdown.map((row) => (
-                                        <button
-                                            key={row.star}
-                                            onClick={() =>
-                                                setRatingFilter(
-                                                    ratingFilter === row.star
-                                                        ? null
-                                                        : row.star,
-                                                )
-                                            }
-                                            className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
-                                        >
-                                            <span className="flex w-12 items-center gap-1 text-xs font-bold text-theme-subtle">
-                                                {row.star}{' '}
-                                                <Star className="h-3 w-3 fill-current text-amber-500" />
-                                            </span>
-                                            <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{
-                                                        width: `${(row.count / mappedReviews.length) * 100}%`,
-                                                    }}
-                                                    className="absolute inset-y-0 left-0 bg-amber-500"
-                                                />
-                                            </div>
-                                            <span className="w-6 text-right text-xs font-medium text-theme-subtle">
-                                                {row.count}
-                                            </span>
-                                        </button>
-                                    ))}
+                                    <span className="text-lg font-bold text-theme">
+                                        {mappedReviews.length > 0
+                                            ? (
+                                                  mappedReviews.reduce(
+                                                      (sum, r) =>
+                                                          sum + r.rating,
+                                                      0,
+                                                  ) / mappedReviews.length
+                                              ).toFixed(1)
+                                            : '—'}
+                                    </span>
+                                    <span className="text-sm text-theme-subtle">
+                                        ({mappedReviews.length} verified
+                                        {mappedReviews.length === 1
+                                            ? ' review'
+                                            : ' reviews'}
+                                        )
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-4 border-b border-theme pb-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="text-sm text-theme-muted">
-                                    {ratingFilter || hasFilesFilter ? (
-                                        <span className="flex flex-wrap items-center gap-2">
-                                            Showing {filteredReviews.length}{' '}
-                                            reviews
-                                            {ratingFilter && (
-                                                <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/20 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-500">
-                                                    {ratingFilter} Stars
-                                                </span>
-                                            )}
-                                            {hasFilesFilter && (
-                                                <span className="inline-flex items-center gap-1 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-500">
-                                                    With Media
-                                                </span>
-                                            )}
-                                            <button
-                                                onClick={() => {
-                                                    setRatingFilter(null);
-                                                    setHasFilesFilter(false);
-                                                }}
-                                                className="inline-flex items-center gap-1 rounded-md bg-theme-surface px-2 py-1 text-[10px] font-bold text-theme transition-colors hover:bg-theme-surface-hover"
-                                            >
-                                                <FilterX className="h-3 w-3" />{' '}
-                                                Clear All
-                                            </button>
+                            {/* Rating Breakdown */}
+                            <div className="flex w-full max-w-xs flex-col gap-2">
+                                {ratingBreakdown.map((row) => (
+                                    <button
+                                        key={row.star}
+                                        onClick={() =>
+                                            setRatingFilter(
+                                                ratingFilter === row.star
+                                                    ? null
+                                                    : row.star,
+                                            )
+                                        }
+                                        className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
+                                    >
+                                        <span className="flex w-12 items-center gap-1 text-xs font-bold text-theme-subtle">
+                                            {row.star}{' '}
+                                            <Star className="h-3 w-3 fill-current text-amber-500" />
                                         </span>
-                                    ) : mappedReviews.length > 0 ? (
-                                        `Showing all ${mappedReviews.length} review${mappedReviews.length === 1 ? '' : 's'}`
-                                    ) : (
-                                        'No reviews yet'
-                                    )}
-                                </div>
+                                        <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{
+                                                    width: `${(row.count / mappedReviews.length) * 100}%`,
+                                                }}
+                                                className="absolute inset-y-0 left-0 bg-amber-500"
+                                            />
+                                        </div>
+                                        <span className="w-6 text-right text-xs font-medium text-theme-subtle">
+                                            {row.count}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                                <button
-                                    onClick={() =>
-                                        setHasFilesFilter(!hasFilesFilter)
-                                    }
-                                    className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
-                                        hasFilesFilter
-                                            ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
-                                            : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
-                                    }`}
-                                >
-                                    <ImageIcon className="h-3.5 w-3.5" />
-                                    With Photos/Videos
-                                </button>
+                        <div className="flex flex-col gap-4 border-b border-theme pb-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="text-sm text-theme-muted">
+                                {ratingFilter || hasFilesFilter ? (
+                                    <span className="flex flex-wrap items-center gap-2">
+                                        Showing {filteredReviews.length} reviews
+                                        {ratingFilter && (
+                                            <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/20 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-500">
+                                                {ratingFilter} Stars
+                                            </span>
+                                        )}
+                                        {hasFilesFilter && (
+                                            <span className="inline-flex items-center gap-1 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-500">
+                                                With Media
+                                            </span>
+                                        )}
+                                        <button
+                                            onClick={() => {
+                                                setRatingFilter(null);
+                                                setHasFilesFilter(false);
+                                            }}
+                                            className="inline-flex items-center gap-1 rounded-md bg-theme-surface px-2 py-1 text-[10px] font-bold text-theme transition-colors hover:bg-theme-surface-hover"
+                                        >
+                                            <FilterX className="h-3 w-3" />{' '}
+                                            Clear All
+                                        </button>
+                                    </span>
+                                ) : mappedReviews.length > 0 ? (
+                                    `Showing all ${mappedReviews.length} review${mappedReviews.length === 1 ? '' : 's'}`
+                                ) : (
+                                    'No reviews yet'
+                                )}
                             </div>
 
-                            {/* Review submission form — shown only to eligible user */}
-                            {reviewEligibleTask && !reviewSubmitted && (
-                                <ReviewForm
-                                    taskId={reviewEligibleTask.id}
-                                    onSuccess={() => setReviewSubmitted(true)}
-                                />
-                            )}
-
-                            {/* Success message after submission */}
-                            {reviewSubmitted && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5"
-                                >
-                                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-400" />
-                                    <p className="text-sm font-semibold text-emerald-400">
-                                        Your review has been submitted. Thank
-                                        you!
-                                    </p>
-                                </motion.div>
-                            )}
-
-                            <motion.div
-                                variants={stagger}
-                                initial="hidden"
-                                animate="visible"
-                                className="space-y-4"
+                            <button
+                                onClick={() =>
+                                    setHasFilesFilter(!hasFilesFilter)
+                                }
+                                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
+                                    hasFilesFilter
+                                        ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
+                                        : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
+                                }`}
                             >
-                                <AnimatePresence mode="popLayout">
-                                    {filteredReviews.length > 0 ? (
-                                        filteredReviews.map((review, i) => (
-                                            <motion.div
-                                                key={review.user + i}
-                                                layout
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{
-                                                    opacity: 0,
-                                                    scale: 0.95,
-                                                }}
-                                                variants={fadeUp}
-                                                className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
-                                            >
-                                                <div className="flex flex-col gap-6 md:flex-row">
-                                                    <div className="flex-1">
-                                                        <div className="mb-4 flex items-center justify-between">
-                                                            <div className="flex items-center gap-4">
-                                                                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
-                                                                    <User className="h-5 w-5 text-theme-subtle" />
-                                                                </div>
-                                                                <div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <h4 className="font-bold text-theme">
-                                                                            {
-                                                                                review.user
-                                                                            }
-                                                                        </h4>
-                                                                        {review.isRepeatClient && (
-                                                                            <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
-                                                                                <Repeat className="h-2.5 w-2.5" />{' '}
-                                                                                Repeat
-                                                                                Client
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                    <span className="text-xs text-theme-muted">
-                                                                        {
-                                                                            review.date
-                                                                        }
-                                                                    </span>
-                                                                </div>
+                                <ImageIcon className="h-3.5 w-3.5" />
+                                With Photos/Videos
+                            </button>
+                        </div>
+
+                        {/* Review submission form — shown only to eligible user */}
+                        {reviewEligibleTask && !reviewSubmitted && (
+                            <ReviewForm
+                                taskId={reviewEligibleTask.id}
+                                onSuccess={() => setReviewSubmitted(true)}
+                            />
+                        )}
+
+                        {/* Success message after submission */}
+                        {reviewSubmitted && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5"
+                            >
+                                <CheckCircle className="h-5 w-5 shrink-0 text-emerald-400" />
+                                <p className="text-sm font-semibold text-emerald-400">
+                                    Your review has been submitted. Thank you!
+                                </p>
+                            </motion.div>
+                        )}
+
+                        <motion.div
+                            variants={stagger}
+                            initial="hidden"
+                            animate="visible"
+                            className="space-y-4"
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {filteredReviews.length > 0 ? (
+                                    filteredReviews.map((review, i) => (
+                                        <motion.div
+                                            key={review.user + i}
+                                            layout
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{
+                                                opacity: 0,
+                                                scale: 0.95,
+                                            }}
+                                            variants={fadeUp}
+                                            className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
+                                        >
+                                            <div className="flex flex-col gap-6 md:flex-row">
+                                                <div className="flex-1">
+                                                    <div className="mb-4 flex items-center justify-between">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                                <User className="h-5 w-5 text-theme-subtle" />
                                                             </div>
-                                                            <div className="flex text-amber-400">
-                                                                {[
-                                                                    1, 2, 3, 4, 5,
-                                                                ].map((s) => (
-                                                                    <Star
-                                                                        key={s}
-                                                                        className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-theme-muted/20'}`}
-                                                                    />
-                                                                ))}
+                                                            <div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <h4 className="font-bold text-theme">
+                                                                        {
+                                                                            review.user
+                                                                        }
+                                                                    </h4>
+                                                                    {review.isRepeatClient && (
+                                                                        <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
+                                                                            <Repeat className="h-2.5 w-2.5" />{' '}
+                                                                            Repeat
+                                                                            Client
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <span className="text-xs text-theme-muted">
+                                                                    {
+                                                                        review.date
+                                                                    }
+                                                                </span>
                                                             </div>
                                                         </div>
-
-                                                        <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
-                                                            "{review.review}"
-                                                        </p>
-
-                                                        <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
-                                                            {review.priceRange && (
-                                                                <div className="flex items-center gap-1.5">
-                                                                    <DollarSign className="h-3 w-3 text-emerald-500" />
-                                                                    <span>
-                                                                        Price:{' '}
-                                                                        {
-                                                                            review.priceRange
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                            {review.duration && (
-                                                                <div className="flex items-center gap-1.5">
-                                                                    <Clock className="h-3 w-3 text-cyan-500" />
-                                                                    <span>
-                                                                        Duration:{' '}
-                                                                        {
-                                                                            review.duration
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            )}
+                                                        <div className="flex text-amber-400">
+                                                            {[
+                                                                1, 2, 3, 4, 5,
+                                                            ].map((s) => (
+                                                                <Star
+                                                                    key={s}
+                                                                    className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-theme-muted/20'}`}
+                                                                />
+                                                            ))}
                                                         </div>
                                                     </div>
 
-                                                    {/* Review Attachments */}
-                                                    {review.files &&
-                                                        review.files.length > 0 && (
-                                                            <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
-                                                                {review.files.map(
-                                                                    (
-                                                                        file,
-                                                                        fIdx,
-                                                                    ) => (
-                                                                        <button
-                                                                            key={
-                                                                                fIdx
-                                                                            }
-                                                                            onClick={() =>
-                                                                                setReviewLightboxItem(
-                                                                                    file,
-                                                                                )
-                                                                            }
-                                                                            className="w-full text-left"
-                                                                        >
-                                                                            <ReviewMedia
-                                                                                file={
-                                                                                    file
-                                                                                }
-                                                                            />
-                                                                        </button>
-                                                                    ),
-                                                                )}
+                                                    <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
+                                                        "{review.review}"
+                                                    </p>
+
+                                                    <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                                        {review.priceRange && (
+                                                            <div className="flex items-center gap-1.5">
+                                                                <DollarSign className="h-3 w-3 text-emerald-500" />
+                                                                <span>
+                                                                    Price:{' '}
+                                                                    {
+                                                                        review.priceRange
+                                                                    }
+                                                                </span>
                                                             </div>
                                                         )}
+                                                        {review.duration && (
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Clock className="h-3 w-3 text-cyan-500" />
+                                                                <span>
+                                                                    Duration:{' '}
+                                                                    {
+                                                                        review.duration
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </motion.div>
-                                        ))
-                                    ) : (
-                                        <div className="py-12 text-center text-theme-subtle">
-                                            No reviews found for this rating
-                                            level.
-                                        </div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
+
+                                                {/* Review Attachments */}
+                                                {review.files &&
+                                                    review.files.length > 0 && (
+                                                        <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
+                                                            {review.files.map(
+                                                                (
+                                                                    file,
+                                                                    fIdx,
+                                                                ) => (
+                                                                    <button
+                                                                        key={
+                                                                            fIdx
+                                                                        }
+                                                                        onClick={() =>
+                                                                            setReviewLightboxItem(
+                                                                                file,
+                                                                            )
+                                                                        }
+                                                                        className="w-full text-left"
+                                                                    >
+                                                                        <ReviewMedia
+                                                                            file={
+                                                                                file
+                                                                            }
+                                                                        />
+                                                                    </button>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <div className="py-12 text-center text-theme-subtle">
+                                        No reviews found for this rating level.
+                                    </div>
+                                )}
+                            </AnimatePresence>
                         </motion.div>
+                    </motion.div>
 
                     {/* ── RECOMMENDED SERVICES (unchanged) ── */}
                     {recommendedServices.length > 0 && (
