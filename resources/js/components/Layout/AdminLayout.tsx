@@ -17,9 +17,6 @@ import {
     Star,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import CursorSelector, {
-    useCursorPreference,
-} from '@/components/UI/CursorSelector';
 import adminRoutes from '@/routes/admin';
 
 interface AdminLayoutProps {
@@ -29,7 +26,6 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const { auth, flash } = usePage<SharedPageProps>().props;
-    const { cursorType } = useCursorPreference();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
@@ -78,11 +74,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     ];
 
     return (
-        <div
-            className="min-h-screen bg-[#050B14] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.15),rgba(255,255,255,0))] font-sans text-slate-200 selection:bg-cyan-500/30"
-            data-cursor={cursorType}
-        >
-            <CursorSelector cursorType={cursorType} />
+        <div className="min-h-screen bg-[#050B14] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.15),rgba(255,255,255,0))] font-sans text-slate-200 selection:bg-cyan-500/30">
             {title && <Head title={`${title} - Admin Panel`} />}
 
             {/* General App Toast / Flash Notification */}

@@ -437,7 +437,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         const thumb = strip.children[activeIndex] as HTMLElement | undefined;
 
         if (thumb) {
-            thumb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            thumb.scrollIntoView({ inline: 'nearest', behavior: 'smooth' });
         }
     }, [activeIndex]);
 
@@ -469,7 +469,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     if (!slides) {
         return (
-            <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[2rem] border border-theme bg-theme-surface">
+            <div className="flex h-[100dvh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
                 <ImageIcon className="h-10 w-10 text-theme-subtle" />
                 <p className="text-sm font-medium text-theme-muted">
                     Portfolio coming soon
@@ -482,126 +482,123 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     return (
         <>
-            <div className="flex gap-3">
-                {/* Main featured view */}
-                <div
-                    className="group relative min-w-0 flex-1 overflow-hidden rounded-[2rem] border border-theme bg-theme-surface"
-                    style={{ aspectRatio: '16/9' }}
+            <div className="group relative h-[100dvh] w-full overflow-hidden">
+                {/* Slides — full screen */}
+                <AnimatePresence
+                    initial={false}
+                    custom={direction}
+                    mode="popLayout"
                 >
-                    <AnimatePresence
-                        initial={false}
+                    <motion.div
+                        key={activeIndex}
                         custom={direction}
-                        mode="popLayout"
+                        variants={slideVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        className="absolute inset-0"
                     >
+                        {active.media_type === 'video' ? (
+                            <video
+                                ref={videoRef}
+                                src={active.media_path ?? undefined}
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            <img
+                                src={active.media_path ?? PLACEHOLDER}
+                                alt={active.alt}
+                                onError={(e) => {
+                                    e.currentTarget.src = PLACEHOLDER;
+                                }}
+                                className="h-full w-full object-cover"
+                            />
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Bottom gradient */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-72 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+                {/* Video progress bar */}
+                {active.media_type === 'video' && (
+                    <div className="absolute inset-x-0 bottom-0 z-30 h-0.5 bg-white/10">
                         <motion.div
-                            key={activeIndex}
-                            custom={direction}
-                            variants={slideVariants}
-                            initial="enter"
-                            animate="center"
-                            exit="exit"
-                            className="absolute inset-0"
-                        >
-                            {active.media_type === 'video' ? (
-                                <video
-                                    ref={videoRef}
-                                    src={active.media_path ?? undefined}
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
-                                <img
-                                    src={active.media_path ?? PLACEHOLDER}
-                                    alt={active.alt}
-                                    onError={(e) => {
-                                        e.currentTarget.src = PLACEHOLDER;
-                                    }}
-                                    className="h-full w-full object-cover"
-                                />
-                            )}
+                            className="h-full bg-cyan-400"
+                            style={{ width: `${videoProgress}%` }}
+                            transition={{ duration: 0.1 }}
+                        />
+                    </div>
+                )}
 
-                            {/* Caption */}
-                            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent p-6 pb-8">
-                                <p className="text-sm font-semibold text-white">
-                                    {active.title}
-                                </p>
-                                {active.media_type === 'video' && (
-                                    <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
-                                        <Film className="h-3 w-3" /> Video
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Video progress bar */}
-                            {active.media_type === 'video' && (
-                                <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
-                                    <motion.div
-                                        className="h-full bg-cyan-400"
-                                        style={{ width: `${videoProgress}%` }}
-                                        transition={{ duration: 0.1 }}
-                                    />
-                                </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Play/Pause overlay for video */}
-                    {active.media_type === 'video' && (
-                        <button
-                            type="button"
-                            onClick={togglePlayPause}
-                            className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                            aria-label={
-                                isPlaying ? 'Pause video' : 'Play video'
-                            }
-                        >
-                            {isPlaying ? (
-                                <Pause className="h-4 w-4" />
-                            ) : (
-                                <Play className="h-4 w-4" />
-                            )}
-                        </button>
-                    )}
-
-                    {/* Fullscreen button */}
+                {/* Play/Pause */}
+                {active.media_type === 'video' && (
                     <button
                         type="button"
-                        onClick={() => setIsLightboxOpen(true)}
-                        className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                        aria-label="View fullscreen"
+                        onClick={togglePlayPause}
+                        className="absolute top-6 left-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                        aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
-                        <Maximize2 className="h-4 w-4" />
+                        {isPlaying ? (
+                            <Pause className="h-4 w-4" />
+                        ) : (
+                            <Play className="h-4 w-4" />
+                        )}
                     </button>
+                )}
 
-                    {/* Navigation arrows */}
-                    {slides.length > 1 && (
-                        <>
-                            <button
-                                onClick={goPrev}
-                                className="absolute top-1/2 left-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                                aria-label="Previous slide"
-                            >
-                                <ChevronLeft className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={goNext}
-                                className="absolute top-1/2 right-4 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                                aria-label="Next slide"
-                            >
-                                <ChevronRight className="h-5 w-5" />
-                            </button>
-                        </>
+                {/* Fullscreen */}
+                <button
+                    type="button"
+                    onClick={() => setIsLightboxOpen(true)}
+                    className="absolute top-6 right-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                    aria-label="View fullscreen"
+                >
+                    <Maximize2 className="h-4 w-4" />
+                </button>
+
+                {/* Navigation arrows */}
+                {slides.length > 1 && (
+                    <>
+                        <button
+                            onClick={goPrev}
+                            className="absolute top-1/2 left-6 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                            aria-label="Previous slide"
+                        >
+                            <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                            onClick={goNext}
+                            className="absolute top-1/2 right-6 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                            aria-label="Next slide"
+                        >
+                            <ChevronRight className="h-5 w-5" />
+                        </button>
+                    </>
+                )}
+
+                {/* Caption */}
+                <div className="absolute bottom-20 left-6 z-20 md:bottom-24">
+                    <p className="text-sm font-semibold text-white drop-shadow">
+                        {active.title}
+                    </p>
+                    {active.media_type === 'video' && (
+                        <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
+                            <Film className="h-3 w-3" /> Video
+                        </span>
                     )}
                 </div>
 
-                {/* Vertical filmstrip */}
+                {/* Horizontal filmstrip overlay */}
                 {slides.length > 1 && (
                     <div
                         ref={filmstripRef}
-                        className="flex w-20 shrink-0 flex-col gap-2 overflow-y-auto"
+                        className="absolute inset-x-0 bottom-4 z-20 flex justify-center gap-2 overflow-x-auto px-4"
+                        style={{ scrollbarWidth: 'none' }}
                     >
                         {slides.map((item, i) => (
                             <button
@@ -609,20 +606,19 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 onClick={() =>
                                     goTo(i, i > activeIndex ? 1 : -1)
                                 }
-                                className={`relative h-20 w-full shrink-0 overflow-hidden rounded-xl transition-all duration-300 ${
+                                className={`relative h-12 w-20 shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${
                                     i === activeIndex
-                                        ? 'opacity-100 ring-2 ring-cyan-400 ring-offset-1 ring-offset-background'
-                                        : 'opacity-40 hover:opacity-70'
+                                        ? 'opacity-100 ring-2 ring-cyan-400 ring-offset-1 ring-offset-black/60'
+                                        : 'opacity-50 hover:opacity-80'
                                 }`}
                                 aria-label={`View ${item.title}`}
                             >
-                                {/* Left accent bar for active */}
                                 {i === activeIndex && (
-                                    <span className="absolute inset-y-0 left-0 z-10 w-0.5 rounded-r-full bg-cyan-400" />
+                                    <span className="absolute inset-x-0 top-0 z-10 h-0.5 rounded-b-full bg-cyan-400" />
                                 )}
                                 {item.media_type === 'video' ? (
-                                    <div className="flex h-full w-full items-center justify-center bg-theme-surface">
-                                        <Film className="h-4 w-4 text-theme-subtle" />
+                                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
+                                        <Film className="h-4 w-4 text-white/60" />
                                         {i === activeIndex && (
                                             <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
                                                 <div
@@ -1061,7 +1057,7 @@ export default function SubCategoryShow({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.7 }}
-                    className="relative w-full pt-20 md:pt-[72px]"
+                    className="relative w-full"
                 >
                     <GallerySlider items={displayPortfolios} />
                 </motion.div>
