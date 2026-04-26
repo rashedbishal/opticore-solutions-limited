@@ -60,6 +60,36 @@ interface UserPresencePayload {
     online: boolean;
 }
 
+function renderMessage(text: string): React.ReactNode {
+    const parts: React.ReactNode[] = [];
+    const pattern = /\[\[here:([^\]]+)\]\]/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = pattern.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push(text.slice(lastIndex, match.index));
+        }
+
+        parts.push(
+            <a
+                key={match.index}
+                href={match[1]}
+                className="font-bold underline"
+            >
+                here
+            </a>,
+        );
+        lastIndex = match.index + match[0].length;
+    }
+
+    if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+}
+
 function applyMessageStatuses(
     currentMessages: Message[],
     statuses: MessageStatusPayload['messages'],
@@ -734,7 +764,9 @@ export default function Index() {
                                                 )}
                                                 {msg.message && (
                                                     <p className="break-words whitespace-pre-wrap">
-                                                        {msg.message}
+                                                        {renderMessage(
+                                                            msg.message,
+                                                        )}
                                                     </p>
                                                 )}
                                             </div>

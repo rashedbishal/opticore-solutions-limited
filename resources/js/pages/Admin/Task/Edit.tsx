@@ -238,8 +238,17 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('date', e.target.value)
                                 }
+                                onClick={(e) => {
+                                    try {
+                                        (
+                                            e.currentTarget as HTMLInputElement
+                                        ).showPicker?.();
+                                    } catch {
+                                        // Fallback if showPicker is not supported or throws
+                                    }
+                                }}
                                 style={{ colorScheme: 'dark' }}
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="w-full cursor-pointer rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
                                 required
                             />
                             {errors.date && (

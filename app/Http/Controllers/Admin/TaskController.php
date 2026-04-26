@@ -217,11 +217,9 @@ class TaskController extends Controller
         $admin = Auth::guard('admin')->user();
         $senderId = $admin ? $admin->id : 0;
 
-        $serviceLine = $serviceUrl
-            ? "\n\nView the service page: {$serviceUrl}"
-            : '';
+        $reviewLink = $serviceUrl ? "[[here:{$serviceUrl}]]" : 'here';
 
-        $messageText = "🎉 Great news! Your task \"{$task->task_name}\" has been delivered!\n\nWe'd love to hear your feedback. You have 24 hours to leave a review for this service.{$serviceLine}\n\nThank you for choosing Opticore Solutions Ltd.!";
+        $messageText = "🎉 Great news! Your task \"{$task->task_name}\" has been delivered!\n\nWe'd love to hear your feedback. You have 24 hours to leave a review for this service {$reviewLink}.\n\nThank you for choosing Opticore Solutions Ltd.!";
 
         $userOnline = Cache::has("user_chat_online_{$user->id}");
 
