@@ -22,11 +22,9 @@ import {
     Maximize2,
     // BadgeCheck,
     Globe,
-    Languages,
     Info,
     HelpCircle,
     ChevronDown,
-    ChevronUp,
     FilterX,
     DollarSign,
     Repeat,
@@ -321,20 +319,18 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-theme bg-theme-surface transition-colors hover:bg-theme-surface-hover">
+        <div className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'glass-panel bg-theme-surface-hover shadow-lg' : 'border border-theme bg-theme-surface hover:bg-theme-surface-hover'}`}>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex w-full items-center justify-between p-5 text-left transition-colors"
+                className="flex w-full items-center justify-between p-6 text-left transition-colors"
             >
-                <span className="text-sm font-bold text-theme">
+                <span className={`text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-cyan-500' : 'text-theme'}`}>
                     {faq.question}
                 </span>
-                {isOpen ? (
-                    <ChevronUp className="h-4 w-4 text-theme-muted" />
-                ) : (
-                    <ChevronDown className="h-4 w-4 text-theme-muted" />
-                )}
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-theme transition-all duration-300 ${isOpen ? 'rotate-180 border-cyan-500/30 bg-cyan-500/10 text-cyan-500' : 'text-theme-muted'}`}>
+                    <ChevronDown className="h-4 w-4" />
+                </div>
             </button>
             <AnimatePresence initial={false}>
                 {isOpen && (
@@ -344,7 +340,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <div className="border-t border-theme p-5 pt-0">
+                        <div className="px-6 pb-6 pt-0">
                             <p className="text-sm leading-relaxed text-theme-muted">
                                 {faq.answer}
                             </p>
@@ -415,8 +411,6 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         if (!vid) {
             return;
         }
-
-        vid.play().catch(() => {});
 
         const onTimeUpdate = () => {
             if (vid.duration) {
@@ -502,9 +496,14 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                     >
                         {active.media_type === 'video' ? (
                             <video
-                                ref={videoRef}
+                                ref={(el) => {
+                                    videoRef.current = el;
+
+                                    if (el) {
+                                        el.play().catch(() => {});
+                                    }
+                                }}
                                 src={active.media_path ?? undefined}
-                                autoPlay
                                 muted
                                 loop
                                 playsInline
@@ -1174,7 +1173,7 @@ export default function SubCategoryShow({
                                 <div
                                     key={plan.id}
                                     onClick={() => setSelectedPlan(plan.id)}
-                                    className={`relative cursor-pointer rounded-[2rem] border p-6 transition-all duration-300 ${
+                                    className={`relative flex flex-col cursor-pointer rounded-[2rem] border p-6 transition-all duration-300 ${
                                         selectedPlan === plan.id
                                             ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
                                             : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
@@ -1226,7 +1225,7 @@ export default function SubCategoryShow({
                                             e.stopPropagation();
                                             handleHireNow(plan.id);
                                         }}
-                                        className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                        className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
                                     >
                                         Hire Now
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1253,15 +1252,19 @@ export default function SubCategoryShow({
                 </motion.div>
 
                 {/* ── TRUST METRICS (full-width section) ── */}
-                <div className="mt-16 w-full border-y border-theme bg-theme-surface/50">
+                <div className="group/trust relative mt-16 w-full overflow-hidden border-y border-theme bg-theme-surface/50 py-16">
+                    {/* Background decorations */}
+                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-40 transition-opacity group-hover/trust:opacity-60" />
+                    <div className="pointer-events-none absolute inset-0 bg-radial-[at_center,_var(--tw-gradient-from)_0%,_transparent_70%] from-cyan-500/5" />
+
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="mx-auto max-w-7xl px-4 py-16"
+                        className="relative z-10 mx-auto max-w-7xl px-4"
                     >
-                        <div className="mb-8 grid grid-cols-2 gap-y-8 sm:grid-cols-4">
+                        <div className="mb-12 grid grid-cols-2 gap-y-10 sm:grid-cols-4">
                             {[
                                 {
                                     value: '5.0',
@@ -1285,19 +1288,25 @@ export default function SubCategoryShow({
                                     suffix: null,
                                     label: 'Active Projects',
                                 },
-                            ].map((metric) => (
-                                <div
+                            ].map((metric, idx) => (
+                                <motion.div
                                     key={metric.label}
-                                    className="flex flex-col items-center gap-1 text-center"
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.1, duration: 0.5 }}
+                                    className="flex flex-col items-center gap-2 text-center"
                                 >
-                                    <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-5xl">
-                                        {metric.value}
+                                    <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-6xl lg:text-7xl">
+                                        <span className="bg-linear-to-b from-theme via-theme to-theme/40 bg-clip-text text-transparent">
+                                            {metric.value}
+                                        </span>
                                         {metric.suffix}
                                     </div>
-                                    <p className="text-sm text-theme-muted">
+                                    <p className="text-xs font-bold tracking-[0.2em] text-theme-muted uppercase">
                                         {metric.label}
                                     </p>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                         <div className="flex justify-center">
@@ -1314,7 +1323,15 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── SERVICE DESCRIPTION (full-width) ── */}
-                <div className="w-full py-20">
+                <div className="relative w-full overflow-hidden py-24">
+                    {/* Decorative background elements */}
+                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4">
+                        <div className="h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4">
+                        <div className="h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-[120px]" />
+                    </div>
+
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1323,50 +1340,60 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mx-auto max-w-4xl px-4"
+                        className="relative z-10 mx-auto max-w-4xl px-4"
                     >
-                            <div className="mb-6 flex items-start gap-4">
-                                <div className="mt-1 w-1 self-stretch rounded-full bg-cyan-500" />
-                                <div>
-                                    <h2 className="text-2xl font-bold text-theme">
-                                        Service Description
-                                    </h2>
-                                </div>
+                        <div className="mb-10 flex items-start gap-5">
+                            <div className="mt-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
+                                <Info className="h-5 w-5" />
                             </div>
-                            <p className="mb-8 text-base leading-relaxed text-theme-muted">
-                                {subCategory.description ??
-                                    `We provide high-quality, professional ${subCategory.name.toLowerCase()} tailored specifically to your brand's voice and goals. Our team of experts focuses on delivering visually stunning and commercially effective results that stand out in today's crowded digital landscape.`}
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                                {descriptionFeatures.map((item) => (
-                                    <div
-                                        key={item.label}
-                                        className="bg-theme-surface/50 flex flex-col items-center gap-3 rounded-2xl p-5 text-center transition-colors hover:bg-theme-surface"
-                                    >
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15">
-                                            <item.Icon className="h-6 w-6 text-cyan-500" />
-                                        </div>
-                                        <span className="text-sm font-semibold text-theme-muted">
-                                            {item.label}
-                                        </span>
-                                    </div>
-                                ))}
+                            <div>
+                                <h2 className="text-3xl font-black tracking-tight text-theme md:text-4xl">
+                                    Service Description
+                                </h2>
+                                <p className="mt-4 text-lg leading-relaxed text-theme-muted">
+                                    {subCategory.description ??
+                                        `We provide high-quality, professional ${subCategory.name.toLowerCase()} tailored specifically to your brand's voice and goals. Our team of experts focuses on delivering visually stunning and commercially effective results that stand out in today's crowded digital landscape.`}
+                                </p>
                             </div>
-                            <div className="mt-8 flex justify-start">
-                                <button
-                                    type="button"
-                                    onClick={scrollToPricing}
-                                    className="group flex items-center gap-2 rounded-2xl bg-foreground px-6 py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                            {descriptionFeatures.map((item, idx) => (
+                                <motion.div
+                                    key={item.label}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="glass-panel group flex flex-col items-center gap-3 rounded-3xl p-6 text-center transition-all hover:-translate-y-1 hover:bg-theme-surface-hover hover:shadow-xl"
                                 >
-                                    Hire Now
-                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                </button>
-                            </div>
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500 transition-colors group-hover:bg-cyan-500 group-hover:text-white">
+                                        <item.Icon className="h-6 w-6" />
+                                    </div>
+                                    <span className="text-sm font-bold text-theme">
+                                        {item.label}
+                                    </span>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        <div className="mt-12 flex justify-center md:justify-start">
+                            <button
+                                type="button"
+                                onClick={scrollToPricing}
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                            >
+                                Hire Now
+                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                        </div>
                     </motion.div>
                 </div>
 
                 {/* ── ABOUT + BACKGROUND (full-width with bg) ── */}
-                <div className="w-full bg-theme-surface/30 py-20">
+                <div className="relative w-full overflow-hidden bg-theme-surface/30 py-24">
+                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
+                    
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1375,36 +1402,40 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mx-auto max-w-4xl px-4"
+                        className="relative z-10 mx-auto max-w-5xl px-4"
                     >
-                        <div className="overflow-hidden rounded-[2rem] border border-theme">
+                        <div className="glass-panel overflow-hidden rounded-[2.5rem] bg-theme-surface/40 shadow-2xl backdrop-blur-xl">
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
-                                <div className="space-y-5 p-8 md:p-10">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-500">
-                                            <Globe className="h-5 w-5" />
+                                <div className="relative space-y-6 p-10 md:p-12">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-500">
+                                            <Globe className="h-6 w-6" />
                                         </div>
-                                        <h2 className="text-xl font-bold text-theme">
+                                        <h2 className="text-2xl font-black text-theme">
                                             Background
                                         </h2>
                                     </div>
-                                    <p className="text-sm leading-relaxed text-theme-muted">
-                                        <span className="font-bold text-theme">
-                                            Opticore Solutions LTD.
-                                        </span>{' '}
-                                        operates from{' '}
-                                        <span className="text-cyan-500">
-                                            New Mexico, USA
-                                        </span>{' '}
-                                        and{' '}
-                                        <span className="text-cyan-500">
-                                            Dhaka, Bangladesh
-                                        </span>
-                                        .
-                                    </p>
-                                    <div className="flex items-center gap-3">
-                                        <Languages className="h-4 w-4 shrink-0 text-theme-subtle" />
+                                    <div className="space-y-4">
+                                        <p className="text-base leading-relaxed text-theme-muted">
+                                            <span className="font-bold text-theme">
+                                                Opticore Solutions LTD.
+                                            </span>{' '}
+                                            is a globally distributed team operating from the heart of tech hubs.
+                                        </p>
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
+                                                <span className="text-sm font-semibold text-theme">New Mexico, USA</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
+                                                <span className="text-sm font-semibold text-theme">Dhaka, Bangladesh</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4">
+                                        <p className="mb-3 text-[10px] font-bold tracking-widest text-theme-muted uppercase">Supported Languages</p>
                                         <div className="flex flex-wrap gap-2">
                                             {[
                                                 { name: 'English', flag: '🇺🇸' },
@@ -1413,7 +1444,7 @@ export default function SubCategoryShow({
                                             ].map((lang) => (
                                                 <span
                                                     key={lang.name}
-                                                    className="flex items-center gap-1.5 rounded-full border border-theme bg-theme-surface px-3 py-1 text-[10px] font-bold tracking-widest text-theme-muted uppercase"
+                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface/50 px-4 py-2 text-xs font-bold text-theme transition-colors hover:bg-theme-surface"
                                                 >
                                                     <span>{lang.flag}</span>
                                                     {lang.name}
@@ -1424,16 +1455,16 @@ export default function SubCategoryShow({
                                 </div>
 
                                 {/* Right: About Us */}
-                                <div className="flex flex-col gap-5 border-t border-theme p-8 md:border-t-0 md:border-l md:p-10">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
-                                            <Info className="h-5 w-5" />
+                                <div className="relative flex flex-col gap-6 bg-linear-to-br from-cyan-500/[0.03] to-violet-500/[0.03] p-10 md:p-12">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
+                                            <Info className="h-6 w-6" />
                                         </div>
-                                        <h2 className="text-xl font-bold text-theme">
+                                        <h2 className="text-2xl font-black text-theme">
                                             About Us
                                         </h2>
                                     </div>
-                                    <p className="text-sm leading-relaxed text-theme-muted">
+                                    <p className="text-base leading-relaxed text-theme-muted">
                                         Opticore is a multidisciplinary creative
                                         agency dedicated to bridging the gap
                                         between high-end strategy and technical
@@ -1442,13 +1473,13 @@ export default function SubCategoryShow({
                                         design, and scalable web solutions that
                                         leave a lasting impact.
                                     </p>
-                                    <div className="mt-auto">
+                                    <div className="mt-auto pt-8">
                                         <button
                                             type="button"
                                             onClick={scrollToPricing}
-                                            className="group flex items-center gap-2 rounded-2xl bg-foreground px-5 py-3 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white md:w-auto"
                                         >
-                                            Hire Now
+                                            Start Project
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                         </button>
                                     </div>
@@ -1459,7 +1490,7 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── FAQs (full-width with border) ── */}
-                <div className="w-full border-y border-theme py-20">
+                <div className="relative w-full border-y border-theme bg-linear-to-b from-transparent via-cyan-500/[0.02] to-transparent py-24">
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1470,32 +1501,34 @@ export default function SubCategoryShow({
                         }}
                         className="mx-auto max-w-4xl px-4"
                     >
-                            <div className="mb-6 flex items-start gap-4">
-                                <div className="mt-1 w-1 self-stretch rounded-full bg-amber-500" />
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
-                                        <HelpCircle className="h-5 w-5" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-theme">
-                                        Service FAQs
-                                    </h2>
-                                </div>
+                        <div className="mb-12 flex flex-col items-center text-center">
+                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
+                                <HelpCircle className="h-7 w-7" />
                             </div>
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                {faqs.map((faq, idx) => (
-                                    <FaqAccordionItem key={idx} faq={faq} />
-                                ))}
-                            </div>
-                            <div className="mt-8 flex justify-start">
-                                <button
-                                    type="button"
-                                    onClick={scrollToPricing}
-                                    className="group flex items-center gap-2 rounded-2xl bg-foreground px-6 py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
-                                >
-                                    Hire Now
-                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                </button>
-                            </div>
+                            <h2 className="text-3xl font-black tracking-tight text-theme md:text-4xl">
+                                Service FAQs
+                            </h2>
+                            <p className="mt-4 text-theme-muted">
+                                Everything you need to know about our {subCategory.name.toLowerCase()} service.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {faqs.map((faq, idx) => (
+                                <FaqAccordionItem key={idx} faq={faq} />
+                            ))}
+                        </div>
+
+                        <div className="mt-12 flex justify-center">
+                            <button
+                                type="button"
+                                onClick={scrollToPricing}
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                            >
+                                Hire Now
+                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                        </div>
                     </motion.div>
                 </div>
 
