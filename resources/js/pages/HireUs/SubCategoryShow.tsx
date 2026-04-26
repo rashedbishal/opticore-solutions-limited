@@ -38,7 +38,6 @@ import {
     Headset,
     Crown,
     Layers,
-    Upload,
     PenLine,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
@@ -135,6 +134,7 @@ type Review = {
     duration: string | null;
     date: string;
     isRepeatClient: boolean;
+    hasRealImage: boolean;
     files?: { type: 'image' | 'video'; url: string }[];
 };
 
@@ -148,9 +148,10 @@ function mapDbReview(r: DbReview): Review {
         duration: r.work_duration,
         date: r.created_at,
         isRepeatClient: r.client_type === 'repeat',
+        hasRealImage: !!r.image_url,
         files: r.image_url
             ? [{ type: 'image' as const, url: r.image_url }]
-            : [],
+            : [{ type: 'image' as const, url: PLACEHOLDER }],
     };
 }
 
@@ -738,39 +739,23 @@ function ReviewForm({
         task_id: number;
         rating: number;
         comment: string;
-        image: File | null;
         price_range: string;
         work_duration: string;
     }>({
         task_id: taskId,
         rating: 0,
         comment: '',
-        image: null,
         price_range: '',
         work_duration: '',
     });
 
     const [hoverRating, setHoverRating] = useState(0);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] ?? null;
-        setData('image', file);
-
-        if (file) {
-            setImagePreview(URL.createObjectURL(file));
-        } else {
-            setImagePreview(null);
-        }
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post('/reviews', {
-            forceFormData: true,
             onSuccess: () => {
                 reset();
-                setImagePreview(null);
                 onSuccess();
             },
         });
@@ -891,51 +876,6 @@ function ReviewForm({
                     </div>
                 </div>
 
-                {/* Image upload */}
-                <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                        Work Proof (optional image)
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-theme bg-theme-surface p-4 transition-colors hover:border-cyan-500/50 hover:bg-theme-surface-hover">
-                        <Upload className="h-5 w-5 shrink-0 text-theme-subtle" />
-                        <span className="text-sm text-theme-muted">
-                            {imagePreview
-                                ? 'Change image'
-                                : 'Upload image (max 4 MB)'}
-                        </span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                        />
-                    </label>
-                    {imagePreview && (
-                        <div className="relative mt-2 h-24 w-24 overflow-hidden rounded-xl border border-theme">
-                            <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="h-full w-full object-cover"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setData('image', null);
-                                    setImagePreview(null);
-                                }}
-                                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
-                            >
-                                <X className="h-3 w-3" />
-                            </button>
-                        </div>
-                    )}
-                    {errors.image && (
-                        <p className="mt-1 text-xs text-red-400">
-                            {errors.image}
-                        </p>
-                    )}
-                </div>
-
                 <button
                     type="submit"
                     disabled={processing || data.rating === 0}
@@ -1001,9 +941,7 @@ export default function SubCategoryShow({
 
     const filteredReviews = mappedReviews.filter((r) => {
         const matchesRating = ratingFilter ? r.rating === ratingFilter : true;
-        const matchesFiles = hasFilesFilter
-            ? r.files && r.files.length > 0
-            : true;
+        const matchesFiles = hasFilesFilter ? r.hasRealImage : true;
 
         return matchesRating && matchesFiles;
     });
