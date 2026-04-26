@@ -11,7 +11,7 @@ import {
     ArrowDown,
     User,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -198,7 +198,7 @@ function ReviewCard({
     );
 }
 
-export default function ClientReviewIndex({ grouped: serverGrouped }: Props) {
+function ClientReviewIndex({ grouped: serverGrouped }: Props) {
     // Local state drives immediate animation; server call persists the order.
     const [grouped, setGrouped] = useState(serverGrouped);
 
@@ -325,6 +325,10 @@ export default function ClientReviewIndex({ grouped: serverGrouped }: Props) {
         </AdminLayout>
     );
 }
+
+ClientReviewIndex.layout = (page: React.ReactNode) => page;
+
+export default ClientReviewIndex;
 
 function CategorySection({
     categorySlug,
