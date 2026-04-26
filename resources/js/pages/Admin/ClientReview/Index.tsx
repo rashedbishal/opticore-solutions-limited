@@ -456,3 +456,5 @@ function CategorySection({
         </div>
     );
 }
+
+ClientReviewIndex.layout = (page: any) => page;
