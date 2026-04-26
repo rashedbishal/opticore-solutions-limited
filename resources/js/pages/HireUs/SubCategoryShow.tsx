@@ -1,6 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     MessageSquare,
@@ -28,7 +28,7 @@ import {
     ChevronDown,
     ChevronUp,
     FilterX,
-    // DollarSign,
+    DollarSign,
     Repeat,
     Palette,
     FileText,
@@ -38,8 +38,10 @@ import {
     Headset,
     Crown,
     Layers,
+    Upload,
+    PenLine,
 } from 'lucide-react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import Modal from '@/components/UI/Modal';
 
@@ -82,12 +84,26 @@ interface RecommendedService {
     image: string | null;
 }
 
+interface DbReview {
+    id: number;
+    username: string;
+    client_type: 'new' | 'repeat';
+    rating: number;
+    comment: string;
+    image_url: string | null;
+    price_range: string | null;
+    work_duration: string | null;
+    created_at: string;
+}
+
 interface Props {
     category: Category;
     subCategory: SubCategory;
     portfolios: PortfolioItem[];
     siblingSubCategories: Array<{ name: string; slug: string }>;
     recommendedServices: RecommendedService[];
+    reviews: DbReview[];
+    reviewEligibleTask: { id: number } | null;
 }
 
 // ─── Animation Variants ────────────────────────────────────────────────────
@@ -107,6 +123,36 @@ const stagger: Variants = {
 };
 
 const PLACEHOLDER = 'https://placehold.co/1200x675/0a0a0a/27272a?text=Opticore';
+
+// ─── Review shape used by the template ──────────────────────────────────────
+
+type Review = {
+    id: number;
+    user: string;
+    review: string;
+    rating: number;
+    priceRange: string | null;
+    duration: string | null;
+    date: string;
+    isRepeatClient: boolean;
+    files?: { type: 'image' | 'video'; url: string }[];
+};
+
+function mapDbReview(r: DbReview): Review {
+    return {
+        id: r.id,
+        user: r.username,
+        review: r.comment,
+        rating: r.rating,
+        priceRange: r.price_range,
+        duration: r.work_duration,
+        date: r.created_at,
+        isRepeatClient: r.client_type === 'repeat',
+        files: r.image_url
+            ? [{ type: 'image' as const, url: r.image_url }]
+            : [],
+    };
+}
 
 // ─── Mock Portfolio Data ────────────────────────────────────────────────────
 
@@ -230,111 +276,10 @@ const PLANS = [
 
 type PlanId = (typeof PLANS)[number]['id'];
 
+
 // ─── Chat Message Type ──────────────────────────────────────────────────────
 
 type ChatMessage = { role: 'team' | 'user'; content: string; time: string };
-
-// ─── Static Reviews ─────────────────────────────────────────────────────────
-
-type Review = {
-    user: string;
-    location: string;
-    flag: string;
-    review: string;
-    rating: number;
-    priceRange: string;
-    duration: string;
-    date: string;
-    isRepeatClient: boolean;
-    files?: { type: 'image' | 'video'; url: string }[];
-};
-
-const REVIEWS: Review[] = [
-    {
-        user: 'Alex M.',
-        location: 'United States',
-        flag: '🇺🇸',
-        review: 'Exceptional work! Communication was smooth and the final result exceeded my expectations. Will definitely hire again.',
-        rating: 5,
-        priceRange: '$25 - $50',
-        duration: '4 days',
-        date: '2 weeks ago',
-        isRepeatClient: true,
-        files: [
-            {
-                type: 'image',
-                url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=800&fit=crop',
-            },
-        ],
-    },
-    {
-        user: 'Sarah K.',
-        location: 'United Kingdom',
-        flag: '🇬🇧',
-        review: 'The team really understood my vision. The deliverables were exactly what I needed to boost engagement.',
-        rating: 5,
-        priceRange: '$50+',
-        duration: '7 days',
-        date: '1 month ago',
-        isRepeatClient: false,
-        files: [
-            {
-                type: 'video',
-                url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            },
-        ],
-    },
-    {
-        user: 'Rafi H.',
-        location: 'Germany',
-        flag: '🇩🇪',
-        review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
-        rating: 5,
-        priceRange: '$10 - $25',
-        duration: '2 days',
-        date: '3 days ago',
-        isRepeatClient: true,
-    },
-    {
-        user: 'John D.',
-        location: 'Canada',
-        flag: '🇨🇦',
-        review: 'Very good service, though the initial concept needed a bit of tweaking. Overall satisfied.',
-        rating: 4,
-        priceRange: '$25 - $50',
-        duration: '5 days',
-        date: '3 weeks ago',
-        isRepeatClient: false,
-    },
-    {
-        user: 'Elena P.',
-        location: 'France',
-        flag: '🇫🇷',
-        review: 'The design was great, but delivery was delayed by a day. Still recommended for the quality.',
-        rating: 4,
-        priceRange: '$50+',
-        duration: '8 days',
-        date: '2 months ago',
-        isRepeatClient: true,
-        files: [
-            {
-                type: 'image',
-                url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&h=800&fit=crop',
-            },
-        ],
-    },
-    {
-        user: 'Mark T.',
-        location: 'Australia',
-        flag: '🇦🇺',
-        review: 'Decent work, but I expected more options in the basic package.',
-        rating: 3,
-        priceRange: '$5 - $10',
-        duration: '2 days',
-        date: '1 week ago',
-        isRepeatClient: false,
-    },
-];
 
 // ─── Review Media Preview ────────────────────────────────────────────────
 
@@ -771,6 +716,239 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     );
 }
 
+// ─── Review Form Component ───────────────────────────────────────────────────
+
+const PRICE_RANGES = ['Under $5', '$5 - $10', '$10 - $25', '$25 - $50', '$50+'];
+const WORK_DURATIONS = [
+    '1 day',
+    '2 days',
+    '3-5 days',
+    '1 week',
+    '2 weeks',
+    '3+ weeks',
+];
+
+function ReviewForm({
+    taskId,
+    onSuccess,
+}: {
+    taskId: number;
+    onSuccess: () => void;
+}) {
+    const { data, setData, post, processing, errors, reset } = useForm<{
+        task_id: number;
+        rating: number;
+        comment: string;
+        image: File | null;
+        price_range: string;
+        work_duration: string;
+    }>({
+        task_id: taskId,
+        rating: 0,
+        comment: '',
+        image: null,
+        price_range: '',
+        work_duration: '',
+    });
+
+    const [hoverRating, setHoverRating] = useState(0);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        setData('image', file);
+
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        } else {
+            setImagePreview(null);
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/reviews', {
+            forceFormData: true,
+            onSuccess: () => {
+                reset();
+                setImagePreview(null);
+                onSuccess();
+            },
+        });
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-5 rounded-3xl border border-cyan-500/30 bg-cyan-500/5 p-6"
+        >
+            <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
+                    <PenLine className="h-5 w-5" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-theme">
+                        Share Your Experience
+                    </h3>
+                    <p className="text-xs text-theme-muted">
+                        Your task has been delivered. Leave a review within 24
+                        hours.
+                    </p>
+                </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Star rating */}
+                <div>
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
+                        Rating *
+                    </label>
+                    <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                            <button
+                                key={s}
+                                type="button"
+                                onMouseEnter={() => setHoverRating(s)}
+                                onMouseLeave={() => setHoverRating(0)}
+                                onClick={() => setData('rating', s)}
+                                className="transition-transform hover:scale-110"
+                            >
+                                <Star
+                                    className={`h-7 w-7 transition-colors ${
+                                        s <= (hoverRating || data.rating)
+                                            ? 'fill-amber-400 text-amber-400'
+                                            : 'text-theme-muted/30'
+                                    }`}
+                                />
+                            </button>
+                        ))}
+                    </div>
+                    {errors.rating && (
+                        <p className="mt-1 text-xs text-red-400">
+                            {errors.rating}
+                        </p>
+                    )}
+                </div>
+
+                {/* Comment */}
+                <div>
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
+                        Review *
+                    </label>
+                    <textarea
+                        value={data.comment}
+                        onChange={(e) => setData('comment', e.target.value)}
+                        placeholder="Describe your experience with this service…"
+                        rows={4}
+                        className="placeholder-theme-muted w-full resize-none rounded-2xl border border-theme bg-theme-surface p-4 text-sm text-theme transition-colors focus:border-cyan-500 focus:outline-none"
+                    />
+                    {errors.comment && (
+                        <p className="mt-1 text-xs text-red-400">
+                            {errors.comment}
+                        </p>
+                    )}
+                </div>
+
+                {/* Price range & Work duration */}
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
+                            Price Range
+                        </label>
+                        <select
+                            value={data.price_range}
+                            onChange={(e) =>
+                                setData('price_range', e.target.value)
+                            }
+                            className="w-full rounded-2xl border border-theme bg-theme-surface px-4 py-2.5 text-sm text-theme focus:border-cyan-500 focus:outline-none"
+                        >
+                            <option value="">Select…</option>
+                            {PRICE_RANGES.map((p) => (
+                                <option key={p} value={p}>
+                                    {p}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
+                            Work Duration
+                        </label>
+                        <select
+                            value={data.work_duration}
+                            onChange={(e) =>
+                                setData('work_duration', e.target.value)
+                            }
+                            className="w-full rounded-2xl border border-theme bg-theme-surface px-4 py-2.5 text-sm text-theme focus:border-cyan-500 focus:outline-none"
+                        >
+                            <option value="">Select…</option>
+                            {WORK_DURATIONS.map((d) => (
+                                <option key={d} value={d}>
+                                    {d}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {/* Image upload */}
+                <div>
+                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
+                        Work Proof (optional image)
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-theme bg-theme-surface p-4 transition-colors hover:border-cyan-500/50 hover:bg-theme-surface-hover">
+                        <Upload className="h-5 w-5 shrink-0 text-theme-subtle" />
+                        <span className="text-sm text-theme-muted">
+                            {imagePreview
+                                ? 'Change image'
+                                : 'Upload image (max 4 MB)'}
+                        </span>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="hidden"
+                        />
+                    </label>
+                    {imagePreview && (
+                        <div className="relative mt-2 h-24 w-24 overflow-hidden rounded-xl border border-theme">
+                            <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="h-full w-full object-cover"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setData('image', null);
+                                    setImagePreview(null);
+                                }}
+                                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
+                            >
+                                <X className="h-3 w-3" />
+                            </button>
+                        </div>
+                    )}
+                    {errors.image && (
+                        <p className="mt-1 text-xs text-red-400">
+                            {errors.image}
+                        </p>
+                    )}
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={processing || data.rating === 0}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-500 py-4 text-sm font-black tracking-widest text-white uppercase transition-all hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    {processing ? 'Submitting…' : 'Submit Review'}
+                </button>
+            </form>
+        </motion.div>
+    );
+}
+
 // ─── Main Component ─────────────────────────────────────────────────────────
 
 export default function SubCategoryShow({
@@ -779,10 +957,12 @@ export default function SubCategoryShow({
     portfolios,
     siblingSubCategories,
     recommendedServices,
+    reviews: dbReviews,
+    reviewEligibleTask,
 }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
     const displayPortfolios =
-        portfolios.length > 0 ? portfolios : MOCK_PORTFOLIOS;
+        portfolios?.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -801,9 +981,11 @@ export default function SubCategoryShow({
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     const [reviewPage, setReviewPage] = useState(1);
     const [reviewLightboxItem, setReviewLightboxItem] = useState<{
-        type: string;
+        type: 'image' | 'video';
         url: string;
     } | null>(null);
+    const [reviewSubmitted, setReviewSubmitted] = useState(false);
+    const mappedReviews = useMemo(() => (dbReviews || []).map(mapDbReview), [dbReviews]);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
     const pricingSectionRef = useRef<HTMLDivElement>(null);
@@ -812,10 +994,10 @@ export default function SubCategoryShow({
 
     const ratingBreakdown = [5, 4, 3, 2, 1].map((star) => ({
         star,
-        count: REVIEWS.filter((r) => r.rating === star).length,
+        count: mappedReviews.filter((r) => r.rating === star).length,
     }));
 
-    const filteredReviews = REVIEWS.filter((r) => {
+    const filteredReviews = mappedReviews.filter((r) => {
         const matchesRating = ratingFilter ? r.rating === ratingFilter : true;
         const matchesFiles = hasFilesFilter
             ? r.files && r.files.length > 0
@@ -1015,7 +1197,7 @@ export default function SubCategoryShow({
                                 ))}
                                 <span className="ml-1 text-theme">5.0</span>
                                 <span className="font-normal text-theme-muted">
-                                    ({REVIEWS.length * 41} Reviews)
+                                    ({mappedReviews.length * 41} reviews)
                                 </span>
                             </div>
                             <span className="text-theme-subtle">·</span>
@@ -1153,7 +1335,7 @@ export default function SubCategoryShow({
                                     label: 'Overall Rating',
                                 },
                                 {
-                                    value: String(REVIEWS.length * 41),
+                                    value: String(mappedReviews.length * 41),
                                     suffix: null,
                                     label: 'Reviews',
                                 },
@@ -1373,321 +1555,288 @@ export default function SubCategoryShow({
                         </motion.div>
                     </div>
 
-                    {/* ── REVIEWS — masonry quote grid ── */}
-                    <motion.div
-                        ref={reviewsSectionRef}
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-60px' }}
-                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="mt-20 space-y-8"
-                    >
-                        {/* Reviews header */}
-                        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                            <div>
-                                <h2 className="text-2xl font-bold text-theme">
-                                    Client Reviews
-                                </h2>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <div className="flex text-amber-400">
-                                        {[1, 2, 3, 4, 5].map((s) => (
-                                            <Star
-                                                key={s}
-                                                className="h-4 w-4 fill-current"
-                                            />
-                                        ))}
-                                    </div>
-                                    <span className="text-lg font-bold text-theme">
-                                        4.8
-                                    </span>
-                                    <span className="text-sm text-theme-subtle">
-                                        ({REVIEWS.length} verified reviews)
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Rating breakdown — donut + numbered badges */}
-                            <div className="flex items-center gap-6">
-                                {/* Donut */}
-                                <div
-                                    className="relative h-20 w-20 shrink-0 rounded-full"
-                                    style={{
-                                        background: `conic-gradient(#f59e0b ${(4.8 / 5) * 360}deg, rgb(39 39 42) 0)`,
-                                    }}
-                                >
-                                    <div className="absolute inset-2 flex flex-col items-center justify-center rounded-full bg-background">
-                                        <span className="text-base leading-none font-black text-theme">
-                                            4.8
+                                            {/* Reviews */}
+                        <motion.div
+                            ref={reviewsSectionRef}
+                            variants={fadeUp}
+                            className="space-y-8"
+                        >
+                            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-theme">
+                                        Client Reviews
+                                    </h2>
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <div className="flex text-amber-400">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star
+                                                    key={s}
+                                                    className="h-4 w-4 fill-current"
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-lg font-bold text-theme">
+                                            {mappedReviews.length > 0
+                                                ? (
+                                                      mappedReviews.reduce(
+                                                          (sum, r) =>
+                                                              sum + r.rating,
+                                                          0,
+                                                      ) / mappedReviews.length
+                                                  ).toFixed(1)
+                                                : '—'}
                                         </span>
-                                        <span className="text-[8px] font-bold text-theme-muted">
-                                            / 5.0
+                                        <span className="text-sm text-theme-subtle">
+                                            ({mappedReviews.length} verified
+                                            {mappedReviews.length === 1
+                                                ? ' review'
+                                                : ' reviews'}
+                                            )
                                         </span>
                                     </div>
                                 </div>
 
-                                {/* Numbered badges */}
-                                <div className="flex flex-wrap gap-2">
+                                {/* Rating Breakdown */}
+                                <div className="flex w-full max-w-xs flex-col gap-2">
                                     {ratingBreakdown.map((row) => (
                                         <button
                                             key={row.star}
-                                            onClick={() => {
+                                            onClick={() =>
                                                 setRatingFilter(
                                                     ratingFilter === row.star
                                                         ? null
                                                         : row.star,
-                                                );
-                                                setReviewPage(1);
-                                            }}
-                                            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all ${
-                                                ratingFilter === row.star
-                                                    ? 'bg-amber-500/20 text-amber-500 ring-1 ring-amber-500/40'
-                                                    : ratingFilter !== null
-                                                      ? 'bg-theme-surface text-theme-subtle opacity-40 hover:opacity-70'
-                                                      : 'bg-theme-surface text-theme-muted hover:bg-theme-surface-hover'
-                                            }`}
+                                                )
+                                            }
+                                            className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
                                         >
-                                            <Star className="h-3 w-3 fill-current text-amber-500" />
-                                            {row.star}
-                                            <span className="rounded-full bg-theme-surface-hover px-1.5 py-0.5 text-[10px]">
+                                            <span className="flex w-12 items-center gap-1 text-xs font-bold text-theme-subtle">
+                                                {row.star}{' '}
+                                                <Star className="h-3 w-3 fill-current text-amber-500" />
+                                            </span>
+                                            <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{
+                                                        width: `${(row.count / mappedReviews.length) * 100}%`,
+                                                    }}
+                                                    className="absolute inset-y-0 left-0 bg-amber-500"
+                                                />
+                                            </div>
+                                            <span className="w-6 text-right text-xs font-medium text-theme-subtle">
                                                 {row.count}
                                             </span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Compact filter row */}
-                        <div className="flex flex-wrap items-center gap-3 border-b border-theme pb-6">
-                            <div className="flex-1 text-sm text-theme-muted">
-                                {ratingFilter || hasFilesFilter ? (
-                                    <span className="flex flex-wrap items-center gap-2">
-                                        Showing {filteredReviews.length} reviews
-                                        {ratingFilter && (
-                                            <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/20 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-500">
-                                                {ratingFilter} Stars
-                                            </span>
-                                        )}
-                                        {hasFilesFilter && (
-                                            <span className="inline-flex items-center gap-1 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-500">
-                                                With Media
-                                            </span>
-                                        )}
-                                    </span>
-                                ) : (
-                                    `All ${REVIEWS.length} reviews`
-                                )}
+                            <div className="flex flex-col gap-4 border-b border-theme pb-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="text-sm text-theme-muted">
+                                    {ratingFilter || hasFilesFilter ? (
+                                        <span className="flex flex-wrap items-center gap-2">
+                                            Showing {filteredReviews.length}{' '}
+                                            reviews
+                                            {ratingFilter && (
+                                                <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/20 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-500">
+                                                    {ratingFilter} Stars
+                                                </span>
+                                            )}
+                                            {hasFilesFilter && (
+                                                <span className="inline-flex items-center gap-1 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-bold text-cyan-500">
+                                                    With Media
+                                                </span>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    setRatingFilter(null);
+                                                    setHasFilesFilter(false);
+                                                }}
+                                                className="inline-flex items-center gap-1 rounded-md bg-theme-surface px-2 py-1 text-[10px] font-bold text-theme transition-colors hover:bg-theme-surface-hover"
+                                            >
+                                                <FilterX className="h-3 w-3" />{' '}
+                                                Clear All
+                                            </button>
+                                        </span>
+                                    ) : mappedReviews.length > 0 ? (
+                                        `Showing all ${mappedReviews.length} review${mappedReviews.length === 1 ? '' : 's'}`
+                                    ) : (
+                                        'No reviews yet'
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={() =>
+                                        setHasFilesFilter(!hasFilesFilter)
+                                    }
+                                    className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
+                                        hasFilesFilter
+                                            ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
+                                            : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
+                                    }`}
+                                >
+                                    <ImageIcon className="h-3.5 w-3.5" />
+                                    With Photos/Videos
+                                </button>
                             </div>
 
-                            <button
-                                onClick={() => {
-                                    setHasFilesFilter(!hasFilesFilter);
-                                    setReviewPage(1);
-                                }}
-                                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
-                                    hasFilesFilter
-                                        ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
-                                        : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
-                                }`}
-                            >
-                                <ImageIcon className="h-3.5 w-3.5" />
-                                With Photos/Videos
-                            </button>
-
-                            {(ratingFilter || hasFilesFilter) && (
-                                <button
-                                    onClick={() => {
-                                        setRatingFilter(null);
-                                        setHasFilesFilter(false);
-                                        setReviewPage(1);
-                                    }}
-                                    className="flex items-center gap-1.5 rounded-full border border-theme bg-theme-surface px-3 py-2 text-xs font-bold text-theme-muted transition-colors hover:bg-theme-surface-hover"
-                                >
-                                    <FilterX className="h-3.5 w-3.5" /> Clear
-                                </button>
+                            {/* Review submission form — shown only to eligible user */}
+                            {reviewEligibleTask && !reviewSubmitted && (
+                                <ReviewForm
+                                    taskId={reviewEligibleTask.id}
+                                    onSuccess={() => setReviewSubmitted(true)}
+                                />
                             )}
-                        </div>
 
-                        {/* Review form for eligible clients */}
-                        {reviewEligibleTask && !reviewSubmitted && (
-                            <ReviewForm
-                                taskId={reviewEligibleTask.id}
-                                onSuccess={() => setReviewSubmitted(true)}
-                            />
-                        )}
-
-                        {/* Masonry quote grid (paginated) */}
-                        <AnimatePresence mode="popLayout">
-                            {filteredReviews.length > 0 ? (
-                                <div className="columns-1 gap-6 sm:columns-2">
-                                    {pagedReviews.map((review, i) => (
-                                        <motion.div
-                                            key={review.user + reviewPage + i}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.95 }}
-                                            transition={{
-                                                duration: 0.35,
-                                                delay: i * 0.05,
-                                            }}
-                                            className="mb-6 break-inside-avoid"
-                                        >
-                                            <div className="group bg-theme-surface/30 hover:bg-theme-surface/60 rounded-3xl p-6 transition-colors">
-                                                {/* Quote text */}
-                                                <p className="mb-4 text-base leading-relaxed text-theme italic">
-                                                    "{review.review}"
-                                                </p>
-
-                                                {/* Rating pill badge */}
-                                                <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-500">
-                                                    {review.rating}.0
-                                                    <Star className="h-3 w-3 fill-current" />
-                                                </span>
-
-                                                {/* Review media attachments */}
-                                                {review.files &&
-                                                    review.files.length > 0 && (
-                                                        <div className="mb-4 flex flex-wrap gap-2">
-                                                            {review.files.map(
-                                                                (
-                                                                    file,
-                                                                    fIdx,
-                                                                ) => (
-                                                                    <button
-                                                                        key={
-                                                                            fIdx
-                                                                        }
-                                                                        onClick={() =>
-                                                                            setReviewLightboxItem(
-                                                                                file,
-                                                                            )
-                                                                        }
-                                                                        className="w-20 text-left"
-                                                                    >
-                                                                        <ReviewMedia
-                                                                            file={
-                                                                                file
-                                                                            }
-                                                                        />
-                                                                    </button>
-                                                                ),
-                                                            )}
-                                                        </div>
-                                                    )}
-
-                                                {/* Author row */}
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-theme-surface-hover">
-                                                        <User className="h-4 w-4 text-theme-subtle" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-1.5">
-                                                            <span className="text-sm font-bold text-theme">
-                                                                {review.user}
-                                                            </span>
-                                                            <BadgeCheck className="h-3.5 w-3.5 text-cyan-500" />
-                                                            {review.isRepeatClient && (
-                                                                <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
-                                                                    <Repeat className="h-2.5 w-2.5" />
-                                                                    Repeat
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <p className="text-xs text-theme-muted">
-                                                            {review.priceRange}{' '}
-                                                            · {review.duration}{' '}
-                                                            · {review.date}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            ) : (
+                            {/* Success message after submission */}
+                            {reviewSubmitted && (
                                 <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="py-12 text-center text-theme-subtle"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5"
                                 >
-                                    No reviews found for this filter.
+                                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-400" />
+                                    <p className="text-sm font-semibold text-emerald-400">
+                                        Your review has been submitted. Thank
+                                        you!
+                                    </p>
                                 </motion.div>
                             )}
-                        </AnimatePresence>
 
-                        {/* Pagination */}
-                        {totalReviewPages > 1 && (
-                            <div className="flex items-center justify-between border-t border-theme pt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setReviewPage((p) =>
-                                            Math.max(1, p - 1),
-                                        );
-                                        reviewsSectionRef.current?.scrollIntoView(
-                                            {
-                                                behavior: 'smooth',
-                                                block: 'start',
-                                            },
-                                        );
-                                    }}
-                                    disabled={reviewPage === 1}
-                                    className="flex items-center gap-2 rounded-2xl border border-theme px-5 py-2.5 text-sm font-bold text-theme transition-colors hover:bg-theme-surface disabled:cursor-not-allowed disabled:opacity-30"
-                                >
-                                    <ChevronLeft className="h-4 w-4" />
-                                    Previous
-                                </button>
+                            <motion.div
+                                variants={stagger}
+                                initial="hidden"
+                                animate="visible"
+                                className="space-y-4"
+                            >
+                                <AnimatePresence mode="popLayout">
+                                    {filteredReviews.length > 0 ? (
+                                        filteredReviews.map((review, i) => (
+                                            <motion.div
+                                                key={review.user + i}
+                                                layout
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{
+                                                    opacity: 0,
+                                                    scale: 0.95,
+                                                }}
+                                                variants={fadeUp}
+                                                className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
+                                            >
+                                                <div className="flex flex-col gap-6 md:flex-row">
+                                                    <div className="flex-1">
+                                                        <div className="mb-4 flex items-center justify-between">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                                    <User className="h-5 w-5 text-theme-subtle" />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <h4 className="font-bold text-theme">
+                                                                            {
+                                                                                review.user
+                                                                            }
+                                                                        </h4>
+                                                                        {review.isRepeatClient && (
+                                                                            <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
+                                                                                <Repeat className="h-2.5 w-2.5" />{' '}
+                                                                                Repeat
+                                                                                Client
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    <span className="text-xs text-theme-muted">
+                                                                        {
+                                                                            review.date
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex text-amber-400">
+                                                                {[
+                                                                    1, 2, 3, 4, 5,
+                                                                ].map((s) => (
+                                                                    <Star
+                                                                        key={s}
+                                                                        className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-theme-muted/20'}`}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        </div>
 
-                                <div className="flex items-center gap-1.5">
-                                    {Array.from(
-                                        { length: totalReviewPages },
-                                        (_, i) => i + 1,
-                                    ).map((page) => (
-                                        <button
-                                            key={page}
-                                            type="button"
-                                            onClick={() => {
-                                                setReviewPage(page);
-                                                reviewsSectionRef.current?.scrollIntoView(
-                                                    {
-                                                        behavior: 'smooth',
-                                                        block: 'start',
-                                                    },
-                                                );
-                                            }}
-                                            className={`h-8 w-8 rounded-full text-xs font-bold transition-all ${
-                                                page === reviewPage
-                                                    ? 'bg-foreground text-background'
-                                                    : 'bg-theme-surface text-theme-muted hover:bg-theme-surface-hover'
-                                            }`}
-                                        >
-                                            {page}
-                                        </button>
-                                    ))}
-                                </div>
+                                                        <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
+                                                            "{review.review}"
+                                                        </p>
 
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setReviewPage((p) =>
-                                            Math.min(totalReviewPages, p + 1),
-                                        );
-                                        reviewsSectionRef.current?.scrollIntoView(
-                                            {
-                                                behavior: 'smooth',
-                                                block: 'start',
-                                            },
-                                        );
-                                    }}
-                                    disabled={reviewPage === totalReviewPages}
-                                    className="flex items-center gap-2 rounded-2xl border border-theme px-5 py-2.5 text-sm font-bold text-theme transition-colors hover:bg-theme-surface disabled:cursor-not-allowed disabled:opacity-30"
-                                >
-                                    Next
-                                    <ChevronRight className="h-4 w-4" />
-                                </button>
-                            </div>
-                        )}
-                    </motion.div>
+                                                        <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                                            {review.priceRange && (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <DollarSign className="h-3 w-3 text-emerald-500" />
+                                                                    <span>
+                                                                        Price:{' '}
+                                                                        {
+                                                                            review.priceRange
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                            {review.duration && (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <Clock className="h-3 w-3 text-cyan-500" />
+                                                                    <span>
+                                                                        Duration:{' '}
+                                                                        {
+                                                                            review.duration
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Review Attachments */}
+                                                    {review.files &&
+                                                        review.files.length > 0 && (
+                                                            <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
+                                                                {review.files.map(
+                                                                    (
+                                                                        file,
+                                                                        fIdx,
+                                                                    ) => (
+                                                                        <button
+                                                                            key={
+                                                                                fIdx
+                                                                            }
+                                                                            onClick={() =>
+                                                                                setReviewLightboxItem(
+                                                                                    file,
+                                                                                )
+                                                                            }
+                                                                            className="w-full text-left"
+                                                                        >
+                                                                            <ReviewMedia
+                                                                                file={
+                                                                                    file
+                                                                                }
+                                                                            />
+                                                                        </button>
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                </div>
+                                            </motion.div>
+                                        ))
+                                    ) : (
+                                        <div className="py-12 text-center text-theme-subtle">
+                                            No reviews found for this rating
+                                            level.
+                                        </div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+                        </motion.div>
 
                     {/* ── RECOMMENDED SERVICES (unchanged) ── */}
                     {recommendedServices.length > 0 && (
@@ -1804,7 +1953,7 @@ export default function SubCategoryShow({
                     <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                     <span className="text-sm font-bold text-theme">5.0</span>
                     <span className="text-xs text-theme-muted">
-                        ({REVIEWS.length * 41})
+                        ({mappedReviews.length * 41})
                     </span>
                 </div>
                 <button
