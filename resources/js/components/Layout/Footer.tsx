@@ -12,7 +12,6 @@ import {
     Play,
     Send,
 } from 'lucide-react';
-import { CursorSwitcher } from '@/components/UI/CursorSelector';
 import MagneticButton from '@/components/UI/MagneticButton';
 import {
     bangladeshPhoneLink,
@@ -226,7 +225,6 @@ export default function Footer() {
 
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-theme pt-6 text-center text-sm text-theme-subtle sm:flex-row sm:text-left">
                     <p>© 2026 Opticore Solutions Ltd. All rights reserved.</p>
-                    <CursorSwitcher />
                     <p>
                         Built for brands that want sharper positioning, stronger
                         visuals, and digital experiences with weight.

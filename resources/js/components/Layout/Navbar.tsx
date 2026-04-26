@@ -86,16 +86,16 @@ function NavLink({
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
-    // const [scrolled, setScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const { user } = props.auth;
 
     useEffect(() => {
         const onScroll = () => {
-            // setScrolled(window.scrollY > 24);
+            setScrolled(window.scrollY > 50);
         };
 
         onScroll();
-        window.addEventListener('scroll', onScroll);
+        window.addEventListener('scroll', onScroll, { passive: true });
 
         return () => {
             window.removeEventListener('scroll', onScroll);
@@ -116,8 +116,12 @@ export default function Navbar() {
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
-                className="fixed inset-x-0 top-0 z-50 px-4 pt-4 will-change-transform sm:px-6 xl:px-4 2xl:px-8"
-                style={{ transform: 'translateZ(0)' }}
+                className={cn(
+                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8',
+                    scrolled
+                        ? 'pointer-events-auto translate-y-0 opacity-100'
+                        : 'pointer-events-none -translate-y-full opacity-0',
+                )}
             >
                 <nav className="mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4">
                     <Link

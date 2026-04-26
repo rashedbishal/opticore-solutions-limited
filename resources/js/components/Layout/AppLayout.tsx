@@ -7,20 +7,13 @@ import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
 import ChatWidget from '@/components/UI/ChatWidget';
-import CursorSelector, {
-    useCursorPreference,
-} from '@/components/UI/CursorSelector';
-
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
-    const { cursorType } = useCursorPreference();
 
     return (
         <SmoothScroll>
             {/* Global Wrapper restored to original styling to debug render crash */}
-            <div className="app-shell bg-grain" data-cursor={cursorType}>
-                <CursorSelector cursorType={cursorType} />
-
+            <div className="app-shell bg-grain">
                 {/* Background effects with refined light-mode presence */}
                 <div className="pointer-events-none absolute inset-0 z-5 overflow-hidden">
                     <div className="absolute inset-x-0 top-0 h-[640px] bg-linear-to-b from-violet-500/[0.12] via-cyan-400/[0.08] to-transparent blur-3xl dark:from-violet-500/10 dark:via-cyan-400/5" />

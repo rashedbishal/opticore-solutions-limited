@@ -1,9 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import CursorSelector, {
-    useCursorPreference,
-} from '@/components/UI/CursorSelector';
 import GradientOrb from '@/components/UI/GradientOrb';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +12,6 @@ export default function GuestLayout({
     children,
     maxWidth = 'md',
 }: GuestLayoutProps) {
-    const { cursorType } = useCursorPreference();
     const maxWidthClasses = {
         md: 'max-w-md',
         lg: 'max-w-lg',
@@ -23,11 +19,7 @@ export default function GuestLayout({
     };
 
     return (
-        <div
-            className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-4"
-            data-cursor={cursorType}
-        >
-            <CursorSelector cursorType={cursorType} />
+        <div className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-4">
             <GradientOrb
                 className="top-[-10%] left-[-10%] h-[600px] w-[600px] blur-[120px]"
                 color="#06b6d4"
