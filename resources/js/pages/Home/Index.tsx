@@ -430,8 +430,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         animate="visible"
                         className="inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-3 py-1 text-xs font-semibold text-theme-muted sm:text-sm"
                     >
-                        <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-                        <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))] bg-[length:200%_100%] bg-clip-text text-transparent">
+                        <Sparkles className="h-3.5 w-3.5 text-cyan-500 dark:text-cyan-300" />
+                        <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,var(--theme-text-muted),var(--theme-text),var(--theme-text-muted))] bg-[length:200%_100%] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))]">
                             ✦ Premium Digital Agency
                         </span>
                     </motion.span>
@@ -633,10 +633,10 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-6 text-center sm:p-10 lg:p-14">
                         <p className="section-kicker">Ready to Scale?</p>
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Hire the Industry's Finest Talent
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             Whether you need a full brand system, campaign
                             creative, motion production, or a web experience
                             that performs, we can shape the right scope with

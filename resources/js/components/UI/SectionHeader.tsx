@@ -335,7 +335,7 @@ export default function SectionHeader({
                 return <TestimonialsTitle text={title} />;
             default:
                 return (
-                    <span className="text-white">
+                    <span className="text-theme">
                         <AnimatedTitle title={title} titles={titles} />
                     </span>
                 );
@@ -362,7 +362,7 @@ export default function SectionHeader({
                 {renderTitle()}
             </h2>
             {description ? (
-                <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                <p className="mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                     {description}
                 </p>
             ) : null}

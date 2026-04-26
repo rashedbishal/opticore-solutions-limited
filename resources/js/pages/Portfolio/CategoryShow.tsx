@@ -89,17 +89,17 @@ export default function PortfolioCategoryShow({
                         className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14"
                     >
                         <nav
-                            className="mb-5 flex items-center gap-2 text-sm text-zinc-500"
+                            className="mb-5 flex items-center gap-2 text-sm text-theme-subtle"
                             aria-label="Breadcrumb"
                         >
                             <Link
                                 href={portfolio.url()}
-                                className="transition-colors hover:text-zinc-300"
+                                className="transition-colors hover:text-theme"
                             >
                                 Portfolio
                             </Link>
                             <span>/</span>
-                            <span className="text-zinc-300">
+                            <span className="text-theme-muted">
                                 {category.label}
                             </span>
                         </nav>
@@ -107,12 +107,12 @@ export default function PortfolioCategoryShow({
                         <span className="section-kicker">
                             Portfolio Category
                         </span>
-                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
                                 {category.label}
                             </span>
                         </h1>
-                        <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
+                        <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
                             {category.description}
                         </p>
                     </motion.div>
@@ -124,7 +124,7 @@ export default function PortfolioCategoryShow({
                     <div className="mb-4">
                         <Link
                             href={portfolio.url()}
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/10"
+                            className="inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-4 py-2 text-sm font-medium text-theme-muted transition-colors hover:bg-theme-surface-hover"
                         >
                             <ArrowLeft className="h-4 w-4" />
                             All categories
@@ -147,8 +147,8 @@ export default function PortfolioCategoryShow({
                                             ])}
                                             className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                                                 isActive
-                                                    ? 'border-violet-400/50 bg-violet-500/15 text-white'
-                                                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
+                                                    ? 'border-violet-400/50 bg-violet-500/15 text-theme dark:border-violet-400/50'
+                                                    : 'border-theme bg-theme-surface text-theme-subtle hover:text-theme'
                                             }`}
                                         >
                                             {sub.name}
@@ -162,25 +162,25 @@ export default function PortfolioCategoryShow({
                                     initial="hidden"
                                     animate="visible"
                                     variants={fadeUp}
-                                    className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/5 p-6"
+                                    className="mt-8 rounded-[1.5rem] border border-theme bg-theme-surface p-6"
                                 >
                                     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                         <div>
-                                            <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                            <p className="text-xs font-semibold tracking-[0.24em] text-cyan-500 uppercase dark:text-cyan-300">
                                                 Selected sub-category
                                             </p>
-                                            <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl">
+                                            <h2 className="mt-3 text-2xl font-bold text-theme sm:text-3xl">
                                                 {selectedSubCategory.name}
                                             </h2>
                                             {selectedSubCategory.description && (
-                                                <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+                                                <p className="mt-3 max-w-2xl text-sm leading-7 text-theme-muted">
                                                     {
                                                         selectedSubCategory.description
                                                     }
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="shrink-0 text-sm font-medium text-zinc-400">
+                                        <div className="shrink-0 text-sm font-medium text-theme-subtle">
                                             {
                                                 selectedSubCategory.portfolios_count
                                             }{' '}
@@ -268,12 +268,12 @@ export default function PortfolioCategoryShow({
 
                                 {portfolios.length === 0 && (
                                     <div className="glass-panel flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
-                                        <FolderOpen className="mb-4 h-10 w-10 text-zinc-600" />
-                                        <p className="text-lg font-medium text-zinc-300">
+                                        <FolderOpen className="mb-4 h-10 w-10 text-theme-subtle" />
+                                        <p className="text-lg font-medium text-theme-muted">
                                             No portfolio items in this
                                             sub-category yet.
                                         </p>
-                                        <p className="mt-2 text-sm text-zinc-500">
+                                        <p className="mt-2 text-sm text-theme-subtle">
                                             Add items from the CMS and they will
                                             appear here automatically.
                                         </p>
@@ -288,14 +288,14 @@ export default function PortfolioCategoryShow({
                             variants={fadeUp}
                             className="glass-panel mt-10 rounded-[1.5rem] py-20 text-center"
                         >
-                            <FolderOpen className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-                            <p className="text-lg font-medium text-zinc-400">
+                            <FolderOpen className="mx-auto mb-4 h-10 w-10 text-theme-subtle" />
+                            <p className="text-lg font-medium text-theme-muted">
                                 No sub-categories yet.
                             </p>
-                            <p className="mt-1 text-sm text-zinc-600">
+                            <p className="mt-1 text-sm text-theme-subtle">
                                 Check back later for new categories and updates.
                             </p>
-                            <p className="mt-1 text-sm text-zinc-600">
+                            <p className="mt-1 text-sm text-theme-subtle">
                                 Sub-categories will appear here once added via
                                 the CMS.
                             </p>
@@ -307,10 +307,10 @@ export default function PortfolioCategoryShow({
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Want work like this for your brand?
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             We create premium identities, campaign systems, and
                             presentation-ready visual assets designed to move
                             perception and performance.
@@ -324,7 +324,7 @@ export default function PortfolioCategoryShow({
                             </MagneticButton>
                             <Link
                                 href="/contact"
-                                className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white"
+                                className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme transition-colors hover:bg-theme-surface-hover"
                             >
                                 Contact Us
                             </Link>

@@ -66,12 +66,12 @@ export default function About() {
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14">
                         <span className="section-kicker">About Us</span>
-                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
                                 Empowering You to Grow, Earn, and Succeed
                             </span>
                         </h1>
-                        <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
+                        <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
                             Opticore Solutions Ltd. helps businesses build
                             stronger perception and sharper digital experiences
                             through premium creative, production, and
@@ -104,10 +104,10 @@ export default function About() {
                                 <span className="section-kicker">
                                     0{index + 1}
                                 </span>
-                                <h2 className="text-3xl font-bold text-white">
+                                <h2 className="text-3xl font-bold text-theme">
                                     {section.title}
                                 </h2>
-                                <p className="mt-5 text-base leading-8 text-zinc-400 sm:text-lg">
+                                <p className="mt-5 text-base leading-8 text-theme-muted sm:text-lg">
                                     {section.body}
                                 </p>
                             </motion.div>
@@ -125,10 +125,10 @@ export default function About() {
                                 className={`glass-panel rounded-[2rem] bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.2),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5 sm:p-8 ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                             >
                                 <div className="flex h-full min-h-[18rem] flex-col justify-between">
-                                    <p className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                    <p className="text-sm font-semibold tracking-[0.24em] text-cyan-400 uppercase dark:text-cyan-300">
                                         Opticore Perspective
                                     </p>
-                                    <p className="text-2xl font-semibold text-balance text-white sm:text-3xl">
+                                    <p className="text-2xl font-semibold text-balance text-theme sm:text-3xl">
                                         Premium digital work only matters when
                                         it creates trust, momentum, and
                                         commercial advantage.
@@ -169,10 +169,10 @@ export default function About() {
                                 }}
                                 className="glass-panel rounded-[2rem] p-6"
                             >
-                                <h3 className="text-xl font-semibold text-white">
+                                <h3 className="text-xl font-semibold text-theme">
                                     {value.title}
                                 </h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                <p className="mt-3 text-sm leading-7 text-theme-muted">
                                     {value.description}
                                 </p>
                             </motion.article>
@@ -190,10 +190,10 @@ export default function About() {
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-6 text-center sm:p-10 lg:p-14">
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Let’s shape the next version of your brand.
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             If you need sharper creative, more refined digital
                             delivery, or a partner that can connect strategy
                             with execution, Opticore is ready.

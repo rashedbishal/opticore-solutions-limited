@@ -18,15 +18,15 @@ export default function AppLayout({ children }: PropsWithChildren) {
     return (
         <SmoothScroll>
             {/* Global Wrapper restored to original styling to debug render crash */}
-            <div className="app-shell" data-cursor={cursorType}>
+            <div className="app-shell bg-grain" data-cursor={cursorType}>
                 <CursorSelector cursorType={cursorType} />
 
-                {/* Background effects restored to original layer */}
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <div className="absolute inset-x-0 top-0 h-[480px] bg-linear-to-b from-violet-500/10 via-cyan-400/5 to-transparent blur-3xl" />
-                    <div className="absolute top-[18%] right-[-10rem] h-72 w-72 rounded-full bg-cyan-400/12 blur-[130px]" />
-                    <div className="absolute top-[40%] left-[-8rem] h-72 w-72 rounded-full bg-violet-500/12 blur-[140px]" />
-                    <div className="absolute right-[15%] bottom-[10%] h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[140px]" />
+                {/* Background effects with refined light-mode presence */}
+                <div className="pointer-events-none absolute inset-0 z-5 overflow-hidden">
+                    <div className="absolute inset-x-0 top-0 h-[640px] bg-linear-to-b from-violet-500/[0.12] via-cyan-400/[0.08] to-transparent blur-3xl dark:from-violet-500/10 dark:via-cyan-400/5" />
+                    <div className="absolute top-[18%] right-[-10rem] h-80 w-80 rounded-full bg-cyan-400/[0.15] blur-[130px] dark:bg-cyan-400/12" />
+                    <div className="absolute top-[40%] left-[-8rem] h-80 w-80 rounded-full bg-violet-500/[0.15] blur-[140px] dark:bg-violet-500/12" />
+                    <div className="absolute right-[15%] bottom-[10%] h-72 w-72 rounded-full bg-fuchsia-500/[0.12] blur-[140px] dark:bg-fuchsia-500/10" />
                 </div>
 
                 <Navbar />
