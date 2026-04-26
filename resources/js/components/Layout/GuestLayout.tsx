@@ -65,12 +65,12 @@ export default function GuestLayout({
                             <img
                                 src="/images/logo/opticore.webp"
                                 alt="Opticore Solutions"
-                                className="block h-10 w-auto dark:hidden sm:h-14 [@media(max-height:600px)]:h-8 [@media(max-height:400px)]:h-6"
+                                className="block h-10 w-auto sm:h-14 dark:hidden [@media(max-height:400px)]:h-6 [@media(max-height:600px)]:h-8"
                             />
                             <img
                                 src="/images/logo/opticore-white.webp"
                                 alt="Opticore Solutions"
-                                className="hidden h-10 w-auto dark:block sm:h-14 [@media(max-height:600px)]:h-8 [@media(max-height:400px)]:h-6"
+                                className="hidden h-10 w-auto sm:h-14 dark:block [@media(max-height:400px)]:h-6 [@media(max-height:600px)]:h-8"
                             />
                         </Link>
                     </div>

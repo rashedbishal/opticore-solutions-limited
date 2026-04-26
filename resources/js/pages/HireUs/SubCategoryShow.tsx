@@ -28,7 +28,7 @@ import {
     ChevronDown,
     ChevronUp,
     FilterX,
-    DollarSign,
+    // DollarSign,
     Repeat,
     Palette,
     FileText,
@@ -485,7 +485,10 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         <>
             <div className="flex gap-3">
                 {/* Main featured view */}
-                <div className="group relative min-w-0 flex-1 overflow-hidden rounded-[2rem] border border-theme bg-theme-surface" style={{ aspectRatio: '16/9' }}>
+                <div
+                    className="group relative min-w-0 flex-1 overflow-hidden rounded-[2rem] border border-theme bg-theme-surface"
+                    style={{ aspectRatio: '16/9' }}
+                >
                     <AnimatePresence
                         initial={false}
                         custom={direction}
@@ -552,7 +555,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                             type="button"
                             onClick={togglePlayPause}
                             className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
-                            aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                            aria-label={
+                                isPlaying ? 'Pause video' : 'Play video'
+                            }
                         >
                             {isPlaying ? (
                                 <Pause className="h-4 w-4" />
@@ -602,7 +607,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                         {slides.map((item, i) => (
                             <button
                                 key={item.id}
-                                onClick={() => goTo(i, i > activeIndex ? 1 : -1)}
+                                onClick={() =>
+                                    goTo(i, i > activeIndex ? 1 : -1)
+                                }
                                 className={`relative h-20 w-full shrink-0 overflow-hidden rounded-xl transition-all duration-300 ${
                                     i === activeIndex
                                         ? 'opacity-100 ring-2 ring-cyan-400 ring-offset-1 ring-offset-background'
@@ -621,7 +628,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                             <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
                                                 <div
                                                     className="h-full bg-cyan-400 transition-none"
-                                                    style={{ width: `${videoProgress}%` }}
+                                                    style={{
+                                                        width: `${videoProgress}%`,
+                                                    }}
                                                 />
                                             </div>
                                         )}
@@ -1000,14 +1009,19 @@ export default function SubCategoryShow({
         return matchesRating && matchesFiles;
     });
 
-    const totalReviewPages = Math.ceil(filteredReviews.length / REVIEWS_PER_PAGE);
+    const totalReviewPages = Math.ceil(
+        filteredReviews.length / REVIEWS_PER_PAGE,
+    );
     const pagedReviews = filteredReviews.slice(
         (reviewPage - 1) * REVIEWS_PER_PAGE,
         reviewPage * REVIEWS_PER_PAGE,
     );
 
     const scrollToPricing = () =>
-        pricingSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        pricingSectionRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1109,7 +1123,6 @@ export default function SubCategoryShow({
                 <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] rounded-full bg-violet-600/5 blur-[140px]" />
 
                 <div className="relative mx-auto max-w-7xl px-4 pt-32">
-
                     {/* Breadcrumb */}
                     <motion.nav
                         initial={{ opacity: 0, y: -8 }}
@@ -1155,7 +1168,7 @@ export default function SubCategoryShow({
                                     className={`shrink-0 border-b-2 pb-3 text-xs font-semibold transition-all ${
                                         s.slug === subCategory.slug
                                             ? 'border-cyan-400 text-cyan-500'
-                                            : 'border-transparent text-theme-muted hover:border-theme-muted/50 hover:text-theme'
+                                            : 'hover:border-theme-muted/50 border-transparent text-theme-muted hover:text-theme'
                                     }`}
                                 >
                                     {s.name}
@@ -1180,7 +1193,10 @@ export default function SubCategoryShow({
                         <div className="flex flex-wrap items-center gap-5 text-sm">
                             <div className="flex items-center gap-1.5 font-bold text-amber-500">
                                 {[1, 2, 3, 4, 5].map((s) => (
-                                    <Star key={s} className="h-4 w-4 fill-current" />
+                                    <Star
+                                        key={s}
+                                        className="h-4 w-4 fill-current"
+                                    />
                                 ))}
                                 <span className="ml-1 text-theme">5.0</span>
                                 <span className="font-normal text-theme-muted">
@@ -1188,7 +1204,9 @@ export default function SubCategoryShow({
                                 </span>
                             </div>
                             <span className="text-theme-subtle">·</span>
-                            <span className="text-theme-muted">10 Orders in Queue</span>
+                            <span className="text-theme-muted">
+                                10 Orders in Queue
+                            </span>
                         </div>
                     </motion.div>
 
@@ -1196,7 +1214,10 @@ export default function SubCategoryShow({
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                            duration: 0.55,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
                     >
                         <GallerySlider items={displayPortfolios} />
                     </motion.div>
@@ -1206,7 +1227,11 @@ export default function SubCategoryShow({
                         ref={pricingSectionRef}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                            duration: 0.55,
+                            delay: 0.15,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="mt-10 scroll-mt-32"
                     >
                         <p className="mb-6 text-[10px] font-bold tracking-[0.2em] text-theme-muted uppercase">
@@ -1220,7 +1245,7 @@ export default function SubCategoryShow({
                                     className={`relative cursor-pointer rounded-[2rem] border p-6 transition-all duration-300 ${
                                         selectedPlan === plan.id
                                             ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
-                                            : 'border-theme bg-theme-surface hover:border-theme-muted/40 hover:bg-theme-surface-hover'
+                                            : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
                                     }`}
                                 >
                                     {'popular' in plan && (
@@ -1231,7 +1256,9 @@ export default function SubCategoryShow({
 
                                     <div className="mb-5 flex items-start justify-between">
                                         <div>
-                                            <div className={`mb-1 flex items-center gap-2 ${selectedPlan === plan.id ? plan.accentClass : 'text-theme-subtle'}`}>
+                                            <div
+                                                className={`mb-1 flex items-center gap-2 ${selectedPlan === plan.id ? plan.accentClass : 'text-theme-subtle'}`}
+                                            >
                                                 <plan.Icon className="h-4 w-4" />
                                                 <span className="text-xs font-bold tracking-widest uppercase">
                                                     {plan.name}
@@ -1241,7 +1268,7 @@ export default function SubCategoryShow({
                                                 {plan.price}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-1.5 rounded-xl border border-theme bg-theme-surface/80 px-3 py-2 text-xs text-theme-muted">
+                                        <div className="bg-theme-surface/80 flex items-center gap-1.5 rounded-xl border border-theme px-3 py-2 text-xs text-theme-muted">
                                             <Clock className="h-3.5 w-3.5" />
                                             {plan.delivery}
                                         </div>
@@ -1287,7 +1314,8 @@ export default function SubCategoryShow({
                             </button>
                             <div className="flex items-center gap-2 text-xs text-theme-muted">
                                 <Shield className="h-4 w-4 text-cyan-500" />
-                                Payment held securely — released only when you're satisfied
+                                Payment held securely — released only when
+                                you're satisfied
                             </div>
                         </div>
                     </motion.div>
@@ -1314,15 +1342,28 @@ export default function SubCategoryShow({
                                     suffix: null,
                                     label: 'Reviews',
                                 },
-                                { value: '100%', suffix: null, label: 'Verified Clients' },
-                                { value: '10', suffix: null, label: 'Active Projects' },
+                                {
+                                    value: '100%',
+                                    suffix: null,
+                                    label: 'Verified Clients',
+                                },
+                                {
+                                    value: '10',
+                                    suffix: null,
+                                    label: 'Active Projects',
+                                },
                             ].map((metric) => (
-                                <div key={metric.label} className="flex flex-col items-center gap-1 text-center">
+                                <div
+                                    key={metric.label}
+                                    className="flex flex-col items-center gap-1 text-center"
+                                >
                                     <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-5xl">
                                         {metric.value}
                                         {metric.suffix}
                                     </div>
-                                    <p className="text-sm text-theme-muted">{metric.label}</p>
+                                    <p className="text-sm text-theme-muted">
+                                        {metric.label}
+                                    </p>
                                 </div>
                             ))}
                         </div>
@@ -1340,13 +1381,15 @@ export default function SubCategoryShow({
 
                     {/* ── CONTENT ZONE ── */}
                     <div className="mx-auto max-w-4xl space-y-16">
-
                         {/* Description — editorial layout */}
                         <motion.div
                             initial={{ opacity: 0, y: 24 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-60px' }}
-                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                                duration: 0.6,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
                         >
                             <div className="mb-6 flex items-start gap-4">
                                 <div className="mt-1 w-1 self-stretch rounded-full bg-cyan-500" />
@@ -1364,7 +1407,7 @@ export default function SubCategoryShow({
                                 {descriptionFeatures.map((item) => (
                                     <div
                                         key={item.label}
-                                        className="flex flex-col items-center gap-3 rounded-2xl bg-theme-surface/50 p-5 text-center transition-colors hover:bg-theme-surface"
+                                        className="bg-theme-surface/50 flex flex-col items-center gap-3 rounded-2xl p-5 text-center transition-colors hover:bg-theme-surface"
                                     >
                                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15">
                                             <item.Icon className="h-6 w-6 text-cyan-500" />
@@ -1392,8 +1435,11 @@ export default function SubCategoryShow({
                             initial={{ opacity: 0, y: 24 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-60px' }}
-                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                            className="overflow-hidden rounded-[2rem] border border-theme bg-theme-surface/50"
+                            transition={{
+                                duration: 0.6,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="bg-theme-surface/50 overflow-hidden rounded-[2rem] border border-theme"
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
@@ -1452,11 +1498,12 @@ export default function SubCategoryShow({
                                     </div>
                                     <p className="text-sm leading-relaxed text-theme-muted">
                                         Opticore is a multidisciplinary creative
-                                        agency dedicated to bridging the gap between
-                                        high-end strategy and technical execution. We
-                                        empower brands with cinematic motion,
-                                        conversion-focused design, and scalable web
-                                        solutions that leave a lasting impact.
+                                        agency dedicated to bridging the gap
+                                        between high-end strategy and technical
+                                        execution. We empower brands with
+                                        cinematic motion, conversion-focused
+                                        design, and scalable web solutions that
+                                        leave a lasting impact.
                                     </p>
                                     <div className="mt-auto">
                                         <button
@@ -1477,7 +1524,10 @@ export default function SubCategoryShow({
                             initial={{ opacity: 0, y: 24 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-60px' }}
-                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                                duration: 0.6,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
                         >
                             <div className="mb-6 flex items-start gap-4">
                                 <div className="mt-1 w-1 self-stretch rounded-full bg-amber-500" />
@@ -1551,7 +1601,7 @@ export default function SubCategoryShow({
                                     }}
                                 >
                                     <div className="absolute inset-2 flex flex-col items-center justify-center rounded-full bg-background">
-                                        <span className="text-base font-black leading-none text-theme">
+                                        <span className="text-base leading-none font-black text-theme">
                                             4.8
                                         </span>
                                         <span className="text-[8px] font-bold text-theme-muted">
@@ -1622,7 +1672,7 @@ export default function SubCategoryShow({
                                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all ${
                                     hasFilesFilter
                                         ? 'border-cyan-400/50 bg-cyan-500/10 text-cyan-500'
-                                        : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-muted/50 hover:text-theme'
+                                        : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted hover:text-theme'
                                 }`}
                             >
                                 <ImageIcon className="h-3.5 w-3.5" />
@@ -1667,9 +1717,9 @@ export default function SubCategoryShow({
                                             }}
                                             className="mb-6 break-inside-avoid"
                                         >
-                                            <div className="group rounded-3xl bg-theme-surface/30 p-6 transition-colors hover:bg-theme-surface/60">
+                                            <div className="group bg-theme-surface/30 hover:bg-theme-surface/60 rounded-3xl p-6 transition-colors">
                                                 {/* Quote text */}
-                                                <p className="mb-4 text-base italic leading-relaxed text-theme">
+                                                <p className="mb-4 text-base leading-relaxed text-theme italic">
                                                     "{review.review}"
                                                 </p>
 
@@ -1680,19 +1730,35 @@ export default function SubCategoryShow({
                                                 </span>
 
                                                 {/* Review media attachments */}
-                                                {review.files && review.files.length > 0 && (
-                                                    <div className="mb-4 flex flex-wrap gap-2">
-                                                        {review.files.map((file, fIdx) => (
-                                                            <button
-                                                                key={fIdx}
-                                                                onClick={() => setReviewLightboxItem(file)}
-                                                                className="w-20 text-left"
-                                                            >
-                                                                <ReviewMedia file={file} />
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
+                                                {review.files &&
+                                                    review.files.length > 0 && (
+                                                        <div className="mb-4 flex flex-wrap gap-2">
+                                                            {review.files.map(
+                                                                (
+                                                                    file,
+                                                                    fIdx,
+                                                                ) => (
+                                                                    <button
+                                                                        key={
+                                                                            fIdx
+                                                                        }
+                                                                        onClick={() =>
+                                                                            setReviewLightboxItem(
+                                                                                file,
+                                                                            )
+                                                                        }
+                                                                        className="w-20 text-left"
+                                                                    >
+                                                                        <ReviewMedia
+                                                                            file={
+                                                                                file
+                                                                            }
+                                                                        />
+                                                                    </button>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    )}
 
                                                 {/* Author row */}
                                                 <div className="flex items-center gap-3">
@@ -1713,9 +1779,9 @@ export default function SubCategoryShow({
                                                             )}
                                                         </div>
                                                         <p className="text-xs text-theme-muted">
-                                                            {review.priceRange} ·{' '}
-                                                            {review.duration} ·{' '}
-                                                            {review.date}
+                                                            {review.priceRange}{' '}
+                                                            · {review.duration}{' '}
+                                                            · {review.date}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1740,8 +1806,15 @@ export default function SubCategoryShow({
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setReviewPage((p) => Math.max(1, p - 1));
-                                        reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        setReviewPage((p) =>
+                                            Math.max(1, p - 1),
+                                        );
+                                        reviewsSectionRef.current?.scrollIntoView(
+                                            {
+                                                behavior: 'smooth',
+                                                block: 'start',
+                                            },
+                                        );
                                     }}
                                     disabled={reviewPage === 1}
                                     className="flex items-center gap-2 rounded-2xl border border-theme px-5 py-2.5 text-sm font-bold text-theme transition-colors hover:bg-theme-surface disabled:cursor-not-allowed disabled:opacity-30"
@@ -1751,13 +1824,21 @@ export default function SubCategoryShow({
                                 </button>
 
                                 <div className="flex items-center gap-1.5">
-                                    {Array.from({ length: totalReviewPages }, (_, i) => i + 1).map((page) => (
+                                    {Array.from(
+                                        { length: totalReviewPages },
+                                        (_, i) => i + 1,
+                                    ).map((page) => (
                                         <button
                                             key={page}
                                             type="button"
                                             onClick={() => {
                                                 setReviewPage(page);
-                                                reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                reviewsSectionRef.current?.scrollIntoView(
+                                                    {
+                                                        behavior: 'smooth',
+                                                        block: 'start',
+                                                    },
+                                                );
                                             }}
                                             className={`h-8 w-8 rounded-full text-xs font-bold transition-all ${
                                                 page === reviewPage
@@ -1773,8 +1854,15 @@ export default function SubCategoryShow({
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setReviewPage((p) => Math.min(totalReviewPages, p + 1));
-                                        reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        setReviewPage((p) =>
+                                            Math.min(totalReviewPages, p + 1),
+                                        );
+                                        reviewsSectionRef.current?.scrollIntoView(
+                                            {
+                                                behavior: 'smooth',
+                                                block: 'start',
+                                            },
+                                        );
                                     }}
                                     disabled={reviewPage === totalReviewPages}
                                     className="flex items-center gap-2 rounded-2xl border border-theme px-5 py-2.5 text-sm font-bold text-theme transition-colors hover:bg-theme-surface disabled:cursor-not-allowed disabled:opacity-30"
@@ -1815,7 +1903,7 @@ export default function SubCategoryShow({
                                             category: service.category_slug,
                                             subcategory: service.slug,
                                         })}
-                                        className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-theme-surface/30 transition-all duration-300 hover:-translate-y-1 hover:bg-theme-surface/50"
+                                        className="group bg-theme-surface/30 hover:bg-theme-surface/50 relative flex flex-col overflow-hidden rounded-3xl border border-theme transition-all duration-300 hover:-translate-y-1"
                                     >
                                         <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
                                             {service.image ? (
@@ -1841,7 +1929,7 @@ export default function SubCategoryShow({
                                         </div>
 
                                         <div className="flex flex-1 flex-col gap-3 p-5">
-                                            <h3 className="text-sm font-bold leading-snug text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
+                                            <h3 className="text-sm leading-snug font-bold text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
                                                 {service.name}
                                             </h3>
 
@@ -1858,9 +1946,14 @@ export default function SubCategoryShow({
                                                         <span className="text-xs font-bold text-theme">
                                                             {service.rating}
                                                         </span>
-                                                        {service.reviews_count > 0 && (
+                                                        {service.reviews_count >
+                                                            0 && (
                                                             <span className="text-[10px] text-theme-subtle">
-                                                                ({service.reviews_count})
+                                                                (
+                                                                {
+                                                                    service.reviews_count
+                                                                }
+                                                                )
                                                             </span>
                                                         )}
                                                     </div>
@@ -1978,7 +2071,7 @@ export default function SubCategoryShow({
                                 duration: 0.3,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="glass-panel border-theme bg-theme-surface mb-4 flex h-[480px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border shadow-2xl sm:w-[360px]"
+                            className="glass-panel mb-4 flex h-[480px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
                         >
                             {/* Header */}
                             <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">

@@ -25,7 +25,7 @@ export default function Login() {
                     className="w-full max-w-md rounded-[2rem] border border-white/10 bg-zinc-950 p-[min(5vh,2.5rem)] shadow-2xl [@media(max-height:400px)]:p-4"
                 >
                     <div className="mb-[min(3vh,2.5rem)] text-center [@media(max-height:400px)]:mb-3">
-                        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/20 text-violet-500 sm:h-14 sm:w-14 [@media(max-height:500px)]:h-10 [@media(max-height:500px)]:w-10 [@media(max-height:400px)]:mb-2">
+                        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/20 text-violet-500 sm:h-14 sm:w-14 [@media(max-height:400px)]:mb-2 [@media(max-height:500px)]:h-10 [@media(max-height:500px)]:w-10">
                             <Lock className="h-6 w-6 sm:h-7 sm:w-7 [@media(max-height:500px)]:h-5 [@media(max-height:500px)]:w-5" />
                         </div>
                         <h1 className="text-[clamp(1.1rem,3vh,1.5rem)] font-bold tracking-tight text-white">

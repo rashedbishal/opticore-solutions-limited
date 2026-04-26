@@ -14,11 +14,11 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState, Suspense } from 'react';
 
-import KineticBento from '@/components/HomeRedesign/KineticBento';
+// import KineticBento from '@/components/HomeRedesign/KineticBento';
 import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
 import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
-import PortalLoop from '@/components/HomeRedesign/PortalLoop';
+// import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';

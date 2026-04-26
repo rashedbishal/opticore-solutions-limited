@@ -48,17 +48,27 @@ interface NebulaItemProps {
 function NebulaItem({ item, index, dx, dy }: NebulaItemProps) {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const baseSize = parseInt(item.size);
-    const responsiveSize = isMobile ? Math.min(baseSize, window.innerWidth * 0.7) + 'px' : item.size;
-    
-    const x = useTransform(dx, [-0.5, 0.5], [index * (isMobile ? -20 : -50), index * (isMobile ? 20 : 50)]);
-    const y = useTransform(dy, [-0.5, 0.5], [index * (isMobile ? -15 : -30), index * (isMobile ? 15 : 30)]);
+    const responsiveSize = isMobile
+        ? Math.min(baseSize, window.innerWidth * 0.7) + 'px'
+        : item.size;
+
+    const x = useTransform(
+        dx,
+        [-0.5, 0.5],
+        [index * (isMobile ? -20 : -50), index * (isMobile ? 20 : 50)],
+    );
+    const y = useTransform(
+        dy,
+        [-0.5, 0.5],
+        [index * (isMobile ? -15 : -30), index * (isMobile ? 15 : 30)],
+    );
     const rotateX = useTransform(dy, [-0.5, 0.5], [15, -15]);
     const rotateY = useTransform(dx, [-0.5, 0.5], [-15, 15]);
 
     return (
         <motion.div
             style={{
-                left: isMobile ? (parseInt(item.x) * 0.8 + 10) + '%' : item.x,
+                left: isMobile ? parseInt(item.x) * 0.8 + 10 + '%' : item.x,
                 top: item.y,
                 width: responsiveSize,
                 x,
