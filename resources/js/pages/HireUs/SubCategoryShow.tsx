@@ -319,16 +319,22 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'glass-panel bg-theme-surface-hover shadow-lg' : 'border border-theme bg-theme-surface hover:bg-theme-surface-hover'}`}>
+        <div
+            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'glass-panel bg-theme-surface-hover shadow-lg' : 'border border-theme bg-theme-surface hover:bg-theme-surface-hover'}`}
+        >
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex w-full items-center justify-between p-6 text-left transition-colors"
             >
-                <span className={`text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-cyan-500' : 'text-theme'}`}>
+                <span
+                    className={`text-sm font-bold tracking-tight transition-colors ${isOpen ? 'text-cyan-500' : 'text-theme'}`}
+                >
                     {faq.question}
                 </span>
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-theme transition-all duration-300 ${isOpen ? 'rotate-180 border-cyan-500/30 bg-cyan-500/10 text-cyan-500' : 'text-theme-muted'}`}>
+                <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-theme transition-all duration-300 ${isOpen ? 'rotate-180 border-cyan-500/30 bg-cyan-500/10 text-cyan-500' : 'text-theme-muted'}`}
+                >
                     <ChevronDown className="h-4 w-4" />
                 </div>
             </button>
@@ -340,7 +346,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <div className="px-6 pb-6 pt-0">
+                        <div className="px-6 pt-0 pb-6">
                             <p className="text-sm leading-relaxed text-theme-muted">
                                 {faq.answer}
                             </p>
@@ -433,7 +439,11 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         const thumb = strip.children[activeIndex] as HTMLElement | undefined;
 
         if (thumb) {
-            thumb.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
+            thumb.scrollIntoView({
+                inline: 'nearest',
+                block: 'nearest',
+                behavior: 'smooth',
+            });
         }
     }, [activeIndex]);
 
@@ -1052,7 +1062,6 @@ export default function SubCategoryShow({
             <Head title={`${subCategory.name} — Hire Opticore`} />
 
             <div className="relative min-h-screen bg-background pb-36 lg:pb-24">
-
                 {/* ── CINEMATIC HERO GALLERY (full-width) ── */}
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -1163,96 +1172,96 @@ export default function SubCategoryShow({
                         delay: 0.15,
                         ease: [0.22, 1, 0.36, 1],
                     }}
-                    className="mx-auto max-w-7xl px-4 scroll-mt-32"
+                    className="mx-auto max-w-7xl scroll-mt-32 px-4"
                 >
-                        <p className="mb-6 text-[10px] font-bold tracking-[0.2em] text-theme-muted uppercase">
-                            Choose Your Plan
-                        </p>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            {PLANS.map((plan) => (
-                                <div
-                                    key={plan.id}
-                                    onClick={() => setSelectedPlan(plan.id)}
-                                    className={`relative flex flex-col cursor-pointer rounded-[2rem] border p-6 transition-all duration-300 ${
-                                        selectedPlan === plan.id
-                                            ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
-                                            : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
-                                    }`}
-                                >
-                                    {'popular' in plan && (
-                                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-cyan-500 px-3 py-0.5 text-[9px] font-black tracking-widest text-white uppercase">
-                                            Most Popular
-                                        </span>
-                                    )}
+                    <p className="mb-6 text-[10px] font-bold tracking-[0.2em] text-theme-muted uppercase">
+                        Choose Your Plan
+                    </p>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        {PLANS.map((plan) => (
+                            <div
+                                key={plan.id}
+                                onClick={() => setSelectedPlan(plan.id)}
+                                className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
+                                    selectedPlan === plan.id
+                                        ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
+                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
+                                }`}
+                            >
+                                {'popular' in plan && (
+                                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-cyan-500 px-3 py-0.5 text-[9px] font-black tracking-widest text-white uppercase">
+                                        Most Popular
+                                    </span>
+                                )}
 
-                                    <div className="mb-5 flex items-start justify-between">
-                                        <div>
-                                            <div
-                                                className={`mb-1 flex items-center gap-2 ${selectedPlan === plan.id ? plan.accentClass : 'text-theme-subtle'}`}
-                                            >
-                                                <plan.Icon className="h-4 w-4" />
-                                                <span className="text-xs font-bold tracking-widest uppercase">
-                                                    {plan.name}
-                                                </span>
-                                            </div>
-                                            <span className="text-3xl font-black text-theme">
-                                                {plan.price}
+                                <div className="mb-5 flex items-start justify-between">
+                                    <div>
+                                        <div
+                                            className={`mb-1 flex items-center gap-2 ${selectedPlan === plan.id ? plan.accentClass : 'text-theme-subtle'}`}
+                                        >
+                                            <plan.Icon className="h-4 w-4" />
+                                            <span className="text-xs font-bold tracking-widest uppercase">
+                                                {plan.name}
                                             </span>
                                         </div>
-                                        <div className="bg-theme-surface/80 flex items-center gap-1.5 rounded-xl border border-theme px-3 py-2 text-xs text-theme-muted">
-                                            <Clock className="h-3.5 w-3.5" />
-                                            {plan.delivery}
-                                        </div>
+                                        <span className="text-3xl font-black text-theme">
+                                            {plan.price}
+                                        </span>
                                     </div>
-
-                                    <ul className="mb-6 space-y-2.5">
-                                        {plan.features.map((f) => (
-                                            <li
-                                                key={f.label}
-                                                className="flex items-center gap-3 text-sm text-theme-muted"
-                                            >
-                                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
-                                                    <f.Icon className="h-3 w-3 text-cyan-500" />
-                                                </span>
-                                                {f.label}
-                                            </li>
-                                        ))}
-                                    </ul>
-
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleHireNow(plan.id);
-                                        }}
-                                        className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
-                                    >
-                                        Hire Now
-                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                    </button>
+                                    <div className="bg-theme-surface/80 flex items-center gap-1.5 rounded-xl border border-theme px-3 py-2 text-xs text-theme-muted">
+                                        <Clock className="h-3.5 w-3.5" />
+                                        {plan.delivery}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
 
-                        <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                            <button
-                                type="button"
-                                onClick={() => setIsContactModalOpen(true)}
-                                className="flex items-center gap-2 rounded-2xl border border-theme px-6 py-3 text-sm font-bold text-theme transition-colors hover:bg-theme-surface"
-                            >
-                                <MessageSquare className="h-4 w-4" />
-                                Need a Custom Quote?
-                            </button>
-                            <div className="flex items-center gap-2 text-xs text-theme-muted">
-                                <Shield className="h-4 w-4 text-cyan-500" />
-                                Payment held securely — released only when
-                                you're satisfied
+                                <ul className="mb-6 space-y-2.5">
+                                    {plan.features.map((f) => (
+                                        <li
+                                            key={f.label}
+                                            className="flex items-center gap-3 text-sm text-theme-muted"
+                                        >
+                                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
+                                                <f.Icon className="h-3 w-3 text-cyan-500" />
+                                            </span>
+                                            {f.label}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleHireNow(plan.id);
+                                    }}
+                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                >
+                                    Hire Now
+                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                </button>
                             </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+                        <button
+                            type="button"
+                            onClick={() => setIsContactModalOpen(true)}
+                            className="flex items-center gap-2 rounded-2xl border border-theme px-6 py-3 text-sm font-bold text-theme transition-colors hover:bg-theme-surface"
+                        >
+                            <MessageSquare className="h-4 w-4" />
+                            Need a Custom Quote?
+                        </button>
+                        <div className="flex items-center gap-2 text-xs text-theme-muted">
+                            <Shield className="h-4 w-4 text-cyan-500" />
+                            Payment held securely — released only when you're
+                            satisfied
                         </div>
+                    </div>
                 </motion.div>
 
                 {/* ── TRUST METRICS (full-width section) ── */}
-                <div className="group/trust relative mt-16 w-full overflow-hidden border-y border-theme bg-theme-surface/50 py-16">
+                <div className="group/trust bg-theme-surface/50 relative mt-16 w-full overflow-hidden border-y border-theme py-16">
                     {/* Background decorations */}
                     <div className="dot-grid pointer-events-none absolute inset-0 opacity-40 transition-opacity group-hover/trust:opacity-60" />
                     <div className="pointer-events-none absolute inset-0 bg-radial-[at_center,_var(--tw-gradient-from)_0%,_transparent_70%] from-cyan-500/5" />
@@ -1294,11 +1303,14 @@ export default function SubCategoryShow({
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1, duration: 0.5 }}
+                                    transition={{
+                                        delay: idx * 0.1,
+                                        duration: 0.5,
+                                    }}
                                     className="flex flex-col items-center gap-2 text-center"
                                 >
                                     <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-6xl lg:text-7xl">
-                                        <span className="bg-linear-to-b from-theme via-theme to-theme/40 bg-clip-text text-transparent">
+                                        <span className="from-theme via-theme to-theme/40 bg-linear-to-b bg-clip-text text-transparent">
                                             {metric.value}
                                         </span>
                                         {metric.suffix}
@@ -1325,10 +1337,10 @@ export default function SubCategoryShow({
                 {/* ── SERVICE DESCRIPTION (full-width) ── */}
                 <div className="relative w-full overflow-hidden py-24">
                     {/* Decorative background elements */}
-                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4">
+                    <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/2">
                         <div className="h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
                     </div>
-                    <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4">
+                    <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/2">
                         <div className="h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-[120px]" />
                     </div>
 
@@ -1391,9 +1403,9 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── ABOUT + BACKGROUND (full-width with bg) ── */}
-                <div className="relative w-full overflow-hidden bg-theme-surface/30 py-24">
+                <div className="bg-theme-surface/30 relative w-full overflow-hidden py-24">
                     <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
-                    
+
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1404,7 +1416,7 @@ export default function SubCategoryShow({
                         }}
                         className="relative z-10 mx-auto max-w-5xl px-4"
                     >
-                        <div className="glass-panel overflow-hidden rounded-[2.5rem] bg-theme-surface/40 shadow-2xl backdrop-blur-xl">
+                        <div className="glass-panel bg-theme-surface/40 overflow-hidden rounded-[2.5rem] shadow-2xl backdrop-blur-xl">
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
                                 <div className="relative space-y-6 p-10 md:p-12">
@@ -1421,21 +1433,29 @@ export default function SubCategoryShow({
                                             <span className="font-bold text-theme">
                                                 Opticore Solutions LTD.
                                             </span>{' '}
-                                            is a globally distributed team operating from the heart of tech hubs.
+                                            is a globally distributed team
+                                            operating from the heart of tech
+                                            hubs.
                                         </p>
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
-                                                <span className="text-sm font-semibold text-theme">New Mexico, USA</span>
+                                                <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-500" />
+                                                <span className="text-sm font-semibold text-theme">
+                                                    New Mexico, USA
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <div className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
-                                                <span className="text-sm font-semibold text-theme">Dhaka, Bangladesh</span>
+                                                <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-500" />
+                                                <span className="text-sm font-semibold text-theme">
+                                                    Dhaka, Bangladesh
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="pt-4">
-                                        <p className="mb-3 text-[10px] font-bold tracking-widest text-theme-muted uppercase">Supported Languages</p>
+                                        <p className="mb-3 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                            Supported Languages
+                                        </p>
                                         <div className="flex flex-wrap gap-2">
                                             {[
                                                 { name: 'English', flag: '🇺🇸' },
@@ -1444,7 +1464,7 @@ export default function SubCategoryShow({
                                             ].map((lang) => (
                                                 <span
                                                     key={lang.name}
-                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface/50 px-4 py-2 text-xs font-bold text-theme transition-colors hover:bg-theme-surface"
+                                                    className="bg-theme-surface/50 flex items-center gap-2 rounded-xl border border-theme px-4 py-2 text-xs font-bold text-theme transition-colors hover:bg-theme-surface"
                                                 >
                                                     <span>{lang.flag}</span>
                                                     {lang.name}
@@ -1509,7 +1529,8 @@ export default function SubCategoryShow({
                                 Service FAQs
                             </h2>
                             <p className="mt-4 text-theme-muted">
-                                Everything you need to know about our {subCategory.name.toLowerCase()} service.
+                                Everything you need to know about our{' '}
+                                {subCategory.name.toLowerCase()} service.
                             </p>
                         </div>
 
@@ -1533,11 +1554,11 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── REVIEWS (full-width, high-contrast bg) ── */}
-                <div className="w-full bg-theme-surface/40 py-20">
+                <div className="bg-theme-surface/40 w-full py-20">
                     <motion.div
                         ref={reviewsSectionRef}
                         variants={fadeUp}
-                        className="mx-auto max-w-7xl px-4 space-y-8"
+                        className="mx-auto max-w-7xl space-y-8 px-4"
                     >
                         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                             <div>
@@ -1821,97 +1842,97 @@ export default function SubCategoryShow({
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: '-80px' }}
-                        className="mx-auto max-w-7xl px-4 py-20 space-y-8"
+                        className="mx-auto max-w-7xl space-y-8 px-4 py-20"
                     >
-                            <motion.div variants={fadeUp}>
-                                <h2 className="text-2xl font-bold text-theme">
-                                    Other Recommended Services
-                                </h2>
-                                <p className="mt-1 text-sm text-theme-muted">
-                                    Explore more of what Opticore has to offer
-                                </p>
-                            </motion.div>
+                        <motion.div variants={fadeUp}>
+                            <h2 className="text-2xl font-bold text-theme">
+                                Other Recommended Services
+                            </h2>
+                            <p className="mt-1 text-sm text-theme-muted">
+                                Explore more of what Opticore has to offer
+                            </p>
+                        </motion.div>
 
-                            <motion.div
-                                variants={fadeUp}
-                                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-                            >
-                                {recommendedServices.map((service) => (
-                                    <Link
-                                        key={service.id}
-                                        href={showSubCategory.url({
-                                            category: service.category_slug,
-                                            subcategory: service.slug,
-                                        })}
-                                        className="group bg-theme-surface/30 hover:bg-theme-surface/50 relative flex flex-col overflow-hidden rounded-3xl border border-theme transition-all duration-300 hover:-translate-y-1"
-                                    >
-                                        <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
-                                            {service.image ? (
-                                                <img
-                                                    src={service.image}
-                                                    alt={service.name}
-                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        e.currentTarget.style.display =
-                                                            'none';
-                                                    }}
-                                                />
-                                            ) : (
-                                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
-                                                    <ImageIcon className="h-8 w-8 text-zinc-700" />
-                                                </div>
-                                            )}
-                                            <div className="absolute top-3 left-3">
-                                                <span className="rounded-full border border-cyan-500/30 bg-black/60 px-2.5 py-1 text-[10px] font-bold tracking-widest text-cyan-500 uppercase backdrop-blur-sm">
-                                                    {service.category_label}
-                                                </span>
+                        <motion.div
+                            variants={fadeUp}
+                            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                        >
+                            {recommendedServices.map((service) => (
+                                <Link
+                                    key={service.id}
+                                    href={showSubCategory.url({
+                                        category: service.category_slug,
+                                        subcategory: service.slug,
+                                    })}
+                                    className="group bg-theme-surface/30 hover:bg-theme-surface/50 relative flex flex-col overflow-hidden rounded-3xl border border-theme transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
+                                        {service.image ? (
+                                            <img
+                                                src={service.image}
+                                                alt={service.name}
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display =
+                                                        'none';
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
+                                                <ImageIcon className="h-8 w-8 text-zinc-700" />
                                             </div>
+                                        )}
+                                        <div className="absolute top-3 left-3">
+                                            <span className="rounded-full border border-cyan-500/30 bg-black/60 px-2.5 py-1 text-[10px] font-bold tracking-widest text-cyan-500 uppercase backdrop-blur-sm">
+                                                {service.category_label}
+                                            </span>
                                         </div>
+                                    </div>
 
-                                        <div className="flex flex-1 flex-col gap-3 p-5">
-                                            <h3 className="text-sm leading-snug font-bold text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
-                                                {service.name}
-                                            </h3>
+                                    <div className="flex flex-1 flex-col gap-3 p-5">
+                                        <h3 className="text-sm leading-snug font-bold text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-500">
+                                            {service.name}
+                                        </h3>
 
-                                            {service.description && (
-                                                <p className="line-clamp-2 text-xs leading-relaxed text-theme-muted">
-                                                    {service.description}
-                                                </p>
-                                            )}
+                                        {service.description && (
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-theme-muted">
+                                                {service.description}
+                                            </p>
+                                        )}
 
-                                            <div className="mt-auto flex items-center justify-between border-t border-theme pt-3">
-                                                {service.rating ? (
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Star className="h-3 w-3 fill-current text-amber-500" />
-                                                        <span className="text-xs font-bold text-theme">
-                                                            {service.rating}
-                                                        </span>
-                                                        {service.reviews_count >
-                                                            0 && (
-                                                            <span className="text-[10px] text-theme-subtle">
-                                                                (
-                                                                {
-                                                                    service.reviews_count
-                                                                }
-                                                                )
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div />
-                                                )}
-                                                {service.price && (
-                                                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-500">
-                                                        From ${service.price}
+                                        <div className="mt-auto flex items-center justify-between border-t border-theme pt-3">
+                                            {service.rating ? (
+                                                <div className="flex items-center gap-1.5">
+                                                    <Star className="h-3 w-3 fill-current text-amber-500" />
+                                                    <span className="text-xs font-bold text-theme">
+                                                        {service.rating}
                                                     </span>
-                                                )}
-                                            </div>
+                                                    {service.reviews_count >
+                                                        0 && (
+                                                        <span className="text-[10px] text-theme-subtle">
+                                                            (
+                                                            {
+                                                                service.reviews_count
+                                                            }
+                                                            )
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div />
+                                            )}
+                                            {service.price && (
+                                                <span className="text-xs font-black text-emerald-600 dark:text-emerald-500">
+                                                    From ${service.price}
+                                                </span>
+                                            )}
                                         </div>
+                                    </div>
 
-                                        <ArrowRight className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 text-cyan-500 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100" />
-                                    </Link>
-                                ))}
-                            </motion.div>
+                                    <ArrowRight className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 text-cyan-500 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100" />
+                                </Link>
+                            ))}
+                        </motion.div>
                     </motion.div>
                 )}
             </div>
