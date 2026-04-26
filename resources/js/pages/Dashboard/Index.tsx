@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import type { FormEventHandler } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Package,
@@ -7,7 +8,6 @@ import {
     Star,
     MessageSquare,
     ChevronRight,
-    Search,
     Bell,
     Settings,
     LayoutDashboard,
@@ -15,66 +15,111 @@ import {
     CreditCard,
     Zap,
     ArrowRight,
+    CheckCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 
-const mockOrders = [
-    {
-        id: 'ORD-7721',
-        service: 'YouTube Thumbnail Design',
-        category: 'Graphic Design',
-        status: 'In Progress',
-        deadline: '2026-04-18',
-        price: '300 BDT',
-        progress: 65,
-        team: 'Visuals Team A',
-    },
-    {
-        id: 'ORD-7718',
-        service: 'Social Media Post Pack',
-        category: 'Graphic Design',
-        status: 'Review Required',
-        deadline: '2026-04-16',
-        price: '500 BDT',
-        progress: 100,
-        team: 'Marketing Team B',
-        deliveredAt: '2026-04-16T10:00:00Z',
-    },
-    {
-        id: 'ORD-7692',
-        service: 'Product 3D Render',
-        category: '3D Production',
-        status: 'Completed',
-        deadline: '2026-04-10',
-        price: '3500 BDT',
-        progress: 100,
-        team: '3D Studio 1',
-        rating: 5,
-    },
-];
+interface SubCategory {
+    id: number;
+    name: string;
+    slug: string;
+}
 
-export default function UserDashboard() {
+interface Task {
+    id: number;
+    task_name: string;
+    category: string;
+    sub_category: SubCategory | null;
+    date: string | null;
+    state: 'pending' | 'in progress' | 'delivered';
+    can_review: boolean;
+    has_review: boolean;
+    review_eligible_until: string | null;
+    service_url: string | null;
+}
+
+interface Props {
+    tasks: Task[];
+}
+
+const STATE_LABELS: Record<string, string> = {
+    pending: 'Pending',
+    'in progress': 'In Progress',
+    delivered: 'Delivered',
+};
+
+function stateClass(task: Task): string {
+    if (task.state === 'delivered' && task.can_review) {
+        return 'bg-amber-500/20 text-amber-500';
+    }
+    if (task.state === 'in progress') {
+        return 'bg-cyan-500/20 text-cyan-500';
+    }
+    if (task.state === 'delivered') {
+        return 'bg-zinc-800 text-zinc-400';
+    }
+    return 'bg-zinc-800 text-zinc-500';
+}
+
+function stateLabel(task: Task): string {
+    if (task.state === 'delivered' && task.can_review) {
+        return 'Review Required';
+    }
+    return STATE_LABELS[task.state] ?? task.state;
+}
+
+export default function UserDashboard({ tasks }: Props) {
+    const { auth } = usePage<{ auth: { user: { name: string } } }>().props;
     const [activeTab, setActiveTab] = useState('active');
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-    const [selectedOrderForReview, setSelectedOrderForReview] =
-        useState<any>(null);
-    const [rating, setRating] = useState(0);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [hoverRating, setHoverRating] = useState(0);
 
-    const filteredOrders = mockOrders.filter((order) => {
+    const { data, setData, post, processing, errors, reset, wasSuccessful } =
+        useForm({
+            task_id: 0,
+            rating: 0,
+            comment: '',
+            price_range: '',
+            work_duration: '',
+        });
+
+    const openReview = (task: Task) => {
+        setSelectedTask(task);
+        reset();
+        setData('task_id', task.id);
+        setIsReviewModalOpen(true);
+    };
+
+    const closeReview = () => {
+        setIsReviewModalOpen(false);
+        setSelectedTask(null);
+        setHoverRating(0);
+    };
+
+    const submitReview: FormEventHandler = (e) => {
+        e.preventDefault();
+        post('/reviews', {
+            onSuccess: () => {
+                closeReview();
+            },
+        });
+    };
+
+    const filteredTasks = tasks.filter((t) => {
         if (activeTab === 'active') {
-            return (
-                order.status === 'In Progress' ||
-                order.status === 'Review Required'
-            );
+            return t.state === 'pending' || t.state === 'in progress' || (t.state === 'delivered' && t.can_review);
         }
-
         if (activeTab === 'completed') {
-            return order.status === 'Completed';
+            return t.state === 'delivered' && !t.can_review;
         }
-
         return true;
     });
+
+    const activeCount = tasks.filter(
+        (t) => t.state === 'pending' || t.state === 'in progress' || (t.state === 'delivered' && t.can_review),
+    ).length;
+    const reviewCount = tasks.filter((t) => t.can_review).length;
 
     return (
         <>
@@ -82,7 +127,6 @@ export default function UserDashboard() {
 
             <div className="min-h-screen bg-black px-4 pt-32 pb-24">
                 <div className="mx-auto max-w-7xl">
-                    {/* Dashboard Header */}
                     <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-center">
                         <div>
                             <h1 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase">
@@ -96,75 +140,71 @@ export default function UserDashboard() {
                         <div className="flex items-center gap-4">
                             <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white">
                                 <Bell className="h-5 w-5" />
-                                <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-cyan-500" />
+                                {reviewCount > 0 && (
+                                    <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-amber-500" />
+                                )}
                             </button>
-                            <button className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-cyan-400">
+                            <Link
+                                href="/hire-us"
+                                className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-cyan-400"
+                            >
                                 <Zap className="h-4 w-4 fill-current" /> New
                                 Project
-                            </button>
+                            </Link>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_1fr]">
-                        {/* Sidebar Navigation */}
                         <aside className="space-y-2">
                             {[
                                 {
                                     id: 'dashboard',
                                     label: 'Dashboard',
                                     icon: LayoutDashboard,
-                                },
-                                {
-                                    id: 'orders',
-                                    label: 'My Orders',
-                                    icon: Package,
+                                    href: '/dashboard',
                                 },
                                 {
                                     id: 'messages',
                                     label: 'Messages',
                                     icon: MessageSquare,
-                                },
-                                {
-                                    id: 'billing',
-                                    label: 'Payments',
-                                    icon: CreditCard,
+                                    href: '#chat',
                                 },
                                 {
                                     id: 'settings',
                                     label: 'Settings',
                                     icon: Settings,
+                                    href: '/profile',
                                 },
                             ].map((item) => (
-                                <button
+                                <Link
                                     key={item.id}
-                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'orders' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                    href={item.href}
+                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'dashboard' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                                 >
                                     <item.icon className="h-5 w-5" />
                                     {item.label}
-                                </button>
+                                </Link>
                             ))}
                         </aside>
 
-                        {/* Main Content Area */}
                         <main className="space-y-8">
-                            {/* Stats Summary */}
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 {[
                                     {
                                         label: 'Active Orders',
-                                        value: '02',
+                                        value: activeCount.toString(),
                                         icon: Package,
                                         color: 'text-cyan-400',
                                     },
                                     {
                                         label: 'Awaiting Review',
-                                        value: '01',
+                                        value: reviewCount.toString(),
                                         icon: Clock,
                                         color: 'text-amber-400',
                                     },
                                     {
-                                        label: 'Total Invested',
-                                        value: '4,300 BDT',
+                                        label: 'Total Tasks',
+                                        value: tasks.length.toString(),
                                         icon: CreditCard,
                                         color: 'text-violet-400',
                                     },
@@ -193,7 +233,6 @@ export default function UserDashboard() {
                                 ))}
                             </div>
 
-                            {/* Orders Table-like View */}
                             <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/20">
                                 <div className="flex items-center justify-between border-b border-white/5 p-8">
                                     <div className="flex rounded-xl bg-black/40 p-1">
@@ -213,23 +252,21 @@ export default function UserDashboard() {
                                         >
                                             Completed
                                         </button>
-                                    </div>
-                                    <div className="relative hidden md:block">
-                                        <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-600" />
-                                        <input
-                                            type="text"
-                                            placeholder="Search orders..."
-                                            className="w-64 rounded-xl border border-white/5 bg-black/40 py-2 pr-4 pl-12 text-sm text-white transition-all focus:border-cyan-500/50 focus:outline-none"
-                                        />
+                                        <button
+                                            onClick={() => setActiveTab('all')}
+                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'all' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                        >
+                                            All
+                                        </button>
                                     </div>
                                 </div>
 
                                 <div className="p-0">
-                                    {filteredOrders.length > 0 ? (
+                                    {filteredTasks.length > 0 ? (
                                         <div className="divide-y divide-white/5">
-                                            {filteredOrders.map((order) => (
+                                            {filteredTasks.map((task) => (
                                                 <div
-                                                    key={order.id}
+                                                    key={task.id}
                                                     className="group p-8 transition-colors hover:bg-white/[0.02]"
                                                 >
                                                     <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
@@ -241,92 +278,55 @@ export default function UserDashboard() {
                                                                 <div className="mb-1 flex items-center gap-3">
                                                                     <h4 className="text-lg font-bold text-white">
                                                                         {
-                                                                            order.service
+                                                                            task.task_name
                                                                         }
                                                                     </h4>
                                                                     <span
-                                                                        className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${
-                                                                            order.status ===
-                                                                            'Review Required'
-                                                                                ? 'bg-amber-500/20 text-amber-500'
-                                                                                : order.status ===
-                                                                                    'In Progress'
-                                                                                  ? 'bg-cyan-500/20 text-cyan-500'
-                                                                                  : 'bg-zinc-800 text-zinc-500'
-                                                                        }`}
+                                                                        className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${stateClass(task)}`}
                                                                     >
-                                                                        {
-                                                                            order.status
-                                                                        }
+                                                                        {stateLabel(
+                                                                            task,
+                                                                        )}
                                                                     </span>
                                                                 </div>
                                                                 <p className="text-xs font-medium tracking-widest text-zinc-500 uppercase">
-                                                                    ID:{' '}
-                                                                    {order.id} •{' '}
-                                                                    {
-                                                                        order.category
-                                                                    }
+                                                                    {task.sub_category
+                                                                        ? task
+                                                                              .sub_category
+                                                                              .name
+                                                                        : task.category}{' '}
+                                                                    {task.date &&
+                                                                        `• ${task.date}`}
                                                                 </p>
+                                                                {task.has_review && (
+                                                                    <p className="mt-1 flex items-center gap-1 text-xs text-green-500">
+                                                                        <CheckCircle className="h-3 w-3" />
+                                                                        Review
+                                                                        submitted
+                                                                    </p>
+                                                                )}
                                                             </div>
                                                         </div>
 
                                                         <div className="flex flex-wrap items-center gap-8 md:gap-12">
-                                                            <div>
-                                                                <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-600 uppercase">
-                                                                    Price
-                                                                </p>
-                                                                <p className="font-bold text-white">
-                                                                    {
-                                                                        order.price
+                                                            {task.service_url && (
+                                                                <Link
+                                                                    href={
+                                                                        task.service_url
                                                                     }
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-600 uppercase">
-                                                                    Deadline
-                                                                </p>
-                                                                <p className="font-bold text-white">
-                                                                    {
-                                                                        order.deadline
-                                                                    }
-                                                                </p>
-                                                            </div>
-                                                            <div className="w-32">
-                                                                <div className="mb-1.5 flex items-center justify-between">
-                                                                    <p className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
-                                                                        Progress
-                                                                    </p>
-                                                                    <span className="text-[10px] font-bold text-white">
-                                                                        {
-                                                                            order.progress
-                                                                        }
-                                                                        %
-                                                                    </span>
-                                                                </div>
-                                                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-                                                                    <motion.div
-                                                                        initial={{
-                                                                            width: 0,
-                                                                        }}
-                                                                        animate={{
-                                                                            width: `${order.progress}%`,
-                                                                        }}
-                                                                        className={`h-full ${order.status === 'Review Required' ? 'bg-amber-500' : 'bg-cyan-500'}`}
-                                                                    />
-                                                                </div>
-                                                            </div>
+                                                                    className="text-xs text-zinc-500 underline hover:text-cyan-400"
+                                                                >
+                                                                    View Service
+                                                                </Link>
+                                                            )}
                                                             <div className="flex items-center gap-3">
-                                                                {order.status ===
-                                                                'Review Required' ? (
+                                                                {task.can_review ? (
                                                                     <button
-                                                                        onClick={() => {
-                                                                            setSelectedOrderForReview(
-                                                                                order,
-                                                                            );
-                                                                            setIsReviewModalOpen(
-                                                                                true,
-                                                                            );
-                                                                        }}
+                                                                        onClick={() =>
+                                                                            openReview(
+                                                                                task,
+                                                                            )
+                                                                        }
                                                                         className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-amber-400"
                                                                     >
                                                                         Review
@@ -334,9 +334,9 @@ export default function UserDashboard() {
                                                                         <ArrowRight className="h-4 w-4" />
                                                                     </button>
                                                                 ) : (
-                                                                    <button className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-zinc-500 transition-all hover:border-white/30 hover:text-white">
+                                                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-zinc-500">
                                                                         <ChevronRight className="h-5 w-5" />
-                                                                    </button>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -363,15 +363,14 @@ export default function UserDashboard() {
                 </div>
             </div>
 
-            {/* Review Submission Modal Demo */}
             <AnimatePresence>
-                {isReviewModalOpen && (
+                {isReviewModalOpen && selectedTask && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setIsReviewModalOpen(false)}
+                            onClick={closeReview}
                             className="absolute inset-0 bg-black/90 backdrop-blur-md"
                         />
                         <motion.div
@@ -389,14 +388,24 @@ export default function UserDashboard() {
                                 <p className="text-zinc-500">
                                     How was your experience with{' '}
                                     <span className="font-bold text-white">
-                                        {selectedOrderForReview?.service}
+                                        {selectedTask.task_name}
                                     </span>
                                     ?
                                 </p>
+                                {selectedTask.service_url && (
+                                    <Link
+                                        href={selectedTask.service_url}
+                                        className="mt-2 block text-sm text-cyan-400 hover:underline"
+                                    >
+                                        View service page →
+                                    </Link>
+                                )}
                             </div>
 
-                            <div className="space-y-8">
-                                {/* Rating Logic Demo */}
+                            <form
+                                onSubmit={submitReview}
+                                className="space-y-8"
+                            >
                                 <div className="flex flex-col items-center rounded-3xl border border-white/5 bg-white/5 py-6">
                                     <p className="mb-6 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
                                         Your Rating
@@ -405,19 +414,22 @@ export default function UserDashboard() {
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <button
                                                 key={star}
+                                                type="button"
                                                 onMouseEnter={() =>
                                                     setHoverRating(star)
                                                 }
                                                 onMouseLeave={() =>
                                                     setHoverRating(0)
                                                 }
-                                                onClick={() => setRating(star)}
+                                                onClick={() =>
+                                                    setData('rating', star)
+                                                }
                                                 className="transition-transform hover:scale-125"
                                             >
                                                 <Star
                                                     className={`h-12 w-12 transition-colors ${
                                                         (hoverRating ||
-                                                            rating) >= star
+                                                            data.rating) >= star
                                                             ? 'fill-current text-amber-400'
                                                             : 'text-zinc-700'
                                                     }`}
@@ -426,18 +438,23 @@ export default function UserDashboard() {
                                         ))}
                                     </div>
                                     <p className="mt-6 h-4 text-sm font-bold tracking-widest text-amber-500 uppercase">
-                                        {rating === 5
+                                        {data.rating === 5
                                             ? 'Exceptional!'
-                                            : rating === 4
+                                            : data.rating === 4
                                               ? 'Great Work'
-                                              : rating === 3
+                                              : data.rating === 3
                                                 ? 'Good'
-                                                : rating === 2
+                                                : data.rating === 2
                                                   ? 'Needs Improvement'
-                                                  : rating === 1
+                                                  : data.rating === 1
                                                     ? 'Poor'
                                                     : ''}
                                     </p>
+                                    {errors.rating && (
+                                        <p className="mt-2 text-sm text-red-400">
+                                            {errors.rating}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-4">
@@ -445,12 +462,64 @@ export default function UserDashboard() {
                                         Detailed Feedback
                                     </p>
                                     <textarea
+                                        value={data.comment}
+                                        onChange={(e) =>
+                                            setData('comment', e.target.value)
+                                        }
                                         placeholder="Tell us about the quality, communication, and speed..."
                                         className="h-40 w-full resize-none rounded-[2rem] border border-white/10 bg-black/40 p-6 text-white transition-all placeholder:text-zinc-700 focus:border-amber-500/50 focus:outline-none"
+                                        required
                                     />
+                                    {errors.comment && (
+                                        <p className="text-sm text-red-400">
+                                            {errors.comment}
+                                        </p>
+                                    )}
                                 </div>
 
-                                {/* Review System Rule Info */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="mb-2 px-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                                            Price Range{' '}
+                                            <span className="normal-case text-zinc-600">
+                                                (optional)
+                                            </span>
+                                        </p>
+                                        <input
+                                            type="text"
+                                            value={data.price_range}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'price_range',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="e.g. 1000–3000 BDT"
+                                            className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-zinc-700 focus:border-amber-500/50 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <p className="mb-2 px-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">
+                                            Work Duration{' '}
+                                            <span className="normal-case text-zinc-600">
+                                                (optional)
+                                            </span>
+                                        </p>
+                                        <input
+                                            type="text"
+                                            value={data.work_duration}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'work_duration',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="e.g. 3 days"
+                                            className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white placeholder:text-zinc-700 focus:border-amber-500/50 focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="flex gap-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
                                     <AlertCircle className="h-5 w-5 shrink-0 text-amber-500" />
                                     <p className="text-xs leading-relaxed text-zinc-400">
@@ -472,26 +541,25 @@ export default function UserDashboard() {
 
                                 <div className="flex flex-col gap-4 sm:flex-row">
                                     <button
-                                        onClick={() =>
-                                            setIsReviewModalOpen(false)
-                                        }
+                                        type="button"
+                                        onClick={closeReview}
                                         className="flex-1 rounded-2xl bg-white/5 px-8 py-5 font-bold text-white transition-colors hover:bg-white/10"
                                     >
                                         Skip for now
                                     </button>
                                     <button
-                                        onClick={() => {
-                                            alert(
-                                                'Demo: Review Submitted Successfully! (This review is now locked)',
-                                            );
-                                            setIsReviewModalOpen(false);
-                                        }}
-                                        className="flex-[2] rounded-2xl bg-amber-500 px-8 py-5 font-black tracking-widest text-black uppercase shadow-xl transition-all hover:bg-amber-400"
+                                        type="submit"
+                                        disabled={
+                                            processing || data.rating === 0
+                                        }
+                                        className="flex-[2] rounded-2xl bg-amber-500 px-8 py-5 font-black tracking-widest text-black uppercase shadow-xl transition-all hover:bg-amber-400 disabled:opacity-50"
                                     >
-                                        Submit Locked Review
+                                        {processing
+                                            ? 'Submitting...'
+                                            : 'Submit Review'}
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </motion.div>
                     </div>
                 )}

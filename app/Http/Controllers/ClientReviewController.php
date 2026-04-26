@@ -17,7 +17,6 @@ class ClientReviewController extends Controller
             'task_id' => ['required', 'integer', 'exists:tasks,id'],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['required', 'string', 'max:2000'],
-            'image' => ['nullable', 'image', 'max:4096'],
             'price_range' => ['nullable', 'string', 'max:100'],
             'work_duration' => ['nullable', 'string', 'max:100'],
         ]);
@@ -39,12 +38,6 @@ class ClientReviewController extends Controller
         // Prevent duplicate reviews.
         abort_if($task->review()->exists(), 409, 'You have already submitted a review for this task.');
 
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('reviews', 'public');
-        }
-
         // Determine client type: repeat if the user has other delivered tasks besides this one.
         $isRepeat = Task::where('user_id', $user->id)
             ->where('id', '!=', $task->id)
@@ -60,7 +53,7 @@ class ClientReviewController extends Controller
             'client_type' => $isRepeat ? 'repeat' : 'new',
             'rating' => $validated['rating'],
             'comment' => $validated['comment'],
-            'image_path' => $imagePath,
+            'image_path' => $task->image_path,
             'price_range' => $validated['price_range'] ?? null,
             'work_duration' => $validated['work_duration'] ?? null,
             'sort_order' => 0,

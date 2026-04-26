@@ -19,6 +19,7 @@ class Task extends Model
         'task_name',
         'date',
         'state',
+        'image_path',
         'review_eligible_until',
     ];
 

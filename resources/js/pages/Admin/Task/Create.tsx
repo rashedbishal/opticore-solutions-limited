@@ -1,4 +1,5 @@
 import type { FormEventHandler, ReactNode } from 'react';
+import { useRef } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -27,19 +28,33 @@ export default function CreateTask({
     subCategoriesByCategory,
     users,
 }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm<{
+        client_name: string;
+        user_id: string | number;
+        category: string;
+        sub_category_id: string | number;
+        task_name: string;
+        date: string;
+        state: string;
+        image: File | null;
+    }>({
         client_name: '',
-        user_id: '' as string | number,
+        user_id: '',
         category: '',
-        sub_category_id: '' as string | number,
+        sub_category_id: '',
         task_name: '',
         date: '',
         state: 'pending',
+        image: null,
     });
+
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.tasks.store.url());
+        post(adminRoutes.tasks.store.url(), {
+            forceFormData: true,
+        });
     };
 
     return (
@@ -204,6 +219,7 @@ export default function CreateTask({
                                 onChange={(e) =>
                                     setData('date', e.target.value)
                                 }
+                                style={{ colorScheme: 'dark' }}
                                 className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
                                 required
                             />
@@ -237,6 +253,32 @@ export default function CreateTask({
                                 </p>
                             )}
                         </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-300">
+                            Task Image{' '}
+                            <span className="text-xs text-slate-500">
+                                (Optional — used as review image)
+                            </span>
+                        </label>
+                        <input
+                            ref={imageInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                                setData(
+                                    'image',
+                                    e.target.files?.[0] ?? null,
+                                )
+                            }
+                            className="w-full rounded-lg border border-white/10 bg-zinc-800 px-4 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
+                        />
+                        {errors.image && (
+                            <p className="text-sm text-red-500">
+                                {errors.image}
+                            </p>
+                        )}
                     </div>
 
                     <div className="flex items-center justify-end gap-4 border-t border-white/10 pt-6">

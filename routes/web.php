@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ClientReviewController as AdminClientReviewController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
@@ -27,6 +27,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ClientReviewController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HireUsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
@@ -111,6 +112,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])->middleware('signed')->name('verification.verify');
     Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
 
+    // User Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     // Profile
     Route::get('/profile', function () {
         return Inertia::render('Profile');
@@ -167,7 +171,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // CMS Admin Routes
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
     Route::resource('portfolio-sub-categories', PortfolioSubCategoryController::class);
     Route::resource('blogs', AdminBlogController::class);

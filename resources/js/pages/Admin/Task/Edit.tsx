@@ -1,4 +1,5 @@
 import type { FormEventHandler, ReactNode } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -25,6 +26,7 @@ interface Task {
     task_name: string;
     date: string | null;
     state: 'pending' | 'in progress' | 'delivered';
+    image_url: string | null;
 }
 
 interface Props {
@@ -40,19 +42,38 @@ export default function EditTask({
     subCategoriesByCategory,
     users,
 }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm<{
+        client_name: string;
+        user_id: number;
+        category: string;
+        sub_category_id: number | string;
+        task_name: string;
+        date: string;
+        state: string;
+        image: File | null;
+        remove_image: boolean;
+        _method: string;
+    }>({
         client_name: task.client_name,
         user_id: task.user_id,
         category: task.category,
-        sub_category_id: task.sub_category_id || ('' as string | number),
+        sub_category_id: task.sub_category_id ?? '',
         task_name: task.task_name,
-        date: task.date || '',
+        date: task.date ?? '',
         state: task.state,
+        image: null,
+        remove_image: false,
+        _method: 'PUT',
     });
+
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(task.image_url);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(adminRoutes.tasks.update.url(task.id));
+        post(adminRoutes.tasks.update.url(task.id), {
+            forceFormData: true,
+        });
     };
 
     return (
@@ -217,6 +238,7 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('date', e.target.value)
                                 }
+                                style={{ colorScheme: 'dark' }}
                                 className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
                                 required
                             />
@@ -250,6 +272,59 @@ export default function EditTask({
                                 </p>
                             )}
                         </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="text-sm font-medium text-slate-300">
+                            Task Image{' '}
+                            <span className="text-xs text-slate-500">
+                                (Used as review image)
+                            </span>
+                        </label>
+                        {previewUrl && !data.remove_image && (
+                            <div className="flex items-center gap-4">
+                                <img
+                                    src={previewUrl}
+                                    alt="Task image"
+                                    className="h-24 w-24 rounded-lg object-cover"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setData('remove_image', true);
+                                        setPreviewUrl(null);
+                                        if (imageInputRef.current) {
+                                            imageInputRef.current.value = '';
+                                        }
+                                        setData('image', null);
+                                    }}
+                                    className="text-sm text-red-400 hover:text-red-300"
+                                >
+                                    Remove image
+                                </button>
+                            </div>
+                        )}
+                        <input
+                            ref={imageInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0] ?? null;
+                                setData('image', file);
+                                setData('remove_image', false);
+                                setPreviewUrl(
+                                    file
+                                        ? URL.createObjectURL(file)
+                                        : task.image_url,
+                                );
+                            }}
+                            className="w-full rounded-lg border border-white/10 bg-zinc-800 px-4 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
+                        />
+                        {errors.image && (
+                            <p className="text-sm text-red-500">
+                                {errors.image}
+                            </p>
+                        )}
                     </div>
 
                     <div className="flex items-center justify-end gap-4 border-t border-white/10 pt-6">

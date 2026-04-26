@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -84,6 +88,7 @@ class TaskController extends Controller
             'task_name' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
             'state' => ['nullable', 'string', 'in:pending,in progress,delivered'],
+            'image' => ['nullable', 'image', 'max:4096'],
         ]);
 
         if (! isset($validated['state'])) {
@@ -94,7 +99,17 @@ class TaskController extends Controller
             $validated['review_eligible_until'] = now()->addHours(24);
         }
 
-        Task::create($validated);
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('tasks', 'public');
+        }
+
+        unset($validated['image']);
+
+        $task = Task::create($validated);
+
+        if ($validated['state'] === 'delivered') {
+            $this->sendDeliveryMessage($task);
+        }
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
     }
@@ -111,6 +126,7 @@ class TaskController extends Controller
                 'task_name' => $task->task_name,
                 'date' => $task->date ? $task->date->format('Y-m-d') : null,
                 'state' => $task->state,
+                'image_url' => $task->image_path ? asset('storage/'.$task->image_path) : null,
             ],
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
@@ -128,26 +144,103 @@ class TaskController extends Controller
             'task_name' => ['sometimes', 'required', 'string', 'max:255'],
             'date' => ['sometimes', 'required', 'date'],
             'state' => ['sometimes', 'required', 'string', 'in:pending,in progress,delivered'],
+            'image' => ['nullable', 'image', 'max:4096'],
+            'remove_image' => ['nullable', 'boolean'],
         ]);
+
+        $wasDelivered = $task->state === 'delivered';
 
         // Open the 24-hour review window when first marking a task as delivered.
         if (
             isset($validated['state']) &&
             $validated['state'] === 'delivered' &&
-            $task->state !== 'delivered'
+            ! $wasDelivered
         ) {
             $validated['review_eligible_until'] = now()->addHours(24);
         }
 
+        if ($request->hasFile('image')) {
+            if ($task->image_path) {
+                Storage::disk('public')->delete($task->image_path);
+            }
+            $validated['image_path'] = $request->file('image')->store('tasks', 'public');
+        } elseif (! empty($validated['remove_image'])) {
+            if ($task->image_path) {
+                Storage::disk('public')->delete($task->image_path);
+            }
+            $validated['image_path'] = null;
+        }
+
+        unset($validated['image'], $validated['remove_image']);
+
         $task->update($validated);
+
+        if (
+            isset($validated['state']) &&
+            $validated['state'] === 'delivered' &&
+            ! $wasDelivered
+        ) {
+            $this->sendDeliveryMessage($task->fresh()->load(['user', 'subCategory']));
+        }
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
     }
 
     public function destroy(Task $task): RedirectResponse
     {
+        if ($task->image_path) {
+            Storage::disk('public')->delete($task->image_path);
+        }
+
         $task->delete();
 
         return back()->with('success', 'Task deleted successfully.');
+    }
+
+    private function sendDeliveryMessage(Task $task): void
+    {
+        $user = User::find($task->user_id);
+        if (! $user) {
+            return;
+        }
+
+        $conversation = $user->conversation()->firstOrCreate([]);
+
+        $serviceUrl = null;
+        if ($task->subCategory) {
+            $serviceUrl = route('hireUsSubCategory', [
+                'category' => $task->category,
+                'subcategory' => $task->subCategory->slug,
+            ]);
+        }
+
+        $admin = Auth::guard('admin')->user();
+        $senderId = $admin ? $admin->id : 0;
+
+        $serviceLine = $serviceUrl
+            ? "\n\nView the service page: {$serviceUrl}"
+            : '';
+
+        $messageText = "🎉 Great news! Your task \"{$task->task_name}\" has been delivered!\n\nWe'd love to hear your feedback. You have 24 hours to leave a review for this service.{$serviceLine}\n\nThank you for choosing Opticore Solutions Ltd.!";
+
+        $userOnline = Cache::has("user_chat_online_{$user->id}");
+
+        $message = $conversation->messages()->create([
+            'sender_type' => 'admin',
+            'sender_id' => $senderId,
+            'message' => $messageText,
+            'attachment_path' => null,
+            'attachment_type' => null,
+            'delivered_at' => $userOnline ? now() : null,
+        ]);
+
+        $conversation->update([
+            'last_message' => "Your task \"{$task->task_name}\" has been delivered!",
+            'last_message_at' => now(),
+        ]);
+
+        $message->load('conversation.user');
+
+        broadcast(new MessageSent($message))->toOthers();
     }
 }
