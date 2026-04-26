@@ -1,6 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     MessageSquare,
@@ -38,8 +38,6 @@ import {
     Headset,
     Crown,
     Layers,
-    Upload,
-    PenLine,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
@@ -84,26 +82,12 @@ interface RecommendedService {
     image: string | null;
 }
 
-interface DbReview {
-    id: number;
-    username: string;
-    client_type: 'new' | 'repeat';
-    rating: number;
-    comment: string;
-    image_url: string | null;
-    price_range: string | null;
-    work_duration: string | null;
-    created_at: string;
-}
-
 interface Props {
     category: Category;
     subCategory: SubCategory;
     portfolios: PortfolioItem[];
     siblingSubCategories: Array<{ name: string; slug: string }>;
     recommendedServices: RecommendedService[];
-    reviews: DbReview[];
-    reviewEligibleTask: { id: number } | null;
 }
 
 // ─── Animation Variants ────────────────────────────────────────────────────
@@ -250,35 +234,107 @@ type PlanId = (typeof PLANS)[number]['id'];
 
 type ChatMessage = { role: 'team' | 'user'; content: string; time: string };
 
-// ─── Review shape used by the template ──────────────────────────────────────
+// ─── Static Reviews ─────────────────────────────────────────────────────────
 
 type Review = {
-    id: number;
     user: string;
+    location: string;
+    flag: string;
     review: string;
     rating: number;
-    priceRange: string | null;
-    duration: string | null;
+    priceRange: string;
+    duration: string;
     date: string;
     isRepeatClient: boolean;
     files?: { type: 'image' | 'video'; url: string }[];
 };
 
-function mapDbReview(r: DbReview): Review {
-    return {
-        id: r.id,
-        user: r.username,
-        review: r.comment,
-        rating: r.rating,
-        priceRange: r.price_range,
-        duration: r.work_duration,
-        date: r.created_at,
-        isRepeatClient: r.client_type === 'repeat',
-        files: r.image_url
-            ? [{ type: 'image' as const, url: r.image_url }]
-            : [],
-    };
-}
+const REVIEWS: Review[] = [
+    {
+        user: 'Alex M.',
+        location: 'United States',
+        flag: '🇺🇸',
+        review: 'Exceptional work! Communication was smooth and the final result exceeded my expectations. Will definitely hire again.',
+        rating: 5,
+        priceRange: '$25 - $50',
+        duration: '4 days',
+        date: '2 weeks ago',
+        isRepeatClient: true,
+        files: [
+            {
+                type: 'image',
+                url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=800&fit=crop',
+            },
+        ],
+    },
+    {
+        user: 'Sarah K.',
+        location: 'United Kingdom',
+        flag: '🇬🇧',
+        review: 'The team really understood my vision. The deliverables were exactly what I needed to boost engagement.',
+        rating: 5,
+        priceRange: '$50+',
+        duration: '7 days',
+        date: '1 month ago',
+        isRepeatClient: false,
+        files: [
+            {
+                type: 'video',
+                url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            },
+        ],
+    },
+    {
+        user: 'Rafi H.',
+        location: 'Germany',
+        flag: '🇩🇪',
+        review: 'Fast turnaround, premium quality. The source files were clean and well-organized. Highly recommended.',
+        rating: 5,
+        priceRange: '$10 - $25',
+        duration: '2 days',
+        date: '3 days ago',
+        isRepeatClient: true,
+    },
+    {
+        user: 'John D.',
+        location: 'Canada',
+        flag: '🇨🇦',
+        review: 'Very good service, though the initial concept needed a bit of tweaking. Overall satisfied.',
+        rating: 4,
+        priceRange: '$25 - $50',
+        duration: '5 days',
+        date: '3 weeks ago',
+        isRepeatClient: false,
+    },
+    {
+        user: 'Elena P.',
+        location: 'France',
+        flag: '🇫🇷',
+        review: 'The design was great, but delivery was delayed by a day. Still recommended for the quality.',
+        rating: 4,
+        priceRange: '$50+',
+        duration: '8 days',
+        date: '2 months ago',
+        isRepeatClient: true,
+        files: [
+            {
+                type: 'image',
+                url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&h=800&fit=crop',
+            },
+        ],
+    },
+    {
+        user: 'Mark T.',
+        location: 'Australia',
+        flag: '🇦🇺',
+        review: 'Decent work, but I expected more options in the basic package.',
+        rating: 3,
+        priceRange: '$5 - $10',
+        duration: '2 days',
+        date: '1 week ago',
+        isRepeatClient: false,
+    },
+];
 
 // ─── Review Media Preview ────────────────────────────────────────────────
 
@@ -717,260 +773,19 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 
-// ─── Review Form Component ───────────────────────────────────────────────────
-
-const PRICE_RANGES = ['Under $5', '$5 - $10', '$10 - $25', '$25 - $50', '$50+'];
-const WORK_DURATIONS = [
-    '1 day',
-    '2 days',
-    '3-5 days',
-    '1 week',
-    '2 weeks',
-    '3+ weeks',
-];
-
-function ReviewForm({
-    taskId,
-    onSuccess,
-}: {
-    taskId: number;
-    onSuccess: () => void;
-}) {
-    const { data, setData, post, processing, errors, reset } = useForm<{
-        task_id: number;
-        rating: number;
-        comment: string;
-        image: File | null;
-        price_range: string;
-        work_duration: string;
-    }>({
-        task_id: taskId,
-        rating: 0,
-        comment: '',
-        image: null,
-        price_range: '',
-        work_duration: '',
-    });
-
-    const [hoverRating, setHoverRating] = useState(0);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] ?? null;
-        setData('image', file);
-
-        if (file) {
-            setImagePreview(URL.createObjectURL(file));
-        } else {
-            setImagePreview(null);
-        }
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        post('/reviews', {
-            forceFormData: true,
-            onSuccess: () => {
-                reset();
-                setImagePreview(null);
-                onSuccess();
-            },
-        });
-    };
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-5 rounded-3xl border border-cyan-500/30 bg-cyan-500/5 p-6"
-        >
-            <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
-                    <PenLine className="h-5 w-5" />
-                </div>
-                <div>
-                    <h3 className="font-bold text-theme">
-                        Share Your Experience
-                    </h3>
-                    <p className="text-xs text-theme-muted">
-                        Your task has been delivered. Leave a review within 24
-                        hours.
-                    </p>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Star rating */}
-                <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                        Rating *
-                    </label>
-                    <div className="flex gap-1">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                            <button
-                                key={s}
-                                type="button"
-                                onMouseEnter={() => setHoverRating(s)}
-                                onMouseLeave={() => setHoverRating(0)}
-                                onClick={() => setData('rating', s)}
-                                className="transition-transform hover:scale-110"
-                            >
-                                <Star
-                                    className={`h-7 w-7 transition-colors ${
-                                        s <= (hoverRating || data.rating)
-                                            ? 'fill-amber-400 text-amber-400'
-                                            : 'text-theme-muted/30'
-                                    }`}
-                                />
-                            </button>
-                        ))}
-                    </div>
-                    {errors.rating && (
-                        <p className="mt-1 text-xs text-red-400">
-                            {errors.rating}
-                        </p>
-                    )}
-                </div>
-
-                {/* Comment */}
-                <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                        Review *
-                    </label>
-                    <textarea
-                        value={data.comment}
-                        onChange={(e) => setData('comment', e.target.value)}
-                        placeholder="Describe your experience with this service…"
-                        rows={4}
-                        className="placeholder-theme-muted w-full resize-none rounded-2xl border border-theme bg-theme-surface p-4 text-sm text-theme transition-colors focus:border-cyan-500 focus:outline-none"
-                    />
-                    {errors.comment && (
-                        <p className="mt-1 text-xs text-red-400">
-                            {errors.comment}
-                        </p>
-                    )}
-                </div>
-
-                {/* Price range & Work duration */}
-                <div className="grid grid-cols-2 gap-3">
-                    <div>
-                        <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                            Price Range
-                        </label>
-                        <select
-                            value={data.price_range}
-                            onChange={(e) =>
-                                setData('price_range', e.target.value)
-                            }
-                            className="w-full rounded-2xl border border-theme bg-theme-surface px-4 py-2.5 text-sm text-theme focus:border-cyan-500 focus:outline-none"
-                        >
-                            <option value="">Select…</option>
-                            {PRICE_RANGES.map((p) => (
-                                <option key={p} value={p}>
-                                    {p}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                            Work Duration
-                        </label>
-                        <select
-                            value={data.work_duration}
-                            onChange={(e) =>
-                                setData('work_duration', e.target.value)
-                            }
-                            className="w-full rounded-2xl border border-theme bg-theme-surface px-4 py-2.5 text-sm text-theme focus:border-cyan-500 focus:outline-none"
-                        >
-                            <option value="">Select…</option>
-                            {WORK_DURATIONS.map((d) => (
-                                <option key={d} value={d}>
-                                    {d}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                {/* Image upload */}
-                <div>
-                    <label className="mb-1.5 block text-xs font-bold tracking-wider text-theme-muted uppercase">
-                        Work Proof (optional image)
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-theme bg-theme-surface p-4 transition-colors hover:border-cyan-500/50 hover:bg-theme-surface-hover">
-                        <Upload className="h-5 w-5 shrink-0 text-theme-subtle" />
-                        <span className="text-sm text-theme-muted">
-                            {imagePreview
-                                ? 'Change image'
-                                : 'Upload image (max 4 MB)'}
-                        </span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                        />
-                    </label>
-                    {imagePreview && (
-                        <div className="relative mt-2 h-24 w-24 overflow-hidden rounded-xl border border-theme">
-                            <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="h-full w-full object-cover"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setData('image', null);
-                                    setImagePreview(null);
-                                }}
-                                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
-                            >
-                                <X className="h-3 w-3" />
-                            </button>
-                        </div>
-                    )}
-                    {errors.image && (
-                        <p className="mt-1 text-xs text-red-400">
-                            {errors.image}
-                        </p>
-                    )}
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={processing || data.rating === 0}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-500 py-4 text-sm font-black tracking-widest text-white uppercase transition-all hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    {processing ? 'Submitting…' : 'Submit Review'}
-                </button>
-            </form>
-        </motion.div>
-    );
-}
-
-// ─── Main Component ─────────────────────────────────────────────────────────
-
 export default function SubCategoryShow({
     category,
     subCategory,
     portfolios,
     siblingSubCategories,
     recommendedServices,
-    reviews: dbReviews,
-    reviewEligibleTask,
 }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
     const displayPortfolios =
         portfolios.length > 0 ? portfolios : MOCK_PORTFOLIOS;
-
-    const REVIEWS: Review[] = dbReviews.map(mapDbReview);
-
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [reviewSubmitted, setReviewSubmitted] = useState(false);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
         {
             role: 'team',
