@@ -129,14 +129,6 @@ export default function Navbar() {
 
     const navItems = [...navigationItems];
 
-    if (user) {
-        navItems.push({
-            label: 'Profile',
-            href: '/profile',
-            icon: 'User',
-        });
-    }
-
     return (
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
@@ -175,27 +167,39 @@ export default function Navbar() {
                     </div>
 
                     <div className="hidden items-center gap-3 xl:flex">
-                        <div className="flex items-center gap-3 rounded-full border border-slate-300 bg-slate-100 p-1.5 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                        <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                             {user ? (
-                                <Link
-                                    href="/logout"
-                                    method="post"
-                                    as="button"
-                                    className="group relative flex items-center gap-2 rounded-full bg-black/5 px-6 py-2.5 text-sm font-medium text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-                                >
-                                    <LogOut className="h-4 w-4 text-violet-400" />
-                                    Sign out
-                                </Link>
+                                <>
+                                    <Link
+                                        href="/profile"
+                                        className={cn(
+                                            'group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300',
+                                            url === '/profile'
+                                                ? 'bg-violet-600 text-white shadow-lg dark:bg-violet-500'
+                                                : 'bg-black/5 text-zinc-800 hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+                                        )}
+                                        aria-label="Profile"
+                                    >
+                                        <User className="h-4 w-4" />
+                                    </Link>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                        aria-label="Sign out"
+                                    >
+                                        <LogOut className="h-4 w-4 text-violet-400" />
+                                    </Link>
+                                </>
                             ) : (
-                                <MagneticButton
+                                <Link
                                     href="/login"
-                                    ariaLabel="Sign in to your account"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                    aria-label="Sign in"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <LogIn className="h-4 w-4" />
-                                        Sign in
-                                    </div>
-                                </MagneticButton>
+                                    <LogIn className="h-4 w-4 text-violet-400" />
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -328,16 +332,31 @@ export default function Navbar() {
                                     className="mx-auto w-full max-w-md"
                                 >
                                     {user ? (
-                                        <Link
-                                            href="/logout"
-                                            method="post"
-                                            as="button"
-                                            onClick={() => setOpen(false)}
-                                            className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
-                                        >
-                                            <LogOut className="h-5 w-5" />
-                                            Sign out
-                                        </Link>
+                                        <div className="flex flex-col gap-3">
+                                            <Link
+                                                href="/profile"
+                                                onClick={() => setOpen(false)}
+                                                className={cn(
+                                                    'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all',
+                                                    url === '/profile'
+                                                        ? 'bg-violet-600 text-white'
+                                                        : 'bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-white',
+                                                )}
+                                            >
+                                                <User className="h-5 w-5" />
+                                                Profile
+                                            </Link>
+                                            <Link
+                                                href="/logout"
+                                                method="post"
+                                                as="button"
+                                                onClick={() => setOpen(false)}
+                                                className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
+                                            >
+                                                <LogOut className="h-5 w-5" />
+                                                Sign out
+                                            </Link>
+                                        </div>
                                     ) : (
                                         <MagneticButton
                                             href="/login"
