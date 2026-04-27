@@ -1203,76 +1203,96 @@ export default function SubCategoryShow({
                     </div>
                 </motion.div>
 
-                {/* ── TRUST METRICS (full-width section) ── */}
-                <div className="group/trust bg-theme-surface/50 relative mt-16 w-full overflow-hidden border-y border-theme py-16">
-                    {/* Background decorations */}
-                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-40 transition-opacity group-hover/trust:opacity-60" />
-                    <div className="pointer-events-none absolute inset-0 bg-radial-[at_center,_var(--tw-gradient-from)_0%,_transparent_70%] from-cyan-500/5" />
-
+                {/* ── TRUST METRICS (wide card) ── */}
+                <div className="relative mt-16 w-full py-10">
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative z-10 mx-auto max-w-7xl px-4"
+                        className="mx-auto max-w-7xl px-4"
                     >
-                        <div className="mb-12 grid grid-cols-2 gap-y-10 sm:grid-cols-4">
-                            {[
-                                {
-                                    value: '5.0',
-                                    suffix: (
-                                        <Star className="inline h-6 w-6 fill-current text-amber-400" />
-                                    ),
-                                    label: 'Overall Rating',
-                                },
-                                {
-                                    value: String(mappedReviews.length * 41),
-                                    suffix: null,
-                                    label: 'Reviews',
-                                },
-                                {
-                                    value: '100%',
-                                    suffix: null,
-                                    label: 'Verified Clients',
-                                },
-                                {
-                                    value: '10',
-                                    suffix: null,
-                                    label: 'Active Projects',
-                                },
-                            ].map((metric, idx) => (
-                                <motion.div
-                                    key={metric.label}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        delay: idx * 0.1,
-                                        duration: 0.5,
-                                    }}
-                                    className="flex flex-col items-center gap-2 text-center"
-                                >
-                                    <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-6xl lg:text-7xl">
-                                        <span className="from-theme via-theme to-theme/40 bg-linear-to-b bg-clip-text text-transparent">
-                                            {metric.value}
+                        <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-500/20 bg-linear-to-br from-cyan-500/[0.07] via-theme-surface to-violet-500/[0.07] p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-12">
+                            {/* Subtle dot grid */}
+                            <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
+                            {/* Glow orbs */}
+                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
+                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-violet-500/10 blur-[80px]" />
+
+                            <div className="relative z-10">
+                                {/* Header label */}
+                                <p className="mb-8 text-center text-[10px] font-bold tracking-[0.25em] text-cyan-500 uppercase md:text-left">
+                                    Why clients trust us
+                                </p>
+
+                                {/* Stats grid */}
+                                <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-theme">
+                                    {[
+                                        {
+                                            value: '5.0',
+                                            suffix: <Star className="h-6 w-6 fill-current text-amber-400 md:h-8 md:w-8" />,
+                                            label: 'Overall Rating',
+                                            accent: 'text-amber-400',
+                                        },
+                                        {
+                                            value: String(mappedReviews.length * 41),
+                                            suffix: null,
+                                            label: 'Happy Reviews',
+                                            accent: 'text-cyan-500',
+                                        },
+                                        {
+                                            value: '100%',
+                                            suffix: null,
+                                            label: 'Verified Clients',
+                                            accent: 'text-emerald-500',
+                                        },
+                                        {
+                                            value: '10',
+                                            suffix: null,
+                                            label: 'Active Projects',
+                                            accent: 'text-violet-500',
+                                        },
+                                    ].map((metric, idx) => (
+                                        <motion.div
+                                            key={metric.label}
+                                            initial={{ opacity: 0, y: 16 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: idx * 0.1, duration: 0.5 }}
+                                            className="flex flex-col items-center gap-2 px-4 py-2 text-center"
+                                        >
+                                            <div className={`flex items-center gap-2 text-5xl font-black md:text-6xl lg:text-7xl ${metric.accent}`}>
+                                                <span>{metric.value}</span>
+                                                {metric.suffix}
+                                            </div>
+                                            <p className="text-xs font-bold tracking-[0.18em] text-theme-muted uppercase">
+                                                {metric.label}
+                                            </p>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                {/* Divider */}
+                                <div className="my-8 h-px bg-linear-to-r from-transparent via-theme to-transparent" />
+
+                                {/* CTA row */}
+                                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                                    <p className="text-sm text-theme-muted">
+                                        Ready to experience the difference?{' '}
+                                        <span className="font-semibold text-theme">
+                                            Join our happy clients today.
                                         </span>
-                                        {metric.suffix}
-                                    </div>
-                                    <p className="text-xs font-bold tracking-[0.2em] text-theme-muted uppercase">
-                                        {metric.label}
                                     </p>
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="flex justify-center">
-                            <button
-                                type="button"
-                                onClick={scrollToPricing}
-                                className="group flex items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
-                            >
-                                Get Started
-                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </button>
+                                    <button
+                                        type="button"
+                                        onClick={scrollToPricing}
+                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                    >
+                                        Get Started
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -1295,7 +1315,7 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="relative z-10 mx-auto max-w-4xl px-4"
+                        className="relative z-10 mx-auto max-w-7xl px-4"
                     >
                         <div className="mb-10 flex items-start gap-5">
                             <div className="mt-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
@@ -1312,7 +1332,7 @@ export default function SubCategoryShow({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                             {descriptionFeatures.map((item, idx) => (
                                 <motion.div
                                     key={item.label}
@@ -1462,7 +1482,7 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mx-auto max-w-4xl px-4"
+                        className="mx-auto max-w-7xl px-4"
                     >
                         <div className="mb-12 flex flex-col items-center text-center">
                             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
@@ -1477,7 +1497,7 @@ export default function SubCategoryShow({
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="flex flex-col gap-4">
                             {faqs.map((faq, idx) => (
                                 <FaqAccordionItem key={idx} faq={faq} />
                             ))}
