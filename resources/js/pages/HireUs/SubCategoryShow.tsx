@@ -37,6 +37,7 @@ import {
     PenLine,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import Modal from '@/components/UI/Modal';
 
@@ -553,16 +554,16 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
             <motion.div 
                 drag={hasPeeks ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.05}
+                dragElastic={0.2}
                 onDragEnd={handleDragEnd}
-                className="group relative h-[85vh] w-full overflow-hidden bg-black cursor-grab active:cursor-grabbing"
+                className="group relative h-[85vh] w-full overflow-hidden bg-black cursor-grab select-none"
             >
                 {sortedSlots.map((slot) => {
                     const item = slides[slot.index];
                     const isCenter = slot.pos === 'center';
                     const isPeekLeft = slot.pos === 'peek-left';
                     const isPeekRight = slot.pos === 'peek-right';
-                    const isClickable = isPeekLeft || isPeekRight;
+                    const isClickable = isPeekLeft || isPeekRight || isCenter;
 
                     return (
                         <motion.div
@@ -575,9 +576,17 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                     removeExited(slot.uid);
                                 }
                             }}
-                            onClick={isClickable ? (isPeekLeft ? goPrev : goNext) : undefined}
+                            onTap={
+                                isClickable
+                                    ? isPeekLeft
+                                        ? goPrev
+                                        : isPeekRight
+                                          ? goNext
+                                          : () => setIsLightboxOpen(true)
+                                    : undefined
+                            }
                             style={{ position: 'absolute', overflow: 'hidden', zIndex: SLOT_ORDER[slot.pos] }}
-                            className={isClickable ? 'cursor-pointer' : ''}
+                            className={isClickable ? 'cursor-grab active:cursor-grabbing' : ''}
                         >
                             {item.media_type === 'video' ? (
                                 <video
@@ -587,7 +596,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                     muted
                                     loop
                                     playsInline
-                                    className="h-full w-full object-cover"
+                                    className="pointer-events-none h-full w-full object-cover"
                                 />
                             ) : (
                                 <img
@@ -596,7 +605,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                     onError={(e) => {
                                         e.currentTarget.src = PLACEHOLDER;
                                     }}
-                                    className="h-full w-full object-cover"
+                                    className="pointer-events-none h-full w-full object-cover"
                                 />
                             )}
 
@@ -606,17 +615,6 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 animate={{ opacity: isCenter ? 0 : 0.45 }}
                                 transition={SLIDE_DUR}
                             />
-
-                            {/* Peek hover chevron */}
-                            {isClickable && (
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                    {isPeekLeft ? (
-                                        <ChevronLeft className="h-7 w-7 text-white drop-shadow-lg" />
-                                    ) : (
-                                        <ChevronRight className="h-7 w-7 text-white drop-shadow-lg" />
-                                    )}
-                                </div>
-                            )}
                         </motion.div>
                     );
                 })}
@@ -708,60 +706,71 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
             </motion.div>
 
             {/* Lightbox */}
-            <AnimatePresence>
-                {isLightboxOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
-                        onClick={() => setIsLightboxOpen(false)}
-                    >
+            {typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                    {isLightboxOpen && (
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                            className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl"
-                            onClick={(e) => e.stopPropagation()}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
                         >
-                            {activeItem.media_type === 'video' ? (
-                                <video
-                                    ref={lightboxVideoRef}
-                                    src={activeItem.media_path ?? undefined}
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    controls
-                                    className="aspect-video w-full object-cover"
-                                />
-                            ) : (
-                                <img
-                                    src={activeItem.media_path ?? PLACEHOLDER}
-                                    alt={activeItem.alt}
-                                    className="aspect-video w-full object-contain"
-                                    onError={(e) => {
-                                        e.currentTarget.src = PLACEHOLDER;
-                                    }}
-                                />
-                            )}
-                            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent px-6 py-5">
-                                <p className="font-semibold text-white">{activeItem.title}</p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setIsLightboxOpen(false)}
-                                className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/80"
-                                aria-label="Close lightbox"
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                                className="relative flex h-full w-full items-center justify-center overflow-hidden"
                             >
-                                <X className="h-5 w-5" />
-                            </button>
+                                <div 
+                                    className="absolute inset-0 cursor-zoom-out" 
+                                    onClick={() => setIsLightboxOpen(false)} 
+                                />
+
+                                {activeItem.media_type === 'video' ? (
+                                    <video
+                                        ref={lightboxVideoRef}
+                                        src={activeItem.media_path ?? undefined}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        controls
+                                        className="relative z-10 h-full w-full object-contain"
+                                    />
+                                ) : (
+                                    <img
+                                        src={activeItem.media_path ?? PLACEHOLDER}
+                                        alt={activeItem.alt}
+                                        className="relative z-10 h-full w-full object-contain"
+                                        onError={(e) => {
+                                            e.currentTarget.src = PLACEHOLDER;
+                                        }}
+                                    />
+                                )}
+
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-black via-black/40 to-transparent px-8 py-10">
+                                    <p className="text-xl font-bold text-white drop-shadow-md">{activeItem.title}</p>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsLightboxOpen(false);
+                                    }}
+                                    className="absolute top-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-xl transition-all hover:bg-white/20 hover:scale-105 active:scale-90"
+                                    aria-label="Close lightbox"
+                                >
+                                    <X className="h-7 w-7" />
+                                </button>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </>
     );
 }
