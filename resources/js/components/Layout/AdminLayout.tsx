@@ -1,5 +1,5 @@
 import type { SharedPageProps } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     LayoutDashboard,
@@ -17,9 +17,9 @@ import {
     Star,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback } from 'react';
-import adminRoutes from '@/routes/admin';
 import NotificationListener from '@/components/Admin/NotificationListener';
 import useEchoReady from '@/hooks/useEchoReady';
+import adminRoutes from '@/routes/admin';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -39,10 +39,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const isOnChatPage = page.url.startsWith(CHAT_PAGE_PATH);
 
     useEffect(() => {
-        if (isOnChatPage) {
-            setNotificationCount(0);
-        }
-    }, [isOnChatPage]);
+        return router.on('navigate', (event) => {
+            if (event.detail.page.url.startsWith(CHAT_PAGE_PATH)) {
+                setNotificationCount(0);
+            }
+        });
+    }, []);
 
     const handleNewNotification = useCallback(() => {
         setNotificationCount((prev) => prev + 1);
@@ -290,7 +292,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                 </span>
                                 <Bell className="h-5 w-5" aria-hidden="true" />
                                 {notificationCount > 0 && !isOnChatPage && (
-                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white shadow-[0_0_8px_rgba(239,68,68,0.7)]">
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] leading-none font-bold text-white shadow-[0_0_8px_rgba(239,68,68,0.7)]">
                                         {notificationCount > 99
                                             ? '99+'
                                             : notificationCount}
