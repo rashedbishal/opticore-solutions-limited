@@ -4,6 +4,7 @@ import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+    ArrowLeft,
     Clock,
     CreditCard,
     DollarSign,
@@ -214,7 +215,7 @@ function OfferCard({
     };
 
     return (
-        <div className="w-72 overflow-hidden rounded-xl border border-white/10 bg-slate-800/90 shadow-lg">
+        <div className="w-full max-w-72 overflow-hidden rounded-xl border border-white/10 bg-slate-800/90 shadow-lg">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
                 <div className="flex items-center gap-1.5">
@@ -581,7 +582,7 @@ export default function Index() {
     };
 
     return (
-        <div className="flex h-[calc(100vh-12rem)] overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
+        <div className="flex h-[calc(100vh-10rem)] overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl md:h-[calc(100vh-12rem)]">
             {echoReady && (
                 <AdminConversationEchoListener
                     activeConvRef={activeConvRef}
@@ -605,8 +606,10 @@ export default function Index() {
                 )}
             </AnimatePresence>
 
-            {/* Sidebar List */}
-            <div className="flex w-1/3 flex-col border-r border-white/5 bg-slate-900/50">
+            {/* Sidebar List — full-width on mobile, 1/3 on desktop */}
+            <div
+                className={`${activeConv ? 'hidden md:flex' : 'flex'} w-full flex-col border-r border-white/5 bg-slate-900/50 md:w-1/3`}
+            >
                 <div className="border-b border-white/5 p-4">
                     <h2 className="mb-4 text-lg font-semibold text-white">
                         Customer Chats
@@ -682,19 +685,30 @@ export default function Index() {
                 </div>
             </div>
 
-            {/* Chat Window */}
-            <div className="flex flex-1 flex-col bg-slate-900/30">
+            {/* Chat Window — hidden on mobile until a conversation is selected */}
+            <div
+                className={`${activeConv ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-slate-900/30`}
+            >
                 {activeConv ? (
                     <>
                         {/* Chat Header */}
                         <div className="flex items-center justify-between border-b border-white/5 bg-slate-900/50 p-4">
-                            <div>
-                                <h3 className="font-semibold text-white">
-                                    {activeConv.user.name}
-                                </h3>
-                                <p className="text-xs text-slate-400">
-                                    {activeConv.user.email}
-                                </p>
+                            <div className="flex min-w-0 items-center gap-2">
+                                {/* Back to list — mobile only */}
+                                <button
+                                    onClick={() => setActiveConv(null)}
+                                    className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white md:hidden"
+                                >
+                                    <ArrowLeft size={18} />
+                                </button>
+                                <div className="min-w-0">
+                                    <h3 className="truncate font-semibold text-white">
+                                        {activeConv.user.name}
+                                    </h3>
+                                    <p className="truncate text-xs text-slate-400">
+                                        {activeConv.user.email}
+                                    </p>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setShowOfferModal(true)}
@@ -705,7 +719,7 @@ export default function Index() {
                             </button>
                         </div>
 
-                        <div className="flex-1 space-y-4 overflow-y-auto p-6">
+                        <div className="flex-1 space-y-4 overflow-y-auto p-3 md:p-6">
                             {messages.map((msg, idx) => (
                                 <div
                                     key={`${msg.id}-${idx}`}

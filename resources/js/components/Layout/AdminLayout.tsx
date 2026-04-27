@@ -305,15 +305,15 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     </div>
                 </header>
 
-                <main className="flex-1 py-8">
+                <main className="flex-1 py-4 md:py-8">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="mb-8 flex items-center justify-between">
-                            {title && (
+                        {title && (
+                            <div className="mb-8 flex items-center justify-between">
                                 <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                                     {title}
                                 </h1>
-                            )}
-                        </div>
+                            </div>
+                        )}
                         {children}
                     </div>
                 </main>
