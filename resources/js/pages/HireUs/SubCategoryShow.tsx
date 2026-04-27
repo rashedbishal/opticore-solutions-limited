@@ -1177,7 +1177,7 @@ export default function SubCategoryShow({
                                         e.stopPropagation();
                                         handleHireNow(plan.id);
                                     }}
-                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
                                 >
                                     Hire Now
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1212,7 +1212,7 @@ export default function SubCategoryShow({
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="mx-auto max-w-7xl px-4"
                     >
-                        <div className="via-theme-surface relative overflow-hidden rounded-[2.5rem] border border-cyan-500/20 bg-linear-to-br from-cyan-500/[0.07] to-violet-500/[0.07] p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-12">
+                        <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-500/25 bg-theme-surface p-8 shadow-[0_24px_80px_rgba(0,0,0,0.65),0_8px_32px_rgba(0,0,0,0.45),0_0_60px_rgba(34,211,238,0.1),inset_0_1px_0_rgba(255,255,255,0.08)] md:p-12">
                             {/* Subtle dot grid */}
                             <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
                             {/* Glow orbs */}
@@ -1295,7 +1295,7 @@ export default function SubCategoryShow({
                                     <button
                                         type="button"
                                         onClick={scrollToPricing}
-                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0"
                                     >
                                         Get Started
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1349,7 +1349,7 @@ export default function SubCategoryShow({
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="glass-panel group flex flex-col items-center gap-3 rounded-3xl p-6 text-center transition-all hover:-translate-y-1 hover:bg-theme-surface-hover hover:shadow-xl"
+                                    className="group flex flex-col items-center gap-3 rounded-3xl border border-theme bg-theme-surface p-6 text-center transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.32),0_2px_6px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-2 hover:border-cyan-500/30 hover:shadow-[0_14px_40px_rgba(0,0,0,0.48),0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.09)] hover:bg-theme-surface-hover"
                                 >
                                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500 transition-colors group-hover:bg-cyan-500 group-hover:text-white">
                                         <item.Icon className="h-6 w-6" />
@@ -1365,7 +1365,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1388,7 +1388,7 @@ export default function SubCategoryShow({
                         }}
                         className="relative z-10 mx-auto max-w-5xl px-4"
                     >
-                        <div className="glass-panel bg-theme-surface/40 overflow-hidden rounded-[2.5rem] shadow-2xl backdrop-blur-xl">
+                        <div className="overflow-hidden rounded-[2.5rem] border border-theme bg-theme-surface shadow-[0_20px_64px_rgba(0,0,0,0.6),0_8px_24px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)]">
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
                                 <div className="relative space-y-6 p-10 md:p-12">
@@ -1436,7 +1436,7 @@ export default function SubCategoryShow({
                                             ].map((lang) => (
                                                 <span
                                                     key={lang.name}
-                                                    className="bg-theme-surface/50 flex items-center gap-2 rounded-xl border border-theme px-4 py-2 text-xs font-bold text-theme transition-colors hover:bg-theme-surface"
+                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme transition-all shadow-[0_3px_10px_rgba(0,0,0,0.38),0_1px_3px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.09)] hover:-translate-y-0.5 hover:border-cyan-500/30 hover:shadow-[0_6px_18px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-theme-surface-hover"
                                                 >
                                                     <span>{lang.flag}</span>
                                                     {lang.name}
@@ -1469,7 +1469,7 @@ export default function SubCategoryShow({
                                         <button
                                             type="button"
                                             onClick={scrollToPricing}
-                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white md:w-auto"
+                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 md:w-auto"
                                         >
                                             Start Project
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1516,7 +1516,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1698,7 +1698,7 @@ export default function SubCategoryShow({
                                                 scale: 0.95,
                                             }}
                                             variants={fadeUp}
-                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-theme-surface p-6 shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
+                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-theme-surface p-6 transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                         >
                                             {/* Accent top bar */}
                                             <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-amber-500/60 via-amber-400/40 to-transparent" />
@@ -1850,7 +1850,7 @@ export default function SubCategoryShow({
                                         category: service.category_slug,
                                         subcategory: service.slug,
                                     })}
-                                    className="group bg-theme-surface/30 hover:bg-theme-surface/50 relative flex flex-col overflow-hidden rounded-3xl border border-theme transition-all duration-300 hover:-translate-y-1"
+                                    className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-theme-surface transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1.5 hover:border-cyan-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                 >
                                     <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
                                         {service.image ? (
