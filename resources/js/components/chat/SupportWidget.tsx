@@ -710,7 +710,6 @@ export default function SupportWidget() {
     );
 }
 
-
 interface EchoListenerProps {
     conversation: Conversation;
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;

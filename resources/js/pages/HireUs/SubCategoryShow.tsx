@@ -316,7 +316,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
     return (
         <div
-            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'border border-cyan-500/30 bg-theme-surface -translate-y-0.5 shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-theme-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)] hover:bg-theme-surface-hover'}`}
+            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? '-translate-y-0.5 border border-cyan-500/30 bg-theme-surface shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-theme-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:bg-theme-surface-hover hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)]'}`}
         >
             <button
                 type="button"
@@ -1127,8 +1127,8 @@ export default function SubCategoryShow({
                                 onClick={() => setSelectedPlan(plan.id)}
                                 className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
-                                        ? 'border-cyan-400/60 bg-theme-surface -translate-y-1.5 shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
-                                        : 'border-theme bg-theme-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-theme-muted/40 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                                        ? '-translate-y-1.5 border-cyan-400/60 bg-theme-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
+                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
@@ -1212,7 +1212,7 @@ export default function SubCategoryShow({
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="mx-auto max-w-7xl px-4"
                     >
-                        <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-500/20 bg-linear-to-br from-cyan-500/[0.07] via-theme-surface to-violet-500/[0.07] p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-12">
+                        <div className="via-theme-surface relative overflow-hidden rounded-[2.5rem] border border-cyan-500/20 bg-linear-to-br from-cyan-500/[0.07] to-violet-500/[0.07] p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-12">
                             {/* Subtle dot grid */}
                             <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
                             {/* Glow orbs */}
@@ -1226,16 +1226,20 @@ export default function SubCategoryShow({
                                 </p>
 
                                 {/* Stats grid */}
-                                <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-theme">
+                                <div className="sm:divide-theme grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-0 sm:divide-x">
                                     {[
                                         {
                                             value: '5.0',
-                                            suffix: <Star className="h-6 w-6 fill-current text-amber-400 md:h-8 md:w-8" />,
+                                            suffix: (
+                                                <Star className="h-6 w-6 fill-current text-amber-400 md:h-8 md:w-8" />
+                                            ),
                                             label: 'Overall Rating',
                                             accent: 'text-amber-400',
                                         },
                                         {
-                                            value: String(mappedReviews.length * 41),
+                                            value: String(
+                                                mappedReviews.length * 41,
+                                            ),
                                             suffix: null,
                                             label: 'Happy Reviews',
                                             accent: 'text-cyan-500',
@@ -1258,10 +1262,15 @@ export default function SubCategoryShow({
                                             initial={{ opacity: 0, y: 16 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            transition={{ delay: idx * 0.1, duration: 0.5 }}
+                                            transition={{
+                                                delay: idx * 0.1,
+                                                duration: 0.5,
+                                            }}
                                             className="flex flex-col items-center gap-2 px-4 py-2 text-center"
                                         >
-                                            <div className={`flex items-center gap-2 text-5xl font-black md:text-6xl lg:text-7xl ${metric.accent}`}>
+                                            <div
+                                                className={`flex items-center gap-2 text-5xl font-black md:text-6xl lg:text-7xl ${metric.accent}`}
+                                            >
                                                 <span>{metric.value}</span>
                                                 {metric.suffix}
                                             </div>
@@ -1273,7 +1282,7 @@ export default function SubCategoryShow({
                                 </div>
 
                                 {/* Divider */}
-                                <div className="my-8 h-px bg-linear-to-r from-transparent via-theme to-transparent" />
+                                <div className="via-theme my-8 h-px bg-linear-to-r from-transparent to-transparent" />
 
                                 {/* CTA row */}
                                 <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
@@ -1519,7 +1528,7 @@ export default function SubCategoryShow({
                 {/* ── REVIEWS (full-width, high-contrast bg) ── */}
                 <div className="relative w-full overflow-hidden border-y border-theme py-20">
                     {/* Section background */}
-                    <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-theme-surface via-theme-surface/60 to-theme-surface" />
+                    <div className="from-theme-surface via-theme-surface/60 to-theme-surface pointer-events-none absolute inset-0 bg-linear-to-b" />
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(34,211,238,0.06),transparent)]" />
 
                     <motion.div
@@ -1736,9 +1745,13 @@ export default function SubCategoryShow({
                                                     </div>
 
                                                     <p className="mb-6 text-sm leading-relaxed text-theme">
-                                                        <span className="mr-0.5 text-lg font-black text-amber-400/60">"</span>
+                                                        <span className="mr-0.5 text-lg font-black text-amber-400/60">
+                                                            "
+                                                        </span>
                                                         {review.review}
-                                                        <span className="ml-0.5 text-lg font-black text-amber-400/60">"</span>
+                                                        <span className="ml-0.5 text-lg font-black text-amber-400/60">
+                                                            "
+                                                        </span>
                                                     </p>
 
                                                     <div className="flex flex-wrap items-center gap-3 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">

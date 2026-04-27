@@ -48,7 +48,7 @@ function NavLink({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'group relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                'group relative flex items-center gap-2 rounded-full border px-4 py-2 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                 active
                     ? 'border-violet-400 bg-violet-100 shadow-[0_3px_10px_rgba(139,92,246,0.2),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-violet-500 dark:bg-violet-950 dark:shadow-[0_3px_10px_rgba(139,92,246,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]'
                     : 'border-slate-300 bg-slate-100 hover:border-slate-400 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800',
@@ -86,7 +86,6 @@ export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
     const [visible, setVisible] = useState(true);
-    const [isAtTop, setIsAtTop] = useState(true);
     const lastScrollY = useRef(0);
     const { user } = props.auth;
 
@@ -94,13 +93,13 @@ export default function Navbar() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
 
-            // Update transparency state
-            setIsAtTop(currentScrollY < 50);
-
             // Headroom logic
             if (currentScrollY < 50) {
                 setVisible(true);
-            } else if (currentScrollY > lastScrollY.current && currentScrollY > 120) {
+            } else if (
+                currentScrollY > lastScrollY.current &&
+                currentScrollY > 120
+            ) {
                 // Scrolling down - hide
                 setVisible(false);
             } else if (currentScrollY < lastScrollY.current) {
@@ -134,7 +133,7 @@ export default function Navbar() {
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
                 className={cn(
-                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
+                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8 dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
                     visible
                         ? 'translate-y-0 opacity-100'
                         : 'pointer-events-none -translate-y-full opacity-0',
@@ -144,7 +143,7 @@ export default function Navbar() {
                     <Link
                         href="/"
                         className={cn(
-                            'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 transition-all duration-300 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                            'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                         )}
                         aria-label="Opticore Solutions home"
                     >
