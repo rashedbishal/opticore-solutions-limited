@@ -354,42 +354,131 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
     );
 }
 
-// ─── Gallery Slider (vertical filmstrip layout) ─────────────────────────────
+// ─── Gallery Slider (simultaneous 3-item track carousel) ────────────────────
+
+const SLIDE_EASE = [0.22, 1, 0.36, 1] as const;
+const SLIDE_DUR = { duration: 0.55, ease: SLIDE_EASE };
+
+// CSS layout properties for each slot — no overlap at any rest position:
+//   peek-left  2%–22%  |  center 22%–78%  |  peek-right 78%–98%
+// framer-motion interpolates all properties simultaneously each RAF tick.
+const SLOT_STYLES = {
+    'exit-left':  { left: '-22%', top: '17.5%', width: '20%', height: '65%', opacity: 0, borderRadius: '16px' },
+    'peek-left':  { left:   '2%', top: '17.5%', width: '20%', height: '65%', opacity: 1, borderRadius: '16px' },
+    'center':     { left:  '22%', top:     '0%', width: '56%', height: '100%', opacity: 1, borderRadius: '0px'  },
+    'peek-right': { left:  '78%', top: '17.5%', width: '20%', height: '65%', opacity: 1, borderRadius: '16px' },
+    'exit-right': { left: '100%', top: '17.5%', width: '20%', height: '65%', opacity: 0, borderRadius: '16px' },
+} as const;
+
+type SlotPos = keyof typeof SLOT_STYLES;
+
+// Render order: exits bottom, peeks middle, center on top.
+const SLOT_ORDER: Record<SlotPos, number> = {
+    'exit-left': 0, 'exit-right': 0,
+    'peek-left': 1, 'peek-right': 1,
+    'center': 2,
+};
+
+interface CarouselSlot {
+    uid: string;
+    index: number;
+    pos: SlotPos;
+    enterFrom: SlotPos | null; // initial position (null = already mounted, skip initial)
+}
 
 function GallerySlider({ items }: { items: PortfolioItem[] }) {
+    const slides = items.length > 0 ? items : null;
+    const uidCounter = useRef(0);
+    const activeRef = useRef(0); // tracks activeIndex without stale-closure issues
+
+    const makeUid = () => `cs${++uidCounter.current}`;
+
     const [activeIndex, setActiveIndex] = useState(0);
-    const [direction, setDirection] = useState<1 | -1>(1);
+    const [slots, setSlots] = useState<CarouselSlot[]>(() => {
+        if (!items.length) {
+            return [];
+        }
+
+        const n = items.length;
+        const result: CarouselSlot[] = [
+            { uid: makeUid(), index: 0, pos: 'center', enterFrom: null },
+        ];
+
+        if (n > 1) {
+            result.unshift({ uid: makeUid(), index: (n - 1) % n, pos: 'peek-left', enterFrom: null });
+            result.push({ uid: makeUid(), index: 1 % n, pos: 'peek-right', enterFrom: null });
+        }
+
+        return result;
+    });
+
     const [isPlaying, setIsPlaying] = useState(true);
     const [videoProgress, setVideoProgress] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const lightboxVideoRef = useRef<HTMLVideoElement>(null);
-    const filmstripRef = useRef<HTMLDivElement>(null);
 
-    const slides = items.length > 0 ? items : null;
+    const navigate = useCallback(
+        (dir: 1 | -1) => {
+            if (!slides || slides.length <= 1) {
+                return;
+            }
 
-    const goTo = useCallback((index: number, dir: 1 | -1) => {
-        setDirection(dir);
-        setActiveIndex(index);
-        setIsPlaying(true);
-        setVideoProgress(0);
+            const n = slides.length;
+            const prev = activeRef.current;
+            const newActive = (prev + dir + n) % n;
+            const newOuter = (newActive + dir + n) % n;
+
+            activeRef.current = newActive;
+            setActiveIndex(newActive);
+            setIsPlaying(true);
+            setVideoProgress(0);
+
+            setSlots((prevSlots) => {
+                // Shift every existing slot one position in the direction of travel
+                const updated: CarouselSlot[] = prevSlots.map((s) => {
+                    let newPos: SlotPos;
+
+                    if (dir === 1) {
+                        newPos =
+                            s.pos === 'peek-left'
+                                ? 'exit-left'
+                                : s.pos === 'center'
+                                  ? 'peek-left'
+                                  : s.pos === 'peek-right'
+                                    ? 'center'
+                                    : s.pos;
+                    } else {
+                        newPos =
+                            s.pos === 'peek-right'
+                                ? 'exit-right'
+                                : s.pos === 'center'
+                                  ? 'peek-right'
+                                  : s.pos === 'peek-left'
+                                    ? 'center'
+                                    : s.pos;
+                    }
+
+                    return { ...s, pos: newPos, enterFrom: null };
+                });
+
+                // New item enters from off-screen on the far side of travel
+                const enterFrom: SlotPos = dir === 1 ? 'exit-right' : 'exit-left';
+                const enterPos: SlotPos = dir === 1 ? 'peek-right' : 'peek-left';
+                updated.push({ uid: `cs${++uidCounter.current}`, index: newOuter, pos: enterPos, enterFrom });
+
+                return updated;
+            });
+        },
+        [slides],
+    );
+
+    const goPrev = useCallback(() => navigate(-1), [navigate]);
+    const goNext = useCallback(() => navigate(1), [navigate]);
+
+    const removeExited = useCallback((uid: string) => {
+        setSlots((prev) => prev.filter((s) => s.uid !== uid));
     }, []);
-
-    const goPrev = useCallback(() => {
-        if (!slides) {
-            return;
-        }
-
-        goTo((activeIndex - 1 + slides.length) % slides.length, -1);
-    }, [activeIndex, slides, goTo]);
-
-    const goNext = useCallback(() => {
-        if (!slides) {
-            return;
-        }
-
-        goTo((activeIndex + 1) % slides.length, 1);
-    }, [activeIndex, slides, goTo]);
 
     const togglePlayPause = useCallback(() => {
         const vid = videoRef.current;
@@ -419,121 +508,111 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                 setVideoProgress((vid.currentTime / vid.duration) * 100);
             }
         };
+
         vid.addEventListener('timeupdate', onTimeUpdate);
 
         return () => vid.removeEventListener('timeupdate', onTimeUpdate);
     }, [activeIndex]);
 
-    // Keep active thumbnail visible in the filmstrip
-    useEffect(() => {
-        const strip = filmstripRef.current;
-
-        if (!strip) {
-            return;
-        }
-
-        const thumb = strip.children[activeIndex] as HTMLElement | undefined;
-
-        if (thumb) {
-            thumb.scrollIntoView({
-                inline: 'nearest',
-                block: 'nearest',
-                behavior: 'smooth',
-            });
-        }
-    }, [activeIndex]);
-
-    const slideVariants: Variants = {
-        enter: (d: number) => ({
-            x: d > 0 ? '100%' : '-100%',
-            opacity: 0,
-            scale: 0.98,
-        }),
-        center: {
-            x: 0,
-            opacity: 1,
-            scale: 1,
-            transition: {
-                duration: 0.5,
-                ease: [0.22, 1, 0.36, 1],
-            },
-        },
-        exit: (d: number) => ({
-            x: d > 0 ? '-100%' : '100%',
-            opacity: 0,
-            scale: 0.98,
-            transition: {
-                duration: 0.4,
-                ease: [0.22, 1, 0.36, 1],
-            },
-        }),
-    };
-
     if (!slides) {
         return (
-            <div className="flex h-[100dvh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
+            <div className="flex h-[70vh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
                 <ImageIcon className="h-10 w-10 text-theme-subtle" />
-                <p className="text-sm font-medium text-theme-muted">
-                    Portfolio coming soon
-                </p>
+                <p className="text-sm font-medium text-theme-muted">Portfolio coming soon</p>
             </div>
         );
     }
 
-    const active = slides[activeIndex];
+    const activeItem = slides[activeIndex];
+    const hasPeeks = slides.length > 1;
+
+    // Render center last so it paints on top; exits at bottom.
+    const sortedSlots = [...slots].sort((a, b) => SLOT_ORDER[a.pos] - SLOT_ORDER[b.pos]);
 
     return (
         <>
-            <div className="group relative h-[100dvh] w-full overflow-hidden">
-                {/* Slides — full screen */}
-                <AnimatePresence
-                    initial={false}
-                    custom={direction}
-                    mode="popLayout"
-                >
-                    <motion.div
-                        key={activeIndex}
-                        custom={direction}
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        className="absolute inset-0"
-                    >
-                        {active.media_type === 'video' ? (
-                            <video
-                                ref={(el) => {
-                                    videoRef.current = el;
+            <div className="group relative h-[70vh] w-full overflow-hidden bg-black">
+                {sortedSlots.map((slot) => {
+                    const item = slides[slot.index];
+                    const isCenter = slot.pos === 'center';
+                    const isPeekLeft = slot.pos === 'peek-left';
+                    const isPeekRight = slot.pos === 'peek-right';
+                    const isClickable = isPeekLeft || isPeekRight;
 
-                                    if (el) {
-                                        el.play().catch(() => {});
+                    return (
+                        <motion.div
+                            key={slot.uid}
+                            initial={slot.enterFrom !== null ? SLOT_STYLES[slot.enterFrom] : false}
+                            animate={SLOT_STYLES[slot.pos]}
+                            transition={SLIDE_DUR}
+                            onAnimationComplete={() => {
+                                if (slot.pos === 'exit-left' || slot.pos === 'exit-right') {
+                                    removeExited(slot.uid);
+                                }
+                            }}
+                            onClick={isClickable ? (isPeekLeft ? goPrev : goNext) : undefined}
+                            style={{ position: 'absolute', overflow: 'hidden', zIndex: SLOT_ORDER[slot.pos] }}
+                            className={isClickable ? 'cursor-pointer' : ''}
+                        >
+                            {item.media_type === 'video' ? (
+                                <video
+                                    ref={
+                                        isCenter
+                                            ? (el) => {
+                                                  videoRef.current = el;
+
+                                                  if (el) {
+                                                      el.play().catch(() => {});
+                                                  }
+                                              }
+                                            : undefined
                                     }
-                                }}
-                                src={active.media_path ?? undefined}
-                                muted
-                                loop
-                                playsInline
-                                className="h-full w-full object-cover"
+                                    src={item.media_path ?? undefined}
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <img
+                                    src={item.media_path ?? PLACEHOLDER}
+                                    alt={item.alt}
+                                    onError={(e) => {
+                                        e.currentTarget.src = PLACEHOLDER;
+                                    }}
+                                    className="h-full w-full object-cover"
+                                />
+                            )}
+
+                            {/* Dim overlay for non-center slots */}
+                            <motion.div
+                                className="pointer-events-none absolute inset-0 bg-black"
+                                animate={{ opacity: isCenter ? 0 : 0.45 }}
+                                transition={SLIDE_DUR}
                             />
-                        ) : (
-                            <img
-                                src={active.media_path ?? PLACEHOLDER}
-                                alt={active.alt}
-                                onError={(e) => {
-                                    e.currentTarget.src = PLACEHOLDER;
-                                }}
-                                className="h-full w-full object-cover"
-                            />
-                        )}
-                    </motion.div>
-                </AnimatePresence>
+
+                            {/* Peek hover chevron */}
+                            {isClickable && (
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                    {isPeekLeft ? (
+                                        <ChevronLeft className="h-7 w-7 text-white drop-shadow-lg" />
+                                    ) : (
+                                        <ChevronRight className="h-7 w-7 text-white drop-shadow-lg" />
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+                    );
+                })}
+
+                {/* ── Overlays (rendered above all slots via z-index) ── */}
 
                 {/* Bottom gradient */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-72 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-40 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
                 {/* Video progress bar */}
-                {active.media_type === 'video' && (
-                    <div className="absolute inset-x-0 bottom-0 z-30 h-0.5 bg-white/10">
+                {activeItem.media_type === 'video' && (
+                    <div className="absolute inset-x-0 bottom-0 z-40 h-0.5 bg-white/10">
                         <motion.div
                             className="h-full bg-cyan-400"
                             style={{ width: `${videoProgress}%` }}
@@ -542,19 +621,15 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                     </div>
                 )}
 
-                {/* Play/Pause */}
-                {active.media_type === 'video' && (
+                {/* Play / Pause */}
+                {activeItem.media_type === 'video' && (
                     <button
                         type="button"
                         onClick={togglePlayPause}
-                        className="absolute top-6 left-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                        className="absolute top-4 left-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
                         aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
-                        {isPlaying ? (
-                            <Pause className="h-4 w-4" />
-                        ) : (
-                            <Play className="h-4 w-4" />
-                        )}
+                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </button>
                 )}
 
@@ -562,25 +637,25 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                 <button
                     type="button"
                     onClick={() => setIsLightboxOpen(true)}
-                    className="absolute top-6 right-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                    className="absolute top-4 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
                     aria-label="View fullscreen"
                 >
                     <Maximize2 className="h-4 w-4" />
                 </button>
 
                 {/* Navigation arrows */}
-                {slides.length > 1 && (
+                {hasPeeks && (
                     <>
                         <button
                             onClick={goPrev}
-                            className="absolute top-1/2 left-6 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                            className="absolute top-1/2 left-4 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
                             aria-label="Previous slide"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={goNext}
-                            className="absolute top-1/2 right-6 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
+                            className="absolute top-1/2 right-4 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
                             aria-label="Next slide"
                         >
                             <ChevronRight className="h-5 w-5" />
@@ -589,65 +664,28 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                 )}
 
                 {/* Caption */}
-                <div className="absolute bottom-20 left-6 z-20 md:bottom-24">
-                    <p className="text-sm font-semibold text-white drop-shadow">
-                        {active.title}
-                    </p>
-                    {active.media_type === 'video' && (
+                <div className="absolute bottom-4 left-4 z-30">
+                    <p className="text-sm font-semibold text-white drop-shadow">{activeItem.title}</p>
+                    {activeItem.media_type === 'video' && (
                         <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
                             <Film className="h-3 w-3" /> Video
                         </span>
                     )}
                 </div>
 
-                {/* Horizontal filmstrip overlay */}
-                {slides.length > 1 && (
-                    <div
-                        ref={filmstripRef}
-                        className="absolute inset-x-0 bottom-4 z-20 flex justify-center gap-2 overflow-x-auto px-4"
-                        style={{ scrollbarWidth: 'none' }}
-                    >
-                        {slides.map((item, i) => (
+                {/* Dot indicators */}
+                {hasPeeks && (
+                    <div className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 gap-1.5">
+                        {slides.map((_, i) => (
                             <button
-                                key={item.id}
-                                onClick={() =>
-                                    goTo(i, i > activeIndex ? 1 : -1)
-                                }
-                                className={`relative h-12 w-20 shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${
-                                    i === activeIndex
-                                        ? 'opacity-100 ring-2 ring-cyan-400 ring-offset-1 ring-offset-black/60'
-                                        : 'opacity-50 hover:opacity-80'
+                                key={i}
+                                type="button"
+                                onClick={() => navigate(i > activeIndex ? 1 : -1)}
+                                className={`h-1.5 rounded-full transition-all duration-300 ${
+                                    i === activeIndex ? 'w-5 bg-cyan-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
                                 }`}
-                                aria-label={`View ${item.title}`}
-                            >
-                                {i === activeIndex && (
-                                    <span className="absolute inset-x-0 top-0 z-10 h-0.5 rounded-b-full bg-cyan-400" />
-                                )}
-                                {item.media_type === 'video' ? (
-                                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
-                                        <Film className="h-4 w-4 text-white/60" />
-                                        {i === activeIndex && (
-                                            <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">
-                                                <div
-                                                    className="h-full bg-cyan-400 transition-none"
-                                                    style={{
-                                                        width: `${videoProgress}%`,
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <img
-                                        src={item.media_path ?? PLACEHOLDER}
-                                        alt={item.alt}
-                                        className="h-full w-full object-cover"
-                                        onError={(e) => {
-                                            e.currentTarget.src = PLACEHOLDER;
-                                        }}
-                                    />
-                                )}
-                            </button>
+                                aria-label={`Go to slide ${i + 1}`}
+                            />
                         ))}
                     </div>
                 )}
@@ -668,17 +706,14 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{
-                                duration: 0.35,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
+                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                             className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {active.media_type === 'video' ? (
+                            {activeItem.media_type === 'video' ? (
                                 <video
                                     ref={lightboxVideoRef}
-                                    src={active.media_path ?? undefined}
+                                    src={activeItem.media_path ?? undefined}
                                     autoPlay
                                     muted
                                     loop
@@ -688,8 +723,8 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 />
                             ) : (
                                 <img
-                                    src={active.media_path ?? PLACEHOLDER}
-                                    alt={active.alt}
+                                    src={activeItem.media_path ?? PLACEHOLDER}
+                                    alt={activeItem.alt}
                                     className="aspect-video w-full object-contain"
                                     onError={(e) => {
                                         e.currentTarget.src = PLACEHOLDER;
@@ -697,9 +732,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 />
                             )}
                             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent px-6 py-5">
-                                <p className="font-semibold text-white">
-                                    {active.title}
-                                </p>
+                                <p className="font-semibold text-white">{activeItem.title}</p>
                             </div>
                             <button
                                 type="button"
