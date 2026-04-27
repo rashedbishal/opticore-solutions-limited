@@ -452,7 +452,7 @@ export default function SupportWidget() {
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     return (
-        <div className="fixed bottom-3 left-3 z-50 sm:bottom-6 sm:left-6">
+        <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
             {conversation && echoReady && (
                 <SupportWidgetEchoListener
                     conversation={conversation}
@@ -465,46 +465,55 @@ export default function SupportWidget() {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: 16, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute bottom-16 left-0 mb-2 flex max-h-[min(100dvh-90px,520px)] w-[min(100vw-24px,24rem)] flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:mb-4"
+                        exit={{ opacity: 0, y: 16, scale: 0.96 }}
+                        transition={{
+                            duration: 0.3,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between bg-violet-600 px-4 py-3 text-white">
-                            <div>
-                                <h3 className="font-semibold">
-                                    Customer Support
-                                </h3>
-                                <p className="text-xs text-violet-200">
-                                    We typically reply in a few minutes
-                                </p>
+                        <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-500">
+                                    <MessageSquare className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-theme">
+                                        Customer Support
+                                    </h3>
+                                    <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">
+                                        Typically replies in minutes
+                                    </span>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="rounded-full p-1 hover:bg-white/20"
+                                className="text-theme-muted transition-colors hover:text-theme"
+                                aria-label="Close chat"
                             >
-                                <X size={20} />
+                                <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 space-y-3 overflow-y-auto bg-slate-900/50 p-4">
+                        <div className="flex-1 space-y-4 overflow-y-auto bg-theme-surface/20 p-5">
                             {messages.map((msg) => (
                                 <div
                                     key={msg.id}
-                                    className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
+                                    className={`flex flex-col ${msg.sender_type === 'user' ? 'items-end' : 'items-start'}`}
                                 >
                                     <div className="max-w-[85%]">
                                         {msg.offer ? (
                                             <OfferCard offer={msg.offer} />
                                         ) : (
                                             <div
-                                                className={`rounded-2xl px-4 py-2.5 text-sm ${
+                                                className={`rounded-2xl p-3.5 text-sm ${
                                                     msg.sender_type === 'user'
-                                                        ? 'rounded-br-none bg-violet-600 text-white'
-                                                        : 'rounded-bl-none bg-slate-800 text-slate-200'
+                                                        ? 'rounded-tr-none bg-foreground text-background'
+                                                        : 'rounded-tl-none border border-theme bg-theme-surface-hover text-theme'
                                                 }`}
                                             >
                                                 {msg.attachment_path && (
@@ -548,7 +557,7 @@ export default function SupportWidget() {
                                         {msg.sender_type === 'user' &&
                                             msg.id ===
                                                 latestOutgoingMessageId && (
-                                                <p className="mt-1 px-1 text-right text-[11px] text-slate-500">
+                                                <p className="mt-1 px-1 text-right text-[11px] text-theme-subtle">
                                                     {getMessageStatusLabel(msg)}
                                                 </p>
                                             )}
@@ -559,7 +568,7 @@ export default function SupportWidget() {
                         </div>
 
                         {/* Input */}
-                        <div className="border-t border-slate-800 bg-slate-900 px-4 py-3">
+                        <div className="border-t border-theme bg-theme-surface-hover p-4">
                             <form
                                 onSubmit={handleSend}
                                 className="flex flex-col gap-2"
@@ -596,16 +605,16 @@ export default function SupportWidget() {
                                             initial={{ opacity: 0, y: 4 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 4 }}
-                                            className="flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-2"
+                                            className="flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2"
                                         >
                                             <Paperclip
                                                 size={13}
-                                                className="shrink-0 text-violet-400"
+                                                className="shrink-0 text-cyan-500"
                                             />
-                                            <span className="flex-1 truncate text-xs text-slate-300">
+                                            <span className="flex-1 truncate text-xs text-theme-muted">
                                                 {attachment.name}
                                             </span>
-                                            <span className="shrink-0 text-[10px] text-slate-500">
+                                            <span className="shrink-0 text-[10px] text-theme-subtle">
                                                 {(
                                                     attachment.size /
                                                     1024 /
@@ -616,7 +625,7 @@ export default function SupportWidget() {
                                             <button
                                                 type="button"
                                                 onClick={handleRemoveAttachment}
-                                                className="shrink-0 text-slate-400 transition hover:text-red-400"
+                                                className="shrink-0 text-theme-muted transition hover:text-red-400"
                                             >
                                                 <X size={14} />
                                             </button>
@@ -625,7 +634,7 @@ export default function SupportWidget() {
                                 </AnimatePresence>
 
                                 {/* Message bar */}
-                                <div className="flex items-center gap-2">
+                                <div className="relative">
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -637,9 +646,9 @@ export default function SupportWidget() {
                                         onClick={() =>
                                             fileInputRef.current?.click()
                                         }
-                                        className={`shrink-0 transition-colors ${attachment ? 'text-violet-400' : 'text-slate-400 hover:text-violet-400'}`}
+                                        className={`absolute top-1/2 left-3 -translate-y-1/2 transition-colors ${attachment ? 'text-cyan-500' : 'text-theme-muted hover:text-cyan-500'}`}
                                     >
-                                        <Paperclip size={20} />
+                                        <Paperclip size={18} />
                                     </button>
                                     <input
                                         type="text"
@@ -648,7 +657,7 @@ export default function SupportWidget() {
                                             setNewMessage(e.target.value)
                                         }
                                         placeholder="Type a message..."
-                                        className="flex-1 rounded-full border-none bg-slate-800 px-4 py-2 text-sm text-white focus:ring-1 focus:ring-violet-500"
+                                        className="placeholder-theme-subtle w-full rounded-xl border border-theme bg-theme-surface py-3 pr-12 pl-10 text-sm text-theme focus:border-cyan-500/50 focus:outline-none"
                                     />
                                     <button
                                         type="submit"
@@ -656,11 +665,14 @@ export default function SupportWidget() {
                                             isSending ||
                                             (!newMessage.trim() && !attachment)
                                         }
-                                        className="shrink-0 rounded-full bg-violet-600 p-2 text-white transition hover:bg-violet-500 disabled:opacity-40"
+                                        className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg bg-cyan-500 text-white transition-colors hover:bg-cyan-600 disabled:opacity-40"
                                     >
-                                        <Send size={16} />
+                                        <Send className="h-4 w-4" />
                                     </button>
                                 </div>
+                                <p className="mt-1 text-center text-[9px] font-bold tracking-[0.2em] text-theme-subtle uppercase">
+                                    Direct Team Chat
+                                </p>
                             </form>
                         </div>
                     </motion.div>
@@ -669,19 +681,34 @@ export default function SupportWidget() {
 
             {/* Toggle button */}
             <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative flex h-14 w-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-500/30 transition-transform hover:scale-110"
+                className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 ${
+                    isOpen
+                        ? 'rotate-90 bg-foreground text-background'
+                        : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
+                }`}
+                aria-label={isOpen ? 'Close chat' : 'Open chat'}
             >
-                {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-                {unread > 0 && !isOpen && (
-                    <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold ring-2 ring-slate-900">
+                {isOpen ? (
+                    <X className="h-7 w-7" />
+                ) : (
+                    <MessageSquare className="h-7 w-7" />
+                )}
+                {unread > 0 && !isOpen ? (
+                    <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold ring-2 ring-background">
                         {unread}
                     </span>
+                ) : (
+                    !isOpen && (
+                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-500" />
+                    )
                 )}
             </button>
         </div>
     );
 }
+
 
 interface EchoListenerProps {
     conversation: Conversation;

@@ -11,8 +11,6 @@ import {
     User,
     ArrowRight,
     X,
-    Send,
-    Users,
     ChevronLeft,
     ChevronRight,
     Film,
@@ -274,10 +272,6 @@ const PLANS = [
 ] as const;
 
 type PlanId = (typeof PLANS)[number]['id'];
-
-// ─── Chat Message Type ──────────────────────────────────────────────────────
-
-type ChatMessage = { role: 'team' | 'user'; content: string; time: string };
 
 // ─── Review Media Preview ────────────────────────────────────────────────
 
@@ -911,18 +905,6 @@ export default function SubCategoryShow({
         portfolios?.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-    const [isChatOpen, setIsChatOpen] = useState(false);
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        {
-            role: 'team',
-            content: `Hi there! We're the ${category.label} team. How can we help with your project today?`,
-            time: new Date().toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-            }),
-        },
-    ]);
-    const [newMessage, setNewMessage] = useState('');
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     // const [reviewPage, setReviewPage] = useState(1);
@@ -935,7 +917,6 @@ export default function SubCategoryShow({
         () => (dbReviews || []).map(mapDbReview),
         [dbReviews],
     );
-    const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
     const pricingSectionRef = useRef<HTMLDivElement>(null);
 
@@ -966,44 +947,6 @@ export default function SubCategoryShow({
             behavior: 'smooth',
             block: 'start',
         });
-
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [chatMessages, isChatOpen]);
-
-    const handleSendMessage = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!newMessage.trim()) {
-            return;
-        }
-
-        const time = new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-
-        setChatMessages((prev) => [
-            ...prev,
-            { role: 'user', content: newMessage, time },
-        ]);
-        setNewMessage('');
-
-        setTimeout(() => {
-            setChatMessages((prev) => [
-                ...prev,
-                {
-                    role: 'team',
-                    content:
-                        'Thanks for reaching out! A team member will review your message and get back to you shortly.',
-                    time: new Date().toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    }),
-                },
-            ]);
-        }, 1500);
-    };
 
     const handleHireNow = (planId: PlanId = selectedPlan) => {
         const plan = PLANS.find((p) => p.id === planId)!;
@@ -2018,122 +1961,6 @@ export default function SubCategoryShow({
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* ── Floating Chat ── */}
-            <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
-                <AnimatePresence>
-                    {isChatOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-                            transition={{
-                                duration: 0.3,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="glass-panel mb-4 flex h-[480px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
-                        >
-                            {/* Header */}
-                            <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-500">
-                                        <Users className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-theme">
-                                            {category.label} Team
-                                        </p>
-                                        <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">
-                                            Online
-                                        </span>
-                                    </div>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsChatOpen(false)}
-                                    className="text-theme-muted transition-colors hover:text-theme"
-                                    aria-label="Close chat"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-
-                            {/* Messages */}
-                            <div className="flex-1 space-y-4 overflow-y-auto p-5">
-                                {chatMessages.map((msg, i) => (
-                                    <div
-                                        key={i}
-                                        className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-                                    >
-                                        <div
-                                            className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
-                                                msg.role === 'user'
-                                                    ? 'rounded-tr-none bg-foreground text-background'
-                                                    : 'rounded-tl-none border border-theme bg-theme-surface-hover text-theme'
-                                            }`}
-                                        >
-                                            {msg.content}
-                                        </div>
-                                        <span className="mt-1.5 text-[10px] text-theme-subtle">
-                                            {msg.time}
-                                        </span>
-                                    </div>
-                                ))}
-                                <div ref={chatEndRef} />
-                            </div>
-
-                            {/* Input */}
-                            <form
-                                onSubmit={handleSendMessage}
-                                className="border-t border-theme bg-theme-surface-hover p-4"
-                            >
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={newMessage}
-                                        onChange={(e) =>
-                                            setNewMessage(e.target.value)
-                                        }
-                                        placeholder="Ask about this service…"
-                                        className="placeholder-theme-subtle w-full rounded-xl border border-theme bg-theme-surface py-3 pr-12 pl-4 text-sm text-theme focus:border-cyan-500/50 focus:outline-none"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg bg-cyan-500 text-white transition-colors hover:bg-cyan-600"
-                                        aria-label="Send message"
-                                    >
-                                        <Send className="h-4 w-4" />
-                                    </button>
-                                </div>
-                                <p className="mt-2.5 text-center text-[9px] font-bold tracking-[0.2em] text-theme-subtle uppercase">
-                                    Direct Team Chat
-                                </p>
-                            </form>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Toggle button */}
-                <button
-                    type="button"
-                    onClick={() => setIsChatOpen((v) => !v)}
-                    className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 ${
-                        isChatOpen
-                            ? 'rotate-90 bg-foreground text-background'
-                            : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
-                    }`}
-                    aria-label={isChatOpen ? 'Close chat' : 'Open chat'}
-                >
-                    {isChatOpen ? (
-                        <X className="h-7 w-7" />
-                    ) : (
-                        <MessageSquare className="h-7 w-7" />
-                    )}
-                    {!isChatOpen && (
-                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-500" />
-                    )}
-                </button>
-            </div>
 
             {/* ── Custom Quote Modal ── */}
             <Modal
