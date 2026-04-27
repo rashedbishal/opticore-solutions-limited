@@ -14,7 +14,7 @@ import {
     LogOut,
     LogIn,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
 import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
@@ -86,19 +86,45 @@ function NavLink({
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const [isAtTop, setIsAtTop] = useState(true);
+    const lastScrollY = useRef(0);
     const { user } = props.auth;
 
     useEffect(() => {
-        const onScroll = () => {
-            setScrolled(window.scrollY > 50);
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Update transparency state
+            setIsAtTop(currentScrollY < 50);
+
+            // Headroom logic
+            if (currentScrollY < 50) {
+                setVisible(true);
+            } else if (currentScrollY > lastScrollY.current && currentScrollY > 120) {
+                // Scrolling down - hide
+                setVisible(false);
+            } else if (currentScrollY < lastScrollY.current) {
+                // Scrolling up - show
+                setVisible(true);
+            }
+
+            lastScrollY.current = currentScrollY;
         };
 
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
+        const handleMouseMove = (e: MouseEvent) => {
+            // Show if mouse is near the top
+            if (e.clientY < 40) {
+                setVisible(true);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('mousemove', handleMouseMove);
 
         return () => {
-            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
 
@@ -118,8 +144,8 @@ export default function Navbar() {
             <header
                 className={cn(
                     'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8',
-                    scrolled
-                        ? 'pointer-events-auto translate-y-0 opacity-100'
+                    visible
+                        ? 'translate-y-0 opacity-100'
                         : 'pointer-events-none -translate-y-full opacity-0',
                 )}
             >
