@@ -48,10 +48,10 @@ function NavLink({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'group relative flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-md transition-all duration-300',
+                'group relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                 active
-                    ? 'border-violet-500/50 bg-violet-500/20 shadow-lg shadow-violet-500/10 dark:border-violet-400/50 dark:bg-violet-400/20'
-                    : 'border-black/10 bg-white/80 hover:border-black/20 hover:bg-white/95 dark:border-white/10 dark:bg-black/40 dark:hover:border-white/20 dark:hover:bg-black/60',
+                    ? 'border-violet-400 bg-violet-100 shadow-[0_3px_10px_rgba(139,92,246,0.2),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-violet-500 dark:bg-violet-950 dark:shadow-[0_3px_10px_rgba(139,92,246,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]'
+                    : 'border-slate-300 bg-slate-100 hover:border-slate-400 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800',
             )}
         >
             {Icon && (
@@ -142,7 +142,7 @@ export default function Navbar() {
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
                 className={cn(
-                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8',
+                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
                     visible
                         ? 'translate-y-0 opacity-100'
                         : 'pointer-events-none -translate-y-full opacity-0',
@@ -152,7 +152,7 @@ export default function Navbar() {
                     <Link
                         href="/"
                         className={cn(
-                            'touch-target inline-flex items-center rounded-full border border-black/10 bg-white/80 backdrop-blur-md transition-all duration-300 dark:border-white/10 dark:bg-black/40',
+                            'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 transition-all duration-300 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                         )}
                         aria-label="Opticore Solutions home"
                     >
@@ -175,7 +175,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="hidden items-center gap-3 xl:flex">
-                        <div className="flex items-center gap-3 rounded-full border border-black/10 bg-white/80 p-1.5 backdrop-blur-md dark:border-white/10 dark:bg-black/40">
+                        <div className="flex items-center gap-3 rounded-full border border-slate-300 bg-slate-100 p-1.5 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                             {user ? (
                                 <Link
                                     href="/logout"
@@ -209,7 +209,7 @@ export default function Navbar() {
                         }
                         className={cn(
                             'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
-                            'h-14 w-14 border border-black/10 bg-white/80 text-zinc-800 backdrop-blur-md dark:border-white/10 dark:bg-black/40 dark:text-white',
+                            'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                         )}
                         onClick={() => setOpen((current) => !current)}
                     >
@@ -228,7 +228,7 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-60 flex flex-col bg-white/98 backdrop-blur-2xl xl:hidden dark:bg-black/98"
+                        className="fixed inset-0 z-60 flex flex-col bg-slate-100 xl:hidden dark:bg-zinc-900"
                     >
                         <div className="flex h-full flex-col">
                             {/* Header inside the menu for consistent top spacing and close button */}
@@ -254,7 +254,7 @@ export default function Navbar() {
                                         <button
                                             type="button"
                                             onClick={() => setOpen(false)}
-                                            className="flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-black/5 text-zinc-800 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-300 bg-slate-200 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <X className="h-5 w-5" />
                                         </button>
@@ -279,7 +279,7 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-center rounded-2xl border border-black/10 bg-black/5 px-2 py-2.5 transition-colors active:bg-black/10 md:px-3 md:py-3 lg:px-4 lg:py-3.5 dark:border-white/10 dark:bg-white/5 dark:active:bg-white/10',
+                                                    'flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-slate-200 px-2 py-2.5 transition-colors active:bg-slate-300 md:px-3 md:py-3 lg:px-4 lg:py-3.5 dark:border-zinc-700 dark:bg-zinc-800 dark:active:bg-zinc-700',
                                                     url === item.href &&
                                                         'border-violet-500/40 bg-violet-500/10 dark:border-violet-400/40',
                                                 )}
