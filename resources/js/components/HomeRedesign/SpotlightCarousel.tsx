@@ -26,7 +26,7 @@ export default function SpotlightCarousel() {
     const [index, setIndex] = useState(0);
 
     return (
-        <div className="relative overflow-hidden bg-background py-40">
+        <div className="relative overflow-hidden py-40">
             <div className="mx-auto max-w-7xl px-4">
                 <div className="grid grid-cols-1 items-center gap-20 md:grid-cols-2">
                     {/* Active Quote */}

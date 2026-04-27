@@ -86,7 +86,7 @@ export default function Checkout({ item }: Props) {
         <>
             <Head title="Checkout — Opticore" />
 
-            <div className="relative min-h-screen bg-background pb-24">
+            <div className="relative min-h-screen pb-24">
                 <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-cyan-500/5 blur-[140px]" />
                 <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] rounded-full bg-violet-600/5 blur-[140px]" />
 

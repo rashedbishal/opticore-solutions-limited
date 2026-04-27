@@ -40,7 +40,7 @@ const items = [
 
 export default function KineticBento() {
     return (
-        <div className="bg-background px-4 py-24">
+        <div className="px-4 py-24">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-16">
                     <h2 className="text-5xl font-black tracking-tighter text-foreground uppercase md:text-7xl">

@@ -1061,7 +1061,7 @@ export default function SubCategoryShow({
         <>
             <Head title={`${subCategory.name} — Hire Opticore`} />
 
-            <div className="relative min-h-screen bg-background pb-36 lg:pb-24">
+            <div className="relative min-h-screen pb-36 lg:pb-24">
                 {/* ── CINEMATIC HERO GALLERY (full-width) ── */}
                 <motion.div
                     initial={{ opacity: 0 }}

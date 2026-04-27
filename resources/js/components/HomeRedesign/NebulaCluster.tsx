@@ -110,7 +110,7 @@ export default function NebulaCluster() {
     return (
         <div
             onMouseMove={handleMouseMove}
-            className="relative h-screen w-full cursor-none overflow-hidden bg-background"
+            className="relative h-screen w-full cursor-none overflow-hidden"
         >
             <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
                 <h2 className="text-7xl font-black tracking-tighter text-foreground uppercase opacity-5 md:text-9xl">

@@ -73,7 +73,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
         <>
             <Head title="Hire Opticore | Digital Services Marketplace" />
 
-            <div className="relative min-h-screen overflow-hidden bg-background px-4 pt-32 pb-24">
+            <div className="relative min-h-screen overflow-hidden px-4 pt-32 pb-24">
                 {/* Background Glows */}
                 <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[120px]" />
                 <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px]" />
