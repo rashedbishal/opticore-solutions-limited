@@ -316,7 +316,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
     return (
         <div
-            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'glass-panel bg-theme-surface-hover shadow-lg' : 'border border-theme bg-theme-surface hover:bg-theme-surface-hover'}`}
+            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'border border-cyan-500/30 bg-theme-surface -translate-y-0.5 shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-theme-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)] hover:bg-theme-surface-hover'}`}
         >
             <button
                 type="button"
@@ -1127,8 +1127,8 @@ export default function SubCategoryShow({
                                 onClick={() => setSelectedPlan(plan.id)}
                                 className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
-                                        ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
-                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
+                                        ? 'border-cyan-400/60 bg-theme-surface -translate-y-1.5 shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
+                                        : 'border-theme bg-theme-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-theme-muted/40 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
