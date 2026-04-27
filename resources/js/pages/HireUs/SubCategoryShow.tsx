@@ -363,18 +363,18 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
 // ─── Gallery Slider (simultaneous 3-item track carousel) ────────────────────
 
-const SLIDE_EASE = [0.22, 1, 0.36, 1] as const;
-const SLIDE_DUR = { duration: 0.55, ease: SLIDE_EASE };
+const SLIDE_EASE = [0.32, 0.72, 0, 1] as const;
+const SLIDE_DUR = { duration: 0.95, ease: SLIDE_EASE };
 
 // CSS layout properties for each slot — no overlap at any rest position:
 //   peek-left  2%–22%  |  center 22%–78%  |  peek-right 78%–98%
 // framer-motion interpolates all properties simultaneously each RAF tick.
 const SLOT_STYLES = {
-    'exit-left':  { left: '-22%', top: '17.5%', width: '20%', height: '65%', opacity: 0, borderRadius: '16px' },
-    'peek-left':  { left:   '2%', top: '17.5%', width: '20%', height: '65%', opacity: 1, borderRadius: '16px' },
-    'center':     { left:  '22%', top:     '0%', width: '56%', height: '100%', opacity: 1, borderRadius: '0px'  },
-    'peek-right': { left:  '78%', top: '17.5%', width: '20%', height: '65%', opacity: 1, borderRadius: '16px' },
-    'exit-right': { left: '100%', top: '17.5%', width: '20%', height: '65%', opacity: 0, borderRadius: '16px' },
+    'exit-left':  { left: '-22%', top: '17.5%', width: '20%', height: '65%', opacity: 0, scale: 0.9, borderRadius: '16px' },
+    'peek-left':  { left:   '2%', top: '17.5%', width: '20%', height: '65%', opacity: 1, scale: 1.0, borderRadius: '16px' },
+    'center':     { left:  '22%', top:     '0%', width: '56%', height: '100%', opacity: 1, scale: 1.0, borderRadius: '0px'  },
+    'peek-right': { left:  '78%', top: '17.5%', width: '20%', height: '65%', opacity: 1, scale: 1.0, borderRadius: '16px' },
+    'exit-right': { left: '100%', top: '17.5%', width: '20%', height: '65%', opacity: 0, scale: 0.9, borderRadius: '16px' },
 } as const;
 
 type SlotPos = keyof typeof SLOT_STYLES;
@@ -483,6 +483,16 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const goPrev = useCallback(() => navigate(-1), [navigate]);
     const goNext = useCallback(() => navigate(1), [navigate]);
 
+    const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+        const threshold = 50;
+        const velocityThreshold = 500;
+        if (info.offset.x > threshold || info.velocity.x > velocityThreshold) {
+            goPrev();
+        } else if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
+            goNext();
+        }
+    };
+
     const removeExited = useCallback((uid: string) => {
         setSlots((prev) => prev.filter((s) => s.uid !== uid));
     }, []);
@@ -540,7 +550,13 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     return (
         <>
-            <div className="group relative h-[70vh] w-full overflow-hidden bg-black">
+            <motion.div 
+                drag={hasPeeks ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.05}
+                onDragEnd={handleDragEnd}
+                className="group relative h-[70vh] w-full overflow-hidden bg-black cursor-grab active:cursor-grabbing"
+            >
                 {sortedSlots.map((slot) => {
                     const item = slides[slot.index];
                     const isCenter = slot.pos === 'center';
@@ -689,7 +705,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                         ))}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Lightbox */}
             <AnimatePresence>
