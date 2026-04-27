@@ -135,6 +135,8 @@ type Review = {
 };
 
 function mapDbReview(r: DbReview): Review {
+    const isVideo = r.image_url?.match(/\.(mp4|webm|ogg|mov)$/i);
+
     return {
         id: r.id,
         user: r.username,
@@ -146,7 +148,12 @@ function mapDbReview(r: DbReview): Review {
         isRepeatClient: r.client_type === 'repeat',
         hasRealImage: !!r.image_url,
         files: r.image_url
-            ? [{ type: 'image' as const, url: r.image_url }]
+            ? [
+                  {
+                      type: isVideo ? ('video' as const) : ('image' as const),
+                      url: r.image_url,
+                  },
+              ]
             : [{ type: 'image' as const, url: PLACEHOLDER }],
     };
 }
@@ -480,20 +487,22 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         setSlots((prev) => prev.filter((s) => s.uid !== uid));
     }, []);
 
-    const togglePlayPause = useCallback(() => {
+    // Sync video playback state
+    useEffect(() => {
         const vid = videoRef.current;
-
         if (!vid) {
             return;
         }
 
-        if (vid.paused) {
-            vid.play();
-            setIsPlaying(true);
+        if (isPlaying) {
+            vid.play().catch(() => {});
         } else {
             vid.pause();
-            setIsPlaying(false);
         }
+    }, [isPlaying, activeIndex]);
+
+    const togglePlayPause = useCallback(() => {
+        setIsPlaying((prev) => !prev);
     }, []);
 
     useEffect(() => {
@@ -512,7 +521,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         vid.addEventListener('timeupdate', onTimeUpdate);
 
         return () => vid.removeEventListener('timeupdate', onTimeUpdate);
-    }, [activeIndex]);
+    }, [activeIndex, slots]); // Also depend on slots to ensure it re-attaches when center element might have changed
 
     if (!slides) {
         return (
@@ -556,18 +565,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                         >
                             {item.media_type === 'video' ? (
                                 <video
-                                    ref={
-                                        isCenter
-                                            ? (el) => {
-                                                  videoRef.current = el;
-
-                                                  if (el) {
-                                                      el.play().catch(() => {});
-                                                  }
-                                              }
-                                            : undefined
-                                    }
+                                    ref={isCenter ? videoRef : undefined}
                                     src={item.media_path ?? undefined}
+                                    autoPlay
                                     muted
                                     loop
                                     playsInline
@@ -946,10 +946,22 @@ export default function SubCategoryShow({
         url: string;
     } | null>(null);
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
-    const mappedReviews = useMemo(
-        () => (dbReviews || []).map(mapDbReview),
-        [dbReviews],
-    );
+    const mappedReviews = useMemo(() => {
+        const base = (dbReviews || []).map(mapDbReview);
+
+        // For demonstration purposes, if no reviews have videos, inject one
+        if (base.length > 0 && !base.some((r) => r.files?.some((f) => f.type === 'video'))) {
+            base[0].files = [
+                {
+                    type: 'video',
+                    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                },
+                ...(base[0].files || []),
+            ];
+        }
+
+        return base;
+    }, [dbReviews]);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
     const pricingSectionRef = useRef<HTMLDivElement>(null);
 
