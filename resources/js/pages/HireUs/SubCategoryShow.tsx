@@ -316,7 +316,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
     return (
         <div
-            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? '-translate-y-0.5 border border-cyan-500/30 bg-theme-surface shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-theme-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:bg-theme-surface-hover hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)]'}`}
+            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? '-translate-y-0.5 border border-cyan-500/30 bg-card-surface shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-card-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:bg-card-surface-hover hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)]'}`}
         >
             <button
                 type="button"
@@ -1127,8 +1127,8 @@ export default function SubCategoryShow({
                                 onClick={() => setSelectedPlan(plan.id)}
                                 className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
-                                        ? '-translate-y-1.5 border-cyan-400/60 bg-theme-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
-                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                                        ? '-translate-y-1.5 border-cyan-400/60 bg-card-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
+                                        : 'border-theme bg-card-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-theme-muted/40 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
@@ -1212,7 +1212,7 @@ export default function SubCategoryShow({
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="mx-auto max-w-7xl px-4"
                     >
-                        <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-500/25 bg-theme-surface p-8 shadow-[0_24px_80px_rgba(0,0,0,0.65),0_8px_32px_rgba(0,0,0,0.45),0_0_60px_rgba(34,211,238,0.1),inset_0_1px_0_rgba(255,255,255,0.08)] md:p-12">
+                        <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-500/25 bg-card-surface p-8 shadow-[0_24px_80px_rgba(0,0,0,0.65),0_8px_32px_rgba(0,0,0,0.45),0_0_60px_rgba(34,211,238,0.1),inset_0_1px_0_rgba(255,255,255,0.08)] md:p-12">
                             {/* Subtle dot grid */}
                             <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
                             {/* Glow orbs */}
@@ -1349,7 +1349,7 @@ export default function SubCategoryShow({
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="group flex flex-col items-center gap-3 rounded-3xl border border-theme bg-theme-surface p-6 text-center transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.32),0_2px_6px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-2 hover:border-cyan-500/30 hover:shadow-[0_14px_40px_rgba(0,0,0,0.48),0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.09)] hover:bg-theme-surface-hover"
+                                    className="group flex flex-col items-center gap-3 rounded-3xl border border-theme bg-card-surface p-6 text-center transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.32),0_2px_6px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-2 hover:border-cyan-500/30 hover:shadow-[0_14px_40px_rgba(0,0,0,0.48),0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                 >
                                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500 transition-colors group-hover:bg-cyan-500 group-hover:text-white">
                                         <item.Icon className="h-6 w-6" />
@@ -1388,7 +1388,7 @@ export default function SubCategoryShow({
                         }}
                         className="relative z-10 mx-auto max-w-5xl px-4"
                     >
-                        <div className="overflow-hidden rounded-[2.5rem] border border-theme bg-theme-surface shadow-[0_20px_64px_rgba(0,0,0,0.6),0_8px_24px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                        <div className="overflow-hidden rounded-[2.5rem] border border-theme bg-card-surface shadow-[0_20px_64px_rgba(0,0,0,0.6),0_8px_24px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)]">
                             <div className="grid grid-cols-1 md:grid-cols-2">
                                 {/* Left: Globe + location + languages */}
                                 <div className="relative space-y-6 p-10 md:p-12">
@@ -1698,7 +1698,7 @@ export default function SubCategoryShow({
                                                 scale: 0.95,
                                             }}
                                             variants={fadeUp}
-                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-theme-surface p-6 transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
+                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-card-surface p-6 transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                         >
                                             {/* Accent top bar */}
                                             <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-amber-500/60 via-amber-400/40 to-transparent" />
@@ -1850,7 +1850,7 @@ export default function SubCategoryShow({
                                         category: service.category_slug,
                                         subcategory: service.slug,
                                     })}
-                                    className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-theme-surface transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1.5 hover:border-cyan-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
+                                    className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-card-surface transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1.5 hover:border-cyan-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                 >
                                     <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
                                         {service.image ? (

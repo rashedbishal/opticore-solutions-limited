@@ -892,6 +892,16 @@
     --theme-surface: oklch(0 0 0 / 0.03);
     --theme-surface-hover: oklch(0 0 0 / 0.06);
     --theme-border: oklch(0 0 0 / 0.08);
+
+    /* Card layer — solid own-color so cards visually pop above the page */
+    --card-surface: oklch(0.985 0.01 258);
+    --card-gradient: linear-gradient(
+        148deg,
+        oklch(0.99 0.014 262) 0%,
+        oklch(0.975 0.01 248) 60%,
+        oklch(0.968 0.012 240) 100%
+    );
+    --card-surface-hover: oklch(0.975 0.012 258);
 }
 
 .dark {
@@ -934,6 +944,16 @@
     --theme-surface: oklch(1 0 0 / 0.05);
     --theme-surface-hover: oklch(1 0 0 / 0.08);
     --theme-border: oklch(1 0 0 / 0.12);
+
+    /* Card layer — elevated dark-indigo surface above the near-black page */
+    --card-surface: oklch(0.19 0.016 268);
+    --card-gradient: linear-gradient(
+        148deg,
+        oklch(0.215 0.022 272) 0%,
+        oklch(0.185 0.014 264) 50%,
+        oklch(0.168 0.009 252) 100%
+    );
+    --card-surface-hover: oklch(0.22 0.018 268);
 }
 
 /* ── Semantic design-system utilities ── */
@@ -955,6 +975,16 @@
 
 @utility bg-theme-surface-hover {
     background-color: var(--theme-surface-hover);
+}
+
+@utility bg-card-surface {
+    background-color: var(--card-surface);
+    background-image: var(--card-gradient);
+}
+
+@utility bg-card-surface-hover {
+    background-color: var(--card-surface-hover);
+    background-image: var(--card-gradient);
 }
 
 @utility border-theme {
