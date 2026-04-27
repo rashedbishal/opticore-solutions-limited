@@ -17,7 +17,6 @@ import {
 import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
-import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -177,7 +176,6 @@ export default function Navbar() {
 
                     <div className="hidden items-center gap-3 xl:flex">
                         <div className="flex items-center gap-3 rounded-full border border-black/10 bg-white/80 p-1.5 backdrop-blur-md dark:border-white/10 dark:bg-black/40">
-                            <ThemeSwitcher />
                             {user ? (
                                 <Link
                                     href="/logout"
@@ -253,7 +251,6 @@ export default function Navbar() {
                                         />
                                     </Link>
                                     <div className="flex items-center gap-2">
-                                        <ThemeSwitcher />
                                         <button
                                             type="button"
                                             onClick={() => setOpen(false)}
