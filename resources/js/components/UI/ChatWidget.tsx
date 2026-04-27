@@ -192,7 +192,8 @@ setSessionId(data.session_id);
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(calc(100dvh-120px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:bottom-18"
+                        data-lenis-prevent
+                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(calc(100dvh-120px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] sm:bottom-18"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
@@ -238,11 +239,10 @@ setSessionId(data.session_id);
 
                         {/* Messages Area */}
                         <div 
-                            data-lenis-prevent
-                            className="flex-1 overflow-y-auto bg-theme-surface/20 p-4 space-y-4 scroll-smooth"
+                            className="flex-1 overflow-y-auto bg-theme-surface p-4 space-y-4 scroll-smooth"
                         >
                             {messages.length === 1 && (
-                                <div className="border-theme bg-theme-surface/30 mb-4 rounded-2xl border p-4 backdrop-blur-sm">
+                                <div className="border-theme bg-theme-surface-hover mb-4 rounded-2xl border p-4 backdrop-blur-sm">
                                     <p className="text-theme-subtle mb-3 text-[11px] font-bold tracking-wider uppercase">
                                         Suggested Inquiries
                                     </p>

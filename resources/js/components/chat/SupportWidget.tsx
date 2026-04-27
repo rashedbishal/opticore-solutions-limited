@@ -472,10 +472,11 @@ export default function SupportWidget() {
                             duration: 0.3,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
+                        data-lenis-prevent
+                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-background shadow-2xl sm:w-[360px]"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">
+                        <div className="flex items-center justify-between border-b border-theme bg-theme-surface px-5 py-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-500">
                                     <MessageSquare className="h-4 w-4" />
@@ -499,7 +500,7 @@ export default function SupportWidget() {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 space-y-4 overflow-y-auto bg-theme-surface/20 p-5">
+                        <div className="flex-1 space-y-4 overflow-y-auto bg-theme-surface p-5">
                             {messages.map((msg) => (
                                 <div
                                     key={msg.id}
