@@ -14,10 +14,9 @@ import {
     LogOut,
     LogIn,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
-import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -49,10 +48,10 @@ function NavLink({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'group relative flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-md transition-all duration-300',
+                'group relative flex items-center gap-2 rounded-full border px-4 py-2 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                 active
-                    ? 'border-violet-500/50 bg-violet-500/20 shadow-lg shadow-violet-500/10 dark:border-violet-400/50 dark:bg-violet-400/20'
-                    : 'border-black/10 bg-white/80 hover:border-black/20 hover:bg-white/95 dark:border-white/10 dark:bg-black/40 dark:hover:border-white/20 dark:hover:bg-black/60',
+                    ? 'border-violet-400 bg-violet-100 shadow-[0_3px_10px_rgba(139,92,246,0.2),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-violet-500 dark:bg-violet-950 dark:shadow-[0_3px_10px_rgba(139,92,246,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]'
+                    : 'border-slate-300 bg-slate-100 hover:border-slate-400 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800',
             )}
         >
             {Icon && (
@@ -86,40 +85,57 @@ function NavLink({
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const lastScrollY = useRef(0);
     const { user } = props.auth;
 
     useEffect(() => {
-        const onScroll = () => {
-            setScrolled(window.scrollY > 50);
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Headroom logic
+            if (currentScrollY < 50) {
+                setVisible(true);
+            } else if (
+                currentScrollY > lastScrollY.current &&
+                currentScrollY > 120
+            ) {
+                // Scrolling down - hide
+                setVisible(false);
+            } else if (currentScrollY < lastScrollY.current) {
+                // Scrolling up - show
+                setVisible(true);
+            }
+
+            lastScrollY.current = currentScrollY;
         };
 
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
+        const handleMouseMove = (e: MouseEvent) => {
+            // Show if mouse is near the top
+            if (e.clientY < 40) {
+                setVisible(true);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('mousemove', handleMouseMove);
 
         return () => {
-            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
 
     const navItems = [...navigationItems];
-
-    if (user) {
-        navItems.push({
-            label: 'Profile',
-            href: '/profile',
-            icon: 'User',
-        });
-    }
 
     return (
         <>
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
                 className={cn(
-                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8',
-                    scrolled
-                        ? 'pointer-events-auto translate-y-0 opacity-100'
+                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8 dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
+                    visible
+                        ? 'translate-y-0 opacity-100'
                         : 'pointer-events-none -translate-y-full opacity-0',
                 )}
             >
@@ -127,7 +143,7 @@ export default function Navbar() {
                     <Link
                         href="/"
                         className={cn(
-                            'touch-target inline-flex items-center rounded-full border border-black/10 bg-white/80 backdrop-blur-md transition-all duration-300 dark:border-white/10 dark:bg-black/40',
+                            'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                         )}
                         aria-label="Opticore Solutions home"
                     >
@@ -150,28 +166,39 @@ export default function Navbar() {
                     </div>
 
                     <div className="hidden items-center gap-3 xl:flex">
-                        <div className="flex items-center gap-3 rounded-full border border-black/10 bg-white/80 p-1.5 backdrop-blur-md dark:border-white/10 dark:bg-black/40">
-                            <ThemeSwitcher />
+                        <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                             {user ? (
-                                <Link
-                                    href="/logout"
-                                    method="post"
-                                    as="button"
-                                    className="group relative flex items-center gap-2 rounded-full bg-black/5 px-6 py-2.5 text-sm font-medium text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-                                >
-                                    <LogOut className="h-4 w-4 text-violet-400" />
-                                    Sign out
-                                </Link>
+                                <>
+                                    <Link
+                                        href="/profile"
+                                        className={cn(
+                                            'group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300',
+                                            url === '/profile'
+                                                ? 'bg-violet-600 text-white shadow-lg dark:bg-violet-500'
+                                                : 'bg-black/5 text-zinc-800 hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+                                        )}
+                                        aria-label="Profile"
+                                    >
+                                        <User className="h-4 w-4" />
+                                    </Link>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                        aria-label="Sign out"
+                                    >
+                                        <LogOut className="h-4 w-4 text-violet-400" />
+                                    </Link>
+                                </>
                             ) : (
-                                <MagneticButton
+                                <Link
                                     href="/login"
-                                    ariaLabel="Sign in to your account"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                    aria-label="Sign in"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <LogIn className="h-4 w-4" />
-                                        Sign in
-                                    </div>
-                                </MagneticButton>
+                                    <LogIn className="h-4 w-4 text-violet-400" />
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -185,7 +212,7 @@ export default function Navbar() {
                         }
                         className={cn(
                             'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
-                            'h-14 w-14 border border-black/10 bg-white/80 text-zinc-800 backdrop-blur-md dark:border-white/10 dark:bg-black/40 dark:text-white',
+                            'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                         )}
                         onClick={() => setOpen((current) => !current)}
                     >
@@ -204,7 +231,7 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-60 flex flex-col bg-white/98 backdrop-blur-2xl xl:hidden dark:bg-black/98"
+                        className="fixed inset-0 z-60 flex flex-col bg-slate-100 xl:hidden dark:bg-zinc-900"
                     >
                         <div className="flex h-full flex-col">
                             {/* Header inside the menu for consistent top spacing and close button */}
@@ -227,11 +254,10 @@ export default function Navbar() {
                                         />
                                     </Link>
                                     <div className="flex items-center gap-2">
-                                        <ThemeSwitcher />
                                         <button
                                             type="button"
                                             onClick={() => setOpen(false)}
-                                            className="flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-black/5 text-zinc-800 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                                            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-300 bg-slate-200 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <X className="h-5 w-5" />
                                         </button>
@@ -256,7 +282,7 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-center rounded-2xl border border-black/10 bg-black/5 px-2 py-2.5 transition-colors active:bg-black/10 md:px-3 md:py-3 lg:px-4 lg:py-3.5 dark:border-white/10 dark:bg-white/5 dark:active:bg-white/10',
+                                                    'flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-slate-200 px-2 py-2.5 transition-colors active:bg-slate-300 md:px-3 md:py-3 lg:px-4 lg:py-3.5 dark:border-zinc-700 dark:bg-zinc-800 dark:active:bg-zinc-700',
                                                     url === item.href &&
                                                         'border-violet-500/40 bg-violet-500/10 dark:border-violet-400/40',
                                                 )}
@@ -305,16 +331,31 @@ export default function Navbar() {
                                     className="mx-auto w-full max-w-md"
                                 >
                                     {user ? (
-                                        <Link
-                                            href="/logout"
-                                            method="post"
-                                            as="button"
-                                            onClick={() => setOpen(false)}
-                                            className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
-                                        >
-                                            <LogOut className="h-5 w-5" />
-                                            Sign out
-                                        </Link>
+                                        <div className="flex flex-col gap-3">
+                                            <Link
+                                                href="/profile"
+                                                onClick={() => setOpen(false)}
+                                                className={cn(
+                                                    'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all',
+                                                    url === '/profile'
+                                                        ? 'bg-violet-600 text-white'
+                                                        : 'bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-white',
+                                                )}
+                                            >
+                                                <User className="h-5 w-5" />
+                                                Profile
+                                            </Link>
+                                            <Link
+                                                href="/logout"
+                                                method="post"
+                                                as="button"
+                                                onClick={() => setOpen(false)}
+                                                className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
+                                            >
+                                                <LogOut className="h-5 w-5" />
+                                                Sign out
+                                            </Link>
+                                        </div>
                                     ) : (
                                         <MagneticButton
                                             href="/login"

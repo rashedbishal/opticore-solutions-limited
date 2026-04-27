@@ -38,7 +38,7 @@ export default function LiquidShuffle() {
     const active = testimonials[index];
 
     return (
-        <div className="relative overflow-hidden bg-background py-32">
+        <div className="relative overflow-hidden py-32">
             <div className="relative z-10 mx-auto max-w-5xl px-4">
                 <div className="flex flex-col items-center text-center">
                     <Quote className="mb-12 h-16 w-16 text-cyan-500/50" />

@@ -68,7 +68,7 @@ export default function PortalLoop() {
     });
 
     return (
-        <div ref={containerRef} className="relative h-[800vh] bg-background">
+        <div ref={containerRef} className="relative h-[800vh]">
             <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
                 {/* Background Grid - Extremely light pattern */}
                 <div

@@ -248,27 +248,38 @@
         text-rendering: optimizeLegibility;
         @apply bg-background text-foreground;
 
-        /* Light mode refined "whitish" gradients */
+        /* Light mode vibrant-but-subtle gradients */
         background-image:
+            linear-gradient(
+                135deg,
+                oklch(0.95 0.06 268 / 0.18) 0%,
+                transparent 50%,
+                oklch(0.95 0.06 196 / 0.15) 100%
+            ),
             radial-gradient(
                 circle at 0% 0%,
-                oklch(0.98 0.01 260 / 0.5),
-                transparent 40%
+                oklch(0.94 0.07 268 / 0.65),
+                transparent 62%
             ),
             radial-gradient(
                 circle at 100% 0%,
-                oklch(0.98 0.02 300 / 0.4),
-                transparent 40%
+                oklch(0.94 0.06 300 / 0.55),
+                transparent 58%
             ),
             radial-gradient(
                 circle at 100% 100%,
-                oklch(0.99 0.01 220 / 0.5),
-                transparent 40%
+                oklch(0.94 0.07 196 / 0.6),
+                transparent 62%
             ),
             radial-gradient(
                 circle at 0% 100%,
-                oklch(0.99 0.01 180 / 0.4),
-                transparent 40%
+                oklch(0.95 0.06 220 / 0.55),
+                transparent 58%
+            ),
+            radial-gradient(
+                circle at 50% 50%,
+                oklch(0.97 0.03 80 / 0.35),
+                transparent 48%
             );
         background-attachment: fixed;
 
@@ -329,9 +340,14 @@
 
 @layer components {
     .app-shell {
-        @apply relative min-h-screen bg-background text-foreground;
+        @apply relative min-h-screen text-foreground;
         width: 100%;
         overflow-x: hidden;
+        background-color: transparent;
+
+        @variant dark {
+            background-color: var(--background);
+        }
     }
 
     .section-shell {

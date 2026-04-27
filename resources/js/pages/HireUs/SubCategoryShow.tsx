@@ -11,8 +11,6 @@ import {
     User,
     ArrowRight,
     X,
-    Send,
-    Users,
     ChevronLeft,
     ChevronRight,
     Film,
@@ -275,10 +273,6 @@ const PLANS = [
 
 type PlanId = (typeof PLANS)[number]['id'];
 
-// ─── Chat Message Type ──────────────────────────────────────────────────────
-
-type ChatMessage = { role: 'team' | 'user'; content: string; time: string };
-
 // ─── Review Media Preview ────────────────────────────────────────────────
 
 function ReviewMedia({
@@ -322,7 +316,7 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
     return (
         <div
-            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? 'glass-panel bg-theme-surface-hover shadow-lg' : 'border border-theme bg-theme-surface hover:bg-theme-surface-hover'}`}
+            className={`overflow-hidden rounded-3xl transition-all duration-300 ${isOpen ? '-translate-y-0.5 border border-cyan-500/30 bg-theme-surface shadow-[0_12px_40px_rgba(0,0,0,0.45),0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]' : 'border border-theme bg-theme-surface shadow-[0_4px_16px_rgba(0,0,0,0.28),0_2px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] hover:-translate-y-0.5 hover:bg-theme-surface-hover hover:shadow-[0_8px_28px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)]'}`}
         >
             <button
                 type="button"
@@ -911,18 +905,6 @@ export default function SubCategoryShow({
         portfolios?.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-    const [isChatOpen, setIsChatOpen] = useState(false);
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        {
-            role: 'team',
-            content: `Hi there! We're the ${category.label} team. How can we help with your project today?`,
-            time: new Date().toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-            }),
-        },
-    ]);
-    const [newMessage, setNewMessage] = useState('');
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     // const [reviewPage, setReviewPage] = useState(1);
@@ -935,7 +917,6 @@ export default function SubCategoryShow({
         () => (dbReviews || []).map(mapDbReview),
         [dbReviews],
     );
-    const chatEndRef = useRef<HTMLDivElement>(null);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
     const pricingSectionRef = useRef<HTMLDivElement>(null);
 
@@ -966,44 +947,6 @@ export default function SubCategoryShow({
             behavior: 'smooth',
             block: 'start',
         });
-
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [chatMessages, isChatOpen]);
-
-    const handleSendMessage = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!newMessage.trim()) {
-            return;
-        }
-
-        const time = new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-
-        setChatMessages((prev) => [
-            ...prev,
-            { role: 'user', content: newMessage, time },
-        ]);
-        setNewMessage('');
-
-        setTimeout(() => {
-            setChatMessages((prev) => [
-                ...prev,
-                {
-                    role: 'team',
-                    content:
-                        'Thanks for reaching out! A team member will review your message and get back to you shortly.',
-                    time: new Date().toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    }),
-                },
-            ]);
-        }, 1500);
-    };
 
     const handleHireNow = (planId: PlanId = selectedPlan) => {
         const plan = PLANS.find((p) => p.id === planId)!;
@@ -1061,7 +1004,7 @@ export default function SubCategoryShow({
         <>
             <Head title={`${subCategory.name} — Hire Opticore`} />
 
-            <div className="relative min-h-screen bg-background pb-36 lg:pb-24">
+            <div className="relative min-h-screen pb-36 lg:pb-24">
                 {/* ── CINEMATIC HERO GALLERY (full-width) ── */}
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -1184,8 +1127,8 @@ export default function SubCategoryShow({
                                 onClick={() => setSelectedPlan(plan.id)}
                                 className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
-                                        ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_28px_rgba(34,211,238,0.18)]'
-                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface hover:bg-theme-surface-hover'
+                                        ? '-translate-y-1.5 border-cyan-400/60 bg-theme-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
+                                        : 'hover:border-theme-muted/40 border-theme bg-theme-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
@@ -1260,76 +1203,105 @@ export default function SubCategoryShow({
                     </div>
                 </motion.div>
 
-                {/* ── TRUST METRICS (full-width section) ── */}
-                <div className="group/trust bg-theme-surface/50 relative mt-16 w-full overflow-hidden border-y border-theme py-16">
-                    {/* Background decorations */}
-                    <div className="dot-grid pointer-events-none absolute inset-0 opacity-40 transition-opacity group-hover/trust:opacity-60" />
-                    <div className="pointer-events-none absolute inset-0 bg-radial-[at_center,_var(--tw-gradient-from)_0%,_transparent_70%] from-cyan-500/5" />
-
+                {/* ── TRUST METRICS (wide card) ── */}
+                <div className="relative mt-16 w-full py-10">
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative z-10 mx-auto max-w-7xl px-4"
+                        className="mx-auto max-w-7xl px-4"
                     >
-                        <div className="mb-12 grid grid-cols-2 gap-y-10 sm:grid-cols-4">
-                            {[
-                                {
-                                    value: '5.0',
-                                    suffix: (
-                                        <Star className="inline h-6 w-6 fill-current text-amber-400" />
-                                    ),
-                                    label: 'Overall Rating',
-                                },
-                                {
-                                    value: String(mappedReviews.length * 41),
-                                    suffix: null,
-                                    label: 'Reviews',
-                                },
-                                {
-                                    value: '100%',
-                                    suffix: null,
-                                    label: 'Verified Clients',
-                                },
-                                {
-                                    value: '10',
-                                    suffix: null,
-                                    label: 'Active Projects',
-                                },
-                            ].map((metric, idx) => (
-                                <motion.div
-                                    key={metric.label}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        delay: idx * 0.1,
-                                        duration: 0.5,
-                                    }}
-                                    className="flex flex-col items-center gap-2 text-center"
-                                >
-                                    <div className="flex items-baseline gap-1.5 text-4xl font-black text-theme md:text-6xl lg:text-7xl">
-                                        <span className="from-theme via-theme to-theme/40 bg-linear-to-b bg-clip-text text-transparent">
-                                            {metric.value}
+                        <div className="via-theme-surface relative overflow-hidden rounded-[2.5rem] border border-cyan-500/20 bg-linear-to-br from-cyan-500/[0.07] to-violet-500/[0.07] p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-12">
+                            {/* Subtle dot grid */}
+                            <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
+                            {/* Glow orbs */}
+                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
+                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-violet-500/10 blur-[80px]" />
+
+                            <div className="relative z-10">
+                                {/* Header label */}
+                                <p className="mb-8 text-center text-[10px] font-bold tracking-[0.25em] text-cyan-500 uppercase md:text-left">
+                                    Why clients trust us
+                                </p>
+
+                                {/* Stats grid */}
+                                <div className="sm:divide-theme grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-0 sm:divide-x">
+                                    {[
+                                        {
+                                            value: '5.0',
+                                            suffix: (
+                                                <Star className="h-6 w-6 fill-current text-amber-400 md:h-8 md:w-8" />
+                                            ),
+                                            label: 'Overall Rating',
+                                            accent: 'text-amber-400',
+                                        },
+                                        {
+                                            value: String(
+                                                mappedReviews.length * 41,
+                                            ),
+                                            suffix: null,
+                                            label: 'Happy Reviews',
+                                            accent: 'text-cyan-500',
+                                        },
+                                        {
+                                            value: '100%',
+                                            suffix: null,
+                                            label: 'Verified Clients',
+                                            accent: 'text-emerald-500',
+                                        },
+                                        {
+                                            value: '10',
+                                            suffix: null,
+                                            label: 'Active Projects',
+                                            accent: 'text-violet-500',
+                                        },
+                                    ].map((metric, idx) => (
+                                        <motion.div
+                                            key={metric.label}
+                                            initial={{ opacity: 0, y: 16 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{
+                                                delay: idx * 0.1,
+                                                duration: 0.5,
+                                            }}
+                                            className="flex flex-col items-center gap-2 px-4 py-2 text-center"
+                                        >
+                                            <div
+                                                className={`flex items-center gap-2 text-5xl font-black md:text-6xl lg:text-7xl ${metric.accent}`}
+                                            >
+                                                <span>{metric.value}</span>
+                                                {metric.suffix}
+                                            </div>
+                                            <p className="text-xs font-bold tracking-[0.18em] text-theme-muted uppercase">
+                                                {metric.label}
+                                            </p>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                {/* Divider */}
+                                <div className="via-theme my-8 h-px bg-linear-to-r from-transparent to-transparent" />
+
+                                {/* CTA row */}
+                                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                                    <p className="text-sm text-theme-muted">
+                                        Ready to experience the difference?{' '}
+                                        <span className="font-semibold text-theme">
+                                            Join our happy clients today.
                                         </span>
-                                        {metric.suffix}
-                                    </div>
-                                    <p className="text-xs font-bold tracking-[0.2em] text-theme-muted uppercase">
-                                        {metric.label}
                                     </p>
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="flex justify-center">
-                            <button
-                                type="button"
-                                onClick={scrollToPricing}
-                                className="group flex items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
-                            >
-                                Get Started
-                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </button>
+                                    <button
+                                        type="button"
+                                        onClick={scrollToPricing}
+                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                                    >
+                                        Get Started
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -1352,7 +1324,7 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="relative z-10 mx-auto max-w-4xl px-4"
+                        className="relative z-10 mx-auto max-w-7xl px-4"
                     >
                         <div className="mb-10 flex items-start gap-5">
                             <div className="mt-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
@@ -1369,7 +1341,7 @@ export default function SubCategoryShow({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                             {descriptionFeatures.map((item, idx) => (
                                 <motion.div
                                     key={item.label}
@@ -1519,7 +1491,7 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mx-auto max-w-4xl px-4"
+                        className="mx-auto max-w-7xl px-4"
                     >
                         <div className="mb-12 flex flex-col items-center text-center">
                             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
@@ -1534,7 +1506,7 @@ export default function SubCategoryShow({
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="flex flex-col gap-4">
                             {faqs.map((faq, idx) => (
                                 <FaqAccordionItem key={idx} faq={faq} />
                             ))}
@@ -1554,15 +1526,22 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── REVIEWS (full-width, high-contrast bg) ── */}
-                <div className="bg-theme-surface/40 w-full py-20">
+                <div className="relative w-full overflow-hidden border-y border-theme py-20">
+                    {/* Section background */}
+                    <div className="from-theme-surface via-theme-surface/60 to-theme-surface pointer-events-none absolute inset-0 bg-linear-to-b" />
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(34,211,238,0.06),transparent)]" />
+
                     <motion.div
                         ref={reviewsSectionRef}
                         variants={fadeUp}
-                        className="mx-auto max-w-7xl space-y-8 px-4"
+                        className="relative z-10 mx-auto max-w-7xl space-y-8 px-4"
                     >
                         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                             <div>
-                                <h2 className="text-2xl font-bold text-theme">
+                                <p className="mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-500 uppercase">
+                                    Verified Client Feedback
+                                </p>
+                                <h2 className="text-3xl font-black tracking-tight text-theme md:text-4xl">
                                     Client Reviews
                                 </h2>
                                 <div className="mt-2 flex items-center gap-2">
@@ -1613,7 +1592,7 @@ export default function SubCategoryShow({
                                             {row.star}{' '}
                                             <Star className="h-3 w-3 fill-current text-amber-500" />
                                         </span>
-                                        <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
+                                        <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-theme-surface-hover">
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{
@@ -1719,13 +1698,16 @@ export default function SubCategoryShow({
                                                 scale: 0.95,
                                             }}
                                             variants={fadeUp}
-                                            className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
+                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-theme-surface p-6 shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
                                         >
+                                            {/* Accent top bar */}
+                                            <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-amber-500/60 via-amber-400/40 to-transparent" />
+
                                             <div className="flex flex-col gap-6 md:flex-row">
                                                 <div className="flex-1">
                                                     <div className="mb-4 flex items-center justify-between">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface-hover ring-2 ring-amber-500/10">
                                                                 <User className="h-5 w-5 text-theme-subtle" />
                                                             </div>
                                                             <div>
@@ -1736,7 +1718,7 @@ export default function SubCategoryShow({
                                                                         }
                                                                     </h4>
                                                                     {review.isRepeatClient && (
-                                                                        <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
+                                                                        <span className="flex items-center gap-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
                                                                             <Repeat className="h-2.5 w-2.5" />{' '}
                                                                             Repeat
                                                                             Client
@@ -1750,28 +1732,33 @@ export default function SubCategoryShow({
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div className="flex text-amber-400">
+                                                        <div className="flex items-center gap-1 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
                                                             {[
                                                                 1, 2, 3, 4, 5,
                                                             ].map((s) => (
                                                                 <Star
                                                                     key={s}
-                                                                    className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-theme-muted/20'}`}
+                                                                    className={`h-3.5 w-3.5 text-amber-400 ${s <= review.rating ? 'fill-current' : 'opacity-20'}`}
                                                                 />
                                                             ))}
                                                         </div>
                                                     </div>
 
-                                                    <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
-                                                        "{review.review}"
+                                                    <p className="mb-6 text-sm leading-relaxed text-theme">
+                                                        <span className="mr-0.5 text-lg font-black text-amber-400/60">
+                                                            "
+                                                        </span>
+                                                        {review.review}
+                                                        <span className="ml-0.5 text-lg font-black text-amber-400/60">
+                                                            "
+                                                        </span>
                                                     </p>
 
-                                                    <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                                    <div className="flex flex-wrap items-center gap-3 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                         {review.priceRange && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                <DollarSign className="h-3 w-3 text-emerald-500" />
+                                                            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-500">
+                                                                <DollarSign className="h-3 w-3" />
                                                                 <span>
-                                                                    Price:{' '}
                                                                     {
                                                                         review.priceRange
                                                                     }
@@ -1779,10 +1766,9 @@ export default function SubCategoryShow({
                                                             </div>
                                                         )}
                                                         {review.duration && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                <Clock className="h-3 w-3 text-cyan-500" />
+                                                            <div className="flex items-center gap-1.5 rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-cyan-500">
+                                                                <Clock className="h-3 w-3" />
                                                                 <span>
-                                                                    Duration:{' '}
                                                                     {
                                                                         review.duration
                                                                     }
@@ -2018,122 +2004,6 @@ export default function SubCategoryShow({
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* ── Floating Chat ── */}
-            <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
-                <AnimatePresence>
-                    {isChatOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-                            transition={{
-                                duration: 0.3,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="glass-panel mb-4 flex h-[480px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-theme bg-theme-surface shadow-2xl sm:w-[360px]"
-                        >
-                            {/* Header */}
-                            <div className="flex items-center justify-between border-b border-theme bg-theme-surface-hover px-5 py-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-500">
-                                        <Users className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-theme">
-                                            {category.label} Team
-                                        </p>
-                                        <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">
-                                            Online
-                                        </span>
-                                    </div>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsChatOpen(false)}
-                                    className="text-theme-muted transition-colors hover:text-theme"
-                                    aria-label="Close chat"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-
-                            {/* Messages */}
-                            <div className="flex-1 space-y-4 overflow-y-auto p-5">
-                                {chatMessages.map((msg, i) => (
-                                    <div
-                                        key={i}
-                                        className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-                                    >
-                                        <div
-                                            className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
-                                                msg.role === 'user'
-                                                    ? 'rounded-tr-none bg-foreground text-background'
-                                                    : 'rounded-tl-none border border-theme bg-theme-surface-hover text-theme'
-                                            }`}
-                                        >
-                                            {msg.content}
-                                        </div>
-                                        <span className="mt-1.5 text-[10px] text-theme-subtle">
-                                            {msg.time}
-                                        </span>
-                                    </div>
-                                ))}
-                                <div ref={chatEndRef} />
-                            </div>
-
-                            {/* Input */}
-                            <form
-                                onSubmit={handleSendMessage}
-                                className="border-t border-theme bg-theme-surface-hover p-4"
-                            >
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={newMessage}
-                                        onChange={(e) =>
-                                            setNewMessage(e.target.value)
-                                        }
-                                        placeholder="Ask about this service…"
-                                        className="placeholder-theme-subtle w-full rounded-xl border border-theme bg-theme-surface py-3 pr-12 pl-4 text-sm text-theme focus:border-cyan-500/50 focus:outline-none"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg bg-cyan-500 text-white transition-colors hover:bg-cyan-600"
-                                        aria-label="Send message"
-                                    >
-                                        <Send className="h-4 w-4" />
-                                    </button>
-                                </div>
-                                <p className="mt-2.5 text-center text-[9px] font-bold tracking-[0.2em] text-theme-subtle uppercase">
-                                    Direct Team Chat
-                                </p>
-                            </form>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Toggle button */}
-                <button
-                    type="button"
-                    onClick={() => setIsChatOpen((v) => !v)}
-                    className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 ${
-                        isChatOpen
-                            ? 'rotate-90 bg-foreground text-background'
-                            : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
-                    }`}
-                    aria-label={isChatOpen ? 'Close chat' : 'Open chat'}
-                >
-                    {isChatOpen ? (
-                        <X className="h-7 w-7" />
-                    ) : (
-                        <MessageSquare className="h-7 w-7" />
-                    )}
-                    {!isChatOpen && (
-                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-500" />
-                    )}
-                </button>
-            </div>
 
             {/* ── Custom Quote Modal ── */}
             <Modal

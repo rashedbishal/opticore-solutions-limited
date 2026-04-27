@@ -35,7 +35,7 @@ export default function OrbitingShowcase() {
     const active = testimonials[index];
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background py-32">
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden py-32">
             <div className="relative flex aspect-square w-full max-w-4xl items-center justify-center">
                 {/* Orbiting Circles */}
                 <div className="absolute inset-0 scale-100 rounded-full border border-theme opacity-20" />

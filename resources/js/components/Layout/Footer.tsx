@@ -13,6 +13,7 @@ import {
     Send,
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
+import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,
@@ -72,7 +73,7 @@ export default function Footer() {
     return (
         <footer className="relative z-10 border-t border-theme bg-theme-surface">
             <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
-            <div className="section-shell pt-14 pb-8 md:pt-18 lg:pt-20">
+            <div className="section-shell pt-14 pb-32 md:pt-18 md:pb-36 lg:pt-20 lg:pb-40">
                 <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-5">
                         <Link
@@ -223,12 +224,13 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-theme pt-6 text-center text-sm text-theme-subtle sm:flex-row sm:text-left">
+                <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-theme pt-6 text-center text-sm text-theme-subtle sm:flex-row sm:text-left">
                     <p>© 2026 Opticore Solutions Ltd. All rights reserved.</p>
-                    <p>
+                    <p className="max-w-md">
                         Built for brands that want sharper positioning, stronger
                         visuals, and digital experiences with weight.
                     </p>
+                    <ThemeSwitcher />
                 </div>
             </div>
         </footer>
