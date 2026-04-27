@@ -535,7 +535,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
     if (!slides) {
         return (
-            <div className="flex h-[70vh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
+            <div className="flex h-[85vh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
                 <ImageIcon className="h-10 w-10 text-theme-subtle" />
                 <p className="text-sm font-medium text-theme-muted">Portfolio coming soon</p>
             </div>
@@ -555,7 +555,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.05}
                 onDragEnd={handleDragEnd}
-                className="group relative h-[70vh] w-full overflow-hidden bg-black cursor-grab active:cursor-grabbing"
+                className="group relative h-[85vh] w-full overflow-hidden bg-black cursor-grab active:cursor-grabbing"
             >
                 {sortedSlots.map((slot) => {
                     const item = slides[slot.index];
