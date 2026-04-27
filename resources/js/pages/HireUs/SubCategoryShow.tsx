@@ -1517,15 +1517,22 @@ export default function SubCategoryShow({
                 </div>
 
                 {/* ── REVIEWS (full-width, high-contrast bg) ── */}
-                <div className="bg-theme-surface/40 w-full py-20">
+                <div className="relative w-full overflow-hidden border-y border-theme py-20">
+                    {/* Section background */}
+                    <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-theme-surface via-theme-surface/60 to-theme-surface" />
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(34,211,238,0.06),transparent)]" />
+
                     <motion.div
                         ref={reviewsSectionRef}
                         variants={fadeUp}
-                        className="mx-auto max-w-7xl space-y-8 px-4"
+                        className="relative z-10 mx-auto max-w-7xl space-y-8 px-4"
                     >
                         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                             <div>
-                                <h2 className="text-2xl font-bold text-theme">
+                                <p className="mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-500 uppercase">
+                                    Verified Client Feedback
+                                </p>
+                                <h2 className="text-3xl font-black tracking-tight text-theme md:text-4xl">
                                     Client Reviews
                                 </h2>
                                 <div className="mt-2 flex items-center gap-2">
@@ -1576,7 +1583,7 @@ export default function SubCategoryShow({
                                             {row.star}{' '}
                                             <Star className="h-3 w-3 fill-current text-amber-500" />
                                         </span>
-                                        <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-theme-surface">
+                                        <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-theme-surface-hover">
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{
@@ -1682,13 +1689,16 @@ export default function SubCategoryShow({
                                                 scale: 0.95,
                                             }}
                                             variants={fadeUp}
-                                            className="bg-theme-surface/30 hover:bg-theme-surface/50 rounded-3xl border border-theme p-6 transition-colors"
+                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-theme-surface p-6 shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
                                         >
+                                            {/* Accent top bar */}
+                                            <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-amber-500/60 via-amber-400/40 to-transparent" />
+
                                             <div className="flex flex-col gap-6 md:flex-row">
                                                 <div className="flex-1">
                                                     <div className="mb-4 flex items-center justify-between">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-theme-surface-hover">
+                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface-hover ring-2 ring-amber-500/10">
                                                                 <User className="h-5 w-5 text-theme-subtle" />
                                                             </div>
                                                             <div>
@@ -1699,7 +1709,7 @@ export default function SubCategoryShow({
                                                                         }
                                                                     </h4>
                                                                     {review.isRepeatClient && (
-                                                                        <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
+                                                                        <span className="flex items-center gap-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-500 uppercase">
                                                                             <Repeat className="h-2.5 w-2.5" />{' '}
                                                                             Repeat
                                                                             Client
@@ -1713,28 +1723,29 @@ export default function SubCategoryShow({
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div className="flex text-amber-400">
+                                                        <div className="flex items-center gap-1 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
                                                             {[
                                                                 1, 2, 3, 4, 5,
                                                             ].map((s) => (
                                                                 <Star
                                                                     key={s}
-                                                                    className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-theme-muted/20'}`}
+                                                                    className={`h-3.5 w-3.5 text-amber-400 ${s <= review.rating ? 'fill-current' : 'opacity-20'}`}
                                                                 />
                                                             ))}
                                                         </div>
                                                     </div>
 
-                                                    <p className="mb-6 text-sm leading-relaxed text-theme-muted italic">
-                                                        "{review.review}"
+                                                    <p className="mb-6 text-sm leading-relaxed text-theme">
+                                                        <span className="mr-0.5 text-lg font-black text-amber-400/60">"</span>
+                                                        {review.review}
+                                                        <span className="ml-0.5 text-lg font-black text-amber-400/60">"</span>
                                                     </p>
 
-                                                    <div className="flex flex-wrap items-center gap-4 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                                    <div className="flex flex-wrap items-center gap-3 border-t border-theme pt-4 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                                         {review.priceRange && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                <DollarSign className="h-3 w-3 text-emerald-500" />
+                                                            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-500">
+                                                                <DollarSign className="h-3 w-3" />
                                                                 <span>
-                                                                    Price:{' '}
                                                                     {
                                                                         review.priceRange
                                                                     }
@@ -1742,10 +1753,9 @@ export default function SubCategoryShow({
                                                             </div>
                                                         )}
                                                         {review.duration && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                <Clock className="h-3 w-3 text-cyan-500" />
+                                                            <div className="flex items-center gap-1.5 rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-cyan-500">
+                                                                <Clock className="h-3 w-3" />
                                                                 <span>
-                                                                    Duration:{' '}
                                                                     {
                                                                         review.duration
                                                                     }
