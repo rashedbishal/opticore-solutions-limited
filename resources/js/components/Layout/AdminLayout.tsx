@@ -16,18 +16,37 @@ import {
     Layers,
     Star,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import adminRoutes from '@/routes/admin';
+import NotificationListener from '@/components/Admin/NotificationListener';
+import useEchoReady from '@/hooks/useEchoReady';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
     title?: string;
 }
 
+const CHAT_PAGE_PATH = '/admin/customer-conversations';
+
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
-    const { auth, flash } = usePage<SharedPageProps>().props;
+    const page = usePage<SharedPageProps>();
+    const { auth, flash } = page.props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const echoReady = useEchoReady();
+    const [notificationCount, setNotificationCount] = useState(0);
+
+    const isOnChatPage = page.url.startsWith(CHAT_PAGE_PATH);
+
+    useEffect(() => {
+        if (isOnChatPage) {
+            setNotificationCount(0);
+        }
+    }, [isOnChatPage]);
+
+    const handleNewNotification = useCallback(() => {
+        setNotificationCount((prev) => prev + 1);
+    }, []);
 
     useEffect(() => {
         if (!flash?.success) {
@@ -76,6 +95,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     return (
         <div className="min-h-screen bg-[#050B14] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.15),rgba(255,255,255,0))] font-sans text-slate-200 selection:bg-cyan-500/30">
             {title && <Head title={`${title} - Admin Panel`} />}
+
+            {echoReady && (
+                <NotificationListener
+                    isOnChatPage={isOnChatPage}
+                    onNewMessage={handleNewNotification}
+                />
+            )}
 
             {/* General App Toast / Flash Notification */}
             <AnimatePresence>
@@ -255,16 +281,22 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     <div className="flex flex-1 items-center justify-end gap-x-4 self-stretch lg:gap-x-6">
                         {/* Top Right Actions */}
                         <div className="flex items-center gap-x-4 lg:gap-x-6">
-                            <button
-                                type="button"
+                            <Link
+                                href={CHAT_PAGE_PATH}
                                 className="relative -m-2.5 p-2.5 text-slate-400 transition-colors hover:text-cyan-400"
                             >
                                 <span className="sr-only">
                                     View notifications
                                 </span>
                                 <Bell className="h-5 w-5" aria-hidden="true" />
-                                <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                            </button>
+                                {notificationCount > 0 && !isOnChatPage && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white shadow-[0_0_8px_rgba(239,68,68,0.7)]">
+                                        {notificationCount > 99
+                                            ? '99+'
+                                            : notificationCount}
+                                    </span>
+                                )}
+                            </Link>
                         </div>
                     </div>
                 </header>
