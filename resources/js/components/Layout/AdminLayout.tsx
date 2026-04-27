@@ -40,6 +40,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     useEffect(() => {
         return router.on('navigate', (event) => {
+            setSidebarOpen(false);
+
             if (event.detail.page.url.startsWith(CHAT_PAGE_PATH)) {
                 setNotificationCount(0);
             }
