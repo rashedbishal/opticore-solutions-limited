@@ -1,3 +1,4 @@
+import type { GlobeItem } from '@/components/HomeRedesign/GlobeCarousel';
 import type { Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 
@@ -15,6 +16,7 @@ import {
 import { useEffect, useRef, useState, Suspense } from 'react';
 
 // import KineticBento from '@/components/HomeRedesign/KineticBento';
+import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
 import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
 import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
@@ -28,6 +30,117 @@ import { clientLogos } from '@/lib/site';
 import { portfolio } from '@/routes';
 
 const easing = [0.22, 1, 0.36, 1] as const;
+
+const globeItems: GlobeItem[] = [
+    {
+        id: 'g1',
+        category: 'Brand Identity',
+        title: 'Visual Branding System',
+        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=500',
+    },
+    {
+        id: 'g2',
+        category: 'Motion Design',
+        title: 'Motion Graphics Reel',
+        image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=500',
+    },
+    {
+        id: 'g3',
+        category: 'Web Design',
+        title: 'Analytics Dashboard',
+        image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=500',
+    },
+    {
+        id: 'g4',
+        category: '3D Production',
+        title: '3D Visual Direction',
+        image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=500',
+    },
+    {
+        id: 'g5',
+        category: 'Social Media',
+        title: 'Campaign Creative',
+        image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=500',
+    },
+    {
+        id: 'g6',
+        category: 'Graphic Design',
+        title: 'Print & Digital Collateral',
+        image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=500',
+    },
+    {
+        id: 'g7',
+        category: 'UI / UX',
+        title: 'Design System',
+        image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=500',
+    },
+    {
+        id: 'g8',
+        category: 'Illustration',
+        title: 'Custom Digital Artwork',
+        image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=500',
+    },
+    {
+        id: 'g9',
+        category: 'Video Editing',
+        title: 'Film Production',
+        image: 'https://images.unsplash.com/photo-1536240478700-b869ad10e128?q=80&w=500',
+    },
+    {
+        id: 'g10',
+        category: 'Content',
+        title: 'Social Content Strategy',
+        image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=500',
+    },
+    {
+        id: 'g11',
+        category: 'Marketing',
+        title: 'Digital Marketing',
+        image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=500',
+    },
+    {
+        id: 'g12',
+        category: 'Branding',
+        title: 'Brand Strategy',
+        image: 'https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=500',
+    },
+    {
+        id: 'g13',
+        category: 'Web Development',
+        title: 'Full-Stack Application',
+        image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=500',
+    },
+    {
+        id: 'g14',
+        category: 'E-commerce',
+        title: 'Online Store Platform',
+        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=500',
+    },
+    {
+        id: 'g15',
+        category: 'SEO & Growth',
+        title: 'Traffic & Conversions',
+        image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?q=80&w=500',
+    },
+    {
+        id: 'g16',
+        category: 'Photography',
+        title: 'Creative Photography',
+        image: 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=500',
+    },
+    {
+        id: 'g17',
+        category: 'Typography',
+        title: 'Editorial Design',
+        image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=500',
+    },
+    {
+        id: 'g18',
+        category: 'Product Design',
+        title: 'Product Visual Identity',
+        image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=500',
+    },
+];
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 60 },
@@ -560,6 +673,23 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[90vh]">
                     <NebulaCluster />
+                </LazySection>
+
+                <section className="border-t border-theme bg-background py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
+                            Portfolio Concept 3
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
+                            Globe Carousel
+                        </h2>
+                        <p className="mt-4 text-theme-muted">
+                            Drag to spin · click a card to focus · ← → to step
+                        </p>
+                    </div>
+                </section>
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <GlobeCarousel items={globeItems} />
                 </LazySection>
 
                 {/* <section className="border-t border-theme bg-background py-20">
