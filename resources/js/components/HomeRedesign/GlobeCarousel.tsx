@@ -18,7 +18,7 @@ export interface GlobeCarouselProps {
     onSelect?: (item: GlobeItem) => void;
 }
 
-// ── Layout types & math ───────────────────────────────────────────────────────
+// ── Internal layout types ─────────────────────────────────────────────────────
 
 interface SizeConfig {
     midRadius: number;
@@ -26,20 +26,25 @@ interface SizeConfig {
     cardW: number;
     cardH: number;
     perspective: number;
+    /** vertical offset in px for top/bottom rings from the 3D origin */
+    ringY: number;
 }
 
 interface CardLayout {
     item: GlobeItem;
-    cardAngle: number; // initial angle in ring (degrees)
-    ringTilt: number; // ring's rotateX (degrees)
-    radius: number; // translateZ distance (px)
+    /** card's fixed position in its ring (degrees) */
+    cardAngle: number;
+    /** fixed Y offset in px — positive = down, negative = up */
+    ringY: number;
+    /** translateZ radius */
+    radius: number;
 }
 
-const RING_DEFS = [
-    { tilt: -38, weightFraction: 0.28, offset: 22 }, // top — staggered by 22°
-    { tilt: 0, weightFraction: 0.44, offset: 0 }, // middle — equator
-    { tilt: 38, weightFraction: 0.28, offset: 22 }, // bottom — staggered by 22°
-];
+// ── Layout math ───────────────────────────────────────────────────────────────
+
+// Ring distribution weights and stagger offsets
+const RING_WEIGHTS = [0.28, 0.44, 0.28];
+const RING_STAGGER = [22, 0, 22]; // degrees — prevents vertical alignment
 
 function computeLayout(items: GlobeItem[], cfg: SizeConfig): CardLayout[] {
     const n = items.length;
@@ -48,33 +53,51 @@ function computeLayout(items: GlobeItem[], cfg: SizeConfig): CardLayout[] {
         return [];
     }
 
-    const midCount = Math.round(n * RING_DEFS[1].weightFraction);
-    const topCount = Math.round(n * RING_DEFS[0].weightFraction);
+    const midCount = Math.round(n * RING_WEIGHTS[1]);
+    const topCount = Math.round(n * RING_WEIGHTS[0]);
     const botCount = n - midCount - topCount;
-    const counts = [topCount, midCount, botCount];
-    const radii = [cfg.sideRadius, cfg.midRadius, cfg.sideRadius];
+
+    const rings = [
+        {
+            ringY: -cfg.ringY,
+            radius: cfg.sideRadius,
+            count: topCount,
+            stagger: RING_STAGGER[0],
+        },
+        {
+            ringY: 0,
+            radius: cfg.midRadius,
+            count: midCount,
+            stagger: RING_STAGGER[1],
+        },
+        {
+            ringY: cfg.ringY,
+            radius: cfg.sideRadius,
+            count: botCount,
+            stagger: RING_STAGGER[2],
+        },
+    ];
 
     const result: CardLayout[] = [];
     let idx = 0;
 
-    RING_DEFS.forEach((ring, ri) => {
-        const count = counts[ri];
-        const step = count > 1 ? 360 / count : 0;
+    for (const ring of rings) {
+        const step = ring.count > 1 ? 360 / ring.count : 0;
 
-        for (let i = 0; i < count && idx < n; i++, idx++) {
+        for (let i = 0; i < ring.count && idx < n; i++, idx++) {
             result.push({
                 item: items[idx],
-                cardAngle: ring.offset + step * i,
-                ringTilt: ring.tilt,
-                radius: radii[ri],
+                cardAngle: ring.stagger + step * i,
+                ringY: ring.ringY,
+                radius: ring.radius,
             });
         }
-    });
+    }
 
     return result;
 }
 
-// ── Constants ─────────────────────────────────────────────────────────────────
+// ── Animation constants ───────────────────────────────────────────────────────
 
 const INERTIA_DECAY = 0.935;
 const DRAG_SENSITIVITY = 0.36;
@@ -92,34 +115,38 @@ export default function GlobeCarousel({
     const isSmall = useMediaQuery('(max-width: 479px)');
     const isMobile = useMediaQuery('(max-width: 767px)');
 
-    // Responsive sizing — card dimensions, radii, and perspective depth
+    // Responsive card + globe dimensions
     const sizeConfig = useMemo<SizeConfig>(() => {
         if (isSmall) {
             return {
-                midRadius: 185,
-                sideRadius: 148,
+                midRadius: 168,
+                sideRadius: 132,
                 cardW: 115,
                 cardH: 84,
-                perspective: 480,
+                perspective: 500,
+                ringY: 92,
             };
         }
 
         if (isMobile) {
             return {
-                midRadius: 270,
-                sideRadius: 215,
+                midRadius: 245,
+                sideRadius: 192,
                 cardW: 148,
                 cardH: 108,
-                perspective: 640,
+                perspective: 660,
+                ringY: 118,
             };
         }
 
+        // Desktop
         return {
-            midRadius: 500,
-            sideRadius: 385,
+            midRadius: 340,
+            sideRadius: 268,
             cardW: 205,
             cardH: 150,
-            perspective: 980,
+            perspective: 880,
+            ringY: 160,
         };
     }, [isSmall, isMobile]);
 
@@ -128,21 +155,17 @@ export default function GlobeCarousel({
         [items, sizeConfig],
     );
 
-    // Keep refs to layout & size so the RAF loop always reads latest values
-    // without needing to recreate the animation callback on every resize.
+    // layoutRef so the RAF closure always reads the latest layout without restart
     const layoutRef = useRef(layout);
-    const sizeRef = useRef(sizeConfig);
+
     useEffect(() => {
         layoutRef.current = layout;
     }, [layout]);
-    useEffect(() => {
-        sizeRef.current = sizeConfig;
-    }, [sizeConfig]);
 
-    // DOM refs — outer card divs receive direct style mutations each frame
+    // One DOM ref per card — RAF mutates styles directly, bypassing React
     const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    // ── Animation state (all refs → no re-renders during animation) ───────────
+    // ── All animation state lives in refs (zero re-renders per frame) ─────────
 
     const globalAngle = useRef(0);
     const velocity = useRef(0);
@@ -152,25 +175,25 @@ export default function GlobeCarousel({
     const rafHandle = useRef(0);
     const selectedIdRef = useRef<string | null>(null);
 
-    // Props as refs so RAF reads latest without needing effect cleanup
     const autoRotateRef = useRef(autoRotate);
     const rotSpeedRef = useRef(rotationSpeed);
+
     useEffect(() => {
         autoRotateRef.current = autoRotate;
     }, [autoRotate]);
+
     useEffect(() => {
         rotSpeedRef.current = rotationSpeed;
     }, [rotationSpeed]);
 
-    // ── Drag tracking ─────────────────────────────────────────────────────────
-
+    // Drag tracking
     const dragStartX = useRef(0);
     const dragStartAngle = useRef(0);
     const lastDragX = useRef(0);
     const lastDragTime = useRef(0);
     const dragDistance = useRef(0);
 
-    // ── React state (only selection — not updated per frame) ──────────────────
+    // ── React state — only for selection (not updated per frame) ──────────────
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -179,13 +202,11 @@ export default function GlobeCarousel({
         setSelectedId(id);
     }, []);
 
-    // ── Core RAF animation loop ───────────────────────────────────────────────
-    // Defined inside useEffect so the self-recursive call avoids stale-closure
-    // issues and satisfies the react-hooks/exhaustive-deps rule.
+    // ── RAF animation loop ────────────────────────────────────────────────────
 
     useEffect(() => {
         function tick() {
-            // 1. Advance global angle
+            // Advance the global rotation angle
             if (!isDragging.current) {
                 if (isSnapping.current) {
                     const diff = snapTarget.current - globalAngle.current;
@@ -208,7 +229,6 @@ export default function GlobeCarousel({
                 }
             }
 
-            // 2. Update each card's transform + depth visuals directly in the DOM
             const cards = layoutRef.current;
             const ga = globalAngle.current;
 
@@ -222,21 +242,24 @@ export default function GlobeCarousel({
                 const card = cards[i];
                 const eff = ga + card.cardAngle;
 
-                // Normalized Z depth: 1 = front, -1 = back
-                const nz =
-                    Math.cos((eff * Math.PI) / 180) *
-                    Math.cos((card.ringTilt * Math.PI) / 180);
+                // Depth: purely from rotateY — cos(eff) in [-1, 1]
+                // 1 = front-facing, -1 = back-facing
+                const nz = Math.cos((eff * Math.PI) / 180);
                 const t = (nz + 1) / 2; // remap to [0, 1]
 
                 const isSel = card.item.id === selectedIdRef.current;
 
-                el.style.transform = `rotateX(${card.ringTilt}deg) rotateY(${eff}deg) translateZ(${card.radius}px)`;
-                el.style.opacity = isSel ? '1' : (0.18 + 0.82 * t).toFixed(2);
-                el.style.zIndex = String(Math.round(t * 200));
+                // translateY(ringY) keeps cards on a fixed horizontal plane —
+                // only rotateY changes, so there is zero vertical movement.
+                el.style.transform = `translateY(${card.ringY}px) rotateY(${eff}deg) translateZ(${card.radius}px)`;
+                el.style.opacity = isSel ? '1' : (0.22 + 0.78 * t).toFixed(2);
 
-                const blurPx = isSel ? 0 : 4 * (1 - t);
+                const blurPx = isSel ? 0 : 3.5 * (1 - t);
                 el.style.filter =
                     blurPx < 0.08 ? 'none' : `blur(${blurPx.toFixed(1)}px)`;
+
+                // Disable pointer events on cards that are nearly back-facing
+                el.style.pointerEvents = t < 0.08 ? 'none' : 'auto';
             }
 
             rafHandle.current = requestAnimationFrame(tick);
@@ -245,16 +268,23 @@ export default function GlobeCarousel({
         rafHandle.current = requestAnimationFrame(tick);
 
         return () => cancelAnimationFrame(rafHandle.current);
-    }, []); // runs once — all state accessed via refs
+    }, []); // runs once — everything accessed via refs
 
-    // ── Snap to nearest front-facing card ─────────────────────────────────────
+    // ── Snap helpers ──────────────────────────────────────────────────────────
+
+    const snapCardToFront = useCallback((card: CardLayout) => {
+        const eff =
+            (((globalAngle.current + card.cardAngle) % 360) + 360) % 360;
+        const adj = eff <= 180 ? -eff : 360 - eff;
+        snapTarget.current = globalAngle.current + adj;
+        isSnapping.current = true;
+    }, []);
 
     const snapToNearest = useCallback(() => {
-        const cards = layoutRef.current;
         let bestCard: CardLayout | null = null;
         let bestDiff = Infinity;
 
-        for (const card of cards) {
+        for (const card of layoutRef.current) {
             const eff =
                 (((globalAngle.current + card.cardAngle) % 360) + 360) % 360;
             const diff = Math.min(eff, 360 - eff);
@@ -266,16 +296,11 @@ export default function GlobeCarousel({
         }
 
         if (bestCard) {
-            const eff =
-                (((globalAngle.current + bestCard.cardAngle) % 360) + 360) %
-                360;
-            const adj = eff <= 180 ? -eff : 360 - eff;
-            snapTarget.current = globalAngle.current + adj;
-            isSnapping.current = true;
+            snapCardToFront(bestCard);
         }
-    }, []);
+    }, [snapCardToFront]);
 
-    // ── Pointer event handlers ────────────────────────────────────────────────
+    // ── Pointer handlers ──────────────────────────────────────────────────────
 
     const onPointerDown = useCallback(
         (e: React.PointerEvent<HTMLDivElement>) => {
@@ -299,15 +324,16 @@ export default function GlobeCarousel({
 
         const dx = e.clientX - dragStartX.current;
         dragDistance.current = Math.abs(dx);
-        globalAngle.current = dragStartAngle.current + dx * DRAG_SENSITIVITY;
+
+        // Negate dx: drag-left shrinks angle → rotates globe left (intuitive)
+        globalAngle.current = dragStartAngle.current - dx * DRAG_SENSITIVITY;
 
         const now = performance.now();
         const dt = now - lastDragTime.current;
 
         if (dt > 0) {
-            // Scale velocity to ~16ms frame time so inertia feels consistent at any fps
             velocity.current =
-                ((e.clientX - lastDragX.current) / dt) * 16 * DRAG_SENSITIVITY;
+                -((e.clientX - lastDragX.current) / dt) * 16 * DRAG_SENSITIVITY;
         }
 
         lastDragX.current = e.clientX;
@@ -341,13 +367,13 @@ export default function GlobeCarousel({
         return () => window.removeEventListener('keydown', onKey);
     }, []);
 
-    // ── Card click ────────────────────────────────────────────────────────────
+    // ── Card click — snap to front + toggle selection ─────────────────────────
 
     const handleCardClick = useCallback(
         (card: CardLayout, e: React.MouseEvent) => {
             e.stopPropagation();
 
-            // Ignore clicks that were actually drag gestures
+            // Treat any movement >8px as a drag, not a click
             if (dragDistance.current > 8) {
                 return;
             }
@@ -357,10 +383,12 @@ export default function GlobeCarousel({
             setSelected(newId);
 
             if (newId) {
+                // Rotate the globe so this card faces forward
+                snapCardToFront(card);
                 onSelect?.(card.item);
             }
         },
-        [onSelect, setSelected],
+        [onSelect, setSelected, snapCardToFront],
     );
 
     // ── Render ────────────────────────────────────────────────────────────────
@@ -371,7 +399,7 @@ export default function GlobeCarousel({
         <div
             className="relative flex w-full cursor-grab items-center justify-center overflow-hidden select-none active:cursor-grabbing"
             style={{
-                height: isMobile ? (isSmall ? '380px' : '460px') : '600px',
+                height: isMobile ? (isSmall ? '360px' : '440px') : '560px',
                 perspective: `${perspective}px`,
                 touchAction: 'none',
             }}
@@ -386,21 +414,11 @@ export default function GlobeCarousel({
                 className="pointer-events-none absolute inset-0"
                 style={{
                     background:
-                        'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(124,58,237,0.10) 0%, rgba(6,182,212,0.06) 40%, transparent 70%)',
+                        'radial-gradient(ellipse 70% 55% at 50% 50%, rgba(124,58,237,0.09) 0%, rgba(6,182,212,0.05) 45%, transparent 70%)',
                 }}
             />
 
-            {/* Equator ring hint */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
-                style={{
-                    width: sizeConfig.midRadius * 2 + cardW,
-                    height: sizeConfig.midRadius * 2 + cardH,
-                }}
-            />
-
-            {/* 3D preserve-3d root — zero-size so cards expand from center */}
+            {/* 3D root — zero-size point from which all cards expand */}
             <div style={{ width: 0, height: 0, transformStyle: 'preserve-3d' }}>
                 {layout.map((card, i) => (
                     <div
@@ -414,31 +432,31 @@ export default function GlobeCarousel({
                             top: -(cardH / 2),
                             width: cardW,
                             height: cardH,
-                            transform: `rotateX(${card.ringTilt}deg) rotateY(${card.cardAngle}deg) translateZ(${card.radius}px)`,
-                            transformStyle: 'preserve-3d',
+                            // Initial transform — overwritten by RAF each frame
+                            transform: `translateY(${card.ringY}px) rotateY(${card.cardAngle}deg) translateZ(${card.radius}px)`,
                             cursor: 'pointer',
                             willChange: 'transform, opacity, filter',
                         }}
                         onClick={(e) => handleCardClick(card, e)}
                     >
                         {/*
-                         * Inner div handles selection scale + shadow via CSS transition.
-                         * It is intentionally separate from the outer RAF-driven div so
-                         * that React state (selectedId) only touches this layer.
+                         * Inner div — handles selection visuals via React state.
+                         * Kept separate from the RAF-driven outer div so animation
+                         * never triggers React re-renders.
                          */}
                         <div
                             className="h-full w-full overflow-hidden rounded-xl border border-white/10"
                             style={{
                                 transform:
                                     selectedId === card.item.id
-                                        ? 'scale(1.12)'
+                                        ? 'scale(1.1)'
                                         : 'scale(1)',
                                 transition:
                                     'transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease',
                                 boxShadow:
                                     selectedId === card.item.id
-                                        ? '0 0 0 2px rgba(167,139,250,0.9), 0 20px 60px -10px rgba(0,0,0,0.7)'
-                                        : '0 8px 40px -10px rgba(0,0,0,0.5)',
+                                        ? '0 0 0 2px rgba(167,139,250,0.85), 0 20px 60px -10px rgba(0,0,0,0.7)'
+                                        : '0 8px 32px -8px rgba(0,0,0,0.5)',
                             }}
                         >
                             <img
@@ -449,13 +467,12 @@ export default function GlobeCarousel({
                                 className={[
                                     'h-full w-full object-cover transition-[filter] duration-300',
                                     selectedId === card.item.id
-                                        ? 'grayscale-0'
+                                        ? ''
                                         : 'grayscale',
                                 ].join(' ')}
                             />
 
-                            {/* Bottom label */}
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-2 pt-6 pb-2 sm:px-3 sm:pb-3">
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-2 pt-5 pb-2 sm:px-3 sm:pb-3">
                                 {card.item.category ? (
                                     <p className="mb-0.5 truncate text-[8px] font-bold tracking-widest text-white/50 uppercase sm:text-[9px]">
                                         {card.item.category}
@@ -470,9 +487,9 @@ export default function GlobeCarousel({
                 ))}
             </div>
 
-            {/* Keyboard / drag hint */}
-            <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/40 px-3 py-1.5 text-center text-xs text-white/40 backdrop-blur-sm">
-                Drag to rotate &nbsp;·&nbsp; ← → to step
+            <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/40 px-3 py-1.5 text-xs whitespace-nowrap text-white/40 backdrop-blur-sm">
+                Drag to rotate &nbsp;·&nbsp; Click a card to focus &nbsp;·&nbsp;
+                ← →
             </p>
         </div>
     );
