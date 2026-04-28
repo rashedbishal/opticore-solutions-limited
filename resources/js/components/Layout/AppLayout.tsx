@@ -1,8 +1,8 @@
 import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
-import { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import SupportWidget from '@/components/chat/SupportWidget';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';

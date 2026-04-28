@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from 'react';
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useEffect, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps extends PropsWithChildren {
     open: boolean;
@@ -11,14 +11,15 @@ interface ModalProps extends PropsWithChildren {
 }
 
 export default function Modal({ open, title, onClose, children }: ModalProps) {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const mounted = useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false,
+    );
 
     useEffect(() => {
         const scrollY = window.scrollY;
+
         if (open) {
             document.body.style.position = 'fixed';
             document.body.style.top = `-${scrollY}px`;
@@ -32,10 +33,12 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
             document.body.style.left = '';
             document.body.style.right = '';
             document.body.style.overflow = '';
+
             if (top) {
                 window.scrollTo(0, parseInt(top || '0') * -1);
             }
         }
+
         return () => {
             const top = document.body.style.top;
             document.body.style.position = '';
@@ -43,13 +46,16 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
             document.body.style.left = '';
             document.body.style.right = '';
             document.body.style.overflow = '';
+
             if (top) {
                 window.scrollTo(0, parseInt(top || '0') * -1);
             }
         };
     }, [open]);
 
-    if (!mounted) return null;
+    if (!mounted) {
+        return null;
+    }
 
     return createPortal(
         <AnimatePresence>

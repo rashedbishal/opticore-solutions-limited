@@ -268,13 +268,20 @@ function formatMessageTime(dateStr: string): string {
         date.getMonth() === now.getMonth() &&
         date.getDate() === now.getDate();
 
-    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 
     if (isToday) {
         return time;
     }
 
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' · ' + time;
+    return (
+        date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
+        ' · ' +
+        time
+    );
 }
 
 function getMessageStatusLabel(
@@ -296,7 +303,10 @@ interface SupportWidgetProps {
     onOpenChange: (open: boolean) => void;
 }
 
-export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetProps) {
+export default function SupportWidget({
+    isOpen,
+    onOpenChange,
+}: SupportWidgetProps) {
     const { auth } = usePage<SharedPageProps>().props;
     const echoReady = useEchoReady();
     const [conversation, setConversation] = useState<Conversation | null>(null);
@@ -544,8 +554,14 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
                                         key={msg.id}
                                         className={cn(
                                             'flex flex-col',
-                                            isUser ? 'items-end' : 'items-start',
-                                            i === 0 ? '' : isFirstInGroup ? 'mt-3' : 'mt-0.5',
+                                            isUser
+                                                ? 'items-end'
+                                                : 'items-start',
+                                            i === 0
+                                                ? ''
+                                                : isFirstInGroup
+                                                  ? 'mt-3'
+                                                  : 'mt-0.5',
                                         )}
                                     >
                                         <div className="max-w-[85%]">
@@ -557,13 +573,15 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
                                                         'rounded-2xl p-3.5 text-sm',
                                                         isUser
                                                             ? cn(
-                                                                'bg-foreground text-background',
-                                                                isFirstInGroup && 'rounded-tr-none',
-                                                            )
+                                                                  'bg-foreground text-background',
+                                                                  isFirstInGroup &&
+                                                                      'rounded-tr-none',
+                                                              )
                                                             : cn(
-                                                                'border border-theme bg-theme-surface-hover text-theme',
-                                                                isFirstInGroup && 'rounded-tl-none',
-                                                            ),
+                                                                  'border border-theme bg-theme-surface-hover text-theme',
+                                                                  isFirstInGroup &&
+                                                                      'rounded-tl-none',
+                                                              ),
                                                     )}
                                                 >
                                                     {msg.attachment_path && (
@@ -575,14 +593,24 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
                                                             className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
                                                         >
                                                             <span className="shrink-0">
-                                                                {msg.attachment_type === 'image' ? (
-                                                                    <ImageIcon size={15} />
+                                                                {msg.attachment_type ===
+                                                                'image' ? (
+                                                                    <ImageIcon
+                                                                        size={
+                                                                            15
+                                                                        }
+                                                                    />
                                                                 ) : (
-                                                                    <FileText size={15} />
+                                                                    <FileText
+                                                                        size={
+                                                                            15
+                                                                        }
+                                                                    />
                                                                 )}
                                                             </span>
                                                             <span className="flex-1 truncate text-xs underline underline-offset-2">
-                                                                Download Attachment
+                                                                Download
+                                                                Attachment
                                                             </span>
                                                             <Download
                                                                 size={13}
@@ -592,22 +620,38 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
                                                     )}
                                                     {msg.message && (
                                                         <p className="break-words whitespace-pre-wrap">
-                                                            {renderMessage(msg.message)}
+                                                            {renderMessage(
+                                                                msg.message,
+                                                            )}
                                                         </p>
                                                     )}
                                                 </div>
                                             )}
-                                            {msg.sender_type === 'user' && msg.id === latestOutgoingMessageId ? (
+                                            {msg.sender_type === 'user' &&
+                                            msg.id ===
+                                                latestOutgoingMessageId ? (
                                                 <p className="mt-1 px-1 text-right text-[11px] text-theme-subtle">
-                                                    {getMessageStatusLabel(msg)} · {formatMessageTime(msg.created_at)}
+                                                    {getMessageStatusLabel(msg)}{' '}
+                                                    ·{' '}
+                                                    {formatMessageTime(
+                                                        msg.created_at,
+                                                    )}
                                                 </p>
-                                            ) : isLastInGroup && (
-                                                <p className={cn(
-                                                    'mt-1 px-1 text-[10px] text-theme-subtle/60',
-                                                    isUser ? 'text-right' : 'text-left',
-                                                )}>
-                                                    {formatMessageTime(msg.created_at)}
-                                                </p>
+                                            ) : (
+                                                isLastInGroup && (
+                                                    <p
+                                                        className={cn(
+                                                            'text-theme-subtle/60 mt-1 px-1 text-[10px]',
+                                                            isUser
+                                                                ? 'text-right'
+                                                                : 'text-left',
+                                                        )}
+                                                    >
+                                                        {formatMessageTime(
+                                                            msg.created_at,
+                                                        )}
+                                                    </p>
+                                                )
                                             )}
                                         </div>
                                     </div>

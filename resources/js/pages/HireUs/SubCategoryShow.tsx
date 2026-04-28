@@ -1675,7 +1675,9 @@ export default function SubCategoryShow({
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => setIsContactModalOpen(true)}
+                                            onClick={() =>
+                                                setIsContactModalOpen(true)
+                                            }
                                             className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
                                         >
                                             <MessageSquare className="h-4 w-4" />
@@ -2139,7 +2141,7 @@ export default function SubCategoryShow({
             </div>
 
             {/* ── Mobile Sticky Bottom Bar ── */}
-            <div className="fixed bottom-0 left-[72px] right-[72px] z-[50] flex items-stretch overflow-hidden rounded-t-2xl border-t border-x border-theme bg-background/90 backdrop-blur-xl sm:left-[92px] sm:right-[92px] lg:hidden">
+            <div className="fixed right-[72px] bottom-0 left-[72px] z-[50] flex items-stretch overflow-hidden rounded-t-2xl border-x border-t border-theme bg-background/90 backdrop-blur-xl sm:right-[92px] sm:left-[92px] lg:hidden">
                 {/* Price + inline rating (xs) / price only (sm+) */}
                 <div className="flex flex-col justify-center px-3 py-2 sm:px-4 sm:py-2.5">
                     <p className="text-[8px] font-bold tracking-widest text-theme-muted uppercase sm:text-[9px]">
