@@ -452,7 +452,7 @@ export default function SupportWidget() {
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     return (
-        <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start sm:bottom-8 sm:left-8">
+        <div className="fixed bottom-2 left-2 z-[100] flex flex-col items-start sm:left-5">
             {conversation && echoReady && (
                 <SupportWidgetEchoListener
                     conversation={conversation}
@@ -684,7 +684,7 @@ export default function SupportWidget() {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 ${
+                className={`relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 sm:h-16 sm:w-16 ${
                     isOpen
                         ? 'rotate-90 bg-foreground text-background'
                         : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
@@ -692,9 +692,9 @@ export default function SupportWidget() {
                 aria-label={isOpen ? 'Close chat' : 'Open chat'}
             >
                 {isOpen ? (
-                    <X className="h-7 w-7" />
+                    <X className="h-6 w-6 sm:h-7 sm:w-7" />
                 ) : (
-                    <MessageSquare className="h-7 w-7" />
+                    <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
                 )}
                 {unread > 0 && !isOpen ? (
                     <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold ring-2 ring-background">

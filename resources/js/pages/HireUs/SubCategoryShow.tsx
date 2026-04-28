@@ -2106,27 +2106,40 @@ export default function SubCategoryShow({
             </div>
 
             {/* ── Mobile Sticky Bottom Bar ── */}
-            <div className="fixed inset-x-0 bottom-0 z-[50] flex items-center gap-3 border-t border-theme bg-background/90 px-4 py-3 backdrop-blur-xl lg:hidden">
-                <div className="flex-1">
-                    <p className="text-[10px] font-bold tracking-widest text-theme-muted uppercase">
-                        Starting from
+            <div className="fixed bottom-0 left-[72px] right-[72px] z-[50] flex items-stretch overflow-hidden rounded-t-2xl border-t border-x border-theme bg-background/90 backdrop-blur-xl sm:left-[92px] sm:right-[92px] lg:hidden">
+                {/* Price + inline rating (xs) / price only (sm+) */}
+                <div className="flex flex-col justify-center px-3 py-2 sm:px-4 sm:py-2.5">
+                    <p className="text-[8px] font-bold tracking-widest text-theme-muted uppercase sm:text-[9px]">
+                        From
                     </p>
-                    <p className="text-xl font-black text-theme">$5</p>
+                    <div className="flex items-baseline gap-1 whitespace-nowrap">
+                        <span className="text-sm font-black text-theme sm:text-xl">
+                            $5
+                        </span>
+                        {/* Rating shown inline only below sm */}
+                        <span className="text-[9px] font-semibold text-amber-500 sm:hidden">
+                            · ★ 5.0
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1.5">
+
+                {/* Separate rating block — sm and above only */}
+                <div className="hidden shrink-0 items-center gap-1.5 px-3 sm:flex">
                     <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                     <span className="text-sm font-bold text-theme">5.0</span>
                     <span className="text-xs text-theme-muted">
                         ({mappedReviews.length * 41})
                     </span>
                 </div>
+
+                {/* CTA button — fills remaining space */}
                 <button
                     type="button"
                     onClick={scrollToPricing}
-                    className="group flex items-center gap-2 rounded-2xl bg-foreground px-5 py-3 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white"
+                    className="group flex flex-1 items-center justify-center gap-1 border-l border-theme bg-foreground px-3 py-2 text-[10px] font-black tracking-widest text-background uppercase transition-colors hover:bg-cyan-500 hover:text-white sm:gap-2 sm:px-5 sm:py-3 sm:text-sm"
                 >
                     See Plans
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 sm:h-4 sm:w-4" />
                 </button>
             </div>
 

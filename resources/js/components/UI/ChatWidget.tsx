@@ -138,7 +138,7 @@ setSessionId(data.session_id);
     };
 
     return (
-        <div className="fixed right-4 bottom-4 z-50 sm:right-8 sm:bottom-8">
+        <div className="fixed right-2 bottom-2 z-50 sm:right-5">
             {/* Teaser Bubble */}
             <AnimatePresence>
                 {showTeaser && !isOpen && (
