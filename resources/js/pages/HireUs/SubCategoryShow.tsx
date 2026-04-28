@@ -1287,7 +1287,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="flex items-center gap-2 text-xs font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                                className="group flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-3.5 py-2 text-xs font-bold text-theme-muted shadow-[0_3px_0_rgba(0,0,0,0.25),0_4px_12px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_3px_0_rgba(34,211,238,0.18),0_6px_14px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2)]"
                             >
                                 <MessageSquare className="h-3.5 w-3.5" />
                                 Need a Custom Quote?
@@ -1368,7 +1368,7 @@ export default function SubCategoryShow({
                                         e.stopPropagation();
                                         handleHireNow(plan.id);
                                     }}
-                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                 >
                                     Hire Now
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1381,7 +1381,7 @@ export default function SubCategoryShow({
                         <button
                             type="button"
                             onClick={() => setIsContactModalOpen(true)}
-                            className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                            className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
                         >
                             <MessageSquare className="h-4 w-4" />
                             Need a Custom Quote?
@@ -1486,7 +1486,7 @@ export default function SubCategoryShow({
                                     <button
                                         type="button"
                                         onClick={scrollToPricing}
-                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_12px_32px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0"
+                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_12px_32px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                     >
                                         Get Started
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1556,7 +1556,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1564,7 +1564,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                                className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
                             >
                                 <MessageSquare className="h-4 w-4" />
                                 Need a Custom Quote?
@@ -1668,7 +1668,7 @@ export default function SubCategoryShow({
                                         <button
                                             type="button"
                                             onClick={scrollToPricing}
-                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 md:w-auto"
+                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] md:w-auto"
                                         >
                                             Start Project
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1676,7 +1676,7 @@ export default function SubCategoryShow({
                                         <button
                                             type="button"
                                             onClick={() => setIsContactModalOpen(true)}
-                                            className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                                            className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
                                         >
                                             <MessageSquare className="h-4 w-4" />
                                             Need a Custom Quote?
@@ -1719,11 +1719,11 @@ export default function SubCategoryShow({
                             ))}
                         </div>
 
-                        <div className="mt-12 flex justify-center">
+                        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1731,7 +1731,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                                className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
                             >
                                 <MessageSquare className="h-4 w-4" />
                                 Need a Custom Quote?
@@ -2169,7 +2169,7 @@ export default function SubCategoryShow({
                 <button
                     type="button"
                     onClick={scrollToPricing}
-                    className="group flex flex-1 items-center justify-center gap-1 border-l border-theme bg-foreground px-3 py-2 text-[10px] font-black tracking-widest text-background uppercase transition-colors hover:bg-cyan-500 hover:text-white sm:gap-2 sm:px-5 sm:py-3 sm:text-sm"
+                    className="group flex flex-1 items-center justify-center gap-1 border-l border-theme bg-foreground px-3 py-2 text-[10px] font-black tracking-widest text-background uppercase shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-3px_0_rgba(0,0,0,0.3)] transition-all hover:bg-cyan-500 hover:text-white hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-3px_0_rgba(0,150,180,0.5)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] sm:gap-2 sm:px-5 sm:py-3 sm:text-sm"
                 >
                     See Plans
                     <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 sm:h-4 sm:w-4" />
@@ -2253,7 +2253,7 @@ export default function SubCategoryShow({
                     />
                     <button
                         type="button"
-                        className="w-full rounded-2xl bg-cyan-500 py-4 text-sm font-black tracking-widest text-white uppercase transition-colors hover:bg-cyan-600"
+                        className="w-full rounded-2xl bg-cyan-500 py-4 text-sm font-black tracking-widest text-white uppercase shadow-[0_6px_0_rgba(0,150,180,0.5),0_8px_24px_rgba(34,211,238,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-400 hover:shadow-[0_6px_0_rgba(0,150,180,0.5),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,150,180,0.4),0_2px_8px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]"
                     >
                         Send Message
                     </button>
