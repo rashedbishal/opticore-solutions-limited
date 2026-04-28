@@ -273,10 +273,14 @@ function getMessageStatusLabel(
     return 'Sent';
 }
 
-export default function SupportWidget() {
+interface SupportWidgetProps {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+}
+
+export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetProps) {
     const { auth } = usePage<SharedPageProps>().props;
     const echoReady = useEchoReady();
-    const [isOpen, setIsOpen] = useState(false);
     const [conversation, setConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [unread, setUnread] = useState(0);
@@ -491,7 +495,7 @@ export default function SupportWidget() {
                                 </div>
                             </div>
                             <button
-                                onClick={() => setIsOpen(false)}
+                                onClick={() => onOpenChange(false)}
                                 className="text-theme-muted transition-colors hover:text-theme"
                                 aria-label="Close chat"
                             >
@@ -683,7 +687,7 @@ export default function SupportWidget() {
             {/* Toggle button */}
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => onOpenChange(!isOpen)}
                 className={`relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 sm:h-16 sm:w-16 ${
                     isOpen
                         ? 'rotate-90 bg-foreground text-background'

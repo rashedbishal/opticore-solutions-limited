@@ -1,5 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
+import { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SupportWidget from '@/components/chat/SupportWidget';
@@ -7,8 +8,10 @@ import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
 import ChatWidget from '@/components/UI/ChatWidget';
+
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
+    const [openWidget, setOpenWidget] = useState<'ai' | 'support' | null>(null);
 
     return (
         <SmoothScroll>
@@ -40,8 +43,14 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
                 <Footer />
             </div>
-            <ChatWidget />
-            <SupportWidget />
+            <ChatWidget
+                isOpen={openWidget === 'ai'}
+                onOpenChange={(open) => setOpenWidget(open ? 'ai' : null)}
+            />
+            <SupportWidget
+                isOpen={openWidget === 'support'}
+                onOpenChange={(open) => setOpenWidget(open ? 'support' : null)}
+            />
         </SmoothScroll>
     );
 }

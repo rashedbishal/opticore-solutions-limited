@@ -25,8 +25,12 @@ const suggestedQuestions = [
     "How can I get a quote?",
 ];
 
-export default function ChatWidget() {
-    const [isOpen, setIsOpen] = useState(false);
+interface ChatWidgetProps {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+}
+
+export default function ChatWidget({ isOpen, onOpenChange }: ChatWidgetProps) {
     const [showTeaser, setShowTeaser] = useState(false);
     const [teaserText, setTeaserText] = useState("");
     const [isDancing, setIsDancing] = useState(false);
@@ -138,52 +142,7 @@ setSessionId(data.session_id);
     };
 
     return (
-        <div className="fixed right-2 bottom-2 z-50 sm:right-5">
-            {/* Teaser Bubble */}
-            <AnimatePresence>
-                {showTeaser && !isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                        className="border-theme bg-theme-surface/90 absolute right-0 bottom-14 mb-4 w-56 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none sm:bottom-16"
-                    >
-                        <div className="relative">
-                            <div className="flex items-center gap-1.5 mb-2">
-                                <Bot size={12} className="text-violet-500 dark:text-violet-400" />
-                                    <span className="text-theme-subtle text-[11px] font-bold tracking-wider uppercase">Opticore Assistant</span>
-                            </div>
-                            <p className="text-theme text-[13px] font-medium leading-relaxed">
-                                {teaserText}
-                            </p>
-                            {/* Arrow */}
-                            <div className="border-theme bg-theme-surface absolute top-full right-6 w-2 h-2 border-r border-b rotate-45 -translate-y-1" />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Immersive Trigger Button */}
-            <div className="absolute right-0 bottom-0 group/chat flex flex-row-reverse items-center gap-3">
-                <ImmersiveChatTrigger
-                    onClick={() => setIsOpen(!isOpen)}
-                    isOpen={isOpen}
-                    isDancing={isDancing}
-                />
-                {/* Hover label */}
-                {!isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, x: 8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 8 }}
-                        className="border-theme bg-theme-surface/90 hidden sm:flex items-center gap-1.5 rounded-full border px-4 py-2 shadow-[0_0_20px_rgba(124,58,237,0.1)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
-                    >
-                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                        <span className="text-theme text-xs font-semibold whitespace-nowrap">Chat with AI</span>
-                    </motion.div>
-                )}
-            </div>
-
+        <div className="fixed right-2 bottom-2 z-50 sm:right-5 flex flex-col items-end gap-4">
             {/* Chat Window */}
             <AnimatePresence>
                 {isOpen && (
@@ -193,7 +152,7 @@ setSessionId(data.session_id);
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         data-lenis-prevent
-                        className="border-theme bg-background absolute right-0 bottom-16 flex max-h-[min(calc(100dvh-120px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] sm:bottom-18"
+                        className="border-theme bg-background flex max-h-[min(calc(100dvh-88px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)]"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
@@ -228,7 +187,7 @@ setSessionId(data.session_id);
                                         <span className="text-[11px] font-bold tracking-wider text-white uppercase">AI Powered</span>
                                     </div>
                                     <button
-                                        onClick={() => setIsOpen(false)}
+                                        onClick={() => onOpenChange(false)}
                                         className="p-1 text-white/50 hover:text-white transition-colors"
                                     >
                                         <X size={18} />
@@ -386,6 +345,51 @@ setSessionId(data.session_id);
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Trigger Row */}
+            <div className="relative group/chat flex flex-row-reverse items-center gap-3">
+                {/* Teaser Bubble */}
+                <AnimatePresence>
+                    {showTeaser && !isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                            className="border-theme bg-theme-surface/90 absolute bottom-full right-0 mb-3 w-56 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none"
+                        >
+                            <div className="relative">
+                                <div className="flex items-center gap-1.5 mb-2">
+                                    <Bot size={12} className="text-violet-500 dark:text-violet-400" />
+                                    <span className="text-theme-subtle text-[11px] font-bold tracking-wider uppercase">Opticore Assistant</span>
+                                </div>
+                                <p className="text-theme text-[13px] font-medium leading-relaxed">
+                                    {teaserText}
+                                </p>
+                                {/* Arrow */}
+                                <div className="border-theme bg-theme-surface absolute top-full right-6 w-2 h-2 border-r border-b rotate-45 -translate-y-1" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <ImmersiveChatTrigger
+                    onClick={() => onOpenChange(!isOpen)}
+                    isOpen={isOpen}
+                    isDancing={isDancing}
+                />
+                {/* Hover label */}
+                {!isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 8 }}
+                        className="border-theme bg-theme-surface/90 hidden sm:flex items-center gap-1.5 rounded-full border px-4 py-2 shadow-[0_0_20px_rgba(124,58,237,0.1)] backdrop-blur-xl pointer-events-none opacity-0 group-hover/chat:opacity-100 transition-all duration-300 -translate-x-1 group-hover/chat:translate-x-0"
+                    >
+                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                        <span className="text-theme text-xs font-semibold whitespace-nowrap">Chat with AI</span>
+                    </motion.div>
+                )}
+            </div>
         </div>
     );
 }
