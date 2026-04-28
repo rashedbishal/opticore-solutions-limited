@@ -371,20 +371,62 @@ const SLIDE_DUR = { duration: 0.95, ease: SLIDE_EASE };
 //   peek-left  2%–22%  |  center 22%–78%  |  peek-right 78%–98%
 // framer-motion interpolates all properties simultaneously each RAF tick.
 const SLOT_STYLES = {
-    'exit-left':  { left: '-22%', top: '17.5%', width: '20%', height: '65%', opacity: 0, scale: 0.9, borderRadius: '16px' },
-    'peek-left':  { left:   '2%', top: '17.5%', width: '20%', height: '65%', opacity: 1, scale: 1.0, borderRadius: '16px' },
-    'center':     { left:  '22%', top:     '0%', width: '56%', height: '100%', opacity: 1, scale: 1.0, borderRadius: '0px'  },
-    'peek-right': { left:  '78%', top: '17.5%', width: '20%', height: '65%', opacity: 1, scale: 1.0, borderRadius: '16px' },
-    'exit-right': { left: '100%', top: '17.5%', width: '20%', height: '65%', opacity: 0, scale: 0.9, borderRadius: '16px' },
+    'exit-left': {
+        left: '-22%',
+        top: '17.5%',
+        width: '20%',
+        height: '65%',
+        opacity: 0,
+        scale: 0.9,
+        borderRadius: '16px',
+    },
+    'peek-left': {
+        left: '2%',
+        top: '17.5%',
+        width: '20%',
+        height: '65%',
+        opacity: 1,
+        scale: 1.0,
+        borderRadius: '16px',
+    },
+    center: {
+        left: '22%',
+        top: '0%',
+        width: '56%',
+        height: '100%',
+        opacity: 1,
+        scale: 1.0,
+        borderRadius: '0px',
+    },
+    'peek-right': {
+        left: '78%',
+        top: '17.5%',
+        width: '20%',
+        height: '65%',
+        opacity: 1,
+        scale: 1.0,
+        borderRadius: '16px',
+    },
+    'exit-right': {
+        left: '100%',
+        top: '17.5%',
+        width: '20%',
+        height: '65%',
+        opacity: 0,
+        scale: 0.9,
+        borderRadius: '16px',
+    },
 } as const;
 
 type SlotPos = keyof typeof SLOT_STYLES;
 
 // Render order: exits bottom, peeks middle, center on top.
 const SLOT_ORDER: Record<SlotPos, number> = {
-    'exit-left': 0, 'exit-right': 0,
-    'peek-left': 1, 'peek-right': 1,
-    'center': 2,
+    'exit-left': 0,
+    'exit-right': 0,
+    'peek-left': 1,
+    'peek-right': 1,
+    center: 2,
 };
 
 interface CarouselSlot {
@@ -399,8 +441,6 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const uidCounter = useRef(0);
     const activeRef = useRef(0); // tracks activeIndex without stale-closure issues
 
-    const makeUid = () => `cs${++uidCounter.current}`;
-
     const [activeIndex, setActiveIndex] = useState(0);
     const [slots, setSlots] = useState<CarouselSlot[]>(() => {
         if (!items.length) {
@@ -409,12 +449,22 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
         const n = items.length;
         const result: CarouselSlot[] = [
-            { uid: makeUid(), index: 0, pos: 'center', enterFrom: null },
+            { uid: 'initial-center', index: 0, pos: 'center', enterFrom: null },
         ];
 
         if (n > 1) {
-            result.unshift({ uid: makeUid(), index: (n - 1) % n, pos: 'peek-left', enterFrom: null });
-            result.push({ uid: makeUid(), index: 1 % n, pos: 'peek-right', enterFrom: null });
+            result.unshift({
+                uid: 'initial-left',
+                index: (n - 1) % n,
+                pos: 'peek-left',
+                enterFrom: null,
+            });
+            result.push({
+                uid: 'initial-right',
+                index: 1 % n,
+                pos: 'peek-right',
+                enterFrom: null,
+            });
         }
 
         return result;
@@ -441,6 +491,8 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
             setActiveIndex(newActive);
             setIsPlaying(true);
             setVideoProgress(0);
+
+            const nextUid = `cs${++uidCounter.current}`;
 
             setSlots((prevSlots) => {
                 // Shift every existing slot one position in the direction of travel
@@ -471,9 +523,16 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                 });
 
                 // New item enters from off-screen on the far side of travel
-                const enterFrom: SlotPos = dir === 1 ? 'exit-right' : 'exit-left';
-                const enterPos: SlotPos = dir === 1 ? 'peek-right' : 'peek-left';
-                updated.push({ uid: `cs${++uidCounter.current}`, index: newOuter, pos: enterPos, enterFrom });
+                const enterFrom: SlotPos =
+                    dir === 1 ? 'exit-right' : 'exit-left';
+                const enterPos: SlotPos =
+                    dir === 1 ? 'peek-right' : 'peek-left';
+                updated.push({
+                    uid: nextUid,
+                    index: newOuter,
+                    pos: enterPos,
+                    enterFrom,
+                });
 
                 return updated;
             });
@@ -484,12 +543,19 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const goPrev = useCallback(() => navigate(-1), [navigate]);
     const goNext = useCallback(() => navigate(1), [navigate]);
 
-    const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const handleDragEnd = (
+        _: any,
+        info: { offset: { x: number }; velocity: { x: number } },
+    ) => {
         const threshold = 50;
         const velocityThreshold = 500;
+
         if (info.offset.x > threshold || info.velocity.x > velocityThreshold) {
             goPrev();
-        } else if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
+        } else if (
+            info.offset.x < -threshold ||
+            info.velocity.x < -velocityThreshold
+        ) {
             goNext();
         }
     };
@@ -501,6 +567,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     // Sync video playback state
     useEffect(() => {
         const vid = videoRef.current;
+
         if (!vid) {
             return;
         }
@@ -538,7 +605,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
         return (
             <div className="flex h-[85vh] w-full flex-col items-center justify-center gap-4 bg-theme-surface">
                 <ImageIcon className="h-10 w-10 text-theme-subtle" />
-                <p className="text-sm font-medium text-theme-muted">Portfolio coming soon</p>
+                <p className="text-sm font-medium text-theme-muted">
+                    Portfolio coming soon
+                </p>
             </div>
         );
     }
@@ -547,16 +616,18 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const hasPeeks = slides.length > 1;
 
     // Render center last so it paints on top; exits at bottom.
-    const sortedSlots = [...slots].sort((a, b) => SLOT_ORDER[a.pos] - SLOT_ORDER[b.pos]);
+    const sortedSlots = [...slots].sort(
+        (a, b) => SLOT_ORDER[a.pos] - SLOT_ORDER[b.pos],
+    );
 
     return (
         <>
-            <motion.div 
-                drag={hasPeeks ? "x" : false}
+            <motion.div
+                drag={hasPeeks ? 'x' : false}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
                 onDragEnd={handleDragEnd}
-                className="group relative h-[85vh] w-full overflow-hidden bg-black cursor-grab select-none"
+                className="group relative h-[85vh] w-full cursor-grab overflow-hidden bg-black select-none"
             >
                 {sortedSlots.map((slot) => {
                     const item = slides[slot.index];
@@ -568,11 +639,18 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                     return (
                         <motion.div
                             key={slot.uid}
-                            initial={slot.enterFrom !== null ? SLOT_STYLES[slot.enterFrom] : false}
+                            initial={
+                                slot.enterFrom !== null
+                                    ? SLOT_STYLES[slot.enterFrom]
+                                    : false
+                            }
                             animate={SLOT_STYLES[slot.pos]}
                             transition={SLIDE_DUR}
                             onAnimationComplete={() => {
-                                if (slot.pos === 'exit-left' || slot.pos === 'exit-right') {
+                                if (
+                                    slot.pos === 'exit-left' ||
+                                    slot.pos === 'exit-right'
+                                ) {
                                     removeExited(slot.uid);
                                 }
                             }}
@@ -585,8 +663,16 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                           : () => setIsLightboxOpen(true)
                                     : undefined
                             }
-                            style={{ position: 'absolute', overflow: 'hidden', zIndex: SLOT_ORDER[slot.pos] }}
-                            className={isClickable ? 'cursor-grab active:cursor-grabbing' : ''}
+                            style={{
+                                position: 'absolute',
+                                overflow: 'hidden',
+                                zIndex: SLOT_ORDER[slot.pos],
+                            }}
+                            className={
+                                isClickable
+                                    ? 'cursor-grab active:cursor-grabbing'
+                                    : ''
+                            }
                         >
                             {item.media_type === 'video' ? (
                                 <video
@@ -643,7 +729,11 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                         className="absolute top-4 left-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80"
                         aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
-                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                        {isPlaying ? (
+                            <Pause className="h-4 w-4" />
+                        ) : (
+                            <Play className="h-4 w-4" />
+                        )}
                     </button>
                 )}
 
@@ -679,7 +769,9 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
 
                 {/* Caption */}
                 <div className="absolute bottom-4 left-4 z-30">
-                    <p className="text-sm font-semibold text-white drop-shadow">{activeItem.title}</p>
+                    <p className="text-sm font-semibold text-white drop-shadow">
+                        {activeItem.title}
+                    </p>
                     {activeItem.media_type === 'video' && (
                         <span className="mt-1 inline-flex items-center gap-1 text-xs text-cyan-400">
                             <Film className="h-3 w-3" /> Video
@@ -694,9 +786,13 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                             <button
                                 key={i}
                                 type="button"
-                                onClick={() => navigate(i > activeIndex ? 1 : -1)}
+                                onClick={() =>
+                                    navigate(i > activeIndex ? 1 : -1)
+                                }
                                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                                    i === activeIndex ? 'w-5 bg-cyan-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                                    i === activeIndex
+                                        ? 'w-5 bg-cyan-400'
+                                        : 'w-1.5 bg-white/40 hover:bg-white/70'
                                 }`}
                                 aria-label={`Go to slide ${i + 1}`}
                             />
@@ -706,71 +802,84 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
             </motion.div>
 
             {/* Lightbox */}
-            {typeof document !== 'undefined' && createPortal(
-                <AnimatePresence>
-                    {isLightboxOpen && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
-                        >
+            {typeof document !== 'undefined' &&
+                createPortal(
+                    <AnimatePresence>
+                        {isLightboxOpen && (
                             <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.9, opacity: 0 }}
-                                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                                className="relative flex h-full w-full items-center justify-center overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                                className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
                             >
-                                <div 
-                                    className="absolute inset-0 cursor-zoom-out" 
-                                    onClick={() => setIsLightboxOpen(false)} 
-                                />
-
-                                {activeItem.media_type === 'video' ? (
-                                    <video
-                                        ref={lightboxVideoRef}
-                                        src={activeItem.media_path ?? undefined}
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                        controls
-                                        className="relative z-10 h-full w-full object-contain"
-                                    />
-                                ) : (
-                                    <img
-                                        src={activeItem.media_path ?? PLACEHOLDER}
-                                        alt={activeItem.alt}
-                                        className="relative z-10 h-full w-full object-contain"
-                                        onError={(e) => {
-                                            e.currentTarget.src = PLACEHOLDER;
-                                        }}
-                                    />
-                                )}
-
-                                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-black via-black/40 to-transparent px-8 py-10">
-                                    <p className="text-xl font-bold text-white drop-shadow-md">{activeItem.title}</p>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setIsLightboxOpen(false);
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    transition={{
+                                        duration: 0.35,
+                                        ease: [0.22, 1, 0.36, 1],
                                     }}
-                                    className="absolute top-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-xl transition-all hover:bg-white/20 hover:scale-105 active:scale-90"
-                                    aria-label="Close lightbox"
+                                    className="relative flex h-full w-full items-center justify-center overflow-hidden"
                                 >
-                                    <X className="h-7 w-7" />
-                                </button>
+                                    <div
+                                        className="absolute inset-0 cursor-zoom-out"
+                                        onClick={() => setIsLightboxOpen(false)}
+                                    />
+
+                                    {activeItem.media_type === 'video' ? (
+                                        <video
+                                            ref={lightboxVideoRef}
+                                            src={
+                                                activeItem.media_path ??
+                                                undefined
+                                            }
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                            controls
+                                            className="relative z-10 h-full w-full object-contain"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={
+                                                activeItem.media_path ??
+                                                PLACEHOLDER
+                                            }
+                                            alt={activeItem.alt}
+                                            className="relative z-10 h-full w-full object-contain"
+                                            onError={(e) => {
+                                                e.currentTarget.src =
+                                                    PLACEHOLDER;
+                                            }}
+                                        />
+                                    )}
+
+                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-black via-black/40 to-transparent px-8 py-10">
+                                        <p className="text-xl font-bold text-white drop-shadow-md">
+                                            {activeItem.title}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsLightboxOpen(false);
+                                        }}
+                                        className="absolute top-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-xl transition-all hover:scale-105 hover:bg-white/20 active:scale-90"
+                                        aria-label="Close lightbox"
+                                    >
+                                        <X className="h-7 w-7" />
+                                    </button>
+                                </motion.div>
                             </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body
-            )}
+                        )}
+                    </AnimatePresence>,
+                    document.body,
+                )}
         </>
     );
 }
@@ -975,7 +1084,10 @@ export default function SubCategoryShow({
         const base = (dbReviews || []).map(mapDbReview);
 
         // For demonstration purposes, if no reviews have videos, inject one
-        if (base.length > 0 && !base.some((r) => r.files?.some((f) => f.type === 'video'))) {
+        if (
+            base.length > 0 &&
+            !base.some((r) => r.files?.some((f) => f.type === 'video'))
+        ) {
             base[0].files = [
                 {
                     type: 'video',
@@ -1198,7 +1310,7 @@ export default function SubCategoryShow({
                                 className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
                                         ? '-translate-y-1.5 border-cyan-400/60 bg-card-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
-                                        : 'border-theme bg-card-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-theme-muted/40 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                                        : 'hover:border-theme-muted/40 border-theme bg-card-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
@@ -1247,7 +1359,7 @@ export default function SubCategoryShow({
                                         e.stopPropagation();
                                         handleHireNow(plan.id);
                                     }}
-                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
                                 >
                                     Hire Now
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1365,7 +1477,7 @@ export default function SubCategoryShow({
                                     <button
                                         type="button"
                                         onClick={scrollToPricing}
-                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0"
+                                        className="group flex shrink-0 items-center gap-2 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_12px_32px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0"
                                     >
                                         Get Started
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1419,7 +1531,7 @@ export default function SubCategoryShow({
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="group flex flex-col items-center gap-3 rounded-3xl border border-theme bg-card-surface p-6 text-center transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.32),0_2px_6px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-2 hover:border-cyan-500/30 hover:shadow-[0_14px_40px_rgba(0,0,0,0.48),0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.09)]"
+                                    className="group flex flex-col items-center gap-3 rounded-3xl border border-theme bg-card-surface p-6 text-center shadow-[0_6px_24px_rgba(0,0,0,0.32),0_2px_6px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/30 hover:shadow-[0_14px_40px_rgba(0,0,0,0.48),0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                 >
                                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500 transition-colors group-hover:bg-cyan-500 group-hover:text-white">
                                         <item.Icon className="h-6 w-6" />
@@ -1435,7 +1547,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1506,7 +1618,7 @@ export default function SubCategoryShow({
                                             ].map((lang) => (
                                                 <span
                                                     key={lang.name}
-                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme transition-all shadow-[0_3px_10px_rgba(0,0,0,0.38),0_1px_3px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.09)] hover:-translate-y-0.5 hover:border-cyan-500/30 hover:shadow-[0_6px_18px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-theme-surface-hover"
+                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme shadow-[0_3px_10px_rgba(0,0,0,0.38),0_1px_3px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.09)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/30 hover:bg-theme-surface-hover hover:shadow-[0_6px_18px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.12)]"
                                                 >
                                                     <span>{lang.flag}</span>
                                                     {lang.name}
@@ -1539,7 +1651,7 @@ export default function SubCategoryShow({
                                         <button
                                             type="button"
                                             onClick={scrollToPricing}
-                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 md:w-auto"
+                                            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-foreground px-6 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_5px_18px_rgba(0,0,0,0.55),0_2px_4px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.55),0_4px_8px_rgba(34,211,238,0.3),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-0 md:w-auto"
                                         >
                                             Start Project
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1586,7 +1698,7 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
-                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase transition-all hover:bg-cyan-500 hover:text-white shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
+                                className="group flex items-center gap-3 rounded-2xl bg-foreground px-8 py-4 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_20px_rgba(0,0,0,0.48),0_2px_4px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-500 hover:text-white hover:shadow-[0_10px_28px_rgba(34,211,238,0.45),0_3px_6px_rgba(34,211,238,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:translate-y-0"
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -1768,7 +1880,7 @@ export default function SubCategoryShow({
                                                 scale: 0.95,
                                             }}
                                             variants={fadeUp}
-                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-card-surface p-6 transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
+                                            className="group relative overflow-hidden rounded-3xl border border-theme bg-card-surface p-6 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                         >
                                             {/* Accent top bar */}
                                             <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-amber-500/60 via-amber-400/40 to-transparent" />
@@ -1920,7 +2032,7 @@ export default function SubCategoryShow({
                                         category: service.category_slug,
                                         subcategory: service.slug,
                                     })}
-                                    className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-card-surface transition-all duration-300 shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1.5 hover:border-cyan-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
+                                    className="group relative flex flex-col overflow-hidden rounded-3xl border border-theme bg-card-surface shadow-[0_6px_24px_rgba(0,0,0,0.35),0_2px_6px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-1.5 hover:border-cyan-500/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.52),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.09)]"
                                 >
                                     <div className="relative aspect-video w-full overflow-hidden bg-theme-surface">
                                         {service.image ? (
