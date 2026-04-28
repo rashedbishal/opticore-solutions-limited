@@ -1920,13 +1920,13 @@ export default function SubCategoryShow({
 
                                             <div className="flex flex-col gap-6 md:flex-row">
                                                 <div className="flex-1">
-                                                    <div className="mb-4 flex items-center justify-between">
+                                                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface-hover ring-2 ring-amber-500/10">
+                                                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-theme bg-theme-surface-hover ring-2 ring-amber-500/10">
                                                                 <User className="h-5 w-5 text-theme-subtle" />
                                                             </div>
-                                                            <div>
-                                                                <div className="flex items-center gap-2">
+                                                            <div className="min-w-0">
+                                                                <div className="flex flex-wrap items-center gap-2">
                                                                     <h4 className="font-bold text-theme">
                                                                         {
                                                                             review.user
@@ -1947,7 +1947,7 @@ export default function SubCategoryShow({
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center gap-1 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
+                                                        <div className="flex w-fit items-center gap-1 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
                                                             {[
                                                                 1, 2, 3, 4, 5,
                                                             ].map((s) => (
