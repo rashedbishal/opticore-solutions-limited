@@ -1283,6 +1283,15 @@ export default function SubCategoryShow({
                             <span className="text-theme-muted">
                                 10 Orders in Queue
                             </span>
+                            <span className="text-theme-subtle">·</span>
+                            <button
+                                type="button"
+                                onClick={() => setIsContactModalOpen(true)}
+                                className="flex items-center gap-2 text-xs font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                            >
+                                <MessageSquare className="h-3.5 w-3.5" />
+                                Need a Custom Quote?
+                            </button>
                         </div>
                     </motion.div>
                 </div>
@@ -1372,7 +1381,7 @@ export default function SubCategoryShow({
                         <button
                             type="button"
                             onClick={() => setIsContactModalOpen(true)}
-                            className="flex items-center gap-2 rounded-2xl border border-theme px-6 py-3 text-sm font-bold text-theme transition-colors hover:bg-theme-surface"
+                            className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
                         >
                             <MessageSquare className="h-4 w-4" />
                             Need a Custom Quote?
@@ -1543,7 +1552,7 @@ export default function SubCategoryShow({
                             ))}
                         </div>
 
-                        <div className="mt-12 flex justify-center md:justify-start">
+                        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 md:justify-start">
                             <button
                                 type="button"
                                 onClick={scrollToPricing}
@@ -1551,6 +1560,14 @@ export default function SubCategoryShow({
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsContactModalOpen(true)}
+                                className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                            >
+                                <MessageSquare className="h-4 w-4" />
+                                Need a Custom Quote?
                             </button>
                         </div>
                     </motion.div>
@@ -1647,7 +1664,7 @@ export default function SubCategoryShow({
                                         design, and scalable web solutions that
                                         leave a lasting impact.
                                     </p>
-                                    <div className="mt-auto pt-8">
+                                    <div className="mt-auto flex flex-wrap items-center gap-6 pt-8">
                                         <button
                                             type="button"
                                             onClick={scrollToPricing}
@@ -1655,6 +1672,14 @@ export default function SubCategoryShow({
                                         >
                                             Start Project
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsContactModalOpen(true)}
+                                            className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                                        >
+                                            <MessageSquare className="h-4 w-4" />
+                                            Need a Custom Quote?
                                         </button>
                                     </div>
                                 </div>
@@ -1702,6 +1727,14 @@ export default function SubCategoryShow({
                             >
                                 Hire Now
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsContactModalOpen(true)}
+                                className="flex items-center gap-2 text-sm font-bold text-theme-muted transition-colors hover:text-cyan-500"
+                            >
+                                <MessageSquare className="h-4 w-4" />
+                                Need a Custom Quote?
                             </button>
                         </div>
                     </motion.div>
