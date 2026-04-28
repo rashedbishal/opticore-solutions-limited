@@ -474,7 +474,7 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     return (
-        <div className="fixed bottom-2 left-2 z-[100] flex flex-col items-start sm:left-5">
+        <div className="fixed bottom-2 left-2 z-[55] flex flex-col items-start sm:left-5">
             {conversation && echoReady && (
                 <SupportWidgetEchoListener
                     conversation={conversation}

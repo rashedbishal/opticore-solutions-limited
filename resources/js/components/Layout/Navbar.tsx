@@ -329,7 +329,7 @@ export default function Navbar() {
                             </div>
 
                             {/* Footer CTA */}
-                            <div className="mt-auto pt-6 pb-4">
+                            <div className="mt-auto px-4 pt-6 pb-4 sm:px-6">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
