@@ -69,7 +69,7 @@ function NavLink({
                 speed={0.8}
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                 className={cn(
-                    'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors xl:text-[13.5px] xl:tracking-wide',
+                    'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors md:text-[13.5px] md:tracking-wide',
                     active
                         ? 'text-violet-900 dark:text-violet-100'
                         : 'text-zinc-700 dark:text-white/70',
@@ -133,13 +133,13 @@ export default function Navbar() {
             {props.meta?.title && <Head title={props.meta.title} />}
             <header
                 className={cn(
-                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] transition-all duration-500 will-change-transform sm:px-6 xl:px-4 2xl:px-8 dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
+                    'fixed inset-x-0 top-0 z-50 px-4 pt-4 drop-shadow-[0_12px_32px_rgba(0,0,0,0.15)] transition-all duration-500 will-change-transform sm:px-6 md:px-4 2xl:px-8 dark:drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]',
                     visible
                         ? 'translate-y-0 opacity-100'
                         : 'pointer-events-none -translate-y-full opacity-0',
                 )}
             >
-                <nav className="mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4">
+                <nav className="mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 md:px-3 2xl:px-4">
                     {/* Left Side: Logo */}
                     <div className="flex flex-1 justify-start">
                         <Link
@@ -152,18 +152,18 @@ export default function Navbar() {
                             <img
                                 src="/images/logo/opticore.webp"
                                 alt="Opticore Solutions"
-                                className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
+                                className="block h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:hidden"
                             />
                             <img
                                 src="/images/logo/opticore-white.webp"
                                 alt="Opticore Solutions"
-                                className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
+                                className="hidden h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:block"
                             />
                         </Link>
                     </div>
 
                     {/* Center Side: Nav Items */}
-                    <div className="hidden flex-none items-center justify-center gap-6 xl:flex xl:gap-2 2xl:gap-3">
+                    <div className="hidden flex-none items-center justify-center gap-6 md:flex md:gap-2 2xl:gap-3">
                         {navItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
@@ -171,7 +171,7 @@ export default function Navbar() {
 
                     {/* Right Side: Auth & Mobile Toggle */}
                     <div className="flex flex-1 items-center justify-end gap-3">
-                        <div className="hidden items-center gap-3 xl:flex">
+                        <div className="hidden items-center gap-3 md:flex">
                             <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                                 {user ? (
                                     <>
@@ -217,7 +217,7 @@ export default function Navbar() {
                                     : 'Open navigation menu'
                             }
                             className={cn(
-                                'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
+                                'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 md:hidden',
                                 'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                             )}
                             onClick={() => setOpen((current) => !current)}
