@@ -1302,7 +1302,7 @@ export default function SubCategoryShow({
                     <p className="mb-6 text-[10px] font-bold tracking-[0.2em] text-theme-muted uppercase">
                         Choose Your Plan
                     </p>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         {PLANS.map((plan) => (
                             <div
                                 key={plan.id}
@@ -1319,7 +1319,7 @@ export default function SubCategoryShow({
                                     </span>
                                 )}
 
-                                <div className="mb-5 flex items-start justify-between">
+                                <div className="mb-5 flex flex-wrap items-start justify-between gap-y-3">
                                     <div>
                                         <div
                                             className={`mb-1 flex items-center gap-2 ${selectedPlan === plan.id ? plan.accentClass : 'text-theme-subtle'}`}
