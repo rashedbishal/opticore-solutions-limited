@@ -289,7 +289,7 @@ function ReviewMedia({
     file: { type: 'image' | 'video'; url: string };
 }) {
     return (
-        <div className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-theme bg-theme-surface md:w-32">
+        <div className="group relative aspect-square w-full overflow-hidden rounded-lg border border-theme bg-theme-surface md:w-32 md:rounded-2xl">
             {file.type === 'video' ? (
                 <video
                     src={file.url}
@@ -1996,7 +1996,7 @@ export default function SubCategoryShow({
                                                 {/* Review Attachments */}
                                                 {review.files &&
                                                     review.files.length > 0 && (
-                                                        <div className="flex shrink-0 flex-wrap gap-2 md:w-32 md:flex-col">
+                                                        <div className="grid w-28 shrink-0 grid-cols-2 gap-1.5 md:flex md:w-32 md:flex-col md:gap-2">
                                                             {review.files.map(
                                                                 (
                                                                     file,
