@@ -21,6 +21,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
+import { cn } from '@/lib/utils';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -257,6 +258,23 @@ function getLatestOutgoingMessageId(messages: Message[]): number | null {
     }
 
     return null;
+}
+
+function formatMessageTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday =
+        date.getFullYear() === now.getFullYear() &&
+        date.getMonth() === now.getMonth() &&
+        date.getDate() === now.getDate();
+
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (isToday) {
+        return time;
+    }
+
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' · ' + time;
 }
 
 function getMessageStatusLabel(
@@ -504,71 +522,97 @@ export default function SupportWidget({ isOpen, onOpenChange }: SupportWidgetPro
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 space-y-4 overflow-y-auto bg-theme-surface p-5">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`flex flex-col ${msg.sender_type === 'user' ? 'items-end' : 'items-start'}`}
-                                >
-                                    <div className="max-w-[85%]">
-                                        {msg.offer ? (
-                                            <OfferCard offer={msg.offer} />
-                                        ) : (
-                                            <div
-                                                className={`rounded-2xl p-3.5 text-sm ${
-                                                    msg.sender_type === 'user'
-                                                        ? 'rounded-tr-none bg-foreground text-background'
-                                                        : 'rounded-tl-none border border-theme bg-theme-surface-hover text-theme'
-                                                }`}
-                                            >
-                                                {msg.attachment_path && (
-                                                    <a
-                                                        href={`/chat/attachments/${msg.id}/download`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        download
-                                                        className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
-                                                    >
-                                                        <span className="shrink-0">
-                                                            {msg.attachment_type ===
-                                                            'image' ? (
-                                                                <ImageIcon
-                                                                    size={15}
-                                                                />
-                                                            ) : (
-                                                                <FileText
-                                                                    size={15}
-                                                                />
-                                                            )}
-                                                        </span>
-                                                        <span className="flex-1 truncate text-xs underline underline-offset-2">
-                                                            Download Attachment
-                                                        </span>
-                                                        <Download
-                                                            size={13}
-                                                            className="shrink-0 opacity-60 group-hover:opacity-100"
-                                                        />
-                                                    </a>
-                                                )}
-                                                {msg.message && (
-                                                    <p className="break-words whitespace-pre-wrap">
-                                                        {renderMessage(
-                                                            msg.message,
-                                                        )}
-                                                    </p>
-                                                )}
-                                            </div>
+                        <div className="flex-1 overflow-y-auto bg-theme-surface p-5">
+                            {messages.map((msg, i) => {
+                                const isOffer = !!msg.offer;
+                                const isUser = msg.sender_type === 'user';
+                                const prevMsg = messages[i - 1];
+                                const nextMsg = messages[i + 1];
+                                const isFirstInGroup =
+                                    i === 0 ||
+                                    isOffer ||
+                                    !!prevMsg?.offer ||
+                                    prevMsg?.sender_type !== msg.sender_type;
+                                const isLastInGroup =
+                                    i === messages.length - 1 ||
+                                    isOffer ||
+                                    !!nextMsg?.offer ||
+                                    nextMsg?.sender_type !== msg.sender_type;
+
+                                return (
+                                    <div
+                                        key={msg.id}
+                                        className={cn(
+                                            'flex flex-col',
+                                            isUser ? 'items-end' : 'items-start',
+                                            i === 0 ? '' : isFirstInGroup ? 'mt-3' : 'mt-0.5',
                                         )}
-                                        {msg.sender_type === 'user' &&
-                                            msg.id ===
-                                                latestOutgoingMessageId && (
+                                    >
+                                        <div className="max-w-[85%]">
+                                            {msg.offer ? (
+                                                <OfferCard offer={msg.offer} />
+                                            ) : (
+                                                <div
+                                                    className={cn(
+                                                        'rounded-2xl p-3.5 text-sm',
+                                                        isUser
+                                                            ? cn(
+                                                                'bg-foreground text-background',
+                                                                isFirstInGroup && 'rounded-tr-none',
+                                                            )
+                                                            : cn(
+                                                                'border border-theme bg-theme-surface-hover text-theme',
+                                                                isFirstInGroup && 'rounded-tl-none',
+                                                            ),
+                                                    )}
+                                                >
+                                                    {msg.attachment_path && (
+                                                        <a
+                                                            href={`/chat/attachments/${msg.id}/download`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            download
+                                                            className="group mb-1.5 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 transition hover:bg-black/40"
+                                                        >
+                                                            <span className="shrink-0">
+                                                                {msg.attachment_type === 'image' ? (
+                                                                    <ImageIcon size={15} />
+                                                                ) : (
+                                                                    <FileText size={15} />
+                                                                )}
+                                                            </span>
+                                                            <span className="flex-1 truncate text-xs underline underline-offset-2">
+                                                                Download Attachment
+                                                            </span>
+                                                            <Download
+                                                                size={13}
+                                                                className="shrink-0 opacity-60 group-hover:opacity-100"
+                                                            />
+                                                        </a>
+                                                    )}
+                                                    {msg.message && (
+                                                        <p className="break-words whitespace-pre-wrap">
+                                                            {renderMessage(msg.message)}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {msg.sender_type === 'user' && msg.id === latestOutgoingMessageId ? (
                                                 <p className="mt-1 px-1 text-right text-[11px] text-theme-subtle">
-                                                    {getMessageStatusLabel(msg)}
+                                                    {getMessageStatusLabel(msg)} · {formatMessageTime(msg.created_at)}
+                                                </p>
+                                            ) : isLastInGroup && (
+                                                <p className={cn(
+                                                    'mt-1 px-1 text-[10px] text-theme-subtle/60',
+                                                    isUser ? 'text-right' : 'text-left',
+                                                )}>
+                                                    {formatMessageTime(msg.created_at)}
                                                 </p>
                                             )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                             <div ref={messagesEndRef} />
                         </div>
 

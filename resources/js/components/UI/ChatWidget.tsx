@@ -2,13 +2,14 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, Sparkles, Clock, Shield, Loader2, X } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import ImmersiveChatTrigger from "./ImmersiveChatTrigger";
 
 interface Message {
     role: "user" | "assistant";
     content: string;
+    sentAt: Date;
 }
 
 const teasers = [
@@ -38,6 +39,7 @@ export default function ChatWidget({ isOpen, onOpenChange }: ChatWidgetProps) {
         {
             role: "assistant",
             content: "Hi! I'm your Opticore AI assistant. I can help you with project inquiries, technical details, or any questions about our services. How can I assist you today?",
+            sentAt: new Date(),
         },
     ]);
     const [input, setInput] = useState("");
@@ -94,7 +96,7 @@ export default function ChatWidget({ isOpen, onOpenChange }: ChatWidgetProps) {
 return;
 }
 
-        setMessages((prev) => [...prev, { role: "user", content: messageToSend }]);
+        setMessages((prev) => [...prev, { role: "user", content: messageToSend, sentAt: new Date() }]);
 
         if (!textOverride) {
 setInput("");
@@ -125,7 +127,7 @@ throw new Error("Failed to send message");
 setSessionId(data.session_id);
 }
 
-            setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+            setMessages((prev) => [...prev, { role: "assistant", content: data.reply, sentAt: new Date() }]);
         } catch (error) {
             console.error("Chat Error:", error);
             setMessages((prev) => [
@@ -134,6 +136,7 @@ setSessionId(data.session_id);
                     role: "assistant",
                     content:
                         "I apologize, but I'm having trouble connecting right now. Please try again or contact us directly.",
+                    sentAt: new Date(),
                 },
             ]);
         } finally {
@@ -197,8 +200,8 @@ setSessionId(data.session_id);
                         </div>
 
                         {/* Messages Area */}
-                        <div 
-                            className="flex-1 overflow-y-auto bg-theme-surface p-4 space-y-4 scroll-smooth"
+                        <div
+                            className="flex-1 overflow-y-auto bg-theme-surface p-4 scroll-smooth"
                         >
                             {messages.length === 1 && (
                                 <div className="border-theme bg-theme-surface-hover mb-4 rounded-2xl border p-4 backdrop-blur-sm">
@@ -222,78 +225,98 @@ setSessionId(data.session_id);
                                 </div>
                             )}
 
-                            <div className="space-y-4">
-                                {messages.map((msg, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        transition={{ delay: i === messages.length - 1 ? 0.05 : 0 }}
-                                        className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}
-                                    >
-                                        {msg.role === "assistant" && (
-                                            <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
-                                                <Bot size={16} className="text-violet-500" />
-                                            </div>
-                                        )}
+                            <div className="flex flex-col">
+                                {messages.map((msg, i) => {
+                                    const isUser = msg.role === "user";
+                                    const prevSame = i > 0 && messages[i - 1].role === msg.role;
+                                    const nextSame = i < messages.length - 1 && messages[i + 1].role === msg.role;
+                                    const isFirstInGroup = !prevSame;
+                                    const isLastInGroup = !nextSame;
 
-                                        <div
-                                            className={cn(
-                                                "max-w-[85%] rounded-[20px] px-4 py-3 text-sm leading-relaxed shadow-sm",
-                                                msg.role === "user"
-                                                    ? "bg-linear-to-br from-violet-600 to-indigo-600 text-white rounded-tr-none shadow-violet-500/10"
-                                                    : "border border-theme bg-background text-theme backdrop-blur-xl rounded-tl-none"
+                                    return (
+                                        <React.Fragment key={i}>
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                transition={{ delay: i === messages.length - 1 ? 0.05 : 0 }}
+                                                className={cn(
+                                                    "flex items-end gap-2",
+                                                    isUser ? "justify-end" : "justify-start",
+                                                    i === 0 ? "" : isFirstInGroup ? "mt-3" : "mt-0.5"
+                                                )}
+                                            >
+                                                {!isUser && (
+                                                    <div className={cn("h-8 w-8 flex-shrink-0", !isLastInGroup && "invisible")}>
+                                                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
+                                                            <Bot size={16} className="text-violet-500" />
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div
+                                                    className={cn(
+                                                        "max-w-[80%] rounded-[20px] px-4 py-3 text-sm leading-relaxed shadow-sm",
+                                                        isUser
+                                                            ? cn(
+                                                                "bg-linear-to-br from-violet-600 to-indigo-600 text-white shadow-violet-500/10",
+                                                                isFirstInGroup && "rounded-tr-none"
+                                                            )
+                                                            : cn(
+                                                                "border border-theme bg-background text-theme backdrop-blur-xl",
+                                                                isFirstInGroup && "rounded-tl-none"
+                                                            )
+                                                    )}
+                                                >
+                                                    {msg.content}
+                                                </div>
+
+                                                {isUser && (
+                                                    <div className={cn("h-8 w-8 flex-shrink-0", !isLastInGroup && "invisible")}>
+                                                        <div className="border-theme bg-theme-surface flex h-8 w-8 items-center justify-center rounded-xl border">
+                                                            <User size={16} className="text-theme-subtle" />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                            {isLastInGroup && (
+                                                <p className={cn(
+                                                    "mt-1 mb-1 text-[10px] text-theme-subtle/60 px-1",
+                                                    isUser ? "text-right pr-11" : "text-left pl-11"
+                                                )}>
+                                                    {msg.sentAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                </p>
                                             )}
-                                        >
-                                            {msg.content}
-                                        </div>
-
-                                        {msg.role === "user" && (
-                                            <div className="border-theme bg-theme-surface ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl border">
-                                                <User size={16} className="text-theme-subtle" />
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                ))}
+                                        </React.Fragment>
+                                    );
+                                })}
 
                                 {isLoading && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="flex justify-start"
+                                        className={cn(
+                                            "flex items-end gap-2 justify-start",
+                                            messages.length > 0 && messages[messages.length - 1].role === "assistant" ? "mt-0.5" : "mt-3"
+                                        )}
                                     >
-                                        <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
+                                        <div className="flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
                                             <Bot size={16} className="text-violet-500" />
                                         </div>
-                                        <div className="border-theme bg-background flex items-center gap-1.5 rounded-2xl border px-5 py-4 backdrop-blur-xl shadow-sm">
+                                        <div className="border-theme bg-background flex items-center gap-1.5 rounded-[20px] rounded-tl-none border px-5 py-4 backdrop-blur-xl shadow-sm">
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ 
-                                                    duration: 0.6, 
-                                                    repeat: Infinity, 
-                                                    delay: 0,
-                                                    times: [0, 0.5, 1]
-                                                }}                                            />
-                                            <motion.div
-                                                className="h-1.5 w-1.5 rounded-full bg-violet-500"
-                                                animate={{ y: [0, -4, 0] }}
-                                                transition={{ 
-                                                    duration: 0.6, 
-                                                    repeat: Infinity, 
-                                                    delay: 0.2,
-                                                    times: [0, 0.5, 1]
-                                                }}
+                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0, times: [0, 0.5, 1] }}
                                             />
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}
-                                                transition={{ 
-                                                    duration: 0.6, 
-                                                    repeat: Infinity, 
-                                                    delay: 0.4,
-                                                    times: [0, 0.5, 1]
-                                                }}
+                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2, times: [0, 0.5, 1] }}
+                                            />
+                                            <motion.div
+                                                className="h-1.5 w-1.5 rounded-full bg-violet-500"
+                                                animate={{ y: [0, -4, 0] }}
+                                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4, times: [0, 0.5, 1] }}
                                             />
                                         </div>
                                     </motion.div>
