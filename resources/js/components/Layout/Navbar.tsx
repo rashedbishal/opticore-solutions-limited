@@ -140,88 +140,95 @@ export default function Navbar() {
                 )}
             >
                 <nav className="mx-auto flex max-w-7xl items-center justify-between transition-all duration-300 xl:px-3 2xl:px-4">
-                    <Link
-                        href="/"
-                        className={cn(
-                            'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
-                        )}
-                        aria-label="Opticore Solutions home"
-                    >
-                        <img
-                            src="/images/logo/opticore.webp"
-                            alt="Opticore Solutions"
-                            className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
-                        />
-                        <img
-                            src="/images/logo/opticore-white.webp"
-                            alt="Opticore Solutions"
-                            className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
-                        />
-                    </Link>
+                    {/* Left Side: Logo */}
+                    <div className="flex flex-1 justify-start">
+                        <Link
+                            href="/"
+                            className={cn(
+                                'touch-target inline-flex items-center rounded-full border border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                            )}
+                            aria-label="Opticore Solutions home"
+                        >
+                            <img
+                                src="/images/logo/opticore.webp"
+                                alt="Opticore Solutions"
+                                className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
+                            />
+                            <img
+                                src="/images/logo/opticore-white.webp"
+                                alt="Opticore Solutions"
+                                className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
+                            />
+                        </Link>
+                    </div>
 
-                    <div className="hidden flex-1 items-center justify-center gap-6 xl:flex xl:gap-2 2xl:gap-3">
+                    {/* Center Side: Nav Items */}
+                    <div className="hidden flex-none items-center justify-center gap-6 xl:flex xl:gap-2 2xl:gap-3">
                         {navItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
                     </div>
 
-                    <div className="hidden items-center gap-3 xl:flex">
-                        <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
-                            {user ? (
-                                <>
+                    {/* Right Side: Auth & Mobile Toggle */}
+                    <div className="flex flex-1 items-center justify-end gap-3">
+                        <div className="hidden items-center gap-3 xl:flex">
+                            <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                                {user ? (
+                                    <>
+                                        <Link
+                                            href="/profile"
+                                            className={cn(
+                                                'group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300',
+                                                url === '/profile'
+                                                    ? 'bg-violet-600 text-white shadow-lg dark:bg-violet-500'
+                                                    : 'bg-black/5 text-zinc-800 hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+                                            )}
+                                            aria-label="Profile"
+                                        >
+                                            <User className="h-4 w-4" />
+                                        </Link>
+                                        <Link
+                                            href="/logout"
+                                            method="post"
+                                            as="button"
+                                            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                            aria-label="Sign out"
+                                        >
+                                            <LogOut className="h-4 w-4 text-violet-400" />
+                                        </Link>
+                                    </>
+                                ) : (
                                     <Link
-                                        href="/profile"
-                                        className={cn(
-                                            'group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300',
-                                            url === '/profile'
-                                                ? 'bg-violet-600 text-white shadow-lg dark:bg-violet-500'
-                                                : 'bg-black/5 text-zinc-800 hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
-                                        )}
-                                        aria-label="Profile"
-                                    >
-                                        <User className="h-4 w-4" />
-                                    </Link>
-                                    <Link
-                                        href="/logout"
-                                        method="post"
-                                        as="button"
+                                        href="/login"
                                         className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-                                        aria-label="Sign out"
+                                        aria-label="Sign in"
                                     >
-                                        <LogOut className="h-4 w-4 text-violet-400" />
+                                        <LogIn className="h-4 w-4 text-violet-400" />
                                     </Link>
-                                </>
-                            ) : (
-                                <Link
-                                    href="/login"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-zinc-800 transition-all hover:bg-black/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-                                    aria-label="Sign in"
-                                >
-                                    <LogIn className="h-4 w-4 text-violet-400" />
-                                </Link>
-                            )}
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    <button
-                        type="button"
-                        aria-label={
-                            open
-                                ? 'Close navigation menu'
-                                : 'Open navigation menu'
-                        }
-                        className={cn(
-                            'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
-                            'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
-                        )}
-                        onClick={() => setOpen((current) => !current)}
-                    >
-                        {open ? (
-                            <X className="h-5 w-5" />
-                        ) : (
-                            <Menu className="h-5 w-5" />
-                        )}
-                    </button>
+                        <button
+                            type="button"
+                            aria-label={
+                                open
+                                    ? 'Close navigation menu'
+                                    : 'Open navigation menu'
+                            }
+                            className={cn(
+                                'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 xl:hidden',
+                                'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                            )}
+                            onClick={() => setOpen((current) => !current)}
+                        >
+                            {open ? (
+                                <X className="h-5 w-5" />
+                            ) : (
+                                <Menu className="h-5 w-5" />
+                            )}
+                        </button>
+                    </div>
                 </nav>
             </header>
 
