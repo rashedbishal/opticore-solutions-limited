@@ -218,7 +218,7 @@ export default function Navbar() {
                             }
                             className={cn(
                                 'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 md:hidden',
-                                'h-14 w-14 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                                'h-11 w-11 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                             )}
                             onClick={() => setOpen((current) => !current)}
                         >
@@ -264,7 +264,7 @@ export default function Navbar() {
                                         <button
                                             type="button"
                                             onClick={() => setOpen(false)}
-                                            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-300 bg-slate-200 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                                            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 bg-slate-200 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <X className="h-5 w-5" />
                                         </button>
