@@ -83,8 +83,8 @@ const INERTIA_DECAY = 0.92;
 const DRAG_SENSITIVITY = 0.35;
 const SNAP_SPEED = 0.09;
 const SNAP_THRESHOLD = 0.06;
-/** How long the "winning" chip must hold the front before we commit the state update */
 const ACTIVE_STABLE_MS = 320;
+const TILT_DEG = 18;
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -100,12 +100,40 @@ export default function OrbitingTestimonials({
         '(prefers-reduced-motion: reduce)',
     );
 
-    const chipSize = isMobile ? 52 : 68;
-    const orbitRadius = radiusProp ?? (isMobile ? 145 : 215);
-    // Extra height accounts for the rotateX(-18deg) tilt pushing front chips down / back chips up
-    const orbitContainerH = isMobile ? 260 : 340;
+    // ── Sizing (responsive) ────────────────────────────────────────────────────
 
-    // Each item's fixed angle on the ring
+    const chipSize = isMobile ? 64 : 88;
+    const orbitRadius = radiusProp ?? (isMobile ? 170 : 280);
+
+    // Container height must hold the front chip which is pushed DOWN by the tilt:
+    //   frontChipY_from_center = orbitRadius · sin(TILT_DEG)
+    // Back chip is pushed UP by the same amount. Add chipSize/2 on both sides.
+    const tiltOffsetPx = Math.round(
+        orbitRadius * Math.sin((TILT_DEG * Math.PI) / 180),
+    );
+    const orbitContainerH = isMobile
+        ? (tiltOffsetPx + Math.round(chipSize / 2)) * 2 + 40
+        : (tiltOffsetPx + Math.round(chipSize / 2)) * 2 + 60;
+
+    // Fixed height for the text panel — tall enough for any quote.
+    // Content is centered vertically so short quotes look balanced.
+    const textPanelH = isMobile ? 380 : 340;
+
+    // Gap between text panel bottom and orbit container top (mb-4 = 16px)
+    const gapPx = 16;
+
+    // Distance from text panel BOTTOM to the front chip CENTER.
+    // Front chip is below the orbit's scene center by tiltOffsetPx.
+    const clipOffsetPx = gapPx + Math.round(orbitContainerH / 2) + tiltOffsetPx;
+
+    // clipPath anchor: small circle matching the chip, anchored below the panel
+    const chipRadiusPx = Math.round(chipSize / 2);
+    const clipOriginY = `calc(100% + ${clipOffsetPx}px)`;
+    const clipSmall = `circle(${chipRadiusPx}px at 50% ${clipOriginY})`;
+    const clipFull = `circle(200% at 50% ${clipOriginY})`;
+
+    // ── Orbit angles ───────────────────────────────────────────────────────────
+
     const cardAngles = useMemo(
         () => items.map((_, i) => (360 / items.length) * i),
         [items],
@@ -123,7 +151,7 @@ export default function OrbitingTestimonials({
     const rotSpeedRef = useRef(rotationSpeed);
     const prefersReducedRef = useRef(prefersReducedMotion);
 
-    // Active tracking with stability gate (prevents rapid state churn)
+    // Active tracking with stability gate
     const activeIdxRef = useRef(0);
     const frontCandidateIdx = useRef(0);
     const frontCandidateSince = useRef(0);
@@ -141,7 +169,7 @@ export default function OrbitingTestimonials({
     const dragDistance = useRef(0);
     const pointerDownTarget = useRef<EventTarget | null>(null);
 
-    // React state — only the active index needs to be reactive (drives the quote panel)
+    // React state — only the active index is reactive (drives the quote panel)
     const [activeIdx, setActiveIdx] = useState(0);
 
     useEffect(() => {
@@ -158,7 +186,6 @@ export default function OrbitingTestimonials({
 
     useEffect(() => {
         function tick() {
-            // Update rotation angle
             if (!isDragging.current) {
                 if (isSnapping.current) {
                     const diff = snapTarget.current - globalAngle.current;
@@ -184,7 +211,6 @@ export default function OrbitingTestimonials({
             let bestIdx = 0;
             let bestNz = -Infinity;
 
-            // Update each chip's transform + depth visuals
             for (let i = 0; i < cardAngles.length; i++) {
                 const el = chipRefs.current[i];
                 if (!el) continue;
@@ -192,7 +218,7 @@ export default function OrbitingTestimonials({
                 const eff = ((ga + cardAngles[i]) % 360 + 360) % 360;
                 const rad = (eff * Math.PI) / 180;
                 const nz = Math.cos(rad); // -1 = back, 1 = front
-                const t = (nz + 1) / 2; // 0 → 1 depth factor
+                const t = (nz + 1) / 2;
 
                 el.style.transform = `rotateY(${eff}deg) translateZ(${orbitRadius}px)`;
                 el.style.opacity = (0.28 + 0.72 * t).toFixed(3);
@@ -209,7 +235,7 @@ export default function OrbitingTestimonials({
                 }
             }
 
-            // Animate ambient background glow based on orbit rotation
+            // Shift ambient glow with rotation
             if (glowRef.current) {
                 const glowX = 50 + Math.sin((ga * Math.PI) / 180) * 14;
                 const glowY = 50 + Math.cos((ga * Math.PI) / 180) * 6;
@@ -232,7 +258,7 @@ export default function OrbitingTestimonials({
                 }
             }
 
-            // Stability gate: commit state update only after ACTIVE_STABLE_MS of holding front
+            // Stability gate: only commit React state after ACTIVE_STABLE_MS at front
             const now = performance.now();
             if (bestIdx !== frontCandidateIdx.current) {
                 frontCandidateIdx.current = bestIdx;
@@ -320,13 +346,11 @@ export default function OrbitingTestimonials({
         isDragging.current = false;
 
         if (dragDistance.current <= 8) {
-            // Treat as tap — walk up from the target to find a chip
             let el = pointerDownTarget.current as HTMLElement | null;
             while (el) {
                 const idx = chipRefs.current.indexOf(el as HTMLDivElement);
                 if (idx !== -1) {
                     snapCardToFront(idx);
-                    // Bypass stability gate on explicit click
                     activeIdxRef.current = idx;
                     frontCandidateIdx.current = idx;
                     frontCandidateSince.current = performance.now();
@@ -365,51 +389,60 @@ export default function OrbitingTestimonials({
 
     return (
         <div className="relative overflow-hidden py-20">
-            {/* Ambient glow — updated per-frame in RAF */}
+            {/* Ambient glow — shifted per-frame in RAF */}
             <div
                 ref={glowRef}
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 transition-none"
+                className="pointer-events-none absolute inset-0"
             />
 
             <div className="relative z-10 mx-auto max-w-3xl px-4">
-                {/* ── Central active testimonial ────────────────────────────── */}
+                {/* ── Fixed-height text panel ───────────────────────────────── */}
+                {/*
+                 * Fixed height prevents layout shifts between testimonials.
+                 * motion.div is absolutely inset so it occupies the same space
+                 * during both enter and exit phases of AnimatePresence.
+                 */}
                 <div
-                    className="mb-10 flex justify-center"
+                    className="relative mb-4"
+                    style={{ height: textPanelH }}
                     aria-live="polite"
                     aria-atomic="true"
                 >
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeItem.id}
-                            initial={{
-                                // Clip starts as a circle the size of the avatar chip,
-                                // anchored at the bottom-center — pointing at the orbit ring below
-                                clipPath: `circle(${chipSize / 2}px at 50% 100%)`,
-                                opacity: 0,
-                                y: 12,
+                            style={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                textAlign: 'center',
                             }}
-                            animate={{
-                                clipPath: 'circle(160% at 50% 100%)',
-                                opacity: 1,
-                                y: 0,
-                            }}
+                            // Clip starts as a circle matching the front chip's size,
+                            // anchored below the panel at the chip's screen position.
+                            // Text pops out of the bubble on enter, snaps back on exit.
+                            initial={{ clipPath: clipSmall, opacity: 0 }}
+                            animate={{ clipPath: clipFull, opacity: 1 }}
                             exit={{
-                                clipPath: `circle(${chipSize / 2}px at 50% 100%)`,
+                                clipPath: clipSmall,
                                 opacity: 0,
-                                y: 8,
+                                transition: {
+                                    duration: 0.4,
+                                    ease: [0.55, 0, 1, 0.45],
+                                },
                             }}
                             transition={{
                                 duration: 0.65,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="w-full max-w-2xl text-center"
                             role="article"
                             aria-label={`Testimonial by ${activeItem.name}: ${activeItem.quote}`}
                         >
-                            {/* Star rating */}
                             {activeItem.rating ? (
-                                <div className="mb-5 flex justify-center gap-1">
+                                <div className="mb-4 flex justify-center gap-1">
                                     {Array.from({
                                         length: activeItem.rating,
                                     }).map((_, i) => (
@@ -421,21 +454,21 @@ export default function OrbitingTestimonials({
                                 </div>
                             ) : null}
 
-                            <Quote className="mx-auto mb-5 h-8 w-8 text-violet-400/30" />
+                            <Quote className="mx-auto mb-4 h-7 w-7 text-violet-400/30" />
 
                             <p className="text-xl leading-relaxed font-medium text-balance text-foreground md:text-2xl lg:text-[1.65rem]">
                                 &ldquo;{activeItem.quote}&rdquo;
                             </p>
 
-                            <div className="mt-8 flex items-center justify-center gap-3">
+                            <div className="mt-7 flex items-center justify-center gap-3">
                                 {activeItem.image ? (
                                     <img
                                         src={activeItem.image}
                                         alt={activeItem.name}
-                                        className="h-11 w-11 rounded-full object-cover ring-2 ring-violet-500/30"
+                                        className="h-10 w-10 rounded-full object-cover ring-2 ring-violet-500/30"
                                     />
                                 ) : (
-                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-sm font-bold text-violet-300 ring-2 ring-violet-500/20">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-sm font-bold text-violet-300 ring-2 ring-violet-500/20">
                                         {activeItem.name[0]}
                                     </div>
                                 )}
@@ -475,17 +508,18 @@ export default function OrbitingTestimonials({
                     role="region"
                     aria-label="Testimonial selector — drag or use arrow keys"
                 >
-                    {/* 3D scene root — zero-size origin, tilted so back side is elevated */}
+                    {/* 3D scene root — tilted so back side is elevated */}
                     <div
                         style={{
                             width: 0,
                             height: 0,
                             transformStyle: 'preserve-3d',
-                            transform: 'rotateX(-18deg)',
+                            transform: `rotateX(-${TILT_DEG}deg)`,
                         }}
                     >
-                        {/* Orbit ring — lies flat in the XZ plane (rotateX 90deg),
-                            diameter = orbitRadius * 2 so the line threads through chip centers */}
+                        {/* Orbit ring — flat disc in XZ plane, same radius as the orbit.
+                            The tilt on the scene turns it into the correct ellipse.
+                            Placed first in DOM so chips paint on top of it. */}
                         <div
                             aria-hidden="true"
                             style={{
@@ -495,7 +529,7 @@ export default function OrbitingTestimonials({
                                 width: orbitRadius * 2,
                                 height: orbitRadius * 2,
                                 borderRadius: '50%',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                border: '1px solid rgba(255,255,255,0.12)',
                                 transform: 'rotateX(90deg)',
                                 transformOrigin: 'center',
                                 pointerEvents: 'none',
@@ -519,7 +553,7 @@ export default function OrbitingTestimonials({
                                     willChange: 'transform, opacity, filter',
                                 }}
                             >
-                                {/* Avatar circle — border/shadow updated directly in RAF */}
+                                {/* Avatar circle — glow/border mutated directly in RAF */}
                                 <div
                                     ref={(el) => {
                                         chipInnerRefs.current[i] = el;
@@ -584,7 +618,7 @@ export default function OrbitingTestimonials({
                                         left: '50%',
                                         transform: 'translateX(-50%)',
                                         whiteSpace: 'nowrap',
-                                        fontSize: 10,
+                                        fontSize: 11,
                                         fontWeight: 600,
                                         color: 'rgba(255,255,255,0.45)',
                                         letterSpacing: '0.05em',
@@ -598,7 +632,6 @@ export default function OrbitingTestimonials({
                         ))}
                     </div>
 
-                    {/* Hint text */}
                     <p className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-black/30 px-3 py-1 text-[10px] whitespace-nowrap text-white/30 backdrop-blur-sm">
                         Drag to explore &nbsp;·&nbsp; Click to focus &nbsp;·&nbsp; ← →
                     </p>
@@ -606,7 +639,7 @@ export default function OrbitingTestimonials({
 
                 {/* Navigation dots */}
                 <div
-                    className="mt-6 flex justify-center gap-2"
+                    className="mt-5 flex justify-center gap-2"
                     role="tablist"
                     aria-label="Testimonial navigation"
                 >
