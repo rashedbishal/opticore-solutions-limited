@@ -102,7 +102,8 @@ export default function OrbitingTestimonials({
 
     const chipSize = isMobile ? 52 : 68;
     const orbitRadius = radiusProp ?? (isMobile ? 145 : 215);
-    const orbitContainerH = isMobile ? 200 : 260;
+    // Extra height accounts for the rotateX(-18deg) tilt pushing front chips down / back chips up
+    const orbitContainerH = isMobile ? 260 : 340;
 
     // Each item's fixed angle on the ring
     const cardAngles = useMemo(
@@ -193,10 +194,7 @@ export default function OrbitingTestimonials({
                 const nz = Math.cos(rad); // -1 = back, 1 = front
                 const t = (nz + 1) / 2; // 0 → 1 depth factor
 
-                // Slight Y float for realism (simulates tilted ring)
-                const yOffset = Math.sin(rad) * 10;
-
-                el.style.transform = `rotateY(${eff}deg) translateZ(${orbitRadius}px) translateY(${yOffset}px)`;
+                el.style.transform = `rotateY(${eff}deg) translateZ(${orbitRadius}px)`;
                 el.style.opacity = (0.28 + 0.72 * t).toFixed(3);
 
                 const blurPx = Math.max(0, 3 * (1 - t));
@@ -385,22 +383,24 @@ export default function OrbitingTestimonials({
                         <motion.div
                             key={activeItem.id}
                             initial={{
+                                // Clip starts as a circle the size of the avatar chip,
+                                // anchored at the bottom-center — pointing at the orbit ring below
+                                clipPath: `circle(${chipSize / 2}px at 50% 100%)`,
                                 opacity: 0,
-                                y: 18,
-                                filter: 'blur(10px)',
+                                y: 12,
                             }}
                             animate={{
+                                clipPath: 'circle(160% at 50% 100%)',
                                 opacity: 1,
                                 y: 0,
-                                filter: 'blur(0px)',
                             }}
                             exit={{
+                                clipPath: `circle(${chipSize / 2}px at 50% 100%)`,
                                 opacity: 0,
-                                y: -14,
-                                filter: 'blur(8px)',
+                                y: 8,
                             }}
                             transition={{
-                                duration: 0.52,
+                                duration: 0.65,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
                             className="w-full max-w-2xl text-center"
@@ -475,14 +475,33 @@ export default function OrbitingTestimonials({
                     role="region"
                     aria-label="Testimonial selector — drag or use arrow keys"
                 >
-                    {/* 3D scene root — zero-size origin */}
+                    {/* 3D scene root — zero-size origin, tilted so back side is elevated */}
                     <div
                         style={{
                             width: 0,
                             height: 0,
                             transformStyle: 'preserve-3d',
+                            transform: 'rotateX(-18deg)',
                         }}
                     >
+                        {/* Orbit ring — lies flat in the XZ plane (rotateX 90deg),
+                            diameter = orbitRadius * 2 so the line threads through chip centers */}
+                        <div
+                            aria-hidden="true"
+                            style={{
+                                position: 'absolute',
+                                left: -orbitRadius,
+                                top: -orbitRadius,
+                                width: orbitRadius * 2,
+                                height: orbitRadius * 2,
+                                borderRadius: '50%',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                transform: 'rotateX(90deg)',
+                                transformOrigin: 'center',
+                                pointerEvents: 'none',
+                            }}
+                        />
+
                         {items.map((item, i) => (
                             <div
                                 key={item.id}
@@ -578,17 +597,6 @@ export default function OrbitingTestimonials({
                             </div>
                         ))}
                     </div>
-
-                    {/* Orbit path hint (flat oval via perspective parent) */}
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                        style={{
-                            width: orbitRadius * 2 + chipSize + 8,
-                            height: orbitRadius * 2 + chipSize + 8,
-                            border: '1px solid rgba(255,255,255,0.035)',
-                        }}
-                    />
 
                     {/* Hint text */}
                     <p className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-black/30 px-3 py-1 text-[10px] whitespace-nowrap text-white/30 backdrop-blur-sm">
