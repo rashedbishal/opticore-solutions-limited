@@ -20,8 +20,10 @@ import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
 import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
 import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
+import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
 // import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
+import StackedTestimonials from '@/components/HomeRedesign/StackedTestimonials';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
@@ -746,6 +748,37 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <SpotlightCarousel />
+                </LazySection>
+
+                <section className="border-t border-theme bg-background py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-amber-400 uppercase">
+                            Testimonial Concept 4
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
+                            Stacked Depth
+                        </h2>
+                    </div>
+                </section>
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <StackedTestimonials />
+                </LazySection>
+
+                <section className="border-t border-theme bg-background py-20">
+                    <div className="mx-auto max-w-7xl px-4 text-center">
+                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
+                            Testimonial Concept 5
+                        </span>
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
+                            Orbiting Testimonials
+                        </h2>
+                        <p className="mt-4 text-theme-muted">
+                            Drag to spin · Click an avatar to focus · ← → to step
+                        </p>
+                    </div>
+                </section>
+                <LazySection minHeightClassName="min-h-[70vh]">
+                    <OrbitingTestimonials />
                 </LazySection>
             </div>
 
