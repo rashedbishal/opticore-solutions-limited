@@ -401,7 +401,7 @@ setSessionId(data.session_id);
                     isDancing={isDancing}
                 />
                 {/* Hover label */}
-                {!isOpen && (
+                {/* {!isOpen && (
                     <motion.div
                         initial={{ opacity: 0, x: 8 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -411,7 +411,7 @@ setSessionId(data.session_id);
                         <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
                         <span className="text-theme text-xs font-semibold whitespace-nowrap">Chat with AI</span>
                     </motion.div>
-                )}
+                )} */}
             </div>
         </div>
     );
