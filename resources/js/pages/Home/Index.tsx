@@ -773,7 +773,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                             Orbiting Testimonials
                         </h2>
                         <p className="mt-4 text-theme-muted">
-                            Drag to spin · Click an avatar to focus · ← → to step
+                            Drag to spin · Click an avatar to focus · ← → to
+                            step
                         </p>
                     </div>
                 </section>

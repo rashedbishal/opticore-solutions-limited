@@ -1,9 +1,5 @@
-import {
-    animate,
-    motion,
-    useMotionValue,
-    type PanInfo,
-} from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
+import { animate, motion, useMotionValue } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -131,19 +127,29 @@ export default function StackedTestimonials({
     );
 
     useEffect(() => {
-        if (!autoPlay || isPaused || isDragging) return;
+        if (!autoPlay || isPaused || isDragging) {
+            return;
+        }
+
         timerRef.current = setInterval(goNext, interval);
+
         return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         };
     }, [autoPlay, isPaused, isDragging, goNext, interval]);
 
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowRight') goNext();
-            else if (e.key === 'ArrowLeft') goPrev();
+            if (e.key === 'ArrowRight') {
+                goNext();
+            } else if (e.key === 'ArrowLeft') {
+                goPrev();
+            }
         };
         window.addEventListener('keydown', onKey);
+
         return () => window.removeEventListener('keydown', onKey);
     }, [goNext, goPrev]);
 
@@ -160,7 +166,12 @@ export default function StackedTestimonials({
                 dragX.set(0);
                 const goingNext =
                     info.velocity.x < -300 || info.offset.x < -DRAG_THRESHOLD;
-                goingNext ? goNext() : goPrev();
+
+                if (goingNext) {
+                    goNext();
+                } else {
+                    goPrev();
+                }
             } else {
                 // Spring snap-back with natural feel
                 animate(dragX, 0, {
@@ -196,14 +207,16 @@ export default function StackedTestimonials({
                         const isActive = position === 0;
                         const isVisible = position <= maxDepth;
 
-                        if (!isVisible) return null;
+                        if (!isVisible) {
+                            return null;
+                        }
 
                         const cfg = STACK_CONFIGS[position];
 
                         return (
                             <motion.div
                                 key={testimonial.id}
-                                className="absolute inset-x-0 top-0 select-none rounded-[2rem] border border-theme bg-theme-surface p-8"
+                                className="absolute inset-x-0 top-0 rounded-[2rem] border border-theme bg-theme-surface p-8 select-none"
                                 style={{
                                     zIndex: cfg.zIndex,
                                     cursor: isActive ? 'grab' : 'default',
@@ -269,8 +282,9 @@ export default function StackedTestimonials({
                                 onKeyDown={
                                     isActive
                                         ? (e) => {
-                                              if (e.key === 'Enter')
+                                              if (e.key === 'Enter') {
                                                   onChange?.(testimonial);
+                                              }
                                           }
                                         : undefined
                                 }
@@ -334,9 +348,11 @@ export default function StackedTestimonials({
                                         className="absolute right-8 bottom-8 text-xs font-medium tracking-widest text-theme-muted uppercase"
                                         aria-label={`${activeIndex + 1} of ${total}`}
                                     >
-                                        {String(activeIndex + 1).padStart(2, '0')}{' '}
-                                        /{' '}
-                                        {String(total).padStart(2, '0')}
+                                        {String(activeIndex + 1).padStart(
+                                            2,
+                                            '0',
+                                        )}{' '}
+                                        / {String(total).padStart(2, '0')}
                                     </div>
                                 )}
                             </motion.div>
@@ -349,14 +365,14 @@ export default function StackedTestimonials({
                     <div className="flex gap-3">
                         <button
                             onClick={goPrev}
-                            className="rounded-full border border-theme p-3 text-foreground transition-colors hover:bg-theme-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+                            className="rounded-full border border-theme p-3 text-foreground transition-colors hover:bg-theme-surface focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none"
                             aria-label="Previous testimonial"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={goNext}
-                            className="rounded-full border border-theme p-3 text-foreground transition-colors hover:bg-theme-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+                            className="rounded-full border border-theme p-3 text-foreground transition-colors hover:bg-theme-surface focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none"
                             aria-label="Next testimonial"
                         >
                             <ChevronRight className="h-5 w-5" />
@@ -371,10 +387,10 @@ export default function StackedTestimonials({
                                 aria-selected={i === activeIndex}
                                 aria-label={`Testimonial ${i + 1}`}
                                 onClick={() => goTo(i)}
-                                className={`h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                                className={`h-1.5 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none ${
                                     i === activeIndex
                                         ? 'w-7 bg-violet-400'
-                                        : 'w-1.5 bg-theme-muted/30 hover:bg-theme-muted/60'
+                                        : 'bg-theme-muted/30 hover:bg-theme-muted/60 w-1.5'
                                 }`}
                             />
                         ))}

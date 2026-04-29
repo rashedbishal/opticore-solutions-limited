@@ -189,6 +189,7 @@ export default function OrbitingTestimonials({
             if (!isDragging.current) {
                 if (isSnapping.current) {
                     const diff = snapTarget.current - globalAngle.current;
+
                     if (Math.abs(diff) < SNAP_THRESHOLD) {
                         globalAngle.current = snapTarget.current;
                         isSnapping.current = false;
@@ -201,6 +202,7 @@ export default function OrbitingTestimonials({
                     globalAngle.current += velocity.current;
                 } else {
                     velocity.current = 0;
+
                     if (autoRotateRef.current && !prefersReducedRef.current) {
                         globalAngle.current += rotSpeedRef.current;
                     }
@@ -213,9 +215,12 @@ export default function OrbitingTestimonials({
 
             for (let i = 0; i < cardAngles.length; i++) {
                 const el = chipRefs.current[i];
-                if (!el) continue;
 
-                const eff = ((ga + cardAngles[i]) % 360 + 360) % 360;
+                if (!el) {
+                    continue;
+                }
+
+                const eff = (((ga + cardAngles[i]) % 360) + 360) % 360;
                 const rad = (eff * Math.PI) / 180;
                 const nz = Math.cos(rad); // -1 = back, 1 = front
                 const t = (nz + 1) / 2;
@@ -244,13 +249,17 @@ export default function OrbitingTestimonials({
 
             // Update active chip glow/border directly on DOM (no state change)
             const prevIdx = activeIdxRef.current;
+
             if (bestIdx !== prevIdx) {
                 const oldInner = chipInnerRefs.current[prevIdx];
                 const newInner = chipInnerRefs.current[bestIdx];
+
                 if (oldInner) {
                     oldInner.style.borderColor = 'rgba(255,255,255,0.1)';
-                    oldInner.style.boxShadow = '0 8px 24px -6px rgba(0,0,0,0.4)';
+                    oldInner.style.boxShadow =
+                        '0 8px 24px -6px rgba(0,0,0,0.4)';
                 }
+
                 if (newInner) {
                     newInner.style.borderColor = 'rgba(167,139,250,0.85)';
                     newInner.style.boxShadow =
@@ -260,10 +269,12 @@ export default function OrbitingTestimonials({
 
             // Stability gate: only commit React state after ACTIVE_STABLE_MS at front
             const now = performance.now();
+
             if (bestIdx !== frontCandidateIdx.current) {
                 frontCandidateIdx.current = bestIdx;
                 frontCandidateSince.current = now;
             }
+
             if (
                 bestIdx !== activeIdxRef.current &&
                 now - frontCandidateSince.current > ACTIVE_STABLE_MS
@@ -276,6 +287,7 @@ export default function OrbitingTestimonials({
         }
 
         rafHandle.current = requestAnimationFrame(tick);
+
         return () => cancelAnimationFrame(rafHandle.current);
     }, [cardAngles, orbitRadius]);
 
@@ -284,7 +296,7 @@ export default function OrbitingTestimonials({
     const snapCardToFront = useCallback(
         (idx: number) => {
             const eff =
-                ((globalAngle.current + cardAngles[idx]) % 360 + 360) % 360;
+                (((globalAngle.current + cardAngles[idx]) % 360) + 360) % 360;
             const adj = eff <= 180 ? -eff : 360 - eff;
             snapTarget.current = globalAngle.current + adj;
             isSnapping.current = true;
@@ -296,15 +308,18 @@ export default function OrbitingTestimonials({
     const snapToNearest = useCallback(() => {
         let bestIdx = 0;
         let bestDiff = Infinity;
+
         for (let i = 0; i < cardAngles.length; i++) {
             const eff =
-                ((globalAngle.current + cardAngles[i]) % 360 + 360) % 360;
+                (((globalAngle.current + cardAngles[i]) % 360) + 360) % 360;
             const diff = Math.min(eff, 360 - eff);
+
             if (diff < bestDiff) {
                 bestDiff = diff;
                 bestIdx = i;
             }
         }
+
         snapCardToFront(bestIdx);
     }, [cardAngles, snapCardToFront]);
 
@@ -324,31 +339,39 @@ export default function OrbitingTestimonials({
     }, []);
 
     const onPointerMove = useCallback((e: React.PointerEvent) => {
-        if (!isDragging.current) return;
+        if (!isDragging.current) {
+            return;
+        }
+
         const dx = e.clientX - dragStartX.current;
         dragDistance.current = Math.abs(dx);
         globalAngle.current = dragStartAngle.current - dx * DRAG_SENSITIVITY;
 
         const now = performance.now();
         const dt = now - lastDragTime.current;
+
         if (dt > 0) {
             velocity.current =
-                -((e.clientX - lastDragX.current) / dt) *
-                16 *
-                DRAG_SENSITIVITY;
+                -((e.clientX - lastDragX.current) / dt) * 16 * DRAG_SENSITIVITY;
         }
+
         lastDragX.current = e.clientX;
         lastDragTime.current = now;
     }, []);
 
     const onPointerUp = useCallback(() => {
-        if (!isDragging.current) return;
+        if (!isDragging.current) {
+            return;
+        }
+
         isDragging.current = false;
 
         if (dragDistance.current <= 8) {
             let el = pointerDownTarget.current as HTMLElement | null;
+
             while (el) {
                 const idx = chipRefs.current.indexOf(el as HTMLDivElement);
+
                 if (idx !== -1) {
                     snapCardToFront(idx);
                     activeIdxRef.current = idx;
@@ -358,6 +381,7 @@ export default function OrbitingTestimonials({
                     onSelect?.(items[idx]);
                     break;
                 }
+
                 el = el.parentElement;
             }
         } else {
@@ -380,6 +404,7 @@ export default function OrbitingTestimonials({
             }
         };
         window.addEventListener('keydown', onKey);
+
         return () => window.removeEventListener('keydown', onKey);
     }, []);
 
@@ -495,7 +520,7 @@ export default function OrbitingTestimonials({
 
                 {/* ── 3D Orbit ring ─────────────────────────────────────────── */}
                 <div
-                    className="relative flex items-center justify-center cursor-grab select-none active:cursor-grabbing"
+                    className="relative flex cursor-grab items-center justify-center select-none active:cursor-grabbing"
                     style={{
                         height: orbitContainerH,
                         perspective: '1200px',
@@ -633,7 +658,8 @@ export default function OrbitingTestimonials({
                     </div>
 
                     <p className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-black/30 px-3 py-1 text-[10px] whitespace-nowrap text-white/30 backdrop-blur-sm">
-                        Drag to explore &nbsp;·&nbsp; Click to focus &nbsp;·&nbsp; ← →
+                        Drag to explore &nbsp;·&nbsp; Click to focus
+                        &nbsp;·&nbsp; ← →
                     </p>
                 </div>
 
@@ -657,10 +683,10 @@ export default function OrbitingTestimonials({
                                 setActiveIdx(i);
                                 onSelect?.(items[i]);
                             }}
-                            className={`h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                            className={`h-1.5 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none ${
                                 i === activeIdx
                                     ? 'w-7 bg-violet-400'
-                                    : 'w-1.5 bg-theme-muted/25 hover:bg-theme-muted/50'
+                                    : 'bg-theme-muted/25 hover:bg-theme-muted/50 w-1.5'
                             }`}
                         />
                     ))}
