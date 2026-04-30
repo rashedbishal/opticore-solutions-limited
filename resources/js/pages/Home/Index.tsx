@@ -660,6 +660,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <PortalLoop />
                 </LazySection> */}
 
+                    {/* Nebula Cluster */}
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
@@ -677,6 +678,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <NebulaCluster />
                 </LazySection>
 
+                    {/* Globe Carousel */}
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
@@ -708,7 +710,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <KineticBento />
                 </LazySection> */}
 
-                <section className="border-t border-theme bg-background py-20">
+                    {/* Liquid Shuffle */}
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-pink-400 uppercase">
                             Testimonial Concept 1
@@ -720,8 +723,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <LiquidShuffle />
-                </LazySection>
+                </LazySection> */}
 
+                    {/* Orbiting Showcase */}
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
@@ -736,7 +740,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <OrbitingShowcase />
                 </LazySection>
 
-                <section className="border-t border-theme bg-background py-20">
+                    {/* Spotlight Carousel */}
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Testimonial Concept 3
@@ -748,9 +753,10 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <SpotlightCarousel />
-                </LazySection>
+                </LazySection> */}
 
-                <section className="border-t border-theme bg-background py-20">
+                    {/* Stacked Depth */}
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-amber-400 uppercase">
                             Testimonial Concept 4
@@ -762,8 +768,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <StackedTestimonials />
-                </LazySection>
+                </LazySection> */}
 
+                    {/* Orbiting Testimonials */}
                 <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
@@ -783,6 +790,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection>
             </div>
 
+                    {/* Marquee */}
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <Marquee
