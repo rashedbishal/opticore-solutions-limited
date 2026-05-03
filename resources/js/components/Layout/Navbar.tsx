@@ -174,7 +174,7 @@ export default function Navbar() {
                     <div className="flex flex-1 items-center justify-end gap-3">
                         <div className="hidden items-center gap-3 md:flex">
                             <div className="flex h-11 items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 p-1.5 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
-                                <ThemeSwitcher className="h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] transition-all duration-300 hover:scale-105 hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,1)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)] [&>svg]:drop-shadow-md dark:[&>svg]:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                                <ThemeSwitcher className="h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)] [&>svg]:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:[&>svg]:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                                 {user ? (
                                     <>
                                         <Link
@@ -182,13 +182,13 @@ export default function Navbar() {
                                             className={cn(
                                                 'group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105',
                                                 url === '/profile'
-                                                    ? 'bg-gradient-to-b from-violet-500 to-violet-600 shadow-[0_2px_4px_rgba(139,92,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]'
-                                                    : 'bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,1)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]',
+                                                    ? 'bg-gradient-to-b from-violet-500 to-violet-600 shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]'
+                                                    : 'bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]',
                                             )}
                                             aria-label="Profile"
                                         >
                                             <User className={cn(
-                                                "h-4 w-4 drop-shadow-md dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]",
+                                                "h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]",
                                                 url === '/profile' ? 'text-white' : 'text-zinc-600 dark:text-zinc-300'
                                             )} />
                                         </Link>
@@ -196,19 +196,19 @@ export default function Navbar() {
                                             href="/logout"
                                             method="post"
                                             as="button"
-                                            className="group relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] transition-all duration-300 hover:scale-105 hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,1)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                            className="group relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                                             aria-label="Sign out"
                                         >
-                                            <LogOut className="h-4 w-4 text-violet-500 drop-shadow-md dark:text-violet-400 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                                            <LogOut className="h-4 w-4 text-violet-500 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:text-violet-400 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                                         </Link>
                                     </>
                                 ) : (
                                     <Link
                                         href="/login"
-                                        className="group relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] transition-all duration-300 hover:scale-105 hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,1)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                        className="group relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                                         aria-label="Sign in"
                                     >
-                                        <LogIn className="h-4 w-4 text-violet-500 drop-shadow-md dark:text-violet-400 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                                        <LogIn className="h-4 w-4 text-violet-500 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:text-violet-400 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                                     </Link>
                                 )}
                             </div>
