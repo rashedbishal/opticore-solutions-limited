@@ -750,7 +750,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                             Spotlight Carousel
                         </h2>
                         <p className="mt-4 text-theme-muted">
-                            Drag to swipe · click side cards to focus · ← → to step
+                            Drag to swipe · click side cards to focus · ← → to
+                            step
                         </p>
                     </div>
                 </section>

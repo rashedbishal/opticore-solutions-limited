@@ -12,7 +12,12 @@ type Testimonial = {
     comment: string;
 };
 
-type CardPosition = 'center' | 'left' | 'right' | 'hidden-left' | 'hidden-right';
+type CardPosition =
+    | 'center'
+    | 'left'
+    | 'right'
+    | 'hidden-left'
+    | 'hidden-right';
 
 const TESTIMONIALS: Testimonial[] = [
     {
@@ -58,7 +63,7 @@ const TESTIMONIALS: Testimonial[] = [
         role: 'Creative Director',
         rating: 5,
         comment:
-            "Finally, an agency that understands the intersection of high art and commercial performance. Opticore delivers on both fronts without compromise.",
+            'Finally, an agency that understands the intersection of high art and commercial performance. Opticore delivers on both fronts without compromise.',
     },
 ];
 
@@ -75,11 +80,25 @@ const EASING: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const CARD_HEIGHT = 340;
 const STAGE_HEIGHT = 400;
 
-function resolvePosition(index: number, activeIndex: number, total: number): CardPosition {
+function resolvePosition(
+    index: number,
+    activeIndex: number,
+    total: number,
+): CardPosition {
     const diff = (index - activeIndex + total) % total;
-    if (diff === 0) return 'center';
-    if (diff === 1) return 'right';
-    if (diff === total - 1) return 'left';
+
+    if (diff === 0) {
+        return 'center';
+    }
+
+    if (diff === 1) {
+        return 'right';
+    }
+
+    if (diff === total - 1) {
+        return 'left';
+    }
+
     return diff <= Math.floor(total / 2) ? 'hidden-right' : 'hidden-left';
 }
 
@@ -104,7 +123,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
             className={`relative flex h-full flex-col overflow-hidden rounded-3xl border p-7 ${
                 isActive
                     ? 'border-violet-500/25 bg-theme-surface shadow-2xl shadow-violet-900/20'
-                    : 'border-theme bg-theme-surface/70'
+                    : 'bg-theme-surface/70 border-theme'
             }`}
         >
             {/* Gradient sheen for active card */}
@@ -128,7 +147,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                                 className={`h-3.5 w-3.5 ${
                                     si < item.rating
                                         ? 'fill-amber-400 text-amber-400'
-                                        : 'fill-transparent text-theme-muted/20'
+                                        : 'text-theme-muted/20 fill-transparent'
                                 }`}
                             />
                         ))}
@@ -188,11 +207,16 @@ export default function SpotlightCarousel() {
     // Track container width for responsive offsets
     useEffect(() => {
         const el = containerRef.current;
-        if (!el) return;
+
+        if (!el) {
+            return;
+        }
+
         const ro = new ResizeObserver(([entry]) => {
             setContainerWidth(entry.contentRect.width);
         });
         ro.observe(el);
+
         return () => ro.disconnect();
     }, []);
 
@@ -206,7 +230,10 @@ export default function SpotlightCarousel() {
         [containerWidth],
     );
 
-    const next = useCallback(() => setActiveIndex((i) => (i + 1) % total), [total]);
+    const next = useCallback(
+        () => setActiveIndex((i) => (i + 1) % total),
+        [total],
+    );
     const prev = useCallback(
         () => setActiveIndex((i) => (i - 1 + total) % total),
         [total],
@@ -214,18 +241,26 @@ export default function SpotlightCarousel() {
 
     // Auto-rotation — pauses on hover
     useEffect(() => {
-        if (isHovered) return;
+        if (isHovered) {
+            return;
+        }
+
         const interval = setInterval(next, 5000);
+
         return () => clearInterval(interval);
     }, [next, isHovered]);
 
     // Keyboard navigation
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft') prev();
-            else if (e.key === 'ArrowRight') next();
+            if (e.key === 'ArrowLeft') {
+                prev();
+            } else if (e.key === 'ArrowRight') {
+                next();
+            }
         };
         window.addEventListener('keydown', onKey);
+
         return () => window.removeEventListener('keydown', onKey);
     }, [next, prev]);
 
@@ -235,9 +270,19 @@ export default function SpotlightCarousel() {
                 case 'center':
                     return { x: 0, scale: 1, opacity: 1, filter: 'blur(0px)' };
                 case 'left':
-                    return { x: -sideOffset, scale: 0.83, opacity: 0.58, filter: 'blur(1px)' };
+                    return {
+                        x: -sideOffset,
+                        scale: 0.83,
+                        opacity: 0.58,
+                        filter: 'blur(1px)',
+                    };
                 case 'right':
-                    return { x: sideOffset, scale: 0.83, opacity: 0.58, filter: 'blur(1px)' };
+                    return {
+                        x: sideOffset,
+                        scale: 0.83,
+                        opacity: 0.58,
+                        filter: 'blur(1px)',
+                    };
                 case 'hidden-left':
                     return {
                         x: -(containerWidth * 0.78),
@@ -272,8 +317,13 @@ export default function SpotlightCarousel() {
     const onPointerUp = useCallback(
         (e: React.PointerEvent) => {
             const delta = e.clientX - dragStartX.current;
+
             if (hasDragged.current && Math.abs(delta) > 40) {
-                delta < 0 ? next() : prev();
+                if (delta < 0) {
+                    next();
+                } else {
+                    prev();
+                }
             }
         },
         [next, prev],
@@ -281,7 +331,7 @@ export default function SpotlightCarousel() {
 
     return (
         <div
-            className="relative select-none py-16"
+            className="relative py-16 select-none"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -302,7 +352,8 @@ export default function SpotlightCarousel() {
                         const position = resolvePosition(i, activeIndex, total);
                         const animate = getAnimate(position);
                         const isCenter = position === 'center';
-                        const isSide = position === 'left' || position === 'right';
+                        const isSide =
+                            position === 'left' || position === 'right';
                         const zIndex = isCenter ? 20 : isSide ? 10 : 0;
 
                         return (
@@ -325,9 +376,15 @@ export default function SpotlightCarousel() {
                                     opacity: { duration: 0.5 },
                                 }}
                                 onClick={() => {
-                                    if (hasDragged.current) return;
-                                    if (position === 'left') prev();
-                                    else if (position === 'right') next();
+                                    if (hasDragged.current) {
+                                        return;
+                                    }
+
+                                    if (position === 'left') {
+                                        prev();
+                                    } else if (position === 'right') {
+                                        next();
+                                    }
                                 }}
                                 aria-hidden={!isCenter}
                             >
@@ -346,13 +403,17 @@ export default function SpotlightCarousel() {
                     <button
                         onClick={prev}
                         aria-label="Previous testimonial"
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >
                         <ChevronLeft className="h-4 w-4" />
                     </button>
 
                     {/* Pill dots */}
-                    <div className="flex items-center gap-2" role="tablist" aria-label="Testimonials">
+                    <div
+                        className="flex items-center gap-2"
+                        role="tablist"
+                        aria-label="Testimonials"
+                    >
                         {TESTIMONIALS.map((_, i) => (
                             <button
                                 key={i}
@@ -360,10 +421,10 @@ export default function SpotlightCarousel() {
                                 aria-selected={i === activeIndex}
                                 aria-label={`Testimonial ${i + 1}`}
                                 onClick={() => setActiveIndex(i)}
-                                className={`rounded-full transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
+                                className={`rounded-full transition-all duration-500 ease-out focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none ${
                                     i === activeIndex
                                         ? 'h-2 w-7 bg-violet-500'
-                                        : 'h-2 w-2 bg-theme-muted/30 hover:bg-theme-muted/60'
+                                        : 'bg-theme-muted/30 hover:bg-theme-muted/60 h-2 w-2'
                                 }`}
                             />
                         ))}
@@ -372,7 +433,7 @@ export default function SpotlightCarousel() {
                     <button
                         onClick={next}
                         aria-label="Next testimonial"
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >
                         <ChevronRight className="h-4 w-4" />
                     </button>
