@@ -49,18 +49,18 @@ function NavLink({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'group relative flex items-center gap-2 rounded-full border px-4 py-2 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-300 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                'group relative flex h-10 items-center gap-2 rounded-full px-5 transition-all duration-300 hover:scale-105',
                 active
-                    ? 'border-violet-400 bg-violet-100 shadow-[0_3px_10px_rgba(139,92,246,0.2),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-violet-500 dark:bg-violet-950 dark:shadow-[0_3px_10px_rgba(139,92,246,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]'
-                    : 'border-slate-300 bg-slate-100 hover:border-slate-400 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800',
+                    ? 'bg-gradient-to-b from-violet-500 to-violet-600 shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]'
+                    : 'bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]',
             )}
         >
             {Icon && (
                 <Icon
                     className={cn(
-                        'h-4 w-4 transition-colors duration-300',
+                        'h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] transition-colors duration-300 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]',
                         active
-                            ? 'text-violet-600 dark:text-violet-400'
+                            ? 'text-white'
                             : 'text-zinc-500 group-hover:text-violet-600 dark:text-zinc-400 dark:group-hover:text-violet-400',
                     )}
                 />
@@ -72,8 +72,8 @@ function NavLink({
                 className={cn(
                     'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors md:text-[13.5px] md:tracking-wide',
                     active
-                        ? 'text-violet-900 dark:text-violet-100'
-                        : 'text-zinc-700 dark:text-white/70',
+                        ? 'text-white drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]'
+                        : 'text-zinc-700 dark:text-zinc-300',
                 )}
                 trigger={hovered}
             >
@@ -164,7 +164,7 @@ export default function Navbar() {
                     </div>
 
                     {/* Center Side: Nav Items */}
-                    <div className="hidden flex-none items-center justify-center gap-6 md:flex md:gap-2 2xl:gap-3">
+                    <div className="hidden flex-none items-center justify-center md:flex md:gap-3 2xl:gap-4">
                         {navItems.map((item) => (
                             <NavLink key={item.href} item={item} url={url} />
                         ))}
