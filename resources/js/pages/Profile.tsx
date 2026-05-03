@@ -108,7 +108,7 @@ function InvoiceCard({
     return (
         <motion.div
             variants={fadeUp}
-            className={`bg-theme-surface/40 hover:bg-theme-surface/60 relative overflow-hidden rounded-3xl border border-theme p-6 transition-colors ${
+            className={`relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white/80 to-slate-50/60 p-6 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_2px_6px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.12),0_4px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] dark:border-zinc-700 dark:from-zinc-800/80 dark:to-zinc-900/60 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)] ${
                 isNew ? 'border-cyan-500/40 ring-1 ring-cyan-500/20' : ''
             }`}
         >
@@ -119,7 +119,7 @@ function InvoiceCard({
             )}
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
                     <Package className="h-6 w-6" />
                 </div>
 
@@ -241,32 +241,26 @@ export default function Profile() {
                         </AnimatePresence>
 
                         <Tabs defaultValue="overview" className="w-full">
-                            <TabsList className="bg-theme-surface/50 hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto rounded-[2rem] border border-theme p-2 backdrop-blur-md">
-                                <TabsTrigger
-                                    value="overview"
-                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
-                                >
-                                    <User className="h-4 w-4" /> Overview
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="settings"
-                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
-                                >
-                                    <Settings className="h-4 w-4" /> Account
-                                    Settings
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="security"
-                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
-                                >
-                                    <Shield className="h-4 w-4" /> Security
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="preferences"
-                                    className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-colors data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-500"
-                                >
-                                    <Bell className="h-4 w-4" /> Preferences
-                                </TabsTrigger>
+                            {/* L2 — Tabs bar: elevated card sitting on page */}
+                            <TabsList className="hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto rounded-[2rem] border border-slate-200 bg-slate-100/80 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-zinc-700 dark:bg-zinc-900/80 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                                {/* L3 — Tab triggers: 3D buttons atop the bar */}
+                                {(
+                                    [
+                                        { value: 'overview', icon: User, label: 'Overview' },
+                                        { value: 'settings', icon: Settings, label: 'Account Settings' },
+                                        { value: 'security', icon: Shield, label: 'Security' },
+                                        { value: 'preferences', icon: Bell, label: 'Preferences' },
+                                    ] as const
+                                ).map(({ value, icon: Icon, label }) => (
+                                    <TabsTrigger
+                                        key={value}
+                                        value={value}
+                                        className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-all duration-300 hover:scale-[1.02] bg-gradient-to-b from-white to-slate-50 text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:data-[state=active]:from-violet-600 dark:data-[state=active]:to-violet-700 dark:data-[state=active]:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                    >
+                                        <Icon className="h-4 w-4 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.2)]" />
+                                        {label}
+                                    </TabsTrigger>
+                                ))}
                             </TabsList>
 
                             {/* Overview Tab */}
@@ -274,13 +268,14 @@ export default function Profile() {
                                 value="overview"
                                 className="space-y-10 outline-none"
                             >
-                                {/* Profile Overview */}
+                                {/* L1 — Profile Overview Card */}
                                 <motion.div
                                     variants={fadeUp}
-                                    className="glass-panel flex flex-col items-start gap-6 rounded-[2rem] border-theme p-8 sm:flex-row sm:items-center"
+                                    className="flex flex-col items-start gap-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md sm:flex-row sm:items-center dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                 >
-                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-cyan-500/10 text-cyan-500">
-                                        <User className="h-10 w-10" />
+                                    {/* L2 — Avatar: elevated atop the card */}
+                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+                                        <User className="h-10 w-10 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.2)]" />
                                     </div>
 
                                     <div className="flex-1">
@@ -327,8 +322,9 @@ export default function Profile() {
                                         className="flex items-center justify-between"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-500">
-                                                <FileText className="h-5 w-5" />
+                                            {/* L2 — Section icon: elevated */}
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                                                <FileText className="h-5 w-5 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.2)]" />
                                             </div>
                                             <div>
                                                 <h2 className="text-xl font-bold text-theme">
@@ -343,9 +339,10 @@ export default function Profile() {
                                             </div>
                                         </div>
 
+                                        {/* L2 — Order More: 3D pill button */}
                                         <Link
                                             href="/hire-us"
-                                            className="flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme-muted transition-all hover:bg-theme-surface-hover hover:text-theme"
+                                            className="flex items-center gap-2 rounded-full border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-xs font-bold text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.07),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] transition-all hover:scale-105 hover:shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.15)]"
                                         >
                                             <ShoppingBag className="h-3.5 w-3.5" />
                                             Order More
@@ -375,6 +372,7 @@ export default function Profile() {
                                 value="settings"
                                 className="outline-none"
                             >
+                                {/* L1 — Settings card */}
                                 <motion.form
                                     variants={fadeUp}
                                     onSubmit={(e) =>
@@ -383,7 +381,7 @@ export default function Profile() {
                                             'Profile information updated successfully.',
                                         )
                                     }
-                                    className="glass-panel space-y-8 rounded-[2rem] border-theme p-8"
+                                    className="space-y-8 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                 >
                                     <div>
                                         <h2 className="text-xl font-bold text-theme">
@@ -396,17 +394,19 @@ export default function Profile() {
                                     </div>
 
                                     <div className="flex items-center gap-6">
-                                        <div className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-theme bg-theme-surface">
+                                        {/* L2 — Avatar upload: 3D elevated container */}
+                                        <div className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]">
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <Camera className="h-6 w-6 text-white" />
                                             </div>
                                             <User className="h-10 w-10 text-theme-muted" />
                                         </div>
                                         <div>
+                                            {/* L2 — Upload button: 3D */}
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="rounded-xl border-theme bg-theme-surface hover:bg-theme-surface-hover hover:text-theme"
+                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-white to-slate-50 text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.07),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] transition-all hover:scale-[1.02] hover:shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)]"
                                             >
                                                 Upload Avatar
                                             </Button>
@@ -425,10 +425,11 @@ export default function Profile() {
                                             >
                                                 Full Name
                                             </Label>
+                                            {/* L-1 — Input: depressed */}
                                             <Input
                                                 id="name"
                                                 defaultValue={auth.user?.name}
-                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -443,7 +444,7 @@ export default function Profile() {
                                                 defaultValue={auth.user?.name
                                                     ?.toLowerCase()
                                                     .replace(/\s+/g, '')}
-                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                             />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
@@ -457,16 +458,17 @@ export default function Profile() {
                                                 id="email"
                                                 type="email"
                                                 defaultValue={auth.user?.email}
-                                                className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-end border-t border-theme pt-4">
+                                    <div className="flex justify-end border-t border-slate-200 pt-4 dark:border-zinc-700">
+                                        {/* L2 — Primary button: 3D violet */}
                                         <Button
                                             type="submit"
                                             disabled={isSaving}
-                                            className="min-w-[140px] rounded-xl bg-violet-600 text-white hover:bg-violet-700"
+                                            className="min-w-[140px] rounded-xl bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-[0_4px_12px_rgba(139,92,246,0.4),0_2px_4px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(139,92,246,0.5),0_3px_6px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(139,92,246,0.6),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_12px_rgba(139,92,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                                         >
                                             {isSaving ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -487,6 +489,7 @@ export default function Profile() {
                                     variants={stagger}
                                     className="space-y-8"
                                 >
+                                    {/* L1 — Change Password card */}
                                     <motion.form
                                         variants={fadeUp}
                                         onSubmit={(e) =>
@@ -495,7 +498,7 @@ export default function Profile() {
                                                 'Password changed successfully.',
                                             )
                                         }
-                                        className="glass-panel space-y-8 rounded-[2rem] border-theme p-8"
+                                        className="space-y-8 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -519,7 +522,7 @@ export default function Profile() {
                                                 <Input
                                                     id="current_password"
                                                     type="password"
-                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -532,7 +535,7 @@ export default function Profile() {
                                                 <Input
                                                     id="new_password"
                                                     type="password"
-                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -545,16 +548,16 @@ export default function Profile() {
                                                 <Input
                                                     id="confirm_password"
                                                     type="password"
-                                                    className="bg-theme-surface/50 rounded-xl border-theme text-theme"
+                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-start border-t border-theme pt-4">
+                                        <div className="flex justify-start border-t border-slate-200 pt-4 dark:border-zinc-700">
                                             <Button
                                                 type="submit"
                                                 disabled={isSaving}
-                                                className="min-w-[160px] rounded-xl bg-violet-600 text-white hover:bg-violet-700"
+                                                className="min-w-[160px] rounded-xl bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-[0_4px_12px_rgba(139,92,246,0.4),0_2px_4px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(139,92,246,0.5),0_3px_6px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(139,92,246,0.6),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_12px_rgba(139,92,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                                             >
                                                 {isSaving ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -565,9 +568,10 @@ export default function Profile() {
                                         </div>
                                     </motion.form>
 
+                                    {/* L1 — 2FA card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="glass-panel space-y-6 rounded-[2rem] border-theme p-8"
+                                        className="space-y-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -580,7 +584,8 @@ export default function Profile() {
                                             </p>
                                         </div>
 
-                                        <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-6">
+                                        {/* L2 — Toggle row: inner card */}
+                                        <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
                                             <div>
                                                 <div className="font-bold text-theme">
                                                     Secure your account
@@ -601,7 +606,7 @@ export default function Profile() {
                                                         !twoFactorEnabled,
                                                     )
                                                 }
-                                                className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
+                                                className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]' : 'text-theme-muted hover:text-theme'}`}
                                             >
                                                 {twoFactorEnabled ? (
                                                     <ToggleRight className="h-10 w-10" />
@@ -623,9 +628,10 @@ export default function Profile() {
                                     variants={stagger}
                                     className="space-y-8"
                                 >
+                                    {/* L1 — Notifications card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="glass-panel space-y-6 rounded-[2rem] border-theme p-8"
+                                        className="space-y-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -638,7 +644,8 @@ export default function Profile() {
                                         </div>
 
                                         <div className="space-y-4">
-                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
+                                            {/* L2 — Notification rows: inner cards */}
+                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Order Updates
@@ -648,10 +655,10 @@ export default function Profile() {
                                                         your order status.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]" />
                                             </div>
 
-                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
+                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Promotional Emails
@@ -668,7 +675,7 @@ export default function Profile() {
                                                             !promoEmails,
                                                         )
                                                     }
-                                                    className={`transition-colors ${promoEmails ? 'text-emerald-500' : 'text-theme-muted'}`}
+                                                    className={`transition-colors ${promoEmails ? 'text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]' : 'text-theme-muted'}`}
                                                 >
                                                     {promoEmails ? (
                                                         <ToggleRight className="h-8 w-8" />
@@ -678,7 +685,7 @@ export default function Profile() {
                                                 </button>
                                             </div>
 
-                                            <div className="bg-theme-surface/30 flex items-center justify-between rounded-2xl border border-theme p-4">
+                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Security Alerts
@@ -689,14 +696,15 @@ export default function Profile() {
                                                         changes.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]" />
                                             </div>
                                         </div>
                                     </motion.div>
 
+                                    {/* Danger Zone */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="relative overflow-hidden rounded-[2rem] border border-red-500/20 bg-red-500/5 p-8"
+                                        className="relative overflow-hidden rounded-[2rem] border border-red-500/20 bg-gradient-to-b from-red-500/5 to-red-500/10 p-8 shadow-[0_8px_32px_rgba(239,68,68,0.06),inset_0_0_0_1px_rgba(239,68,68,0.1),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(239,68,68,0.04),inset_0_0_0_1px_rgba(239,68,68,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]"
                                     >
                                         <div className="absolute top-0 right-0 p-8 opacity-10">
                                             <Trash2 className="h-32 w-32 text-red-500" />
@@ -712,10 +720,11 @@ export default function Profile() {
                                                 your current active orders will
                                                 be cancelled.
                                             </p>
+                                            {/* L2 — Destructive button: 3D red */}
                                             <Button
                                                 type="button"
                                                 variant="destructive"
-                                                className="rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 transition-all hover:border-red-500 hover:bg-red-500 hover:text-white"
+                                                className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-500/8 to-red-500/15 text-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.1),inset_0_0_0_1px_rgba(239,68,68,0.2),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all hover:scale-[1.02] hover:border-red-500 hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-[0_6px_16px_rgba(239,68,68,0.4),inset_0_0_0_1px_rgba(239,68,68,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]"
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />{' '}
                                                 Delete Account
