@@ -121,11 +121,11 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
     const activeBg = 'bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-[#1e1e2c] dark:via-[#151520] dark:to-[#0a0a0f]';
     const inactiveBg = 'bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-[#151520] dark:via-[#0f0f16] dark:to-[#050508]';
 
-    const activeShadowLight = 'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12),0_0_0_1px_rgba(139,92,246,0.3),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-6px_12px_rgba(0,0,0,0.04)]';
-    const activeShadowDark = 'dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-6px_12px_rgba(0,0,0,0.7)]';
+    const activeShadowLight = 'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15),0_0_0_1px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(255,255,255,0.8),inset_0_1px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(0,0,0,0.05)]';
+    const activeShadowDark = 'dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.5)]';
 
-    const inactiveShadowLight = 'shadow-[0_15px_30px_-10px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-6px_12px_rgba(0,0,0,0.02)]';
-    const inactiveShadowDark = 'dark:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(255,255,255,0.08),inset_0_-6px_12px_rgba(0,0,0,0.5)]';
+    const inactiveShadowLight = 'shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.6),inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(0,0,0,0.03)]';
+    const inactiveShadowDark = 'dark:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(255,255,255,0.08),inset_0_-1px_2px_rgba(0,0,0,0.3)]';
 
     return (
         <div
@@ -152,10 +152,10 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
             <div className="relative z-0 flex h-full flex-col">
                 {/* Header row */}
                 <div className="mb-4 flex items-start justify-between gap-2">
-                    {/* Engraved quote icon */}
-                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/30 dark:text-violet-400/50 [filter:drop-shadow(0_1px_1px_rgba(255,255,255,0.8))] dark:[filter:drop-shadow(0_-1px_1px_rgba(0,0,0,0.6))]" />
+                    {/* Elevated quote icon */}
+                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/80 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:text-violet-400/80 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                     {/* Elevated stars */}
-                    <div className="flex gap-0.5 drop-shadow-sm dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <div className="flex gap-0.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]">
                         {Array.from({ length: 5 }).map((_, si) => (
                             <Star
                                 key={si}
@@ -179,26 +179,28 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                 </p>
 
                 {/* Author (Elevated content) */}
-                <div className="mt-6 flex items-center gap-3 drop-shadow-md dark:drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
+                <div className="mt-6 flex items-center gap-4">
                     {item.image ? (
-                        <img
-                            src={item.image}
-                            alt={item.name}
-                            className="h-11 w-11 flex-shrink-0 rounded-full object-cover shadow-sm ring-2 ring-violet-500/25 dark:shadow-[0_4px_10px_rgba(0,0,0,0.8)]"
-                        />
+                        <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 p-1 shadow-[0_3px_8px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                            <img
+                                src={item.image}
+                                alt={item.name}
+                                className="h-full w-full rounded-full object-cover drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
+                            />
+                        </div>
                     ) : (
                         <div
-                            className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br shadow-sm ring-2 ring-white/10 dark:shadow-[0_4px_10px_rgba(0,0,0,0.8)] ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white`}
+                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br shadow-[0_4px_10px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.2),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)] ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white [&>span]:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.4)] dark:[&>span]:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]`}
                         >
-                            {initials}
+                            <span>{initials}</span>
                         </div>
                     )}
                     <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-theme">
+                        <div className="truncate text-sm font-semibold text-theme drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
                             {item.name}
                         </div>
                         <div className="truncate text-xs text-theme-muted">
-                            {item.role} · {item.company}
+                            {item.role} &middot; {item.company}
                         </div>
                     </div>
                 </div>
