@@ -1292,10 +1292,10 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="group flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-3.5 py-2 text-xs font-bold text-theme-muted shadow-[0_3px_0_rgba(0,0,0,0.25),0_4px_12px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_3px_0_rgba(34,211,238,0.18),0_6px_14px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2)]"
+                                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-700 transition-all duration-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                             >
-                                <MessageSquare className="h-3.5 w-3.5" />
-                                Need a Custom Quote?
+                                <MessageSquare className="h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] text-cyan-500 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                                <span>Need a Custom Quote?</span>
                             </button>
                         </div>
                     </motion.div>
@@ -1321,10 +1321,10 @@ export default function SubCategoryShow({
                             <div
                                 key={plan.id}
                                 onClick={() => setSelectedPlan(plan.id)}
-                                className={`relative flex cursor-pointer flex-col rounded-[2rem] border p-6 transition-all duration-300 ${
+                                className={`relative flex cursor-pointer flex-col rounded-[2rem] p-6 transition-all duration-300 ${
                                     selectedPlan === plan.id
-                                        ? '-translate-y-1.5 border-cyan-400/60 bg-card-surface shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]'
-                                        : 'hover:border-theme-muted/40 border-theme bg-card-surface shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                                        ? '-translate-y-1.5 bg-gradient-to-b from-cyan-50/50 to-white shadow-[0_0_48px_rgba(34,211,238,0.22),0_16px_48px_rgba(0,0,0,0.15),0_4px_12px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_2px_4px_rgba(255,255,255,0.8),inset_0_-2px_4px_rgba(0,0,0,0.05)] dark:from-cyan-950/30 dark:to-zinc-900 dark:shadow-[0_0_48px_rgba(34,211,238,0.15),0_16px_48px_rgba(0,0,0,0.55),0_4px_12px_rgba(0,0,0,0.35),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.15)]'
+                                        : 'bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.08),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(0,0,0,0.05)] dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.38),0_2px_8px_rgba(0,0,0,0.25),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.32),inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_1px_rgba(255,255,255,0.08)]'
                                 }`}
                             >
                                 {'popular' in plan && (
@@ -1347,8 +1347,8 @@ export default function SubCategoryShow({
                                             {plan.price}
                                         </span>
                                     </div>
-                                    <div className="bg-theme-surface/80 flex items-center gap-1.5 rounded-xl border border-theme px-3 py-2 text-xs text-theme-muted">
-                                        <Clock className="h-3.5 w-3.5" />
+                                    <div className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-700 bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.02)] dark:text-zinc-300 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                        <Clock className="h-3.5 w-3.5 text-zinc-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] dark:text-zinc-400 dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
                                         {plan.delivery}
                                     </div>
                                 </div>
@@ -1359,8 +1359,8 @@ export default function SubCategoryShow({
                                             key={f.label}
                                             className="flex items-center gap-3 text-sm text-theme-muted"
                                         >
-                                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
-                                                <f.Icon className="h-3 w-3 text-cyan-500" />
+                                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                                <f.Icon className="h-3 w-3 text-cyan-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
                                             </span>
                                             {f.label}
                                         </li>
@@ -1373,10 +1373,14 @@ export default function SubCategoryShow({
                                         e.stopPropagation();
                                         handleHireNow(plan.id);
                                     }}
-                                    className="group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-sm font-black tracking-widest text-background uppercase shadow-[0_6px_0_rgba(0,0,0,0.35),0_8px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:-translate-y-1 hover:bg-cyan-500 hover:text-white hover:shadow-[0_6px_0_rgba(0,170,200,0.4),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.22)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                    className={`group mt-auto flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold tracking-widest uppercase transition-all duration-300 hover:scale-105 ${
+                                        selectedPlan === plan.id
+                                            ? 'bg-gradient-to-b from-cyan-400 to-cyan-600 text-white shadow-[0_4px_12px_rgba(34,211,238,0.4),0_2px_4px_rgba(34,211,238,0.2),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_4px_12px_rgba(34,211,238,0.3),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]'
+                                            : 'bg-gradient-to-b from-zinc-800 to-zinc-950 text-white shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(0,0,0,1),inset_0_1px_2px_rgba(255,255,255,0.15)] hover:from-cyan-500 hover:to-cyan-600 hover:shadow-[0_6px_16px_rgba(34,211,238,0.4),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.3)] dark:from-zinc-100 dark:to-zinc-300 dark:text-zinc-900 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_2px_rgba(255,255,255,0.8)] dark:hover:from-cyan-400 dark:hover:to-cyan-500 dark:hover:text-white'
+                                    }`}
                                 >
-                                    Hire Now
-                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    <span className={selectedPlan === plan.id ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]' : ''}>Hire Now</span>
+                                    <ArrowRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${selectedPlan === plan.id ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]' : ''}`} />
                                 </button>
                             </div>
                         ))}
@@ -1386,10 +1390,10 @@ export default function SubCategoryShow({
                         <button
                             type="button"
                             onClick={() => setIsContactModalOpen(true)}
-                            className="group flex items-center gap-2 rounded-2xl border border-theme bg-theme-surface px-5 py-3 text-sm font-bold text-theme-muted shadow-[0_4px_0_rgba(0,0,0,0.28),0_6px_18px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/40 hover:bg-cyan-500/5 hover:text-cyan-500 hover:shadow-[0_4px_0_rgba(34,211,238,0.2),0_8px_22px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
+                            className="group flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-zinc-700 transition-all duration-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                         >
-                            <MessageSquare className="h-4 w-4" />
-                            Need a Custom Quote?
+                            <MessageSquare className="h-5 w-5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] text-cyan-500 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                            <span>Need a Custom Quote?</span>
                         </button>
                         <div className="flex items-center gap-2 text-xs text-theme-muted">
                             <Shield className="h-4 w-4 text-cyan-500" />
