@@ -22,7 +22,7 @@ import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
 import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
 // import PortalLoop from '@/components/HomeRedesign/PortalLoop';
-// import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
+import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 // import StackedTestimonials from '@/components/HomeRedesign/StackedTestimonials';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -741,7 +741,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection>
 
                 {/* Spotlight Carousel */}
-                {/* <section className="border-t border-theme bg-background py-20">
+                <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                             Testimonial Concept 3
@@ -749,11 +749,14 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
                             Spotlight Carousel
                         </h2>
+                        <p className="mt-4 text-theme-muted">
+                            Drag to swipe · click side cards to focus · ← → to step
+                        </p>
                     </div>
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <SpotlightCarousel />
-                </LazySection> */}
+                </LazySection>
 
                 {/* Stacked Depth */}
                 {/* <section className="border-t border-theme bg-background py-20">
