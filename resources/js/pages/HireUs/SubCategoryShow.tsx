@@ -2260,13 +2260,13 @@ export default function SubCategoryShow({
                     </p>
                     <textarea
                         placeholder="Describe what you need — scope, timeline, budget…"
-                        className="placeholder-theme-muted h-32 w-full rounded-2xl border border-theme bg-theme-surface p-4 text-sm text-theme transition-colors focus:border-cyan-500 focus:outline-none"
+                        className="placeholder-zinc-400 h-32 w-full rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4 text-sm text-zinc-900 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] transition-all focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-cyan-500/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] dark:focus:bg-zinc-900 dark:placeholder-zinc-500"
                     />
                     <button
                         type="button"
-                        className="w-full rounded-2xl bg-cyan-500 py-4 text-sm font-black tracking-widest text-white uppercase shadow-[0_6px_0_rgba(0,150,180,0.5),0_8px_24px_rgba(34,211,238,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-400 hover:shadow-[0_6px_0_rgba(0,150,180,0.5),0_10px_28px_rgba(34,211,238,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] active:translate-y-[4px] active:shadow-[0_1px_0_rgba(0,150,180,0.4),0_2px_8px_rgba(34,211,238,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                        className="w-full rounded-2xl bg-gradient-to-b from-cyan-400 to-cyan-600 py-4 text-sm font-bold tracking-widest text-white uppercase shadow-[0_4px_12px_rgba(34,211,238,0.4),0_2px_4px_rgba(34,211,238,0.2),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(34,211,238,0.4),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] active:scale-[0.98] dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_4px_12px_rgba(34,211,238,0.3),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                     >
-                        Send Message
+                        <span className="drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]">Send Message</span>
                     </button>
                 </div>
             </Modal>
