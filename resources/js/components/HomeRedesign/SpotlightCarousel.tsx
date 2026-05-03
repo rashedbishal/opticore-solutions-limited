@@ -75,7 +75,7 @@ const AVATAR_GRADIENTS = [
     'from-amber-500 to-orange-600',
 ] as const;
 
-const EASING: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const EASING: [number, number, number, number] = [0.8, 0, 0.2, 1];
 
 const CARD_HEIGHT = 340;
 const STAGE_HEIGHT = 400;
@@ -118,28 +118,41 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
         .slice(0, 2)
         .toUpperCase();
 
+    const activeBg = 'bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-[#1e1e2c] dark:via-[#151520] dark:to-[#0a0a0f]';
+    const inactiveBg = 'bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-[#151520] dark:via-[#0f0f16] dark:to-[#050508]';
+
+    const activeShadowLight = 'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12),0_0_0_1px_rgba(139,92,246,0.3),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-6px_12px_rgba(0,0,0,0.04)]';
+    const activeShadowDark = 'dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-6px_12px_rgba(0,0,0,0.7)]';
+
+    const inactiveShadowLight = 'shadow-[0_15px_30px_-10px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-6px_12px_rgba(0,0,0,0.02)]';
+    const inactiveShadowDark = 'dark:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(255,255,255,0.08),inset_0_-6px_12px_rgba(0,0,0,0.5)]';
+
     return (
         <div
-            className={`relative flex h-full flex-col overflow-hidden rounded-3xl border p-7 ${
+            className={`relative flex h-full flex-col overflow-hidden rounded-3xl p-7 transition-all duration-[1.4s] ease-[cubic-bezier(0.8,0,0.2,1)] ${
                 isActive
-                    ? 'border-violet-500/25 bg-theme-surface shadow-2xl shadow-violet-900/20'
-                    : 'bg-theme-surface/70 border-theme'
+                    ? `${activeBg} ${activeShadowLight} ${activeShadowDark}`
+                    : `${inactiveBg} ${inactiveShadowLight} ${inactiveShadowDark}`
             }`}
         >
+            {/* Top glare effect for 3D depth */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/25 to-transparent opacity-80 dark:opacity-100" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/60 dark:from-white/[0.04] to-transparent opacity-60" />
+
             {/* Gradient sheen for active card */}
             {isActive && (
-                <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br from-violet-500/[0.07] via-transparent to-cyan-500/[0.07]" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-500/[0.03] via-transparent to-cyan-500/[0.03] dark:from-violet-500/[0.08] dark:to-cyan-500/[0.05]" />
             )}
 
             {/* Dimming overlay for side cards */}
             {!isActive && (
-                <div className="pointer-events-none absolute inset-0 z-10 rounded-3xl bg-background/30" />
+                <div className="pointer-events-none absolute inset-0 z-10 bg-slate-900/[0.03] dark:bg-black/40" />
             )}
 
             <div className="relative z-0 flex h-full flex-col">
                 {/* Header row */}
                 <div className="mb-4 flex items-start justify-between gap-2">
-                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-400/50" />
+                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/30 dark:text-violet-400/50" />
                     <div className="flex gap-0.5">
                         {Array.from({ length: 5 }).map((_, si) => (
                             <Star
@@ -245,7 +258,7 @@ export default function SpotlightCarousel() {
             return;
         }
 
-        const interval = setInterval(next, 5000);
+        const interval = setInterval(next, 7000);
 
         return () => clearInterval(interval);
     }, [next, isHovered]);
@@ -370,10 +383,10 @@ export default function SpotlightCarousel() {
                                 }}
                                 animate={animate}
                                 transition={{
-                                    duration: 0.78,
+                                    duration: 1.4,
                                     ease: EASING,
-                                    filter: { duration: 0.55 },
-                                    opacity: { duration: 0.5 },
+                                    filter: { duration: 1.2 },
+                                    opacity: { duration: 1.2 },
                                 }}
                                 onClick={() => {
                                     if (hasDragged.current) {

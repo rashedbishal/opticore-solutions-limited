@@ -16,11 +16,11 @@ import {
 import { useEffect, useRef, useState, Suspense } from 'react';
 
 // import KineticBento from '@/components/HomeRedesign/KineticBento';
-import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
+// import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
 // import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
 import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
-import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
-import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
+// import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
+// import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
 // import PortalLoop from '@/components/HomeRedesign/PortalLoop';
 import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 // import StackedTestimonials from '@/components/HomeRedesign/StackedTestimonials';
@@ -678,24 +678,6 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <NebulaCluster />
                 </LazySection>
 
-                {/* Globe Carousel */}
-                <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
-                            Portfolio Concept 3
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Globe Carousel
-                        </h2>
-                        <p className="mt-4 text-theme-muted">
-                            Drag to spin · click a card to focus · ← → to step
-                        </p>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[70vh]">
-                    <GlobeCarousel items={globeItems} />
-                </LazySection>
-
                 {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
@@ -726,7 +708,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection> */}
 
                 {/* Orbiting Showcase */}
-                <section className="border-t border-theme bg-background py-20">
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
                             Testimonial Concept 2
@@ -738,7 +720,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[90vh]">
                     <OrbitingShowcase />
-                </LazySection>
+                </LazySection> */}
 
                 {/* Spotlight Carousel */}
                 <section className="border-t border-theme bg-background py-20">
@@ -775,7 +757,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection> */}
 
                 {/* Orbiting Testimonials */}
-                <section className="border-t border-theme bg-background py-20">
+                {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
                         <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
                             Testimonial Concept 5
@@ -791,7 +773,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </section>
                 <LazySection minHeightClassName="min-h-[70vh]">
                     <OrbitingTestimonials />
-                </LazySection>
+                </LazySection> */}
             </div>
 
             {/* Marquee */}
