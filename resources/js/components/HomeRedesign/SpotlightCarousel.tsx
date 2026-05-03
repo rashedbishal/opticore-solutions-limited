@@ -152,8 +152,10 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
             <div className="relative z-0 flex h-full flex-col">
                 {/* Header row */}
                 <div className="mb-4 flex items-start justify-between gap-2">
-                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/30 dark:text-violet-400/50" />
-                    <div className="flex gap-0.5">
+                    {/* Engraved quote icon */}
+                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/30 dark:text-violet-400/50 [filter:drop-shadow(0_1px_1px_rgba(255,255,255,0.8))] dark:[filter:drop-shadow(0_-1px_1px_rgba(0,0,0,0.6))]" />
+                    {/* Elevated stars */}
+                    <div className="flex gap-0.5 drop-shadow-sm dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                         {Array.from({ length: 5 }).map((_, si) => (
                             <Star
                                 key={si}
@@ -167,26 +169,26 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                     </div>
                 </div>
 
-                {/* Comment */}
+                {/* Comment (Engraved text) */}
                 <p
-                    className={`flex-1 text-sm leading-relaxed sm:text-base ${
+                    className={`flex-1 text-sm leading-relaxed sm:text-base [text-shadow:0_1px_1px_rgba(255,255,255,0.8)] dark:[text-shadow:0_-1px_1px_rgba(0,0,0,0.8),0_1px_1px_rgba(255,255,255,0.05)] ${
                         isActive ? 'text-theme-muted' : 'text-theme-muted/60'
                     }`}
                 >
                     &ldquo;{item.comment}&rdquo;
                 </p>
 
-                {/* Author */}
-                <div className="mt-6 flex items-center gap-3">
+                {/* Author (Elevated content) */}
+                <div className="mt-6 flex items-center gap-3 drop-shadow-md dark:drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
                     {item.image ? (
                         <img
                             src={item.image}
                             alt={item.name}
-                            className="h-11 w-11 flex-shrink-0 rounded-full object-cover ring-2 ring-violet-500/25"
+                            className="h-11 w-11 flex-shrink-0 rounded-full object-cover shadow-sm ring-2 ring-violet-500/25 dark:shadow-[0_4px_10px_rgba(0,0,0,0.8)]"
                         />
                     ) : (
                         <div
-                            className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white ring-2 ring-white/10`}
+                            className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br shadow-sm ring-2 ring-white/10 dark:shadow-[0_4px_10px_rgba(0,0,0,0.8)] ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white`}
                         >
                             {initials}
                         </div>
