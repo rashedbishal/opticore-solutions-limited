@@ -364,8 +364,8 @@ function FaqAccordionItem({ faq }: { faq: FaqItem }) {
 
 // ─── Gallery Slider (simultaneous 3-item track carousel) ────────────────────
 
-const SLIDE_EASE = [0.32, 0.72, 0, 1] as const;
-const SLIDE_DUR = { duration: 0.95, ease: SLIDE_EASE };
+const SLIDE_EASE = [0.25, 1, 0.5, 1] as const;
+const SLIDE_DUR = { duration: 1.4, ease: SLIDE_EASE };
 
 // CSS layout properties for each slot — no overlap at any rest position:
 //   peek-left  2%–22%  |  center 22%–78%  |  peek-right 78%–98%
@@ -379,15 +379,17 @@ const SLOT_STYLES = {
         opacity: 0,
         scale: 0.9,
         borderRadius: '16px',
+        filter: 'blur(12px)',
     },
     'peek-left': {
         left: '2%',
         top: '17.5%',
         width: '20%',
         height: '65%',
-        opacity: 1,
-        scale: 1.0,
+        opacity: 0.5,
+        scale: 0.95,
         borderRadius: '16px',
+        filter: 'blur(6px)',
     },
     center: {
         left: '22%',
@@ -397,15 +399,17 @@ const SLOT_STYLES = {
         opacity: 1,
         scale: 1.0,
         borderRadius: '0px',
+        filter: 'blur(0px)',
     },
     'peek-right': {
         left: '78%',
         top: '17.5%',
         width: '20%',
         height: '65%',
-        opacity: 1,
-        scale: 1.0,
+        opacity: 0.5,
+        scale: 0.95,
         borderRadius: '16px',
+        filter: 'blur(6px)',
     },
     'exit-right': {
         left: '100%',
@@ -415,6 +419,7 @@ const SLOT_STYLES = {
         opacity: 0,
         scale: 0.9,
         borderRadius: '16px',
+        filter: 'blur(12px)',
     },
 } as const;
 
@@ -698,7 +703,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                             {/* Dim overlay for non-center slots */}
                             <motion.div
                                 className="pointer-events-none absolute inset-0 bg-black"
-                                animate={{ opacity: isCenter ? 0 : 0.45 }}
+                                animate={{ opacity: isCenter ? 0 : 0.6 }}
                                 transition={SLIDE_DUR}
                             />
                         </motion.div>
