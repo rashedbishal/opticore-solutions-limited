@@ -54,8 +54,8 @@ const defaultReasons: HighlightItem[] = [
 ];
 
 export const navigationItems: NavItem[] = [
-    { label: 'Home', href: '/', icon: 'Globe' },
-    { label: 'Hire Us', href: '/hire-us', icon: 'Box' },
+    { label: 'Home', href: '/', icon: 'Home' },
+    { label: 'Hire Us', href: '/hire-us', icon: 'Briefcase' },
 ];
 
 export const bangladeshPhoneNumber = '+88-01896204400';

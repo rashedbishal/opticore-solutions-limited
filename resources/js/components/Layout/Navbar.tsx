@@ -13,6 +13,8 @@ import {
     User,
     LogOut,
     LogIn,
+    Home,
+    Briefcase,
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
@@ -29,6 +31,8 @@ const IconMap: Record<string, any> = {
     Code2,
     Mail,
     User,
+    Home,
+    Briefcase,
 };
 
 function NavLink({
