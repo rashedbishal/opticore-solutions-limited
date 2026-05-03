@@ -1762,46 +1762,45 @@ export default function SubCategoryShow({
                         variants={fadeUp}
                         className="relative z-10 mx-auto max-w-7xl space-y-8 px-4"
                     >
-                        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                            <div>
+                        <div className="flex flex-col gap-6 md:flex-row md:items-stretch md:justify-between">
+                            <div className="flex flex-col justify-center rounded-[2rem] p-6 sm:p-8 bg-gradient-to-b from-white to-slate-50 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)] md:flex-1">
                                 <p className="mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-500 uppercase">
                                     Verified Client Feedback
                                 </p>
-                                <h2 className="text-3xl font-black tracking-tight text-theme md:text-4xl">
+                                <h2 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white md:text-4xl drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                     Client Reviews
                                 </h2>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <div className="flex text-amber-400">
-                                        {[1, 2, 3, 4, 5].map((s) => (
-                                            <Star
-                                                key={s}
-                                                className="h-4 w-4 fill-current"
-                                            />
-                                        ))}
+                                <div className="mt-4 flex items-center gap-3">
+                                    <div className="flex items-center gap-1.5 rounded-xl bg-amber-50 px-3 py-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_1px_rgba(251,191,36,0.2)] dark:bg-amber-950/30 dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(251,191,36,0.2)]">
+                                        <div className="flex text-amber-500">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star
+                                                    key={s}
+                                                    className="h-4 w-4 fill-current drop-shadow-[0_1px_2px_rgba(245,158,11,0.3)]"
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="ml-1 text-lg font-bold text-amber-600 dark:text-amber-400">
+                                            {mappedReviews.length > 0
+                                                ? (
+                                                      mappedReviews.reduce(
+                                                          (sum, r) => sum + r.rating,
+                                                          0,
+                                                      ) / mappedReviews.length
+                                                  ).toFixed(1)
+                                                : '—'}
+                                        </span>
                                     </div>
-                                    <span className="text-lg font-bold text-theme">
-                                        {mappedReviews.length > 0
-                                            ? (
-                                                  mappedReviews.reduce(
-                                                      (sum, r) =>
-                                                          sum + r.rating,
-                                                      0,
-                                                  ) / mappedReviews.length
-                                              ).toFixed(1)
-                                            : '—'}
-                                    </span>
-                                    <span className="text-sm text-theme-subtle">
+                                    <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
                                         ({mappedReviews.length} verified
-                                        {mappedReviews.length === 1
-                                            ? ' review'
-                                            : ' reviews'}
-                                        )
+                                        {mappedReviews.length === 1 ? ' review' : ' reviews'})
                                     </span>
                                 </div>
                             </div>
 
                             {/* Rating Breakdown */}
-                            <div className="flex w-full max-w-xs flex-col gap-2">
+                            <div className="flex w-full md:max-w-xs lg:max-w-sm flex-col justify-center gap-2 rounded-[2rem] p-6 sm:p-8 bg-gradient-to-b from-white to-slate-50 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)]">
+                                <h3 className="mb-2 text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-zinc-500 uppercase">Rating Breakdown</h3>
                                 {ratingBreakdown.map((row) => (
                                     <button
                                         key={row.star}
@@ -1812,22 +1811,22 @@ export default function SubCategoryShow({
                                                     : row.star,
                                             )
                                         }
-                                        className={`group flex items-center gap-3 transition-opacity ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
+                                        className={`group flex items-center gap-3 rounded-lg px-2 py-1 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800/50 ${ratingFilter !== null && ratingFilter !== row.star ? 'opacity-40' : 'opacity-100'}`}
                                     >
-                                        <span className="flex w-12 items-center gap-1 text-xs font-bold text-theme-subtle">
+                                        <span className="flex w-12 items-center gap-1 text-xs font-bold text-zinc-500 dark:text-zinc-400">
                                             {row.star}{' '}
-                                            <Star className="h-3 w-3 fill-current text-amber-500" />
+                                            <Star className="h-3 w-3 fill-current text-amber-500 drop-shadow-[0_1px_1px_rgba(245,158,11,0.3)]" />
                                         </span>
-                                        <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-theme-surface-hover">
+                                        <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-zinc-200 shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] dark:bg-zinc-950 dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{
                                                     width: `${(row.count / mappedReviews.length) * 100}%`,
                                                 }}
-                                                className="absolute inset-y-0 left-0 bg-amber-500"
+                                                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]"
                                             />
                                         </div>
-                                        <span className="w-6 text-right text-xs font-medium text-theme-subtle">
+                                        <span className="w-6 text-right text-xs font-bold text-zinc-500 dark:text-zinc-400">
                                             {row.count}
                                         </span>
                                     </button>
