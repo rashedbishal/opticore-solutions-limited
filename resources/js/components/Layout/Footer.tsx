@@ -13,7 +13,6 @@ import {
     Send,
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
-import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,
@@ -230,7 +229,6 @@ export default function Footer() {
                         Built for brands that want sharper positioning, stronger
                         visuals, and digital experiences with weight.
                     </p>
-                    <ThemeSwitcher />
                 </div>
             </div>
         </footer>

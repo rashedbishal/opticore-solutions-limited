@@ -17,6 +17,7 @@ import {
 import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import MagneticButton from '@/components/UI/MagneticButton';
+import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -173,6 +174,7 @@ export default function Navbar() {
                     <div className="flex flex-1 items-center justify-end gap-3">
                         <div className="hidden items-center gap-3 md:flex">
                             <div className="flex h-10 items-center gap-1 rounded-full border border-slate-300 bg-slate-100 p-1 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                                <ThemeSwitcher className="h-8 w-8 border-0 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10" />
                                 {user ? (
                                     <>
                                         <Link
@@ -337,46 +339,57 @@ export default function Navbar() {
                                     transition={{ delay: 0.25 }}
                                     className="mx-auto w-full max-w-md"
                                 >
-                                    {user ? (
-                                        <div className="flex flex-col gap-3">
-                                            <Link
-                                                href="/profile"
-                                                onClick={() => setOpen(false)}
-                                                className={cn(
-                                                    'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all',
-                                                    url === '/profile'
-                                                        ? 'bg-violet-600 text-white'
-                                                        : 'bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-white',
-                                                )}
-                                            >
-                                                <User className="h-5 w-5" />
-                                                Profile
-                                            </Link>
-                                            <Link
-                                                href="/logout"
-                                                method="post"
-                                                as="button"
-                                                onClick={() => setOpen(false)}
-                                                className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
-                                            >
-                                                <LogOut className="h-5 w-5" />
-                                                Sign out
-                                            </Link>
+                                    <div className="flex items-start gap-3">
+                                        <ThemeSwitcher className="shrink-0" />
+                                        <div className="flex-1">
+                                            {user ? (
+                                                <div className="flex flex-col gap-3">
+                                                    <Link
+                                                        href="/profile"
+                                                        onClick={() =>
+                                                            setOpen(false)
+                                                        }
+                                                        className={cn(
+                                                            'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all',
+                                                            url === '/profile'
+                                                                ? 'bg-violet-600 text-white'
+                                                                : 'bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-white',
+                                                        )}
+                                                    >
+                                                        <User className="h-5 w-5" />
+                                                        Profile
+                                                    </Link>
+                                                    <Link
+                                                        href="/logout"
+                                                        method="post"
+                                                        as="button"
+                                                        onClick={() =>
+                                                            setOpen(false)
+                                                        }
+                                                        className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
+                                                    >
+                                                        <LogOut className="h-5 w-5" />
+                                                        Sign out
+                                                    </Link>
+                                                </div>
+                                            ) : (
+                                                <MagneticButton
+                                                    href="/login"
+                                                    fullWidth
+                                                    ariaLabel="Sign in to your account"
+                                                    onClick={() =>
+                                                        setOpen(false)
+                                                    }
+                                                    className="py-4 text-base font-bold tracking-wide uppercase"
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <LogIn className="h-5 w-5" />
+                                                        Sign in
+                                                    </div>
+                                                </MagneticButton>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <MagneticButton
-                                            href="/login"
-                                            fullWidth
-                                            ariaLabel="Sign in to your account"
-                                            onClick={() => setOpen(false)}
-                                            className="py-4 text-base font-bold tracking-wide uppercase"
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <LogIn className="h-5 w-5" />
-                                                Sign in
-                                            </div>
-                                        </MagneticButton>
-                                    )}
+                                    </div>
                                 </motion.div>
                             </div>
                         </div>

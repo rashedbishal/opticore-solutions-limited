@@ -1,22 +1,25 @@
 import type { ReactNode } from 'react';
 import Lenis from '@studio-freight/lenis';
-import { useEffect, useRef } from 'react';
+import { createContext, useEffect, useState } from 'react';
+
+export const LenisContext = createContext<Lenis | null>(null);
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
-    const lenisRef = useRef<Lenis | null>(null);
+    const [lenis, setLenis] = useState<Lenis | null>(null);
 
     useEffect(() => {
-        const lenis = new Lenis({
+        const instance = new Lenis({
             duration: 1.4,
             easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             smoothTouch: false,
             touchMultiplier: 2,
         } as unknown as ConstructorParameters<typeof Lenis>[0]);
 
-        lenisRef.current = lenis;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLenis(instance);
 
         function raf(time: number) {
-            lenis.raf(time);
+            instance.raf(time);
             requestAnimationFrame(raf);
         }
 
@@ -24,9 +27,12 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
         return () => {
             cancelAnimationFrame(rafId);
-            lenis.destroy();
+            instance.destroy();
+            setLenis(null);
         };
     }, []);
 
-    return <>{children}</>;
+    return (
+        <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>
+    );
 }

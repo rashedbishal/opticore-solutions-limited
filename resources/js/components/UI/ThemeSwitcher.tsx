@@ -2,11 +2,11 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({ className }: { className?: string }) {
     const { theme, toggle, mounted } = useTheme();
 
     if (!mounted) {
-        return <div className="h-10 w-10" />;
+        return <div className={cn('h-10 w-10', className)} />;
     }
 
     return (
@@ -18,6 +18,7 @@ export default function ThemeSwitcher() {
                 'inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300',
                 'border border-black/20 bg-black/5 text-zinc-600 hover:border-black/30 hover:bg-black/10 hover:text-black',
                 'dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white',
+                className,
             )}
         >
             {theme === 'dark' ? (

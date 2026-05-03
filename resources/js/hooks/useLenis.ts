@@ -1,6 +1,6 @@
-import type Lenis from '@studio-freight/lenis';
-import { useRef } from 'react';
+import { useContext } from 'react';
+import { LenisContext } from '@/components/Layout/SmoothScroll';
 
 export function useLenis() {
-    return useRef<Lenis | null>(null);
+    return useContext(LenisContext);
 }

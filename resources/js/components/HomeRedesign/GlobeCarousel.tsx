@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useLenis } from '@/hooks/useLenis';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // ── Public types ──────────────────────────────────────────────────────────────
@@ -188,6 +189,12 @@ export default function GlobeCarousel({
     const selectedIdRef = useRef<string | null>(null);
     const lightboxOpenRef = useRef(false); // pauses auto-rotate while modal is open
 
+    const lenis = useLenis();
+    const lenisRef = useRef(lenis);
+    useEffect(() => {
+        lenisRef.current = lenis;
+    }, [lenis]);
+
     const autoRotateRef = useRef(autoRotate);
     const rotSpeedRef = useRef(rotationSpeed);
     useEffect(() => {
@@ -227,8 +234,7 @@ export default function GlobeCarousel({
 
     useEffect(
         () => () => {
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
+            lenisRef.current?.start();
         },
         [],
     );
@@ -337,8 +343,7 @@ export default function GlobeCarousel({
             selectedIdRef.current = null;
             setSelectedId(null);
             lightboxOpenRef.current = false;
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
+            lenisRef.current?.start();
         }
     }, []);
 
@@ -372,8 +377,7 @@ export default function GlobeCarousel({
             selectedIdRef.current = null;
             setSelectedId(null);
             lightboxOpenRef.current = false;
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
+            lenisRef.current?.start();
         }
     }, []);
 
@@ -452,8 +456,7 @@ export default function GlobeCarousel({
                         });
                         setLbPhase('opening');
                         lightboxOpenRef.current = true;
-                        document.body.style.overflow = 'hidden';
-                        document.documentElement.style.overflow = 'hidden';
+                        lenisRef.current?.stop();
 
                         setSelected(card.item.id);
                         snapCardToFront(card);

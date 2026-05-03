@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
+import { useLenis } from '@/hooks/useLenis';
 
 interface ModalProps extends PropsWithChildren {
     open: boolean;
@@ -11,6 +12,8 @@ interface ModalProps extends PropsWithChildren {
 }
 
 export default function Modal({ open, title, onClose, children }: ModalProps) {
+    const lenis = useLenis();
+
     const mounted = useSyncExternalStore(
         () => () => {},
         () => true,
@@ -18,40 +21,16 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
     );
 
     useEffect(() => {
-        const scrollY = window.scrollY;
-
         if (open) {
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.overflow = 'hidden';
+            lenis?.stop();
         } else {
-            const top = document.body.style.top;
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.overflow = '';
-
-            if (top) {
-                window.scrollTo(0, parseInt(top || '0') * -1);
-            }
+            lenis?.start();
         }
 
         return () => {
-            const top = document.body.style.top;
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.overflow = '';
-
-            if (top) {
-                window.scrollTo(0, parseInt(top || '0') * -1);
-            }
+            lenis?.start();
         };
-    }, [open]);
+    }, [open, lenis]);
 
     if (!mounted) {
         return null;
