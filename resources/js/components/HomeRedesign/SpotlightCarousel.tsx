@@ -118,14 +118,20 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
         .slice(0, 2)
         .toUpperCase();
 
-    const activeBg = 'bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-[#1e1e2c] dark:via-[#151520] dark:to-[#0a0a0f]';
-    const inactiveBg = 'bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-[#151520] dark:via-[#0f0f16] dark:to-[#050508]';
+    const activeBg =
+        'bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-[#1e1e2c] dark:via-[#151520] dark:to-[#0a0a0f]';
+    const inactiveBg =
+        'bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-[#151520] dark:via-[#0f0f16] dark:to-[#050508]';
 
-    const activeShadowLight = 'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15),0_0_0_1px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(255,255,255,0.8),inset_0_1px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(0,0,0,0.05)]';
-    const activeShadowDark = 'dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.5)]';
+    const activeShadowLight =
+        'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15),0_0_0_1px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(255,255,255,0.8),inset_0_1px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(0,0,0,0.05)]';
+    const activeShadowDark =
+        'dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.5)]';
 
-    const inactiveShadowLight = 'shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.6),inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(0,0,0,0.03)]';
-    const inactiveShadowDark = 'dark:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(255,255,255,0.08),inset_0_-1px_2px_rgba(0,0,0,0.3)]';
+    const inactiveShadowLight =
+        'shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.6),inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(0,0,0,0.03)]';
+    const inactiveShadowDark =
+        'dark:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(255,255,255,0.08),inset_0_-1px_2px_rgba(0,0,0,0.3)]';
 
     return (
         <div
@@ -136,8 +142,8 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
             }`}
         >
             {/* Top glare effect for 3D depth */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/25 to-transparent opacity-80 dark:opacity-100" />
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/60 dark:from-white/[0.04] to-transparent opacity-60" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80 dark:via-white/25 dark:opacity-100" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/60 to-transparent opacity-60 dark:from-white/[0.04]" />
 
             {/* Gradient sheen for active card */}
             {isActive && (
@@ -171,7 +177,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
 
                 {/* Comment (Engraved text) */}
                 <p
-                    className={`flex-1 text-sm leading-relaxed sm:text-base [text-shadow:0_1px_1px_rgba(255,255,255,0.8)] dark:[text-shadow:0_-1px_1px_rgba(0,0,0,0.8),0_1px_1px_rgba(255,255,255,0.05)] ${
+                    className={`flex-1 text-sm leading-relaxed [text-shadow:0_1px_1px_rgba(255,255,255,0.8)] sm:text-base dark:[text-shadow:0_-1px_1px_rgba(0,0,0,0.8),0_1px_1px_rgba(255,255,255,0.05)] ${
                         isActive ? 'text-theme-muted' : 'text-theme-muted/60'
                     }`}
                 >

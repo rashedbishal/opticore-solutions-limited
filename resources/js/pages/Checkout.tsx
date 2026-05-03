@@ -123,8 +123,8 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-6"
                         >
-                            <div className="rounded-[2rem] p-8 bg-gradient-to-b from-white to-slate-50 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)] border border-slate-100 dark:border-zinc-800">
-                                <h2 className="mb-6 text-xl font-bold tracking-tight text-zinc-900 dark:text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                            <div className="rounded-[2rem] border border-slate-100 bg-gradient-to-b from-white to-slate-50 p-8 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                <h2 className="mb-6 text-xl font-bold tracking-tight text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                     Payment Method
                                 </h2>
 
@@ -190,23 +190,23 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-4"
                         >
-                            <div className="rounded-[2rem] p-6 bg-gradient-to-b from-white to-slate-50 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)] border border-slate-100 dark:border-zinc-800">
-                                <h2 className="mb-5 text-lg font-bold tracking-tight text-zinc-900 dark:text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                            <div className="rounded-[2rem] border border-slate-100 bg-gradient-to-b from-white to-slate-50 p-6 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                <h2 className="mb-5 text-lg font-bold tracking-tight text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                     Order Summary
                                 </h2>
 
-                                <div className="space-y-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
+                                <div className="space-y-4 border-b border-zinc-200 pb-5 dark:border-zinc-800">
                                     <div>
-                                        <div className="text-[10px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                                        <div className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase dark:text-zinc-500">
                                             Service
                                         </div>
-                                        <div className="mt-1 text-sm font-bold text-zinc-900 dark:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+                                        <div className="mt-1 text-sm font-bold text-zinc-900 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:text-white">
                                             {item.service}
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <div className="text-[10px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                                            <div className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase dark:text-zinc-500">
                                                 Plan
                                             </div>
                                             <div className="mt-1 flex items-center gap-1.5 rounded-xl bg-cyan-50/50 px-3 py-1.5 text-sm font-bold text-cyan-600 shadow-[inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_1px_rgba(34,211,238,0.2)] dark:bg-cyan-950/30 dark:text-cyan-400 dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(34,211,238,0.2)]">
@@ -215,7 +215,7 @@ export default function Checkout({ item }: Props) {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-[10px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                                            <div className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase dark:text-zinc-500">
                                                 Delivery
                                             </div>
                                             <div className="mt-1 flex items-center gap-1.5 rounded-xl bg-zinc-100 px-3 py-1.5 text-sm font-bold text-zinc-600 shadow-[inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_1px_rgba(0,0,0,0.05)] dark:bg-zinc-800/50 dark:text-zinc-300 dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
@@ -230,7 +230,7 @@ export default function Checkout({ item }: Props) {
                                     <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
                                         Total
                                     </span>
-                                    <span className="text-2xl font-black text-zinc-900 dark:text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                                    <span className="text-2xl font-black text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                         {item.price}
                                     </span>
                                 </div>
@@ -283,10 +283,10 @@ export default function Checkout({ item }: Props) {
                                 </button>
                             </div>
 
-                            <div className="rounded-[2rem] p-5 bg-gradient-to-b from-cyan-50 to-white shadow-[0_4px_12px_rgba(34,211,238,0.1),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:from-cyan-950/40 dark:to-zinc-900 dark:shadow-[0_4px_12px_rgba(34,211,238,0.05),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_1px_2px_rgba(255,255,255,0.1)] border border-cyan-100/50 dark:border-cyan-900/50">
+                            <div className="rounded-[2rem] border border-cyan-100/50 bg-gradient-to-b from-cyan-50 to-white p-5 shadow-[0_4px_12px_rgba(34,211,238,0.1),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:border-cyan-900/50 dark:from-cyan-950/40 dark:to-zinc-900 dark:shadow-[0_4px_12px_rgba(34,211,238,0.05),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_1px_2px_rgba(255,255,255,0.1)]">
                                 <h4 className="mb-1.5 flex items-center gap-2 text-sm font-bold text-cyan-600 dark:text-cyan-400">
-                                    <Shield className="h-4 w-4 drop-shadow-[0_1px_1px_rgba(34,211,238,0.3)]" /> Secure
-                                    Purchase
+                                    <Shield className="h-4 w-4 drop-shadow-[0_1px_1px_rgba(34,211,238,0.3)]" />{' '}
+                                    Secure Purchase
                                 </h4>
                                 <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                                     Your payment is held securely and released

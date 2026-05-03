@@ -246,16 +246,32 @@ export default function Profile() {
                                 {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                 {(
                                     [
-                                        { value: 'overview', icon: User, label: 'Overview' },
-                                        { value: 'settings', icon: Settings, label: 'Account Settings' },
-                                        { value: 'security', icon: Shield, label: 'Security' },
-                                        { value: 'preferences', icon: Bell, label: 'Preferences' },
+                                        {
+                                            value: 'overview',
+                                            icon: User,
+                                            label: 'Overview',
+                                        },
+                                        {
+                                            value: 'settings',
+                                            icon: Settings,
+                                            label: 'Account Settings',
+                                        },
+                                        {
+                                            value: 'security',
+                                            icon: Shield,
+                                            label: 'Security',
+                                        },
+                                        {
+                                            value: 'preferences',
+                                            icon: Bell,
+                                            label: 'Preferences',
+                                        },
                                     ] as const
                                 ).map(({ value, icon: Icon, label }) => (
                                     <TabsTrigger
                                         key={value}
                                         value={value}
-                                        className="flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold transition-all duration-300 hover:scale-[1.02] bg-gradient-to-b from-white to-slate-50 text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:data-[state=active]:from-violet-600 dark:data-[state=active]:to-violet-700 dark:data-[state=active]:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                        className="flex items-center gap-2 rounded-2xl bg-gradient-to-b from-white to-slate-50 px-6 py-3 text-sm font-bold text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-[1.02] data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:data-[state=active]:from-violet-600 dark:data-[state=active]:to-violet-700 dark:data-[state=active]:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                                     >
                                         <Icon className="h-4 w-4 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.2)]" />
                                         {label}

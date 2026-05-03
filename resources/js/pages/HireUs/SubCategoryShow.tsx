@@ -1292,9 +1292,9 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-700 transition-all duration-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                className="group flex items-center gap-2 rounded-xl bg-gradient-to-b from-white to-slate-50 px-4 py-2.5 text-xs font-bold text-zinc-700 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                             >
-                                <MessageSquare className="h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] text-cyan-500 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                                <MessageSquare className="h-4 w-4 text-cyan-500 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                                 <span>Need a Custom Quote?</span>
                             </button>
                         </div>
@@ -1347,7 +1347,7 @@ export default function SubCategoryShow({
                                             {plan.price}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-700 bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.02)] dark:text-zinc-300 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                    <div className="flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-white to-slate-50 px-3 py-2 text-xs font-semibold text-zinc-700 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.02)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
                                         <Clock className="h-3.5 w-3.5 text-zinc-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] dark:text-zinc-400 dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
                                         {plan.delivery}
                                     </div>
@@ -1379,8 +1379,18 @@ export default function SubCategoryShow({
                                             : 'bg-gradient-to-b from-zinc-800 to-zinc-950 text-white shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(0,0,0,1),inset_0_1px_2px_rgba(255,255,255,0.15)] hover:from-cyan-500 hover:to-cyan-600 hover:shadow-[0_6px_16px_rgba(34,211,238,0.4),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.3)] dark:from-zinc-100 dark:to-zinc-300 dark:text-zinc-900 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_2px_rgba(255,255,255,0.8)] dark:hover:from-cyan-400 dark:hover:to-cyan-500 dark:hover:text-white'
                                     }`}
                                 >
-                                    <span className={selectedPlan === plan.id ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]' : ''}>Hire Now</span>
-                                    <ArrowRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${selectedPlan === plan.id ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]' : ''}`} />
+                                    <span
+                                        className={
+                                            selectedPlan === plan.id
+                                                ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]'
+                                                : ''
+                                        }
+                                    >
+                                        Hire Now
+                                    </span>
+                                    <ArrowRight
+                                        className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${selectedPlan === plan.id ? 'drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]' : ''}`}
+                                    />
                                 </button>
                             </div>
                         ))}
@@ -1390,9 +1400,9 @@ export default function SubCategoryShow({
                         <button
                             type="button"
                             onClick={() => setIsContactModalOpen(true)}
-                            className="group flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-zinc-700 transition-all duration-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                            className="group flex items-center gap-2 rounded-2xl bg-gradient-to-b from-white to-slate-50 px-6 py-3.5 text-sm font-bold text-zinc-700 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                         >
-                            <MessageSquare className="h-5 w-5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] text-cyan-500 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                            <MessageSquare className="h-5 w-5 text-cyan-500 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                             <span>Need a Custom Quote?</span>
                         </button>
                         <div className="flex items-center gap-2 text-xs text-theme-muted">
@@ -1763,11 +1773,11 @@ export default function SubCategoryShow({
                         className="relative z-10 mx-auto max-w-7xl space-y-8 px-4"
                     >
                         <div className="flex flex-col gap-6 md:flex-row md:items-stretch md:justify-between">
-                            <div className="flex flex-col justify-center rounded-[2rem] p-6 sm:p-8 bg-gradient-to-b from-white to-slate-50 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)] md:flex-1">
+                            <div className="flex flex-col justify-center rounded-[2rem] bg-gradient-to-b from-white to-slate-50 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] sm:p-8 md:flex-1 dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)]">
                                 <p className="mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-500 uppercase">
                                     Verified Client Feedback
                                 </p>
-                                <h2 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white md:text-4xl drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                                <h2 className="text-3xl font-black tracking-tight text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] md:text-4xl dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                     Client Reviews
                                 </h2>
                                 <div className="mt-4 flex items-center gap-3">
@@ -1784,7 +1794,8 @@ export default function SubCategoryShow({
                                             {mappedReviews.length > 0
                                                 ? (
                                                       mappedReviews.reduce(
-                                                          (sum, r) => sum + r.rating,
+                                                          (sum, r) =>
+                                                              sum + r.rating,
                                                           0,
                                                       ) / mappedReviews.length
                                                   ).toFixed(1)
@@ -1793,14 +1804,19 @@ export default function SubCategoryShow({
                                     </div>
                                     <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
                                         ({mappedReviews.length} verified
-                                        {mappedReviews.length === 1 ? ' review' : ' reviews'})
+                                        {mappedReviews.length === 1
+                                            ? ' review'
+                                            : ' reviews'}
+                                        )
                                     </span>
                                 </div>
                             </div>
 
                             {/* Rating Breakdown */}
-                            <div className="flex w-full md:max-w-xs lg:max-w-sm flex-col justify-center gap-2 rounded-[2rem] p-6 sm:p-8 bg-gradient-to-b from-white to-slate-50 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                                <h3 className="mb-2 text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-zinc-500 uppercase">Rating Breakdown</h3>
+                            <div className="flex w-full flex-col justify-center gap-2 rounded-[2rem] bg-gradient-to-b from-white to-slate-50 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-1px_2px_rgba(0,0,0,0.02)] sm:p-8 md:max-w-xs lg:max-w-sm dark:from-zinc-800 dark:to-zinc-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.05)]">
+                                <h3 className="mb-2 text-[10px] font-bold tracking-[0.2em] text-zinc-400 uppercase dark:text-zinc-500">
+                                    Rating Breakdown
+                                </h3>
                                 {ratingBreakdown.map((row) => (
                                     <button
                                         key={row.star}
@@ -2259,13 +2275,15 @@ export default function SubCategoryShow({
                     </p>
                     <textarea
                         placeholder="Describe what you need — scope, timeline, budget…"
-                        className="placeholder-zinc-400 h-32 w-full rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4 text-sm text-zinc-900 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] transition-all focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-cyan-500/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] dark:focus:bg-zinc-900 dark:placeholder-zinc-500"
+                        className="h-32 w-full rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4 text-sm text-zinc-900 placeholder-zinc-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] transition-all focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-500/10 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:placeholder-zinc-500 dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] dark:focus:bg-zinc-900"
                     />
                     <button
                         type="button"
                         className="w-full rounded-2xl bg-gradient-to-b from-cyan-400 to-cyan-600 py-4 text-sm font-bold tracking-widest text-white uppercase shadow-[0_4px_12px_rgba(34,211,238,0.4),0_2px_4px_rgba(34,211,238,0.2),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(34,211,238,0.4),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] active:scale-[0.98] dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_4px_12px_rgba(34,211,238,0.3),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
                     >
-                        <span className="drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]">Send Message</span>
+                        <span className="drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]">
+                            Send Message
+                        </span>
                     </button>
                 </div>
             </Modal>

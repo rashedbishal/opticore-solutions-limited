@@ -191,10 +191,14 @@ export default function Navbar() {
                                             )}
                                             aria-label="Profile"
                                         >
-                                            <User className={cn(
-                                                "h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]",
-                                                url === '/profile' ? 'text-white' : 'text-zinc-600 dark:text-zinc-300'
-                                            )} />
+                                            <User
+                                                className={cn(
+                                                    'h-4 w-4 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]',
+                                                    url === '/profile'
+                                                        ? 'text-white'
+                                                        : 'text-zinc-600 dark:text-zinc-300',
+                                                )}
+                                            />
                                         </Link>
                                         <Link
                                             href="/logout"
