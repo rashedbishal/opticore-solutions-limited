@@ -159,9 +159,9 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                 {/* Header row */}
                 <div className="mb-4 flex items-start justify-between gap-2">
                     {/* Elevated quote icon */}
-                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/80 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:text-violet-400/80 dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
+                    <Quote className="h-7 w-7 flex-shrink-0 text-violet-500/80 drop-icon dark:text-violet-400/80 dark:drop-icon" />
                     {/* Elevated stars */}
-                    <div className="flex gap-0.5 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]">
+                    <div className="flex gap-0.5 drop-icon">
                         {Array.from({ length: 5 }).map((_, si) => (
                             <Star
                                 key={si}
@@ -187,22 +187,22 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                 {/* Author (Elevated content) */}
                 <div className="mt-6 flex items-center gap-4">
                     {item.image ? (
-                        <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 p-1 shadow-[0_3px_8px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                        <div className="neo-btn-ghost relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full p-1">
                             <img
                                 src={item.image}
                                 alt={item.name}
-                                className="h-full w-full rounded-full object-cover drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
+                                className="h-full w-full rounded-full object-cover drop-icon"
                             />
                         </div>
                     ) : (
                         <div
-                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br shadow-[0_4px_10px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.2),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)] ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white [&>span]:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.4)] dark:[&>span]:drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]`}
+                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br shadow-[0_4px_10px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.2),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)] ${AVATAR_GRADIENTS[colorIndex % AVATAR_GRADIENTS.length]} text-sm font-bold text-white [&>span]:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.4)] dark:[&>span]:drop-icon`}
                         >
                             <span>{initials}</span>
                         </div>
                     )}
                     <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-theme drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                        <div className="truncate text-sm font-semibold text-theme drop-icon-sm dark:drop-icon-md">
                             {item.name}
                         </div>
                         <div className="truncate text-xs text-theme-muted">

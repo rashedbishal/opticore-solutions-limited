@@ -362,15 +362,7 @@
         border: 1px solid var(--theme-border);
         background-color: var(--theme-surface);
         @apply backdrop-blur-md;
-        box-shadow:
-            inset 0 1px 0 rgb(255 255 255 / 0.12),
-            0 10px 40px oklch(0 0 0 / 0.04);
-
-        @variant dark {
-            box-shadow:
-                inset 0 1px 0 rgb(255 255 255 / 0.07),
-                0 18px 80px rgb(0 0 0 / 0.28);
-        }
+        box-shadow: var(--neo-shadow-panel);
     }
 
     .gradient-text {
@@ -379,7 +371,7 @@
 
     .section-kicker {
         @apply mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[13px] font-semibold tracking-wider uppercase;
-        border: 1px solid var(--theme-border);
+        border: 1px solid var(--border-default);
         background-color: var(--theme-surface);
         color: var(--theme-text-muted);
     }
@@ -442,6 +434,179 @@
         background-size: 22px 22px;
         animation: var(--animate-grid-drift);
     }
+
+    /* ═══════════════════════════════════════════════════
+       NEO COMPONENT CLASSES — raw CSS, no @apply for gradients/blur
+       Shadow tokens auto-switch via CSS var dark-mode overrides.
+       ═══════════════════════════════════════════════════ */
+
+    .neo-panel {
+        border-radius: 2rem;
+        border: 1px solid #e2e8f0;
+        background: linear-gradient(to bottom, rgb(255 255 255 / 0.9), rgb(248 250 252 / 0.8));
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        box-shadow: var(--neo-shadow-panel);
+        @variant dark {
+            border-color: #3f3f46;
+            background: linear-gradient(to bottom, rgb(39 39 42 / 0.9), rgb(24 24 27 / 0.8));
+        }
+    }
+
+    .neo-panel-elevated {
+        border-radius: 2rem;
+        border: 1px solid #f1f5f9;
+        background: linear-gradient(to bottom, #fff, #f8fafc);
+        box-shadow: var(--neo-shadow-modal);
+        @variant dark {
+            border-color: #27272a;
+            background: linear-gradient(to bottom, #18181b, #09090b);
+        }
+    }
+
+    .neo-btn-ghost {
+        border: 1px solid #e2e8f0;
+        background: linear-gradient(to bottom, #fff, #f8fafc);
+        box-shadow: var(--neo-shadow-btn);
+        transition: box-shadow 200ms ease, transform 200ms ease;
+        @variant dark {
+            border-color: #52525b;
+            background: linear-gradient(to bottom, #3f3f46, #27272a);
+        }
+    }
+    .neo-btn-ghost:hover { box-shadow: var(--neo-shadow-btn-hover); }
+
+    .neo-btn-primary {
+        background: linear-gradient(to bottom, #8b5cf6, #7c3aed);
+        color: white;
+        box-shadow: var(--neo-glow-primary);
+        transition: box-shadow 200ms ease;
+        @variant dark { background: linear-gradient(to bottom, #7c3aed, #6d28d9); }
+    }
+    .neo-btn-primary:hover { box-shadow: var(--neo-glow-primary-hover); }
+    .neo-btn-primary:active { box-shadow: var(--neo-shadow-inset); }
+
+    .neo-btn-accent {
+        background: linear-gradient(to bottom, #22d3ee, #0891b2);
+        color: white;
+        box-shadow: var(--neo-glow-accent);
+        transition: box-shadow 200ms ease;
+        @variant dark { background: linear-gradient(to bottom, #06b6d4, #0e7490); }
+    }
+    .neo-btn-accent:hover { box-shadow: var(--neo-glow-accent-hover); }
+    .neo-btn-accent:active { box-shadow: var(--neo-shadow-inset); }
+
+    .neo-field {
+        border: 1px solid #e2e8f0;
+        background: linear-gradient(to bottom, #f1f5f9, #f8fafc);
+        box-shadow: var(--neo-shadow-inset);
+        @variant dark {
+            border-color: #3f3f46;
+            background: linear-gradient(to bottom, #09090b, #18181b);
+        }
+    }
+    .neo-field:focus {
+        box-shadow: var(--neo-shadow-inset-focus);
+        outline: none;
+    }
+
+    .neo-tab-list {
+        border-radius: 2rem;
+        border: 1px solid #e2e8f0;
+        background-color: rgb(241 245 249 / 0.8);
+        padding: 0.5rem;
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        box-shadow: var(--neo-shadow-tabs);
+        @variant dark {
+            border-color: #3f3f46;
+            background-color: rgb(24 24 27 / 0.8);
+        }
+    }
+
+    .neo-tab-item {
+        @apply rounded-2xl;
+        background: linear-gradient(to bottom, #fff, #f8fafc);
+        font-weight: 700;
+        color: #52525b;
+        box-shadow: var(--neo-shadow-btn);
+        transition: box-shadow 200ms ease;
+        @variant dark {
+            background: linear-gradient(to bottom, #3f3f46, #27272a);
+            color: #d4d4d8;
+        }
+    }
+    .neo-tab-item[data-state='active'] {
+        background: linear-gradient(to bottom, #8b5cf6, #7c3aed);
+        color: white;
+        box-shadow: var(--neo-glow-primary);
+        @variant dark { background: linear-gradient(to bottom, #7c3aed, #6d28d9); }
+    }
+
+    .neo-row {
+        @apply rounded-2xl;
+        border: 1px solid #e2e8f0;
+        background: linear-gradient(to bottom, rgb(255 255 255 / 0.6), rgb(248 250 252 / 0.4));
+        box-shadow: var(--neo-shadow-sm);
+        @variant dark {
+            border-color: #3f3f46;
+            background: linear-gradient(to bottom, rgb(39 39 42 / 0.6), rgb(24 24 27 / 0.4));
+        }
+    }
+
+    .neo-btn-cta {
+        background-color: var(--color-foreground);
+        color: var(--color-background);
+        box-shadow: 0 6px 0 rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18);
+        transition: box-shadow 150ms ease, transform 150ms ease, background-color 150ms ease, color 150ms ease;
+    }
+    .neo-btn-cta:hover {
+        background-color: #06b6d4;
+        color: white;
+        transform: translateY(-4px);
+        box-shadow: 0 6px 0 rgba(0,170,200,0.4), 0 12px 32px rgba(34,211,238,0.5), inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+    .neo-btn-cta:active {
+        transform: translateY(4px);
+        box-shadow: 0 1px 0 rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .neo-btn-outline {
+        border: 1px solid var(--theme-border);
+        background-color: var(--theme-surface);
+        color: var(--theme-text-muted);
+        box-shadow: 0 4px 0 rgba(0,0,0,0.28), 0 6px 18px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
+        transition: box-shadow 150ms ease, transform 150ms ease, border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+    }
+    .neo-btn-outline:hover {
+        border-color: rgb(6 182 212 / 0.4);
+        background-color: rgb(6 182 212 / 0.05);
+        color: #06b6d4;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 0 rgba(34,211,238,0.2), 0 8px 22px rgba(34,211,238,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .neo-btn-outline:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .magnetic-btn {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        border-radius: 9999px;
+        background: linear-gradient(to right, #8b5cf6, #22d3ee);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: white;
+        box-shadow: 0 0 25px rgba(124,58,237,0.35);
+        transition: box-shadow 300ms;
+    }
+    .magnetic-btn:hover { box-shadow: 0 0 25px rgba(124,58,237,0.5); }
 
     /* ── Blog page glitch title ── */
     .blog-glitch-title {
@@ -811,6 +976,7 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
+
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -902,6 +1068,67 @@
         oklch(0.968 0.012 240) 100%
     );
     --card-surface-hover: oklch(0.975 0.012 258);
+
+    /* ── Border token used by .section-kicker ── */
+    --border-default: oklch(0 0 0 / 0.1);
+
+    /* ── Neo component shadow tokens — match actual TSX neomorphic patterns ── */
+    /* Small surface (row items, stat chips) */
+    --neo-shadow-sm:
+        0 2px 8px rgba(0,0,0,0.06),
+        inset 0 0 0 1px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    /* Ghost button / pill — full 3D raised stamp effect */
+    --neo-shadow-btn:
+        0 3px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04),
+        inset 0 0 0 1px rgba(0,0,0,0.05),
+        inset 0 1px 2px rgba(255,255,255,1),
+        inset 0 -1px 1px rgba(0,0,0,0.05);
+    --neo-shadow-btn-hover:
+        0 6px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.06),
+        inset 0 0 0 1px rgba(0,0,0,0.05),
+        inset 0 1px 2px rgba(255,255,255,1),
+        inset 0 -1px 1px rgba(0,0,0,0.05);
+    /* Panel LG (main content sections) */
+    --neo-shadow-panel:
+        0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04),
+        inset 0 0 0 1px rgba(0,0,0,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    /* Modal / checkout card (XL) */
+    --neo-shadow-modal:
+        0 16px 64px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.05),
+        inset 0 0 0 1px rgba(0,0,0,0.05),
+        inset 0 2px 4px rgba(255,255,255,1);
+    /* Inset form field */
+    --neo-shadow-inset:
+        inset 0 2px 5px rgba(0,0,0,0.07),
+        inset 0 1px 2px rgba(0,0,0,0.05);
+    --neo-shadow-inset-focus:
+        inset 0 2px 5px rgba(0,0,0,0.07),
+        inset 0 1px 2px rgba(0,0,0,0.05),
+        0 0 0 2px rgba(139,92,246,0.25);
+    /* Tab list container */
+    --neo-shadow-tabs:
+        0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.9),
+        inset 0 0 0 1px rgba(0,0,0,0.04);
+    /* Branded glows */
+    --neo-glow-primary:
+        0 4px 12px rgba(139,92,246,0.4), 0 2px 4px rgba(139,92,246,0.2),
+        inset 0 0 0 1px rgba(139,92,246,0.5),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    --neo-glow-primary-hover:
+        0 6px 16px rgba(139,92,246,0.5), 0 3px 6px rgba(139,92,246,0.3),
+        inset 0 0 0 1px rgba(139,92,246,0.6),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    --neo-glow-accent:
+        0 4px 12px rgba(34,211,238,0.4), 0 2px 4px rgba(34,211,238,0.2),
+        inset 0 0 0 1px rgba(34,211,238,0.5),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    --neo-glow-accent-hover:
+        0 6px 16px rgba(34,211,238,0.4),
+        inset 0 0 0 1px rgba(34,211,238,0.5),
+        inset 0 1px 2px rgba(255,255,255,0.5);
 }
 
 .dark {
@@ -944,6 +1171,53 @@
     --theme-surface: oklch(1 0 0 / 0.05);
     --theme-surface-hover: oklch(1 0 0 / 0.08);
     --theme-border: oklch(1 0 0 / 0.12);
+
+    /* ── Border token (dark) ── */
+    --border-default: oklch(1 0 0 / 0.12);
+
+    /* ── Neo component shadow tokens — dark mode overrides ── */
+    --neo-shadow-sm:
+        0 2px 8px rgba(0,0,0,0.4),
+        inset 0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    --neo-shadow-btn:
+        0 4px 6px rgba(0,0,0,0.5),
+        inset 0 1px 1px rgba(255,255,255,0.1);
+    --neo-shadow-btn-hover:
+        0 6px 12px rgba(0,0,0,0.7),
+        inset 0 1px 1px rgba(255,255,255,0.2);
+    --neo-shadow-panel:
+        0 8px 32px rgba(0,0,0,0.5),
+        inset 0 0 0 1px rgba(255,255,255,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    --neo-shadow-modal:
+        0 16px 64px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3),
+        inset 0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 1px rgba(255,255,255,0.1);
+    --neo-shadow-inset:
+        inset 0 2px 5px rgba(0,0,0,0.4),
+        inset 0 1px 2px rgba(0,0,0,0.3);
+    --neo-shadow-inset-focus:
+        inset 0 2px 5px rgba(0,0,0,0.4),
+        inset 0 1px 2px rgba(0,0,0,0.3),
+        0 0 0 2px rgba(139,92,246,0.3);
+    --neo-shadow-tabs:
+        0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    --neo-glow-primary:
+        0 4px 12px rgba(139,92,246,0.3),
+        inset 0 1px 1px rgba(255,255,255,0.2);
+    --neo-glow-primary-hover:
+        0 4px 6px rgba(139,92,246,0.4),
+        inset 0 1px 1px rgba(255,255,255,0.2);
+    --neo-glow-accent:
+        0 4px 12px rgba(34,211,238,0.3),
+        inset 0 0 0 1px rgba(34,211,238,0.4),
+        inset 0 1px 1px rgba(255,255,255,0.2);
+    --neo-glow-accent-hover:
+        0 6px 16px rgba(34,211,238,0.4),
+        inset 0 0 0 1px rgba(34,211,238,0.5),
+        inset 0 1px 2px rgba(255,255,255,0.3);
 
     /* Card layer — elevated dark-indigo surface above the near-black page */
     --card-surface: oklch(0.19 0.016 268);
@@ -989,4 +1263,32 @@
 
 @utility border-theme {
     border-color: var(--theme-border);
+}
+
+/* ── Drop-shadow utility classes (raw filter, bypasses Tailwind's CSS-var chain)
+   Each saves ~350 bytes vs the arbitrary drop-shadow-[...] approach ── */
+@layer components {
+    /* Standard icon shadow: subtle in light, heavy in dark */
+    .drop-icon {
+        filter: drop-shadow(0 1.5px 2px rgba(0,0,0,0.3));
+        @variant dark { filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)); }
+    }
+    /* Lighter icon shadow */
+    .drop-icon-sm {
+        filter: drop-shadow(0 1px 1.5px rgba(0,0,0,0.2));
+        @variant dark { filter: drop-shadow(0 1.5px 2px rgba(0,0,0,0.5)); }
+    }
+    /* Heavier icon shadow */
+    .drop-icon-md {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        @variant dark { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+    }
+    /* Subtle light-mode only */
+    .drop-icon-subtle {
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.05));
+    }
+    /* Emerald glow */
+    .drop-icon-emerald {
+        filter: drop-shadow(0 2px 4px rgba(16,185,129,0.4));
+    }
 }

@@ -106,7 +106,7 @@ export default function ResetPassword({
                 <button
                     type="submit"
                     disabled={processing}
-                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all hover:bg-cyan-400 hover:text-white sm:rounded-2xl sm:py-4 sm:text-sm sm:shadow-[0_20px_40px_rgba(0,0,0,0.15)] [@media(max-height:500px)]:py-2"
+                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-lg transition-all hover:bg-cyan-400 hover:text-white sm:rounded-2xl sm:py-4 sm:text-sm sm:shadow-2xl [@media(max-height:500px)]:py-2"
                 >
                     {processing ? 'Updating Password...' : 'Reset Password'}{' '}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />

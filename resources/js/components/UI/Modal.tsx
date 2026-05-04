@@ -52,7 +52,7 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 24, scale: 0.96 }}
                         transition={{ duration: 0.3 }}
-                        className="w-full max-w-lg rounded-[2rem] p-5 sm:p-7 bg-gradient-to-b from-white to-slate-50 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)] border border-slate-100 dark:border-zinc-800"
+                        className="neo-panel-elevated w-full max-w-lg p-5 sm:p-7"
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div className="mb-6 flex items-center justify-between">
@@ -62,7 +62,7 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
                             <button
                                 type="button"
                                 aria-label="Close modal"
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-b from-white to-slate-50 text-zinc-500 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.02)] transition-all hover:scale-105 hover:text-zinc-800 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-400 dark:shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:text-zinc-200"
+                                className="neo-btn-ghost flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition-all hover:scale-105 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
                                 onClick={onClose}
                             >
                                 <X className="h-5 w-5" />

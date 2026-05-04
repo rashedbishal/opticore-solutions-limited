@@ -108,7 +108,7 @@ function InvoiceCard({
     return (
         <motion.div
             variants={fadeUp}
-            className={`relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white/80 to-slate-50/60 p-6 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_2px_6px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.12),0_4px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] dark:border-zinc-700 dark:from-zinc-800/80 dark:to-zinc-900/60 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)] ${
+            className={`neo-panel relative overflow-hidden rounded-3xl p-6 transition-all ${
                 isNew ? 'border-cyan-500/40 ring-1 ring-cyan-500/20' : ''
             }`}
         >
@@ -242,7 +242,7 @@ export default function Profile() {
 
                         <Tabs defaultValue="overview" className="w-full">
                             {/* L2 — Tabs bar: elevated card sitting on page */}
-                            <TabsList className="hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto rounded-[2rem] border border-slate-200 bg-slate-100/80 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-zinc-700 dark:bg-zinc-900/80 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                            <TabsList className="neo-tab-list hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto">
                                 {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                 {(
                                     [
@@ -271,9 +271,9 @@ export default function Profile() {
                                     <TabsTrigger
                                         key={value}
                                         value={value}
-                                        className="flex items-center gap-2 rounded-2xl bg-gradient-to-b from-white to-slate-50 px-6 py-3 text-sm font-bold text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-[1.02] data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-[0_3px_8px_rgba(139,92,246,0.4),0_1px_3px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:data-[state=active]:from-violet-600 dark:data-[state=active]:to-violet-700 dark:data-[state=active]:shadow-[0_4px_6px_rgba(139,92,246,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                        className="neo-tab-item flex items-center gap-2 px-6 py-3 text-sm transition-all duration-300 hover:scale-[1.02]"
                                     >
-                                        <Icon className="h-4 w-4 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.2)]" />
+                                        <Icon className="h-4 w-4 drop-icon-sm" />
                                         {label}
                                     </TabsTrigger>
                                 ))}
@@ -287,11 +287,11 @@ export default function Profile() {
                                 {/* L1 — Profile Overview Card */}
                                 <motion.div
                                     variants={fadeUp}
-                                    className="flex flex-col items-start gap-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md sm:flex-row sm:items-center dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                    className="neo-panel flex flex-col items-start gap-6 p-8 sm:flex-row sm:items-center"
                                 >
                                     {/* L2 — Avatar: elevated atop the card */}
                                     <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
-                                        <User className="h-10 w-10 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.2)]" />
+                                        <User className="h-10 w-10 drop-icon-sm" />
                                     </div>
 
                                     <div className="flex-1">
@@ -340,7 +340,7 @@ export default function Profile() {
                                         <div className="flex items-center gap-3">
                                             {/* L2 — Section icon: elevated */}
                                             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                                                <FileText className="h-5 w-5 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.2)]" />
+                                                <FileText className="h-5 w-5 drop-icon-sm" />
                                             </div>
                                             <div>
                                                 <h2 className="text-xl font-bold text-theme">
@@ -358,7 +358,7 @@ export default function Profile() {
                                         {/* L2 — Order More: 3D pill button */}
                                         <Link
                                             href="/hire-us"
-                                            className="flex items-center gap-2 rounded-full border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-xs font-bold text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.07),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] transition-all hover:scale-105 hover:shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.15)]"
+                                            className="neo-btn-ghost flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 transition-all hover:scale-105"
                                         >
                                             <ShoppingBag className="h-3.5 w-3.5" />
                                             Order More
@@ -397,7 +397,7 @@ export default function Profile() {
                                             'Profile information updated successfully.',
                                         )
                                     }
-                                    className="space-y-8 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                    className="neo-panel space-y-8 p-8"
                                 >
                                     <div>
                                         <h2 className="text-xl font-bold text-theme">
@@ -422,7 +422,7 @@ export default function Profile() {
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-white to-slate-50 text-zinc-600 shadow-[0_2px_6px_rgba(0,0,0,0.07),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] transition-all hover:scale-[1.02] hover:shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.04)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:text-zinc-300 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)]"
+                                                className="neo-btn-ghost rounded-xl text-zinc-600 dark:text-zinc-300 transition-all hover:scale-[1.02]"
                                             >
                                                 Upload Avatar
                                             </Button>
@@ -445,7 +445,7 @@ export default function Profile() {
                                             <Input
                                                 id="name"
                                                 defaultValue={auth.user?.name}
-                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -460,7 +460,7 @@ export default function Profile() {
                                                 defaultValue={auth.user?.name
                                                     ?.toLowerCase()
                                                     .replace(/\s+/g, '')}
-                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
@@ -474,7 +474,7 @@ export default function Profile() {
                                                 id="email"
                                                 type="email"
                                                 defaultValue={auth.user?.email}
-                                                className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                className="neo-field rounded-xl"
                                             />
                                         </div>
                                     </div>
@@ -484,7 +484,7 @@ export default function Profile() {
                                         <Button
                                             type="submit"
                                             disabled={isSaving}
-                                            className="min-w-[140px] rounded-xl bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-[0_4px_12px_rgba(139,92,246,0.4),0_2px_4px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(139,92,246,0.5),0_3px_6px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(139,92,246,0.6),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_12px_rgba(139,92,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                            className="neo-btn-primary min-w-[140px] rounded-xl transition-all hover:scale-[1.02]"
                                         >
                                             {isSaving ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -514,7 +514,7 @@ export default function Profile() {
                                                 'Password changed successfully.',
                                             )
                                         }
-                                        className="space-y-8 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                        className="neo-panel space-y-8 p-8"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -538,7 +538,7 @@ export default function Profile() {
                                                 <Input
                                                     id="current_password"
                                                     type="password"
-                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                    className="neo-field rounded-xl"
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -551,7 +551,7 @@ export default function Profile() {
                                                 <Input
                                                     id="new_password"
                                                     type="password"
-                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                    className="neo-field rounded-xl"
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -564,7 +564,7 @@ export default function Profile() {
                                                 <Input
                                                     id="confirm_password"
                                                     type="password"
-                                                    className="rounded-xl border-slate-200 bg-gradient-to-b from-slate-100 to-slate-50 text-theme shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05)] focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.07),inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_2px_rgba(139,92,246,0.25)] dark:border-zinc-700 dark:from-zinc-950 dark:to-zinc-900 dark:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)] dark:focus:shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3),0_0_0_2px_rgba(139,92,246,0.3)]"
+                                                    className="neo-field rounded-xl"
                                                 />
                                             </div>
                                         </div>
@@ -573,7 +573,7 @@ export default function Profile() {
                                             <Button
                                                 type="submit"
                                                 disabled={isSaving}
-                                                className="min-w-[160px] rounded-xl bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-[0_4px_12px_rgba(139,92,246,0.4),0_2px_4px_rgba(139,92,246,0.2),inset_0_0_0_1px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(139,92,246,0.5),0_3px_6px_rgba(139,92,246,0.3),inset_0_0_0_1px_rgba(139,92,246,0.6),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-violet-600 dark:to-violet-700 dark:shadow-[0_4px_12px_rgba(139,92,246,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                                className="neo-btn-primary min-w-[160px] rounded-xl transition-all hover:scale-[1.02]"
                                             >
                                                 {isSaving ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -587,7 +587,7 @@ export default function Profile() {
                                     {/* L1 — 2FA card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="space-y-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                        className="neo-panel space-y-6 p-8"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -601,7 +601,7 @@ export default function Profile() {
                                         </div>
 
                                         {/* L2 — Toggle row: inner card */}
-                                        <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                        <div className="neo-row flex items-center justify-between p-6">
                                             <div>
                                                 <div className="font-bold text-theme">
                                                     Secure your account
@@ -622,7 +622,7 @@ export default function Profile() {
                                                         !twoFactorEnabled,
                                                     )
                                                 }
-                                                className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]' : 'text-theme-muted hover:text-theme'}`}
+                                                className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500 drop-icon-emerald' : 'text-theme-muted hover:text-theme'}`}
                                             >
                                                 {twoFactorEnabled ? (
                                                     <ToggleRight className="h-10 w-10" />
@@ -647,7 +647,7 @@ export default function Profile() {
                                     {/* L1 — Notifications card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="space-y-6 rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white/90 to-slate-50/80 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md dark:border-zinc-700 dark:from-zinc-800/90 dark:to-zinc-900/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                                        className="neo-panel space-y-6 p-8"
                                     >
                                         <div>
                                             <h2 className="text-xl font-bold text-theme">
@@ -661,7 +661,7 @@ export default function Profile() {
 
                                         <div className="space-y-4">
                                             {/* L2 — Notification rows: inner cards */}
-                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                            <div className="neo-row flex items-center justify-between p-4">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Order Updates
@@ -671,10 +671,10 @@ export default function Profile() {
                                                         your order status.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-icon-emerald" />
                                             </div>
 
-                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                            <div className="neo-row flex items-center justify-between p-4">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Promotional Emails
@@ -691,7 +691,7 @@ export default function Profile() {
                                                             !promoEmails,
                                                         )
                                                     }
-                                                    className={`transition-colors ${promoEmails ? 'text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]' : 'text-theme-muted'}`}
+                                                    className={`transition-colors ${promoEmails ? 'text-emerald-500 drop-icon-emerald' : 'text-theme-muted'}`}
                                                 >
                                                     {promoEmails ? (
                                                         <ToggleRight className="h-8 w-8" />
@@ -701,7 +701,7 @@ export default function Profile() {
                                                 </button>
                                             </div>
 
-                                            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-gradient-to-b from-white/60 to-slate-50/40 p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-700 dark:from-zinc-800/60 dark:to-zinc-900/40 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                            <div className="neo-row flex items-center justify-between p-4">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Security Alerts
@@ -712,7 +712,7 @@ export default function Profile() {
                                                         changes.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)]" />
+                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-icon-emerald" />
                                             </div>
                                         </div>
                                     </motion.div>

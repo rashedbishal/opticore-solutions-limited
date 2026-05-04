@@ -38,7 +38,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all hover:bg-cyan-400 hover:text-white sm:rounded-2xl sm:py-4 sm:text-sm sm:shadow-[0_20px_40px_rgba(0,0,0,0.15)] [@media(max-height:500px)]:py-2"
+                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-lg transition-all hover:bg-cyan-400 hover:text-white sm:rounded-2xl sm:py-4 sm:text-sm sm:shadow-2xl [@media(max-height:500px)]:py-2"
                 >
                     {processing
                         ? 'Sending Link...'

@@ -123,8 +123,8 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-6"
                         >
-                            <div className="rounded-[2rem] border border-slate-100 bg-gradient-to-b from-white to-slate-50 p-8 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                                <h2 className="mb-6 text-xl font-bold tracking-tight text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                            <div className="neo-panel-elevated p-8">
+                                <h2 className="mb-6 text-xl font-bold tracking-tight text-zinc-900 drop-icon-subtle dark:text-white dark:drop-icon-md">
                                     Payment Method
                                 </h2>
 
@@ -145,7 +145,7 @@ export default function Checkout({ item }: Props) {
                                             <div
                                                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] ${selectedMethod === method.id ? 'bg-cyan-500/10 dark:bg-cyan-500/20' : 'bg-slate-200 dark:bg-zinc-950'} ${method.color}`}
                                             >
-                                                <method.icon className="h-5 w-5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]" />
+                                                <method.icon className="h-5 w-5 drop-icon-sm" />
                                             </div>
                                             <div className="flex-1">
                                                 <div className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -190,8 +190,8 @@ export default function Checkout({ item }: Props) {
                             }}
                             className="space-y-4"
                         >
-                            <div className="rounded-[2rem] border border-slate-100 bg-gradient-to-b from-white to-slate-50 p-6 shadow-[0_16px_64px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.05),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)] dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_16px_64px_rgba(0,0,0,0.5),0_4px_12px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                                <h2 className="mb-5 text-lg font-bold tracking-tight text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                            <div className="neo-panel-elevated p-6">
+                                <h2 className="mb-5 text-lg font-bold tracking-tight text-zinc-900 drop-icon-subtle dark:text-white dark:drop-icon-md">
                                     Order Summary
                                 </h2>
 
@@ -200,7 +200,7 @@ export default function Checkout({ item }: Props) {
                                         <div className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase dark:text-zinc-500">
                                             Service
                                         </div>
-                                        <div className="mt-1 text-sm font-bold text-zinc-900 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:text-white">
+                                        <div className="mt-1 text-sm font-bold text-zinc-900 drop-icon-sm dark:text-white">
                                             {item.service}
                                         </div>
                                     </div>
@@ -230,7 +230,7 @@ export default function Checkout({ item }: Props) {
                                     <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
                                         Total
                                     </span>
-                                    <span className="text-2xl font-black text-zinc-900 drop-shadow-[0_2px_2px_rgba(0,0,0,0.05)] dark:text-white dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                                    <span className="text-2xl font-black text-zinc-900 drop-icon-subtle dark:text-white dark:drop-icon-md">
                                         {item.price}
                                     </span>
                                 </div>
@@ -239,7 +239,7 @@ export default function Checkout({ item }: Props) {
                                     type="button"
                                     disabled={isProcessing}
                                     onClick={handlePay}
-                                    className="group relative mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-b from-cyan-400 to-cyan-600 py-4 text-sm font-black tracking-widest text-white uppercase shadow-[0_4px_12px_rgba(34,211,238,0.4),0_2px_4px_rgba(34,211,238,0.2),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(34,211,238,0.4),inset_0_0_0_1px_rgba(34,211,238,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100 dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_4px_12px_rgba(34,211,238,0.3),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                    className="neo-btn-accent group relative mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 text-sm font-black tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
                                 >
                                     <AnimatePresence mode="wait">
                                         {isDone ? (
@@ -253,7 +253,7 @@ export default function Checkout({ item }: Props) {
                                                     opacity: 1,
                                                     scale: 1,
                                                 }}
-                                                className="flex items-center gap-2 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]"
+                                                className="flex items-center gap-2 drop-icon"
                                             >
                                                 <CheckCircle className="h-4 w-4" />
                                                 Payment Accepted!
@@ -263,7 +263,7 @@ export default function Checkout({ item }: Props) {
                                                 key="loading"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
-                                                className="flex items-center gap-2 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]"
+                                                className="flex items-center gap-2 drop-icon"
                                             >
                                                 <Loader2 className="h-4 w-4 animate-spin" />
                                                 Processing…
@@ -273,7 +273,7 @@ export default function Checkout({ item }: Props) {
                                                 key="idle"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
-                                                className="flex items-center gap-2 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.3)]"
+                                                className="flex items-center gap-2 drop-icon"
                                             >
                                                 Pay Now
                                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
