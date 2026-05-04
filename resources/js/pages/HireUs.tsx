@@ -105,19 +105,16 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     </section>
 
                     {/* Service Tabs */}
-                    <div className="mb-20 flex flex-wrap justify-center gap-4">
+                    <div className="neo-tab-list mx-auto mb-20 flex w-fit flex-wrap justify-center gap-2 p-2">
                         {services.map((service) => (
                             <button
                                 key={service.id}
                                 onClick={() => setActiveTab(service.id)}
-                                className={`flex items-center gap-3 rounded-2xl border px-6 py-4 font-bold transition-all duration-300 ${
-                                    activeTab === service.id
-                                        ? 'border-foreground bg-foreground text-background shadow-xl'
-                                        : 'hover:border-theme-muted/50 border-theme bg-theme-surface text-theme-muted shadow-sm hover:text-theme'
-                                }`}
+                                data-state={activeTab === service.id ? 'active' : 'inactive'}
+                                className="neo-tab-item flex items-center gap-3 px-6 py-4 text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--neo-shadow-btn-hover)] active:translate-y-0"
                             >
                                 <service.icon
-                                    className={`h-5 w-5 ${activeTab === service.id ? 'text-background' : service.color}`}
+                                    className={`h-4 w-4 ${activeTab === service.id ? 'text-white' : service.color}`}
                                 />
                                 {service.name}
                             </button>
@@ -132,44 +129,45 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4 }}
-                            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                            className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
                         >
                             {subCategories[activeTab]?.map((sub) => (
                                 <Link
                                     key={sub.slug}
                                     href={`/hire-us/${activeTab}/${sub.slug}`}
-                                    className="group relative overflow-hidden rounded-[2.5rem] border border-theme bg-theme-surface shadow-sm transition-all duration-500 hover:border-cyan-500/50 hover:bg-theme-surface-hover hover:shadow-2xl"
+                                    className="neo-panel-elevated group relative flex flex-col overflow-hidden transition-all duration-500 hover:-translate-y-2"
                                 >
-                                    <div className="aspect-[4/3] overflow-hidden">
+                                    <div className="relative aspect-[16/10] w-full overflow-hidden">
                                         <img
                                             src={sub.image}
                                             alt={sub.name}
                                             className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0"
                                         />
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10" />
                                     </div>
                                     <div className="p-8">
                                         <div className="mb-4 flex items-start justify-between">
                                             <h3 className="text-2xl leading-tight font-black tracking-tight text-theme uppercase transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
                                                 {sub.name}
                                             </h3>
-                                            <div className="flex items-center gap-1 font-bold text-amber-500">
-                                                <Star className="h-4 w-4 fill-current" />
-                                                <span className="text-sm">
+                                            <div className="neo-row flex items-center gap-1 px-2 py-1 font-bold text-amber-500">
+                                                <Star className="h-3 w-3 fill-current drop-shadow-[0_2px_4px_rgba(245,158,11,0.4)]" />
+                                                <span className="text-xs">
                                                     {sub.rating}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex items-center justify-between border-t border-theme pt-6">
+                                        <div className="mt-8 flex items-center justify-between border-t border-theme/50 pt-6">
                                             <div>
                                                 <p className="mb-1 text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
                                                     Starting At
                                                 </p>
-                                                <p className="text-xl font-black text-theme">
+                                                <p className="text-xl font-black text-theme drop-shadow-sm">
                                                     {sub.price}
                                                 </p>
                                             </div>
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-theme-muted transition-all group-hover:border-cyan-500 group-hover:bg-cyan-500 group-hover:text-white">
-                                                <ArrowRight className="h-5 w-5" />
+                                            <div className="neo-btn-accent flex h-12 w-12 items-center justify-center rounded-2xl">
+                                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                                             </div>
                                         </div>
                                     </div>
@@ -179,22 +177,22 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             {/* Display "Coming Soon" if no sub-categories for the active tab */}
                             {(!subCategories[activeTab] ||
                                 subCategories[activeTab].length === 0) && (
-                                <div className="glass-panel col-span-full rounded-[3rem] py-24 text-center">
-                                    <Sparkles className="mx-auto mb-6 h-12 w-12 text-theme-subtle" />
-                                    <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
-                                        Coming Soon
-                                    </h3>
-                                    <p className="mt-2 text-theme-subtle">
-                                        We're onboarding expert talent for this
-                                        category.
-                                    </p>
-                                </div>
-                            )}
+                                    <div className="neo-panel col-span-full py-24 text-center">
+                                        <Sparkles className="mx-auto mb-6 h-12 w-12 text-theme-subtle animate-float" />
+                                        <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
+                                            Coming Soon
+                                        </h3>
+                                        <p className="mt-2 text-theme-subtle">
+                                            We're onboarding expert talent for this
+                                            category.
+                                        </p>
+                                    </div>
+                                )}
                         </motion.div>
                     </AnimatePresence>
 
                     {/* Trust Section */}
-                    <div className="mt-32 grid grid-cols-1 gap-12 border-t border-theme pt-24 md:grid-cols-3">
+                    <div className="mt-32 grid grid-cols-1 gap-8 border-t border-theme/50 pt-24 md:grid-cols-3">
                         {[
                             {
                                 icon: Zap,
@@ -212,8 +210,8 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                 desc: 'Premium results guaranteed or your money back.',
                             },
                         ].map((item, i) => (
-                            <div key={i} className="flex gap-6">
-                                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-cyan-600 dark:text-cyan-400">
+                            <div key={i} className="neo-panel flex gap-6 p-6">
+                                <div className="neo-btn-ghost flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-cyan-600 dark:text-cyan-400">
                                     <item.icon className="h-6 w-6" />
                                 </div>
                                 <div>
