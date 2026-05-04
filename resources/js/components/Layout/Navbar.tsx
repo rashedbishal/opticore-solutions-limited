@@ -54,15 +54,13 @@ function NavLink({
             onMouseLeave={() => setHovered(false)}
             className={cn(
                 'group relative flex h-10 items-center gap-2 rounded-full px-5 transition-all duration-300 hover:scale-105',
-                active
-                    ? 'neo-btn-primary'
-                    : 'neo-btn-ghost',
+                active ? 'neo-btn-primary' : 'neo-btn-ghost',
             )}
         >
             {Icon && (
                 <Icon
                     className={cn(
-                        'h-4 w-4 drop-icon transition-colors duration-300 dark:drop-icon',
+                        'drop-icon dark:drop-icon h-4 w-4 transition-colors duration-300',
                         active
                             ? 'text-white'
                             : 'text-zinc-500 group-hover:text-violet-600 dark:text-zinc-400 dark:group-hover:text-violet-400',
@@ -76,7 +74,7 @@ function NavLink({
                 className={cn(
                     'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors md:text-[13.5px] md:tracking-wide',
                     active
-                        ? 'text-white drop-icon'
+                        ? 'drop-icon text-white'
                         : 'text-zinc-700 dark:text-zinc-300',
                 )}
                 trigger={hovered}
@@ -178,7 +176,7 @@ export default function Navbar() {
                     <div className="flex flex-1 items-center justify-end gap-3">
                         <div className="hidden items-center gap-3 md:flex">
                             <div className="flex h-11 items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 p-1.5 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
-                                <ThemeSwitcher className="h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)] [&>svg]:drop-icon dark:[&>svg]:drop-icon" />
+                                <ThemeSwitcher className="[&>svg]:drop-icon dark:[&>svg]:drop-icon h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]" />
                                 {user ? (
                                     <>
                                         <Link
@@ -193,7 +191,7 @@ export default function Navbar() {
                                         >
                                             <User
                                                 className={cn(
-                                                    'h-4 w-4 drop-icon',
+                                                    'drop-icon h-4 w-4',
                                                     url === '/profile'
                                                         ? 'text-white'
                                                         : 'text-zinc-600 dark:text-zinc-300',
@@ -207,7 +205,7 @@ export default function Navbar() {
                                             className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
                                             aria-label="Sign out"
                                         >
-                                            <LogOut className="h-4 w-4 text-violet-500 drop-icon dark:text-violet-400 dark:drop-icon" />
+                                            <LogOut className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
                                         </Link>
                                     </>
                                 ) : (
@@ -216,7 +214,7 @@ export default function Navbar() {
                                         className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
                                         aria-label="Sign in"
                                     >
-                                        <LogIn className="h-4 w-4 text-violet-500 drop-icon dark:text-violet-400 dark:drop-icon" />
+                                        <LogIn className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
                                     </Link>
                                 )}
                             </div>

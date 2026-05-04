@@ -273,7 +273,7 @@ export default function Profile() {
                                         value={value}
                                         className="neo-tab-item flex items-center gap-2 px-6 py-3 text-sm transition-all duration-300 hover:scale-[1.02]"
                                     >
-                                        <Icon className="h-4 w-4 drop-icon-sm" />
+                                        <Icon className="drop-icon-sm h-4 w-4" />
                                         {label}
                                     </TabsTrigger>
                                 ))}
@@ -291,7 +291,7 @@ export default function Profile() {
                                 >
                                     {/* L2 — Avatar: elevated atop the card */}
                                     <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
-                                        <User className="h-10 w-10 drop-icon-sm" />
+                                        <User className="drop-icon-sm h-10 w-10" />
                                     </div>
 
                                     <div className="flex-1">
@@ -340,7 +340,7 @@ export default function Profile() {
                                         <div className="flex items-center gap-3">
                                             {/* L2 — Section icon: elevated */}
                                             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                                                <FileText className="h-5 w-5 drop-icon-sm" />
+                                                <FileText className="drop-icon-sm h-5 w-5" />
                                             </div>
                                             <div>
                                                 <h2 className="text-xl font-bold text-theme">
@@ -358,7 +358,7 @@ export default function Profile() {
                                         {/* L2 — Order More: 3D pill button */}
                                         <Link
                                             href="/hire-us"
-                                            className="neo-btn-ghost flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 transition-all hover:scale-105"
+                                            className="neo-btn-ghost flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
                                         >
                                             <ShoppingBag className="h-3.5 w-3.5" />
                                             Order More
@@ -422,7 +422,7 @@ export default function Profile() {
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="neo-btn-ghost rounded-xl text-zinc-600 dark:text-zinc-300 transition-all hover:scale-[1.02]"
+                                                className="neo-btn-ghost rounded-xl text-zinc-600 transition-all hover:scale-[1.02] dark:text-zinc-300"
                                             >
                                                 Upload Avatar
                                             </Button>
@@ -622,7 +622,7 @@ export default function Profile() {
                                                         !twoFactorEnabled,
                                                     )
                                                 }
-                                                className={`transition-colors ${twoFactorEnabled ? 'text-emerald-500 drop-icon-emerald' : 'text-theme-muted hover:text-theme'}`}
+                                                className={`transition-colors ${twoFactorEnabled ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
                                             >
                                                 {twoFactorEnabled ? (
                                                     <ToggleRight className="h-10 w-10" />
@@ -671,7 +671,7 @@ export default function Profile() {
                                                         your order status.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-icon-emerald" />
+                                                <ToggleRight className="drop-icon-emerald h-8 w-8 cursor-not-allowed text-emerald-500" />
                                             </div>
 
                                             <div className="neo-row flex items-center justify-between p-4">
@@ -691,7 +691,7 @@ export default function Profile() {
                                                             !promoEmails,
                                                         )
                                                     }
-                                                    className={`transition-colors ${promoEmails ? 'text-emerald-500 drop-icon-emerald' : 'text-theme-muted'}`}
+                                                    className={`transition-colors ${promoEmails ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
                                                 >
                                                     {promoEmails ? (
                                                         <ToggleRight className="h-8 w-8" />
@@ -712,7 +712,7 @@ export default function Profile() {
                                                         changes.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="h-8 w-8 cursor-not-allowed text-emerald-500 drop-icon-emerald" />
+                                                <ToggleRight className="drop-icon-emerald h-8 w-8 cursor-not-allowed text-emerald-500" />
                                             </div>
                                         </div>
                                     </motion.div>

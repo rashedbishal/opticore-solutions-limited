@@ -1292,9 +1292,9 @@ export default function SubCategoryShow({
                             <button
                                 type="button"
                                 onClick={() => setIsContactModalOpen(true)}
-                                className="neo-btn-ghost group flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 transition-all duration-300 hover:scale-105"
+                                className="neo-btn-ghost group flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-700 transition-all duration-300 hover:scale-105 dark:text-zinc-300"
                             >
-                                <MessageSquare className="h-4 w-4 text-cyan-500 drop-icon" />
+                                <MessageSquare className="drop-icon h-4 w-4 text-cyan-500" />
                                 <span>Need a Custom Quote?</span>
                             </button>
                         </div>
@@ -1348,7 +1348,7 @@ export default function SubCategoryShow({
                                         </span>
                                     </div>
                                     <div className="neo-btn-ghost flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                                        <Clock className="h-3.5 w-3.5 text-zinc-500 drop-icon-sm dark:text-zinc-400 dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
+                                        <Clock className="drop-icon-sm h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400 dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
                                         {plan.delivery}
                                     </div>
                                 </div>
@@ -1360,7 +1360,7 @@ export default function SubCategoryShow({
                                             className="flex items-center gap-3 text-sm text-theme-muted"
                                         >
                                             <span className="neo-btn-ghost flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                                                <f.Icon className="h-3 w-3 text-cyan-500 drop-icon-sm dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
+                                                <f.Icon className="drop-icon-sm h-3 w-3 text-cyan-500 dark:drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.6)]" />
                                             </span>
                                             {f.label}
                                         </li>
@@ -1400,9 +1400,9 @@ export default function SubCategoryShow({
                         <button
                             type="button"
                             onClick={() => setIsContactModalOpen(true)}
-                            className="neo-btn-ghost group flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-zinc-700 dark:text-zinc-300 transition-all duration-300 hover:scale-105"
+                            className="neo-btn-ghost group flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-zinc-700 transition-all duration-300 hover:scale-105 dark:text-zinc-300"
                         >
-                            <MessageSquare className="h-5 w-5 text-cyan-500 drop-icon" />
+                            <MessageSquare className="drop-icon h-5 w-5 text-cyan-500" />
                             <span>Need a Custom Quote?</span>
                         </button>
                         <div className="flex items-center gap-2 text-xs text-theme-muted">
@@ -1777,7 +1777,7 @@ export default function SubCategoryShow({
                                 <p className="mb-2 text-[10px] font-bold tracking-[0.2em] text-cyan-500 uppercase">
                                     Verified Client Feedback
                                 </p>
-                                <h2 className="text-3xl font-black tracking-tight text-zinc-900 drop-icon-subtle md:text-4xl dark:text-white dark:drop-icon-md">
+                                <h2 className="drop-icon-subtle dark:drop-icon-md text-3xl font-black tracking-tight text-zinc-900 md:text-4xl dark:text-white">
                                     Client Reviews
                                 </h2>
                                 <div className="mt-4 flex items-center gap-3">
@@ -2281,9 +2281,7 @@ export default function SubCategoryShow({
                         type="button"
                         className="neo-btn-accent w-full rounded-2xl py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                        <span className="drop-icon">
-                            Send Message
-                        </span>
+                        <span className="drop-icon">Send Message</span>
                     </button>
                 </div>
             </Modal>
