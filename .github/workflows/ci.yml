@@ -68,6 +68,8 @@ jobs:
           sed -i 's/^CACHE_STORE=.*/CACHE_STORE=array/' .env
           sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
           sed -i 's/^QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
+          # Patch phpunit.xml to use 127.0.0.1 for CI
+          sed -i 's/192.168.0.114/127.0.0.1/g' phpunit.xml
 
       - name: Create admin test database
         run: PGPASSWORD=password psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE opticoresolutions_admin_test;"
