@@ -110,7 +110,11 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             <button
                                 key={service.id}
                                 onClick={() => setActiveTab(service.id)}
-                                data-state={activeTab === service.id ? 'active' : 'inactive'}
+                                data-state={
+                                    activeTab === service.id
+                                        ? 'active'
+                                        : 'inactive'
+                                }
                                 className="neo-tab-item flex items-center gap-3 px-6 py-4 text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--neo-shadow-btn-hover)] active:translate-y-0"
                             >
                                 <service.icon
@@ -143,7 +147,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                             alt={sub.name}
                                             className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0"
                                         />
-                                        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10" />
+                                        <div className="absolute inset-0 ring-1 ring-black/10 ring-inset dark:ring-white/10" />
                                     </div>
                                     <div className="p-8">
                                         <div className="mb-4 flex items-start justify-between">
@@ -157,7 +161,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex items-center justify-between border-t border-theme/50 pt-6">
+                                        <div className="border-theme/50 mt-8 flex items-center justify-between border-t pt-6">
                                             <div>
                                                 <p className="mb-1 text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
                                                     Starting At
@@ -177,22 +181,22 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             {/* Display "Coming Soon" if no sub-categories for the active tab */}
                             {(!subCategories[activeTab] ||
                                 subCategories[activeTab].length === 0) && (
-                                    <div className="neo-panel col-span-full py-24 text-center">
-                                        <Sparkles className="mx-auto mb-6 h-12 w-12 text-theme-subtle animate-float" />
-                                        <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
-                                            Coming Soon
-                                        </h3>
-                                        <p className="mt-2 text-theme-subtle">
-                                            We're onboarding expert talent for this
-                                            category.
-                                        </p>
-                                    </div>
-                                )}
+                                <div className="neo-panel col-span-full py-24 text-center">
+                                    <Sparkles className="mx-auto mb-6 h-12 w-12 animate-float text-theme-subtle" />
+                                    <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
+                                        Coming Soon
+                                    </h3>
+                                    <p className="mt-2 text-theme-subtle">
+                                        We're onboarding expert talent for this
+                                        category.
+                                    </p>
+                                </div>
+                            )}
                         </motion.div>
                     </AnimatePresence>
 
                     {/* Trust Section */}
-                    <div className="mt-32 grid grid-cols-1 gap-8 border-t border-theme/50 pt-24 md:grid-cols-3">
+                    <div className="border-theme/50 mt-32 grid grid-cols-1 gap-8 border-t pt-24 md:grid-cols-3">
                         {[
                             {
                                 icon: Zap,
