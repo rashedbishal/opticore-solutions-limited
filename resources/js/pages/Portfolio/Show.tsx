@@ -46,7 +46,12 @@ export default function PortfolioShow({ categories, meta }: Props) {
                 />
             </Head>
 
-            <section className="section-shell pt-32 md:pt-36 lg:pt-40">
+            <div className="relative min-h-screen">
+                {/* Background Glows */}
+                <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-radial from-cyan-500/10 to-transparent blur-[160px]" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] rounded-full bg-radial from-violet-600/10 to-transparent blur-[160px]" />
+
+                <section className="relative z-10 section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
@@ -158,6 +163,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                     </div>
                 </div>
             </section>
+            </div>
         </>
     );
 }

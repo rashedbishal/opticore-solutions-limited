@@ -13,6 +13,7 @@ import {
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import GradientOrb from '@/components/UI/GradientOrb';
 
 interface HireUsSubCategory {
     name: string;
@@ -75,8 +76,14 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
 
             <div className="relative min-h-screen overflow-hidden px-4 pt-32 pb-24">
                 {/* Background Glows */}
-                <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] bg-radial from-cyan-500/10 to-transparent" />
-                <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] bg-radial from-violet-600/10 to-transparent" />
+                <GradientOrb
+                    className="top-0 right-0 h-[600px] w-[600px] translate-x-1/4 -translate-y-1/4"
+                    color="rgb(6 182 212 / 0.12)"
+                />
+                <GradientOrb
+                    className="bottom-0 left-0 h-[600px] w-[600px] -translate-x-1/4 translate-y-1/4"
+                    color="rgb(124 58 237 / 0.12)"
+                />
 
                 <div className="relative z-10 mx-auto max-w-7xl">
                     {/* Hero Section */}
@@ -98,133 +105,115 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             </h1>
                             <p className="mx-auto mb-12 max-w-2xl text-xl leading-relaxed text-theme-muted">
                                 Select a category to explore our professional
-                                sub-categories and start your project with the
-                                industry's finest talent.
+                                creative and digital services tailored for your
+                                business.
                             </p>
                         </motion.div>
                     </section>
 
-                    {/* Service Tabs */}
-                    <div className="neo-tab-list mx-auto mb-20 flex w-fit flex-wrap justify-center gap-2 p-2">
-                        {services.map((service) => (
-                            <button
-                                key={service.id}
-                                onClick={() => setActiveTab(service.id)}
-                                data-state={activeTab === service.id ? 'active' : 'inactive'}
-                                className="neo-tab-item flex items-center gap-3 px-6 py-4 text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--neo-shadow-btn-hover)] active:translate-y-0"
-                            >
-                                <service.icon
-                                    className={`h-4 w-4 ${activeTab === service.id ? 'text-white' : service.color}`}
-                                />
-                                {service.name}
-                            </button>
-                        ))}
-                    </div>
+                    {/* Services Tabs */}
+                    <section className="mb-20">
+                        <div className="hide-scrollbar flex items-center justify-center gap-4 overflow-x-auto pb-4">
+                            {services.map((service) => {
+                                const Icon = service.icon;
+                                const isActive = activeTab === service.id;
+                                return (
+                                    <button
+                                        key={service.id}
+                                        type="button"
+                                        onClick={() => setActiveTab(service.id)}
+                                        className={`flex shrink-0 items-center gap-3 rounded-2xl border px-6 py-4 transition-all duration-300 ${
+                                            isActive
+                                                ? 'border-violet-500/50 bg-violet-500/10 text-theme'
+                                                : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-hover hover:text-theme'
+                                        }`}
+                                    >
+                                        <div
+                                            className={`rounded-xl p-2 ${service.bg} ${service.color}`}
+                                        >
+                                            <Icon className="h-5 w-5" />
+                                        </div>
+                                        <span className="font-bold whitespace-nowrap">
+                                            {service.name}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </section>
 
-                    {/* Sub-Category Grid */}
+                    {/* Marketplace Grid */}
                     <AnimatePresence mode="wait">
-                        <motion.div
+                        <motion.section
                             key={activeTab}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.4 }}
-                            className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
+                            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
                         >
-                            {subCategories[activeTab]?.map((sub) => (
-                                <Link
-                                    key={sub.slug}
-                                    href={`/hire-us/${activeTab}/${sub.slug}`}
-                                    className="neo-panel-elevated group relative flex flex-col overflow-hidden transition-all duration-500 hover:-translate-y-2"
-                                >
-                                    <div className="relative aspect-[16/10] w-full overflow-hidden">
-                                        <img
-                                            src={sub.image}
-                                            alt={sub.name}
-                                            className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0"
-                                        />
-                                        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10" />
-                                    </div>
-                                    <div className="p-8">
-                                        <div className="mb-4 flex items-start justify-between">
-                                            <h3 className="text-2xl leading-tight font-black tracking-tight text-theme uppercase transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
-                                                {sub.name}
-                                            </h3>
-                                            <div className="neo-row flex items-center gap-1 px-2 py-1 font-bold text-amber-500">
-                                                <Star className="h-3 w-3 fill-current drop-shadow-[0_2px_4px_rgba(245,158,11,0.4)]" />
-                                                <span className="text-xs">
-                                                    {sub.rating}
-                                                </span>
+                            {(subCategories[activeTab] || []).map(
+                                (item, idx) => (
+                                    <motion.div
+                                        key={item.slug}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="group glass-panel overflow-hidden rounded-[2.5rem] border border-theme transition-all duration-500 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10"
+                                    >
+                                        <Link
+                                            href={`/hire-us/${activeTab}/${item.slug}`}
+                                        >
+                                            {/* Image */}
+                                            <div className="relative h-64 overflow-hidden">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                                                <div className="absolute top-4 right-4 rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white shadow-lg">
+                                                    Starts at {item.price}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="mt-8 flex items-center justify-between border-t border-theme/50 pt-6">
-                                            <div>
-                                                <p className="mb-1 text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
-                                                    Starting At
-                                                </p>
-                                                <p className="text-xl font-black text-theme drop-shadow-sm">
-                                                    {sub.price}
-                                                </p>
-                                            </div>
-                                            <div className="neo-btn-accent flex h-12 w-12 items-center justify-center rounded-2xl">
-                                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
 
-                            {/* Display "Coming Soon" if no sub-categories for the active tab */}
-                            {(!subCategories[activeTab] ||
-                                subCategories[activeTab].length === 0) && (
-                                    <div className="neo-panel col-span-full py-24 text-center">
-                                        <Sparkles className="mx-auto mb-6 h-12 w-12 text-theme-subtle animate-float" />
-                                        <h3 className="text-2xl font-bold tracking-widest text-theme-muted uppercase">
-                                            Coming Soon
-                                        </h3>
-                                        <p className="mt-2 text-theme-subtle">
-                                            We're onboarding expert talent for this
-                                            category.
-                                        </p>
-                                    </div>
-                                )}
-                        </motion.div>
+                                            {/* Info */}
+                                            <div className="p-8">
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <div className="flex items-center gap-1 text-amber-400">
+                                                        <Star className="h-4 w-4 fill-current" />
+                                                        <span className="text-sm font-bold text-theme">
+                                                            {item.rating}
+                                                        </span>
+                                                        <span className="text-xs text-theme-muted">
+                                                            ({item.reviews})
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-theme-muted">
+                                                        <Users className="h-4 w-4" />
+                                                        <span className="text-xs">
+                                                            24 Active
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <h3 className="mb-6 text-2xl font-black tracking-tight text-theme group-hover:text-violet-500 transition-colors">
+                                                    {item.name}
+                                                </h3>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm font-bold text-theme-muted group-hover:text-theme transition-colors">
+                                                        View Marketplace
+                                                    </span>
+                                                    <div className="rounded-full bg-theme-surface p-3 text-theme group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+                                                        <ArrowRight className="h-5 w-5" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                ),
+                            )}
+                        </motion.section>
                     </AnimatePresence>
-
-                    {/* Trust Section */}
-                    <div className="mt-32 grid grid-cols-1 gap-8 border-t border-theme/50 pt-24 md:grid-cols-3">
-                        {[
-                            {
-                                icon: Zap,
-                                title: 'Instant Start',
-                                desc: 'Projects kicked off immediately after purchase.',
-                            },
-                            {
-                                icon: Users,
-                                title: 'Direct Access',
-                                desc: 'Chat directly with the creative team working on your task.',
-                            },
-                            {
-                                icon: Star,
-                                title: 'Quality First',
-                                desc: 'Premium results guaranteed or your money back.',
-                            },
-                        ].map((item, i) => (
-                            <div key={i} className="neo-panel flex gap-6 p-6">
-                                <div className="neo-btn-ghost flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-cyan-600 dark:text-cyan-400">
-                                    <item.icon className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <h4 className="mb-2 text-lg font-bold text-theme">
-                                        {item.title}
-                                    </h4>
-                                    <p className="text-sm leading-relaxed text-theme-subtle">
-                                        {item.desc}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </div>
         </>

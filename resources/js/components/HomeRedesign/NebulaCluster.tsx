@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 
 import { useLenis } from '@/hooks/useLenis';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import GradientOrb from '@/components/UI/GradientOrb';
 
 interface NebulaEntry {
     id: number;
@@ -348,7 +349,17 @@ export default function NebulaCluster() {
                 className="relative h-screen w-full overflow-hidden"
             >
                 <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-                    <h2 className="text-7xl font-black tracking-tighter text-foreground uppercase opacity-[0.04] md:text-9xl">
+                    {/* Background Glows */}
+                    <GradientOrb
+                        className="top-1/4 left-1/4 h-80 w-80 -rotate-12"
+                        color="rgb(124 58 237 / 0.15)"
+                    />
+                    <GradientOrb
+                        className="bottom-1/4 right-1/4 h-80 w-80 rotate-12"
+                        color="rgb(6 182 212 / 0.15)"
+                    />
+                    
+                    <h2 className="relative z-10 text-7xl font-black tracking-tighter text-foreground uppercase opacity-[0.04] md:text-9xl">
                         The Nebula
                     </h2>
                 </div>
