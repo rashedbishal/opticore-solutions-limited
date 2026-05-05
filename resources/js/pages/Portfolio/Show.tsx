@@ -100,8 +100,8 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                         className="group neo-panel flex h-full flex-col p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl dark:border-white/5"
                                     >
                                         <div className="flex items-start justify-between gap-4">
-                                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inset transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                                                <FolderKanban className="h-6 w-6" />
+                                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-theme-surface text-primary shadow-[0_4px_0_rgba(0,0,0,0.15),0_8px_16px_rgba(0,0,0,0.1)] ring-1 ring-white/10 transition-all duration-500 group-hover:translate-y-[-2px] group-hover:rotate-[8deg] group-hover:shadow-[0_6px_0_rgba(0,0,0,0.15),0_12px_24px_rgba(124,58,237,0.2)] dark:bg-white/5 dark:shadow-[0_4px_0_rgba(0,0,0,0.4),0_8px_16px_rgba(0,0,0,0.3)] dark:group-hover:shadow-[0_6px_0_rgba(0,0,0,0.4),0_12px_24px_rgba(124,58,237,0.3)]">
+                                                <FolderKanban className="h-7 w-7 drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)]" />
                                             </div>
                                             <div className="flex gap-2 text-[10px] font-black tracking-[0.25em] text-cyan-600 uppercase dark:text-cyan-400">
                                                 <span>

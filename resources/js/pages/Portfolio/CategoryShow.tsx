@@ -213,7 +213,8 @@ export default function PortfolioCategoryShow({
 
                         {subCategories.length > 0 ? (
                             <>
-                                <div className="no-scrollbar flex items-center gap-3 overflow-x-auto pb-6 lg:flex-wrap">
+                            <div className="mb-10 flex flex-wrap justify-center gap-4">
+                                <div className="inline-flex flex-wrap items-center gap-2 rounded-[2rem] border border-slate-300 bg-linear-to-b from-slate-200 to-slate-100 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)] backdrop-blur-md dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
                                     {subCategories.map((sub) => {
                                         const isActive =
                                             sub.slug === selectedSubCategory?.slug;
@@ -225,7 +226,7 @@ export default function PortfolioCategoryShow({
                                                     category.slug,
                                                     sub.slug,
                                                 ])}
-                                                className={`touch-target shrink-0 rounded-full px-5 py-3 text-[13px] font-bold tracking-wide transition-all ${
+                                                className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
                                                     isActive
                                                         ? 'neo-btn-primary scale-105'
                                                         : 'neo-btn-ghost hover:scale-105'
@@ -236,6 +237,7 @@ export default function PortfolioCategoryShow({
                                         );
                                     })}
                                 </div>
+                            </div>
 
                                 {selectedSubCategory && (
                                     <motion.div
@@ -261,7 +263,9 @@ export default function PortfolioCategoryShow({
                                                 )}
                                             </div>
                                             <div className="flex shrink-0 items-center gap-2 text-xs font-black tracking-widest text-theme-subtle uppercase">
-                                                <span className="h-1 w-1 rounded-full bg-primary" />
+                                                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-theme-surface shadow-[0_2px_0_rgba(0,0,0,0.15)] ring-1 ring-white/10 dark:bg-white/5 dark:shadow-[0_2px_0_rgba(0,0,0,0.4)]">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary drop-shadow-[0_0_2px_rgba(139,92,246,0.8)]" />
+                                                </div>
                                                 {
                                                     selectedSubCategory.portfolios_count
                                                 }{' '}
@@ -296,8 +300,8 @@ export default function PortfolioCategoryShow({
                                     </div>
                                 ) : (
                                     <div className="neo-panel mt-12 flex min-h-72 flex-col items-center justify-center p-16 text-center">
-                                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-theme-surface shadow-inset">
-                                            <FolderOpen className="h-8 w-8 text-theme-subtle" />
+                                        <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-theme-surface shadow-[0_6px_0_rgba(0,0,0,0.15),0_12px_24px_rgba(0,0,0,0.1)] ring-1 ring-white/10 dark:bg-white/5 dark:shadow-[0_6px_0_rgba(0,0,0,0.4),0_12px_24px_rgba(0,0,0,0.3)]">
+                                            <FolderOpen className="h-9 w-9 text-theme-subtle drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
                                         </div>
                                         <p className="text-xl font-bold text-theme">
                                             Vault is empty
@@ -315,8 +319,8 @@ export default function PortfolioCategoryShow({
                                 variants={fadeUp}
                                 className="neo-panel mt-10 flex flex-col items-center py-20 text-center"
                             >
-                                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-theme-surface shadow-inset">
-                                    <FolderOpen className="h-8 w-8 text-theme-subtle" />
+                                <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-theme-surface shadow-[0_6px_0_rgba(0,0,0,0.15),0_12px_24px_rgba(0,0,0,0.1)] ring-1 ring-white/10 dark:bg-white/5 dark:shadow-[0_6px_0_rgba(0,0,0,0.4),0_12px_24px_rgba(0,0,0,0.3)]">
+                                    <FolderOpen className="h-9 w-9 text-theme-subtle drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
                                 </div>
                                 <p className="text-xl font-bold text-theme">
                                     No Collections Found
