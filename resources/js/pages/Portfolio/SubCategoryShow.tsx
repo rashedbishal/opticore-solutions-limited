@@ -174,7 +174,7 @@ export default function PortfolioSubCategoryShow({
                             initial="hidden"
                             animate="visible"
                             variants={staggerContainer}
-                            className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3"
+                            className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
                         >
                             {portfolios.map((item) => (
                                 <motion.div
@@ -206,7 +206,7 @@ export default function PortfolioSubCategoryShow({
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
                                     <div className="absolute inset-x-0 bottom-0 p-5">
-                                        <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                        <p className="text-xs font-semibold tracking-[0.24em] text-cyan-600 uppercase dark:text-cyan-300">
                                             {subCategory.name}
                                         </p>
                                         <div className="mt-2 flex items-center justify-between gap-4">
