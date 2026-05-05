@@ -1432,8 +1432,8 @@ export default function SubCategoryShow({
                             {/* Subtle dot grid */}
                             <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
                             {/* Glow orbs */}
-                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 bg-radial from-cyan-500/10 to-transparent" />
-                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 bg-radial from-violet-500/10 to-transparent" />
+                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 bg-radial from-cyan-500/10 to-transparent blur-2xl" />
+                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 bg-radial from-violet-500/10 to-transparent blur-2xl" />
 
                             <div className="relative z-10">
                                 {/* Header label */}
@@ -1526,10 +1526,10 @@ export default function SubCategoryShow({
                 <div className="relative w-full overflow-hidden py-24">
                     {/* Decorative background elements */}
                     <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/2">
-                        <div className="h-[500px] w-[500px] bg-radial from-cyan-500/5 to-transparent" />
+                        <div className="h-[500px] w-[500px] bg-radial from-cyan-500/5 to-transparent blur-2xl" />
                     </div>
                     <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/2">
-                        <div className="h-[500px] w-[500px] bg-radial from-violet-500/5 to-transparent" />
+                        <div className="h-[500px] w-[500px] bg-radial from-violet-500/5 to-transparent blur-2xl" />
                     </div>
 
                     <motion.div

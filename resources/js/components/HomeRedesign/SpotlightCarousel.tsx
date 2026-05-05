@@ -360,7 +360,13 @@ export default function SpotlightCarousel() {
                 {/* ── Cards stage ── */}
                 <div
                     className="relative flex items-center justify-center overflow-visible"
-                    style={{ height: STAGE_HEIGHT }}
+                    style={{
+                        height: STAGE_HEIGHT,
+                        maskImage:
+                            'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
+                        WebkitMaskImage:
+                            'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
+                    }}
                 >
                     {TESTIMONIALS.map((item, i) => {
                         const position = resolvePosition(i, activeIndex, total);
@@ -386,7 +392,6 @@ export default function SpotlightCarousel() {
                                 transition={{
                                     duration: 1.4,
                                     ease: EASING,
-                                    filter: { duration: 1.2 },
                                     opacity: { duration: 1.2 },
                                 }}
                                 onClick={() => {

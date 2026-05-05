@@ -202,22 +202,21 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                 transition={
                     item.isCenter
                         ? {
-                              duration: 12,
-                              repeat: Infinity,
-                              ease: 'easeInOut',
-                              times: [0, 0.25, 0.5, 0.75, 1],
-                          }
+                            duration: 12,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                            times: [0, 0.25, 0.5, 0.75, 1],
+                        }
                         : undefined
                 }
             >
                 <div style={{ perspective: '1000px' }}>
                     <motion.button
                         style={{ x, y, rotateX, rotateY }}
-                        className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${
-                            item.isCenter
+                        className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${item.isCenter
                                 ? 'w-[min(300px,34vw)]'
                                 : 'w-[min(220px,24vw)]'
-                        } aspect-[4/3]`}
+                            } aspect-[4/3]`}
                         whileHover={{ scale: 1.07 }}
                         onClick={onSelect}
                     >
@@ -316,9 +315,8 @@ export default function NebulaCluster() {
                         <button
                             key={item.id}
                             onClick={() => setSelected(item.id)}
-                            className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border border-theme ${
-                                item.isCenter ? 'col-span-2' : ''
-                            }`}
+                            className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border border-theme ${item.isCenter ? 'col-span-2' : ''
+                                }`}
                         >
                             <img
                                 src={item.src}
@@ -358,7 +356,7 @@ export default function NebulaCluster() {
                         className="bottom-1/4 right-1/4 h-80 w-80 rotate-12"
                         color="rgb(6 182 212 / 0.15)"
                     />
-                    
+
                     <h2 className="relative z-10 text-7xl font-black tracking-tighter text-foreground uppercase opacity-[0.04] md:text-9xl">
                         The Nebula
                     </h2>

@@ -548,22 +548,32 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection> */}
 
                 {/* Nebula Cluster */}
-                <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
-                            Portfolio Concept 2
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Nebula Cluster
-                        </h2>
-                        <p className="mt-4 text-theme-muted">
-                            Move your mouse to interact with the cluster
-                        </p>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[90vh]">
-                    <NebulaCluster />
-                </LazySection>
+                <div className="relative overflow-hidden">
+                    <GradientOrb
+                        className="top-0 right-0 h-[500px] w-[500px] translate-x-1/3 -translate-y-1/3"
+                        color="rgb(139 92 246 / 0.18)"
+                    />
+                    <GradientOrb
+                        className="bottom-0 left-0 h-[500px] w-[500px] -translate-x-1/3 translate-y-1/3"
+                        color="rgb(6 182 212 / 0.14)"
+                    />
+                    <section className="border-t border-theme bg-background/60 py-20">
+                        <div className="mx-auto max-w-7xl px-4 text-center">
+                            <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
+                                Portfolio Concept 2
+                            </span>
+                            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
+                                Nebula Cluster
+                            </h2>
+                            <p className="mt-4 text-theme-muted">
+                                Move your mouse to interact with the cluster
+                            </p>
+                        </div>
+                    </section>
+                    <LazySection minHeightClassName="min-h-[90vh]">
+                        <NebulaCluster />
+                    </LazySection>
+                </div>
 
                 {/* <section className="border-t border-theme bg-background py-20">
                     <div className="mx-auto max-w-7xl px-4 text-center">
@@ -610,23 +620,33 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                 </LazySection> */}
 
                 {/* Spotlight Carousel */}
-                <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
-                            Testimonial Concept 3
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Spotlight Carousel
-                        </h2>
-                        <p className="mt-4 text-theme-muted">
-                            Drag to swipe · click side cards to focus · ← → to
-                            step
-                        </p>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[70vh]">
-                    <SpotlightCarousel />
-                </LazySection>
+                <div className="relative overflow-hidden">
+                    <GradientOrb
+                        className="top-0 left-0 h-[480px] w-[480px] -translate-x-1/3 -translate-y-1/3"
+                        color="rgb(124 58 237 / 0.15)"
+                    />
+                    <GradientOrb
+                        className="bottom-0 right-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
+                        color="rgb(6 182 212 / 0.12)"
+                    />
+                    <section className="border-t border-theme bg-background/60 py-20">
+                        <div className="mx-auto max-w-7xl px-4 text-center">
+                            <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
+                                Testimonial Concept 3
+                            </span>
+                            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
+                                Spotlight Carousel
+                            </h2>
+                            <p className="mt-4 text-theme-muted">
+                                Drag to swipe · click side cards to focus · ← → to
+                                step
+                            </p>
+                        </div>
+                    </section>
+                    <LazySection minHeightClassName="min-h-[70vh]">
+                        <SpotlightCarousel />
+                    </LazySection>
+                </div>
 
                 {/* Stacked Depth */}
                 {/* <section className="border-t border-theme bg-background py-20">
