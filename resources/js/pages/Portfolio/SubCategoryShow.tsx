@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
+import { useRef } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 
@@ -24,15 +24,6 @@ interface Props {
 
 const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
 
-const fadeUp = {
-    hidden: { opacity: 0, y: 32 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-};
-
 function MasonryCard({
     item,
     label,
@@ -45,7 +36,10 @@ function MasonryCard({
     index: number;
 }) {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' });
+    const isInView = useInView(ref, {
+        once: true,
+        margin: '0px 0px -80px 0px',
+    });
 
     return (
         <motion.div
@@ -88,12 +82,12 @@ function MasonryCard({
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity duration-500 sm:opacity-0 sm:group-hover:opacity-100" />
 
                 {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-5 opacity-100 transition-all duration-500 transform translate-y-0 sm:opacity-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0">
+                <div className="absolute inset-x-0 bottom-0 translate-y-0 transform p-5 opacity-100 transition-all duration-500 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
                     <p className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">
                         {label}
                     </p>
                     <div className="mt-1.5 flex items-center justify-between gap-4">
-                        <h3 className="text-sm font-bold leading-tight text-white line-clamp-2">
+                        <h3 className="line-clamp-2 text-sm leading-tight font-bold text-white">
                             {item.title}
                         </h3>
                         <Link
@@ -201,7 +195,7 @@ export default function PortfolioSubCategoryShow({
                                 </span>
                             </h1>
                             {subCategory.description && (
-                                <p className="mt-8 max-w-3xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
+                                <p className="mt-8 max-w-3xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
                                     {subCategory.description}
                                 </p>
                             )}
@@ -306,7 +300,7 @@ export default function PortfolioSubCategoryShow({
                             <h2 className="text-3xl font-black text-balance text-theme sm:text-4xl md:text-5xl">
                                 Want work like this for your brand?
                             </h2>
-                            <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
+                            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
                                 We create premium identities, campaign systems,
                                 and presentation-ready visual assets designed to
                                 move perception and performance.

@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import {
     AnimatePresence,
     motion,
@@ -6,9 +7,8 @@ import {
     useTransform,
 } from 'framer-motion';
 import { ArrowUpRight, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link } from '@inertiajs/react';
 
 import GradientOrb from '@/components/UI/GradientOrb';
 import { useLenis } from '@/hooks/useLenis';
@@ -148,11 +148,11 @@ function ExpandModal({
                             <p className="mt-3 leading-relaxed text-theme-muted">
                                 {item.description}
                             </p>
-                            
+
                             <div className="mt-6 flex justify-end">
                                 <Link
                                     href={item.href}
-                                    className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-violet-700 hover:scale-105"
+                                    className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 hover:bg-violet-700"
                                 >
                                     Explore Portfolio
                                     <ArrowUpRight className="h-4 w-4" />
@@ -220,21 +220,22 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                 transition={
                     item.isCenter
                         ? {
-                            duration: 12,
-                            repeat: Infinity,
-                            ease: 'easeInOut',
-                            times: [0, 0.25, 0.5, 0.75, 1],
-                        }
+                              duration: 12,
+                              repeat: Infinity,
+                              ease: 'easeInOut',
+                              times: [0, 0.25, 0.5, 0.75, 1],
+                          }
                         : undefined
                 }
             >
                 <div style={{ perspective: '1000px' }}>
                     <motion.button
                         style={{ x, y, rotateX, rotateY }}
-                        className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${item.isCenter
+                        className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${
+                            item.isCenter
                                 ? 'w-[min(300px,34vw)]'
                                 : 'w-[min(220px,24vw)]'
-                            } aspect-[4/3]`}
+                        } aspect-[4/3]`}
                         whileHover={{ scale: 1.07 }}
                         onClick={onSelect}
                     >
@@ -293,7 +294,7 @@ function StarField({
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    const stars = useMemo(() => {
+    const [stars] = useState<Star[]>(() => {
         return Array.from({ length: 60 }, (_, i) => ({
             id: i,
             x: `${Math.random() * 100}%`,
@@ -301,7 +302,7 @@ function StarField({
             size: Math.random() * 2 + 1,
             opacity: Math.random() * 0.5 + 0.1,
         }));
-    }, []);
+    });
 
     // Stars move at a much shallower depth than cards
     const x = useTransform(dx, [-0.5, 0.5], [-20 * intensity, 20 * intensity]);
@@ -316,8 +317,8 @@ function StarField({
                 <div
                     key={star.id}
                     className={`absolute rounded-full transition-colors duration-500 ${
-                        isDark 
-                            ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' 
+                        isDark
+                            ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]'
                             : 'bg-violet-600 shadow-[0_0_8px_rgba(124,58,237,0.4)]'
                     }`}
                     style={{
@@ -395,8 +396,9 @@ export default function NebulaCluster() {
                         <button
                             key={item.id}
                             onClick={() => setSelected(item.id)}
-                            className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border border-theme ${item.isCenter ? 'col-span-2' : ''
-                                }`}
+                            className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border border-theme ${
+                                item.isCenter ? 'col-span-2' : ''
+                            }`}
                         >
                             <img
                                 src={item.src}
@@ -433,7 +435,7 @@ export default function NebulaCluster() {
                         color="rgb(124 58 237 / 0.15)"
                     />
                     <GradientOrb
-                        className="bottom-1/4 right-1/4 h-80 w-80 rotate-12"
+                        className="right-1/4 bottom-1/4 h-80 w-80 rotate-12"
                         color="rgb(6 182 212 / 0.15)"
                     />
 

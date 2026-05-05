@@ -1,8 +1,9 @@
+import type { Variants } from 'framer-motion';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowRight, FolderKanban, Layers3 } from 'lucide-react';
-import MagneticButton from '@/components/UI/MagneticButton';
 import GradientOrb from '@/components/UI/GradientOrb';
+import MagneticButton from '@/components/UI/MagneticButton';
 import { portfolioCategory } from '@/routes';
 
 interface Category {
@@ -18,12 +19,12 @@ interface Props {
     meta: { title: string; description: string };
 }
 
-const staggerGrid = {
+const staggerGrid: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
 };
 
-const cardVariant = {
+const cardVariant: Variants = {
     hidden: { opacity: 0, y: 28, scale: 0.96 },
     visible: {
         opacity: 1,
@@ -71,7 +72,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                     Explore Work By Category
                                 </span>
                             </h1>
-                            <p className="mt-8 max-w-3xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
+                            <p className="mt-8 max-w-3xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
                                 Start with the discipline you need. Each
                                 category opens into its own sub-category tabs so
                                 you can drill straight into relevant work.
@@ -124,7 +125,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                             {category.label}
                                         </h2>
 
-                                        <p className="mt-5 flex-1 text-sm font-medium leading-relaxed text-theme-muted">
+                                        <p className="mt-5 flex-1 text-sm leading-relaxed font-medium text-theme-muted">
                                             {category.description}
                                         </p>
 
@@ -152,7 +153,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                             <h2 className="text-3xl font-black text-balance text-theme sm:text-4xl md:text-5xl">
                                 Want work like this for your brand?
                             </h2>
-                            <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
+                            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
                                 We create premium identities, campaign systems,
                                 and presentation-ready visual assets designed to
                                 move perception and performance.

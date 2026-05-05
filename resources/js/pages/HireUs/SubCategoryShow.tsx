@@ -41,7 +41,6 @@ import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import GradientOrb from '@/components/UI/GradientOrb';
 import Modal from '@/components/UI/Modal';
-import GradientOrb from '@/components/UI/GradientOrb';
 
 interface PortfolioItem {
     id: number;

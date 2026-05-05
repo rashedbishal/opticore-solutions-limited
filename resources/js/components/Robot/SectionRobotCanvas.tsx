@@ -28,12 +28,6 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
                 });
             } else if (animation === 'circle') {
                 const tl = gsap.timeline({ repeat: -1 });
-<<<<<<< HEAD
-                tl.to(groupRef.current.position, { x: 0.5, z: 0.5, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: 0, z: 1, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: -0.5, z: 0.5, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: 0, z: 0, duration: 2, ease: 'sine.inOut' });
-=======
                 tl.to(groupRef.current.position, {
                     x: 0.5,
                     z: 0.5,
@@ -58,7 +52,6 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
                         duration: 2,
                         ease: 'sine.inOut',
                     });
->>>>>>> @{-1}
 
                 gsap.to(groupRef.current.rotation, {
                     y: Math.PI * 2,
@@ -80,13 +73,9 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
                     ref={ref}
                     modelPath="/models/quaternius_cc0-george-1063.glb"
                     initialAnimation={
-<<<<<<< HEAD
-                        animation === 'spin' || animation === 'circle' ? 'idle' : animation
-=======
                         animation === 'spin' || animation === 'circle'
                             ? 'idle'
                             : animation
->>>>>>> @{-1}
                     }
                 />
             </group>
@@ -96,13 +85,9 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
 
 RobotInScene.displayName = 'RobotInScene';
 
-<<<<<<< HEAD
-export default function SectionRobotCanvas({ animation }: SectionRobotCanvasProps) {
-=======
 export default function SectionRobotCanvas({
     animation,
 }: SectionRobotCanvasProps) {
->>>>>>> @{-1}
     const robotModelRef = useRef<RobotModelRef>(null);
 
     return (

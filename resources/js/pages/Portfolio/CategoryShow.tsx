@@ -1,9 +1,10 @@
+import type { Variants } from 'framer-motion';
 import { Head, Link } from '@inertiajs/react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
-import MagneticButton from '@/components/UI/MagneticButton';
+import { useRef } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
+import MagneticButton from '@/components/UI/MagneticButton';
 import { portfolio, portfolioPreview, portfolioSubCategory } from '@/routes';
 
 interface Category {
@@ -38,7 +39,7 @@ interface Props {
 
 const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
 
-const fadeUp = {
+const fadeUp: Variants = {
     hidden: { opacity: 0, y: 32 },
     visible: {
         opacity: 1,
@@ -57,7 +58,10 @@ function MasonryCard({
     index: number;
 }) {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' });
+    const isInView = useInView(ref, {
+        once: true,
+        margin: '0px 0px -80px 0px',
+    });
 
     return (
         <motion.div
@@ -95,17 +99,17 @@ function MasonryCard({
                         className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                     />
                 )}
-                
+
                 {/* Gradient Overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity duration-500 sm:opacity-0 sm:group-hover:opacity-100" />
-                
+
                 {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-5 opacity-100 transition-all duration-500 transform translate-y-0 sm:opacity-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0">
+                <div className="absolute inset-x-0 bottom-0 translate-y-0 transform p-5 opacity-100 transition-all duration-500 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
                     <p className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">
                         {label}
                     </p>
                     <div className="mt-1.5 flex items-center justify-between gap-4">
-                        <h3 className="text-sm font-bold leading-tight text-white line-clamp-2">
+                        <h3 className="line-clamp-2 text-sm leading-tight font-bold text-white">
                             {item.title}
                         </h3>
                         <Link
@@ -184,15 +188,13 @@ export default function PortfolioCategoryShow({
                                 </span>
                             </nav>
 
-                            <span className="section-kicker">
-                                Case Studies
-                            </span>
+                            <span className="section-kicker">Case Studies</span>
                             <h1 className="text-4xl font-black text-balance text-theme sm:text-5xl md:text-6xl lg:text-7xl">
                                 <span className="gradient-text">
                                     {category.label}
                                 </span>
                             </h1>
-                            <p className="mt-8 max-w-3xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
+                            <p className="mt-8 max-w-3xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
                                 {category.description}
                             </p>
                         </motion.div>
@@ -213,38 +215,41 @@ export default function PortfolioCategoryShow({
 
                         {subCategories.length > 0 ? (
                             <>
-                            <div className="mb-10 flex flex-wrap justify-center gap-4">
-                                <div className="inline-flex flex-wrap items-center gap-2 rounded-[2rem] border border-slate-300 bg-linear-to-b from-slate-200 to-slate-100 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)] backdrop-blur-md dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                                    {subCategories.map((sub) => {
-                                        const isActive =
-                                            sub.slug === selectedSubCategory?.slug;
+                                <div className="mb-10 flex flex-wrap justify-center gap-4">
+                                    <div className="inline-flex flex-wrap items-center gap-2 rounded-[2rem] border border-slate-300 bg-linear-to-b from-slate-200 to-slate-100 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)] backdrop-blur-md dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
+                                        {subCategories.map((sub) => {
+                                            const isActive =
+                                                sub.slug ===
+                                                selectedSubCategory?.slug;
 
-                                        return (
-                                            <Link
-                                                key={sub.id}
-                                                href={portfolioSubCategory.url([
-                                                    category.slug,
-                                                    sub.slug,
-                                                ])}
-                                                className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
-                                                    isActive
-                                                        ? 'neo-btn-primary scale-105'
-                                                        : 'neo-btn-ghost hover:scale-105'
-                                                }`}
-                                            >
-                                                {sub.name}
-                                            </Link>
-                                        );
-                                    })}
+                                            return (
+                                                <Link
+                                                    key={sub.id}
+                                                    href={portfolioSubCategory.url(
+                                                        [
+                                                            category.slug,
+                                                            sub.slug,
+                                                        ],
+                                                    )}
+                                                    className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
+                                                        isActive
+                                                            ? 'neo-btn-primary scale-105'
+                                                            : 'neo-btn-ghost hover:scale-105'
+                                                    }`}
+                                                >
+                                                    {sub.name}
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
 
                                 {selectedSubCategory && (
                                     <motion.div
                                         initial="hidden"
                                         animate="visible"
                                         variants={fadeUp}
-                                        className="mt-8 neo-panel p-8"
+                                        className="neo-panel mt-8 p-8"
                                     >
                                         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                                             <div className="max-w-3xl">
@@ -255,7 +260,7 @@ export default function PortfolioCategoryShow({
                                                     {selectedSubCategory.name}
                                                 </h2>
                                                 {selectedSubCategory.description && (
-                                                    <p className="mt-4 text-sm font-medium leading-relaxed text-theme-muted">
+                                                    <p className="mt-4 text-sm leading-relaxed font-medium text-theme-muted">
                                                         {
                                                             selectedSubCategory.description
                                                         }
@@ -307,7 +312,8 @@ export default function PortfolioCategoryShow({
                                             Vault is empty
                                         </p>
                                         <p className="mt-2 text-sm font-medium text-theme-muted">
-                                            No portfolio items in this sub-category yet.
+                                            No portfolio items in this
+                                            sub-category yet.
                                         </p>
                                     </div>
                                 )}
@@ -326,7 +332,8 @@ export default function PortfolioCategoryShow({
                                     No Collections Found
                                 </p>
                                 <p className="mt-2 max-w-xs text-sm font-medium text-theme-muted">
-                                    Check back later for new categories and updates.
+                                    Check back later for new categories and
+                                    updates.
                                 </p>
                             </motion.div>
                         )}
@@ -340,10 +347,10 @@ export default function PortfolioCategoryShow({
                             <h2 className="text-3xl font-black text-balance text-theme sm:text-4xl md:text-5xl">
                                 Elevated Results For Your Brand
                             </h2>
-                            <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
-                                We create premium identities, campaign systems, and
-                                presentation-ready visual assets designed to move
-                                perception and performance.
+                            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed font-medium text-theme-muted sm:text-lg">
+                                We create premium identities, campaign systems,
+                                and presentation-ready visual assets designed to
+                                move perception and performance.
                             </p>
                             <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                                 <MagneticButton
