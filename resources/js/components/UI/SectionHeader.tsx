@@ -1,6 +1,6 @@
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
-import { useEffect, useState, useRef, useLayoutEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface SectionHeaderProps {
     eyebrow?: string;
@@ -281,35 +281,27 @@ export default function SectionHeader({
 }: SectionHeaderProps) {
     const h2Ref = useRef<HTMLHeadingElement>(null);
 
-    // This effect ensures that even when text is split into multiple spans 
-    // for animation, the gradient appears as one seamless transition.
-    useLayoutEffect(() => {
+    // Aligns gradient spans so they appear as one seamless gradient across
+    // the full h2 width, regardless of how the text is split into child spans.
+    // useEffect (post-paint) is correct here — measurements are stable after
+    // the browser has laid out the text, and there is no rAF loop to maintain.
+    useEffect(() => {
         const container = h2Ref.current;
 
         if (!container) {
             return;
         }
 
-        // We use a small timeout to ensure the DOM has finished 
-        // processing the title change before measuring.
-        const frame = requestAnimationFrame(() => {
-            const containerWidth = container.offsetWidth;
-            const containerRect = container.getBoundingClientRect();
-            
-            // Find all span elements that carry a gradient
-            const gradientElements = container.querySelectorAll<HTMLElement>('[class*="bg-clip-text"], .gradient-text');
+        const containerWidth = container.offsetWidth;
+        const containerRect = container.getBoundingClientRect();
+        const gradientElements = container.querySelectorAll<HTMLElement>('[class*="bg-clip-text"], .gradient-text');
 
-            gradientElements.forEach((el) => {
-                const elRect = el.getBoundingClientRect();
-                // We use relative viewport offsets to ensure nesting doesn't break alignment
-                const offsetLeft = elRect.left - containerRect.left;
-                
-                el.style.backgroundSize = `${containerWidth}px 100%`;
-                el.style.backgroundPosition = `-${offsetLeft}px 0`;
-            });
+        gradientElements.forEach((el) => {
+            const elRect = el.getBoundingClientRect();
+            const offsetLeft = elRect.left - containerRect.left;
+            el.style.backgroundSize = `${containerWidth}px 100%`;
+            el.style.backgroundPosition = `-${offsetLeft}px 0`;
         });
-
-        return () => cancelAnimationFrame(frame);
     }, [title, titles, animationType, variant]);
 
     const renderTitle = () => {

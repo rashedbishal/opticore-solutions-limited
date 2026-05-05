@@ -186,6 +186,7 @@ export default function GlobeCarousel({
     const isSnapping = useRef(false);
     const snapTarget = useRef(0);
     const rafHandle = useRef(0);
+    const containerRef = useRef<HTMLDivElement>(null);
     const selectedIdRef = useRef<string | null>(null);
     const lightboxOpenRef = useRef(false); // pauses auto-rotate while modal is open
 
@@ -284,18 +285,39 @@ export default function GlobeCarousel({
 
                 el.style.transform = `translateY(${card.ringY}px) rotateY(${eff}deg) translateZ(${card.radius}px)`;
                 el.style.opacity = isSel ? '1' : (0.22 + 0.78 * t).toFixed(2);
-                const blurPx = isSel ? 0 : 3.5 * (1 - t);
-                el.style.filter =
-                    blurPx < 0.08 ? 'none' : `blur(${blurPx.toFixed(1)}px)`;
                 el.style.pointerEvents = t < 0.08 ? 'none' : 'auto';
             }
 
             rafHandle.current = requestAnimationFrame(tick);
         }
 
+        function pause() {
+            cancelAnimationFrame(rafHandle.current);
+            rafHandle.current = 0;
+        }
+        function resume() {
+            if (!rafHandle.current) {
+                rafHandle.current = requestAnimationFrame(tick);
+            }
+        }
+
         rafHandle.current = requestAnimationFrame(tick);
 
-        return () => cancelAnimationFrame(rafHandle.current);
+        const onVisibility = () =>
+            document.visibilityState === 'hidden' ? pause() : resume();
+        document.addEventListener('visibilitychange', onVisibility);
+
+        const obs = new IntersectionObserver(
+            ([entry]) => (entry.isIntersecting ? resume() : pause()),
+            { threshold: 0.01 },
+        );
+        if (containerRef.current) { obs.observe(containerRef.current); }
+
+        return () => {
+            cancelAnimationFrame(rafHandle.current);
+            document.removeEventListener('visibilitychange', onVisibility);
+            obs.disconnect();
+        };
     }, []);
 
     // ── Snap helpers ──────────────────────────────────────────────────────────
@@ -547,6 +569,7 @@ export default function GlobeCarousel({
     return (
         <>
             <div
+                ref={containerRef}
                 className="relative flex w-full cursor-grab items-center justify-center overflow-hidden select-none active:cursor-grabbing"
                 style={{
                     height: isMobile ? (isSmall ? '360px' : '440px') : '560px',
@@ -590,7 +613,7 @@ export default function GlobeCarousel({
                                 height: cardH,
                                 transform: `translateY(${card.ringY}px) rotateY(${card.cardAngle}deg) translateZ(${card.radius}px)`,
                                 cursor: 'pointer',
-                                willChange: 'transform, opacity, filter',
+                                willChange: 'transform, opacity',
                             }}
                         >
                             <div
