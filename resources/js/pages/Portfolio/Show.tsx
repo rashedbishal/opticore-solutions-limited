@@ -55,12 +55,12 @@ export default function PortfolioShow({ categories, meta }: Props) {
                         className="glass-panel rounded-[2rem] p-6 sm:p-10 lg:p-14"
                     >
                         <span className="section-kicker">Portfolio</span>
-                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
                                 Explore Work By Category
                             </span>
                         </h1>
-                        <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
+                        <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
                             Start with the discipline you need. Each category
                             opens into its own sub-category tabs so you can
                             drill straight into relevant work.
@@ -87,15 +87,15 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                     className="group glass-panel flex h-full flex-col rounded-[1.75rem] p-7 transition-all hover:border-violet-400/40 hover:bg-violet-500/5"
                                 >
                                     <div className="flex items-start justify-between gap-4">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-600 ring-1 ring-violet-400/20 dark:text-violet-300">
                                             <FolderKanban className="h-5 w-5" />
                                         </div>
-                                        <div className="flex gap-2 text-[11px] font-semibold tracking-[0.2em] text-cyan-300 uppercase">
+                                        <div className="flex gap-2 text-[11px] font-semibold tracking-[0.2em] text-cyan-600 uppercase dark:text-cyan-300">
                                             <span>
                                                 {category.sub_categories_count}{' '}
                                                 tabs
                                             </span>
-                                            <span className="text-zinc-600">
+                                            <span className="text-theme-border">
                                                 /
                                             </span>
                                             <span>
@@ -105,20 +105,20 @@ export default function PortfolioShow({ categories, meta }: Props) {
                                         </div>
                                     </div>
 
-                                    <h2 className="mt-8 text-2xl font-bold text-white transition-colors group-hover:text-violet-200">
+                                    <h2 className="mt-8 text-2xl font-bold text-theme transition-colors group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
                                         {category.label}
                                     </h2>
 
-                                    <p className="mt-4 flex-1 text-sm leading-7 text-zinc-400">
+                                    <p className="mt-4 flex-1 text-sm leading-7 text-theme-muted">
                                         {category.description}
                                     </p>
 
-                                    <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-5">
-                                        <div className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400">
+                                    <div className="mt-8 flex items-center justify-between border-t border-theme pt-5">
+                                        <div className="inline-flex items-center gap-2 text-sm font-medium text-theme-subtle">
                                             <Layers3 className="h-4 w-4" />
                                             View sub-categories
                                         </div>
-                                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-violet-400 transition-colors group-hover:text-violet-300">
+                                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-600 transition-colors group-hover:text-cyan-500 dark:text-cyan-400 dark:group-hover:text-cyan-300">
                                             Open
                                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                         </span>
@@ -133,10 +133,10 @@ export default function PortfolioShow({ categories, meta }: Props) {
             <section className="section-shell pt-0">
                 <div className="section-inner">
                     <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-8 text-center sm:p-10 lg:p-14">
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Want work like this for your brand?
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             We create premium identities, campaign systems, and
                             presentation-ready visual assets designed to move
                             perception and performance.
@@ -150,7 +150,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                             </MagneticButton>
                             <Link
                                 href="/contact"
-                                className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white"
+                                className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme transition-colors hover:bg-theme-surface-hover"
                             >
                                 Contact Us
                             </Link>
