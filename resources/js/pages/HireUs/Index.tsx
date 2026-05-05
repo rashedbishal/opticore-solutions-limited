@@ -152,8 +152,8 @@ export default function HireUs() {
 
             <div className="relative min-h-screen overflow-hidden px-4 pt-32 pb-24">
                 {/* Background Glows */}
-                <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[120px]" />
-                <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[120px]" />
+                <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] bg-radial from-cyan-500/10 to-transparent" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] bg-radial from-violet-600/10 to-transparent" />
 
                 <div className="relative z-10 mx-auto max-w-7xl">
                     {/* Hero Section */}

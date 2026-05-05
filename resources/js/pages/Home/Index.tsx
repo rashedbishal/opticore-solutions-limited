@@ -41,10 +41,9 @@ const fadeUp: Variants = {
     },
 };
 const blurReveal: Variants = {
-    hidden: { opacity: 0, filter: 'blur(12px)', y: 30 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
         opacity: 1,
-        filter: 'blur(0px)',
         y: 0,
         transition: { duration: 0.9, ease: easing },
     },
