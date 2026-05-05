@@ -76,19 +76,19 @@ export default function ServiceCard({
                         </span>
                     </div>
 
-                    <h3 className="mt-2.5 text-base font-bold text-white uppercase tracking-tight">
+                    <h3 className="mt-2.5 text-base font-bold text-theme uppercase tracking-tight">
                         {service.name}
                     </h3>
 
-                    <p className="mt-1.5 text-sm leading-6 text-zinc-400 line-clamp-2">
+                    <p className="mt-1.5 text-sm leading-6 text-theme-muted line-clamp-2">
                         {service.description}
                     </p>
                 </div>
 
                 {/* Dashboard Image Stack */}
-                <div className="relative my-5 flex aspect-[1.4/1] w-full items-center justify-center rounded-xl bg-zinc-950/40 ring-1 ring-white/5 overflow-hidden">
+                <div className="relative my-5 flex aspect-[1.4/1] w-full items-center justify-center rounded-xl bg-theme-surface/40 ring-1 ring-theme-border overflow-hidden">
                     {/* Background Tech Pattern */}
-                    <div className="absolute inset-0 opacity-10 [mask-image:radial-gradient(circle,black,transparent)]">
+                    <div className="absolute inset-0 opacity-10 [mask-image:radial-gradient(circle,black,transparent)] dark:opacity-20">
                         <svg className="h-full w-full" fill="none">
                             <defs>
                                 <pattern
@@ -99,8 +99,9 @@ export default function ServiceCard({
                                 >
                                     <path
                                         d="M 12 0 L 0 0 0 12"
-                                        stroke="white"
+                                        stroke="currentColor"
                                         strokeWidth="0.5"
+                                        className="text-theme-border"
                                     />
                                 </pattern>
                             </defs>
@@ -126,7 +127,7 @@ export default function ServiceCard({
                                     }}
 
                                     className={cn(
-                                        'absolute w-[65%] aspect-video rounded-lg overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:shadow-violet-500/20',
+                                        'absolute w-[65%] aspect-video rounded-lg overflow-hidden border border-theme shadow-2xl transition-all duration-500 group-hover:shadow-violet-500/20',
 
                                         // DEFAULT (non-hover) spread
                                         idx === 0
@@ -151,7 +152,7 @@ export default function ServiceCard({
                                             : '',
                                     )}
                                 >
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                                     <img
                                         src={
                                             item.media_path ??
@@ -178,7 +179,7 @@ export default function ServiceCard({
                                 <div className="absolute inset-2 rounded-full border border-violet-500/20" />
                                 <Icon className="relative h-6 w-6 text-violet-400/50" />
                             </div>
-                            <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-wider">
+                            <span className="text-[12px] font-bold text-theme-subtle uppercase tracking-wider">
                                 Data Pending
                             </span>
                             <div className="mt-2 h-0.5 w-8 rounded-full bg-violet-500/10" />
@@ -188,10 +189,10 @@ export default function ServiceCard({
 
                 {/* CTA */}
                 <div className="mt-auto inline-flex items-center justify-between">
-                    <span className="text-[13px] font-bold tracking-wider text-cyan-400 uppercase">
+                    <span className="text-[13px] font-bold tracking-wider text-primary uppercase">
                         Explore System
                     </span>
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-white/5 text-cyan-400 transition-all duration-300 group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-theme bg-theme-surface text-primary transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/10">
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </div>
                 </div>

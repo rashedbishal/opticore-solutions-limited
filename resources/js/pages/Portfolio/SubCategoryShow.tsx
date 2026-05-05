@@ -1,6 +1,6 @@
-import type { Variants } from 'framer-motion';
 import { Head, Link, router } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -22,21 +22,102 @@ interface Props {
     meta: { title: string; description: string };
 }
 
-const scaleIn: Variants = {
-    hidden: { opacity: 0, scale: 0.85 },
+const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 32 },
     visible: {
         opacity: 1,
-        scale: 1,
-        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+        y: 0,
+        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
     },
 };
 
-const staggerContainer: Variants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-};
+function MasonryCard({
+    item,
+    label,
+    previewHref,
+    index,
+}: {
+    item: PortfolioItem;
+    label: string;
+    previewHref: string;
+    index: number;
+}) {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' });
 
-const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 28 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            transition={{
+                duration: 0.55,
+                delay: Math.min(index * 0.07, 0.42),
+                ease: [0.22, 1, 0.36, 1],
+            }}
+            className="group neo-panel relative mb-6 w-full break-inside-avoid overflow-hidden shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:border-white/5"
+            style={{ willChange: 'transform, opacity' }}
+        >
+            <div className="relative aspect-auto overflow-hidden">
+                {item.media_type === 'video' ? (
+                    <video
+                        src={item.media_path ?? undefined}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    />
+                ) : (
+                    <img
+                        src={item.media_path ?? PLACEHOLDER}
+                        alt={item.alt}
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                            e.currentTarget.src = PLACEHOLDER;
+                        }}
+                        className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    />
+                )}
+
+                {/* Gradient Overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity duration-500 sm:opacity-0 sm:group-hover:opacity-100" />
+
+                {/* Content Overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-5 opacity-100 transition-all duration-500 transform translate-y-0 sm:opacity-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0">
+                    <p className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">
+                        {label}
+                    </p>
+                    <div className="mt-1.5 flex items-center justify-between gap-4">
+                        <h3 className="text-sm font-bold leading-tight text-white line-clamp-2">
+                            {item.title}
+                        </h3>
+                        <Link
+                            href={previewHref}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                            aria-label={`View ${item.title} full screen`}
+                        >
+                            {item.media_type === 'video' ? (
+                                <>
+                                    <Film className="h-3 w-3" /> Watch
+                                </>
+                            ) : (
+                                <>
+                                    <ArrowRight className="h-3 w-3" /> View
+                                </>
+                            )}
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
 
 export default function PortfolioSubCategoryShow({
     category,
@@ -68,16 +149,15 @@ export default function PortfolioSubCategoryShow({
                 />
             </Head>
 
-            {/* Hero */}
-            <div className="relative overflow-hidden">
-                {/* Background Glows */}
+            <div className="relative min-h-screen overflow-hidden">
+                {/* Atmospheric Glows */}
                 <GradientOrb
                     className="top-0 left-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2"
-                    color="rgb(124 58 237 / 0.15)"
+                    color="rgb(124 58 237 / 0.12)"
                 />
                 <GradientOrb
                     className="top-0 right-0 h-[600px] w-[600px] translate-x-1/2 -translate-y-1/2"
-                    color="rgb(6 182 212 / 0.15)"
+                    color="rgb(6 182 212 / 0.12)"
                 />
 
                 <section className="section-shell relative z-10 pt-32 md:pt-36 lg:pt-40">
@@ -86,27 +166,27 @@ export default function PortfolioSubCategoryShow({
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7 }}
-                            className="glass-panel rounded-[2rem] p-5 sm:p-10 lg:p-14"
+                            className="neo-panel p-6 sm:p-10 lg:p-14"
                         >
                             {/* Breadcrumb */}
                             <nav
-                                className="mb-5 flex items-center gap-2 text-sm text-theme-subtle"
+                                className="mb-6 flex items-center gap-2 text-xs font-bold tracking-wider text-theme-subtle uppercase"
                                 aria-label="Breadcrumb"
                             >
                                 <Link
-                                    href="/portfolio/graphic-design"
-                                    className="transition-colors hover:text-theme"
+                                    href="/portfolio"
+                                    className="transition-colors hover:text-primary"
                                 >
                                     Portfolio
                                 </Link>
-                                <span>/</span>
+                                <span className="opacity-30">/</span>
                                 <Link
                                     href={`/portfolio/${category.slug}`}
-                                    className="transition-colors hover:text-theme"
+                                    className="transition-colors hover:text-primary"
                                 >
                                     {category.label}
                                 </Link>
-                                <span>/</span>
+                                <span className="opacity-30">/</span>
                                 <span className="text-theme-muted">
                                     {subCategory.name}
                                 </span>
@@ -115,13 +195,13 @@ export default function PortfolioSubCategoryShow({
                             <span className="section-kicker">
                                 {category.label}
                             </span>
-                            <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
+                            <h1 className="text-4xl font-black text-balance text-theme sm:text-5xl md:text-6xl">
                                 <span className="gradient-text">
                                     {subCategory.name}
                                 </span>
                             </h1>
                             {subCategory.description && (
-                                <p className="mt-6 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
+                                <p className="mt-8 max-w-3xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
                                     {subCategory.description}
                                 </p>
                             )}
@@ -129,19 +209,19 @@ export default function PortfolioSubCategoryShow({
                     </div>
                 </section>
 
-                {/* Category tabs */}
-                <section className="section-shell pt-0">
+                <section className="section-shell relative z-10 pt-0">
                     <div className="section-inner">
-                        <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
+                        {/* Category tabs */}
+                        <div className="no-scrollbar flex items-center gap-3 overflow-x-auto pb-4">
                             {allCategories.map((cat) => (
                                 <button
                                     key={cat.slug}
                                     type="button"
                                     aria-label={`View ${cat.label} portfolio`}
-                                    className={`touch-target shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
+                                    className={`touch-target shrink-0 rounded-full px-5 py-3 text-[13px] font-bold tracking-wide transition-all ${
                                         cat.slug === category.slug
-                                            ? 'border-violet-500/50 bg-violet-500/15 text-theme dark:border-violet-400/50'
-                                            : 'border-theme bg-theme-surface text-theme-muted hover:text-theme'
+                                            ? 'neo-btn-primary scale-105'
+                                            : 'neo-btn-ghost hover:scale-105'
                                     }`}
                                     onClick={() =>
                                         handleCategoryClick(cat.slug)
@@ -154,24 +234,24 @@ export default function PortfolioSubCategoryShow({
 
                         {/* Sub-category tabs (siblings) */}
                         {siblingSubCategories.length > 1 && (
-                            <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+                            <div className="no-scrollbar mt-6 flex items-center gap-3 overflow-x-auto pb-4">
                                 <Link
                                     href={`/portfolio/${category.slug}`}
-                                    className="touch-target shrink-0 rounded-full border border-theme bg-theme-surface px-3 py-1.5 text-xs font-medium text-theme-subtle transition-all hover:text-theme"
+                                    className="neo-btn-ghost group flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold tracking-wide text-theme-subtle transition-all hover:text-primary"
                                     aria-label={`Back to ${category.label} sub-categories`}
                                 >
-                                    <ArrowLeft className="mr-1 inline h-3 w-3" />
-                                    All
+                                    <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-1" />
+                                    ALL
                                 </Link>
                                 {siblingSubCategories.map((s) => (
                                     <button
                                         key={s.slug}
                                         type="button"
                                         aria-label={`View ${s.name}`}
-                                        className={`touch-target shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                                        className={`touch-target shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all ${
                                             s.slug === subCategory.slug
-                                                ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:border-cyan-400/40 dark:text-cyan-300'
-                                                : 'border-theme bg-theme-surface text-theme-subtle hover:text-theme'
+                                                ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-700 shadow-inset dark:border-cyan-400/40 dark:text-cyan-300'
+                                                : 'neo-btn-ghost text-theme-subtle hover:text-theme'
                                         }`}
                                         onClick={() =>
                                             handleSubCategoryClick(s.slug)
@@ -183,111 +263,51 @@ export default function PortfolioSubCategoryShow({
                             </div>
                         )}
 
-                        {/* Portfolio grid */}
+                        {/* Portfolio masonry gallery */}
                         {portfolios.length > 0 ? (
-                            <motion.div
+                            <div
                                 key={subCategory.slug}
-                                initial="hidden"
-                                animate="visible"
-                                variants={staggerContainer}
-                                className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                                className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4"
                             >
-                                {portfolios.map((item) => (
-                                    <motion.div
+                                {portfolios.map((item, index) => (
+                                    <MasonryCard
                                         key={item.id}
-                                        variants={scaleIn}
-                                        className="group glass-panel relative mb-4 block w-full overflow-hidden rounded-[1.5rem]"
-                                    >
-                                        {/* Media thumbnail */}
-                                        {item.media_type === 'video' ? (
-                                            <video
-                                                src={
-                                                    item.media_path ?? undefined
-                                                }
-                                                muted
-                                                preload="metadata"
-                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            />
-                                        ) : (
-                                            <img
-                                                src={
-                                                    item.media_path ??
-                                                    PLACEHOLDER
-                                                }
-                                                alt={item.alt}
-                                                loading="lazy"
-                                                onError={(e) => {
-                                                    e.currentTarget.src =
-                                                        PLACEHOLDER;
-                                                }}
-                                                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            />
-                                        )}
-
-                                        {/* Hover overlay */}
-                                        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100" />
-                                        <div className="absolute inset-x-0 bottom-0 p-5">
-                                            <p className="text-xs font-semibold tracking-[0.24em] text-cyan-600 uppercase dark:text-cyan-300">
-                                                {subCategory.name}
-                                            </p>
-                                            <div className="mt-2 flex items-center justify-between gap-4">
-                                                <h3 className="text-lg font-semibold text-white">
-                                                    {item.title}
-                                                </h3>
-                                                <Link
-                                                    href={`/portfolio-item/${item.id}`}
-                                                    onClick={(e) =>
-                                                        e.stopPropagation()
-                                                    }
-                                                    className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-100 hover:text-white"
-                                                    aria-label={`View ${item.title} full screen`}
-                                                >
-                                                    {item.media_type ===
-                                                    'video' ? (
-                                                        <>
-                                                            <Film className="h-4 w-4" />{' '}
-                                                            Watch
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <ArrowRight className="h-4 w-4" />{' '}
-                                                            View
-                                                        </>
-                                                    )}
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </motion.div>
+                                        item={item}
+                                        label={subCategory.name}
+                                        previewHref={`/portfolio-item/${item.id}`}
+                                        index={index}
+                                    />
                                 ))}
-                            </motion.div>
+                            </div>
                         ) : (
-                            <div className="glass-panel mt-10 flex min-h-72 flex-col items-center justify-center rounded-[1.5rem] px-6 py-16 text-center">
-                                <FolderOpen className="mb-4 h-10 w-10 text-theme-subtle" />
-                                <p className="text-lg font-medium text-theme-muted">
-                                    No portfolio items in this sub-category yet.
+                            <div className="neo-panel mt-12 flex min-h-72 flex-col items-center justify-center p-16 text-center">
+                                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-theme-surface shadow-inset">
+                                    <FolderOpen className="h-8 w-8 text-theme-subtle" />
+                                </div>
+                                <p className="text-xl font-bold text-theme">
+                                    Gallery Empty
                                 </p>
-                                <p className="mt-2 text-sm text-theme-subtle">
-                                    Check back later for new projects and
-                                    updates.
+                                <p className="mt-2 text-sm font-medium text-theme-muted">
+                                    No projects in this sub-category yet.
                                 </p>
                             </div>
                         )}
                     </div>
                 </section>
 
-                {/* CTA */}
-                <section className="section-shell pt-0">
+                <section className="section-shell relative z-10 pt-0">
                     <div className="section-inner">
-                        <div className="glass-panel rounded-[2rem] border-t border-t-violet-400/70 p-6 text-center sm:p-10 lg:p-14">
-                            <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
+                        <div className="neo-panel p-8 text-center sm:p-12 lg:p-16">
+                            <div className="mx-auto mb-8 h-px w-24 bg-linear-to-r from-transparent via-violet-500/50 to-transparent" />
+                            <h2 className="text-3xl font-black text-balance text-theme sm:text-4xl md:text-5xl">
                                 Want work like this for your brand?
                             </h2>
-                            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
+                            <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-relaxed text-theme-muted sm:text-lg">
                                 We create premium identities, campaign systems,
                                 and presentation-ready visual assets designed to
                                 move perception and performance.
                             </p>
-                            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                            <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                                 <MagneticButton
                                     href="/request-appointment"
                                     ariaLabel="Request a project appointment"
@@ -296,7 +316,7 @@ export default function PortfolioSubCategoryShow({
                                 </MagneticButton>
                                 <Link
                                     href="/contact"
-                                    className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme"
+                                    className="neo-btn-ghost group relative flex h-12 items-center justify-center rounded-full px-8 text-sm font-black tracking-widest text-theme uppercase transition-all hover:scale-105"
                                 >
                                     Contact Us
                                 </Link>
