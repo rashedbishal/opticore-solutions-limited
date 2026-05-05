@@ -80,9 +80,14 @@ export default function Footer() {
                             className="inline-flex items-center text-theme"
                         >
                             <img
-                                src="/images/logo/opticore.png"
+                                src="/images/logo/opticore.webp"
                                 alt="Opticore Solutions"
-                                className="h-11 w-auto shrink-0 object-contain"
+                                className="h-16 w-auto shrink-0 object-contain dark:hidden"
+                            />
+                            <img
+                                src="/images/logo/opticore-white.webp"
+                                alt="Opticore Solutions"
+                                className="hidden h-16 w-auto shrink-0 object-contain dark:block"
                             />
                         </Link>
                         <p className="max-w-sm text-sm leading-7 text-theme-muted">
