@@ -378,18 +378,20 @@ setSessionId(data.session_id);
                             initial={{ opacity: 0, y: 20, scale: 0.8 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                            className="border-theme bg-theme-surface/90 absolute bottom-full right-0 mb-3 w-56 rounded-2xl border p-4 shadow-[0_0_30px_rgba(0,0,0,0.2)] backdrop-blur-xl pointer-events-none"
+                            className="absolute bottom-full right-0 mb-3 w-56 rounded-[1.5rem] border-2 border-violet-500/30 bg-background/98 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl pointer-events-none"
                         >
                             <div className="relative">
                                 <div className="flex items-center gap-1.5 mb-2">
-                                    <Bot size={12} className="text-violet-500 dark:text-violet-400" />
-                                    <span className="text-theme-subtle text-[11px] font-bold tracking-wider uppercase">Opticore Assistant</span>
+                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-violet-500/10 border border-violet-500/20">
+                                        <Bot size={11} className="text-violet-500" />
+                                    </div>
+                                    <span className="text-violet-600 dark:text-violet-400 text-[10px] font-black tracking-widest uppercase">Opticore AI</span>
                                 </div>
-                                <p className="text-theme text-[13px] font-medium leading-relaxed">
+                                <p className="text-theme text-[13.5px] font-semibold leading-relaxed">
                                     {teaserText}
                                 </p>
                                 {/* Arrow */}
-                                <div className="border-theme bg-theme-surface absolute top-full right-6 w-2 h-2 border-r border-b rotate-45 -translate-y-1" />
+                                <div className="absolute top-[calc(100%+14px)] right-6 w-3 h-3 border-r-2 border-b-2 border-violet-500/30 bg-background rotate-45 -translate-y-4" />
                             </div>
                         </motion.div>
                     )}
