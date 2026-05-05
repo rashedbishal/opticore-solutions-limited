@@ -583,8 +583,15 @@ function ScannedCarousel({
             scannerRef.current?.pause();
         };
         const resume = () => {
-            if (!s.animId) { s.lastT = performance.now(); animateTrack(); }
-            if (!s.clipId) { updateClip(); }
+            if (!s.animId) {
+                s.lastT = performance.now();
+                animateTrack();
+            }
+
+            if (!s.clipId) {
+                updateClip();
+            }
+
             scannerRef.current?.resume();
         };
         const onVisibility = () =>
@@ -595,7 +602,10 @@ function ScannedCarousel({
             ([entry]) => (entry.isIntersecting ? resume() : pause()),
             { threshold: 0.01 },
         );
-        if (rootRef.current) { intersectObs.observe(rootRef.current); }
+
+        if (rootRef.current) {
+            intersectObs.observe(rootRef.current);
+        }
 
         return () => {
             cancelAnimationFrame(s.animId);

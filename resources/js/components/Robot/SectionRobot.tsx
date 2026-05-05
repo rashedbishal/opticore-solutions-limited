@@ -27,7 +27,13 @@ export default function SectionRobot({
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const containerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
+<<<<<<< HEAD
     const [selectedAnimation, setSelectedAnimation] = useState(animation || 'idle');
+=======
+    const [selectedAnimation, setSelectedAnimation] = useState(
+        animation || 'idle',
+    );
+>>>>>>> @{-1}
 
     useEffect(() => {
         if (!animation) {

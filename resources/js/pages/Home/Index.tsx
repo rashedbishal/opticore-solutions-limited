@@ -626,7 +626,11 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         color="rgb(124 58 237 / 0.15)"
                     />
                     <GradientOrb
+<<<<<<< HEAD
                         className="bottom-0 right-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
+=======
+                        className="right-0 bottom-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
+>>>>>>> @{-1}
                         color="rgb(6 182 212 / 0.12)"
                     />
                     <section className="border-t border-theme bg-background/60 py-20">
@@ -638,8 +642,13 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                 Spotlight Carousel
                             </h2>
                             <p className="mt-4 text-theme-muted">
+<<<<<<< HEAD
                                 Drag to swipe · click side cards to focus · ← → to
                                 step
+=======
+                                Drag to swipe · click side cards to focus · ← →
+                                to step
+>>>>>>> @{-1}
                             </p>
                         </div>
                     </section>

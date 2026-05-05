@@ -311,7 +311,10 @@ export default function GlobeCarousel({
             ([entry]) => (entry.isIntersecting ? resume() : pause()),
             { threshold: 0.01 },
         );
-        if (containerRef.current) { obs.observe(containerRef.current); }
+
+        if (containerRef.current) {
+            obs.observe(containerRef.current);
+        }
 
         return () => {
             cancelAnimationFrame(rafHandle.current);
