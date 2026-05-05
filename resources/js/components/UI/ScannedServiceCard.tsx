@@ -286,11 +286,23 @@ delete this.particles[this.count - i];
     }
 
     animate() {
- this.render(); this.rafId = requestAnimationFrame(() => this.animate()); 
-}
+        this.render();
+        this.rafId = requestAnimationFrame(() => this.animate());
+    }
+    pause() {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = 0;
+    }
+    resume() {
+        if (!this.rafId) {
+            this.animate();
+        }
+    }
     destroy() {
- cancelAnimationFrame(this.rafId); this.particles = {}; this.count = 0; 
-}
+        cancelAnimationFrame(this.rafId);
+        this.particles = {};
+        this.count = 0;
+    }
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -564,6 +576,27 @@ function ScannedCarousel({
         document.addEventListener('touchmove', tm, { passive: false });
         document.addEventListener('touchend', endDrag);
 
+        // ── Pause all loops when tab is hidden or component scrolls off-screen ──
+        const pause = () => {
+            cancelAnimationFrame(s.animId); s.animId = 0;
+            cancelAnimationFrame(s.clipId); s.clipId = 0;
+            scannerRef.current?.pause();
+        };
+        const resume = () => {
+            if (!s.animId) { s.lastT = performance.now(); animateTrack(); }
+            if (!s.clipId) { updateClip(); }
+            scannerRef.current?.resume();
+        };
+        const onVisibility = () =>
+            document.visibilityState === 'hidden' ? pause() : resume();
+        document.addEventListener('visibilitychange', onVisibility);
+
+        const intersectObs = new IntersectionObserver(
+            ([entry]) => (entry.isIntersecting ? resume() : pause()),
+            { threshold: 0.01 },
+        );
+        if (rootRef.current) { intersectObs.observe(rootRef.current); }
+
         return () => {
             cancelAnimationFrame(s.animId);
             cancelAnimationFrame(s.clipId);
@@ -573,6 +606,8 @@ function ScannedCarousel({
             document.removeEventListener('mouseup', endDrag);
             document.removeEventListener('touchmove', tm);
             document.removeEventListener('touchend', endDrag);
+            document.removeEventListener('visibilitychange', onVisibility);
+            intersectObs.disconnect();
             scannerRef.current?.destroy();
         };
     }, [
