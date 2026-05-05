@@ -23,3 +23,9 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Raise PHP upload limits to 300 MB
+<IfModule mod_php.c>
+    php_value upload_max_filesize 300M
+    php_value post_max_size 300M
+</IfModule>

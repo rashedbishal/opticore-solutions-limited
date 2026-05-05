@@ -84,7 +84,7 @@ class PortfolioController extends Controller
             'media' => [
                 'required',
                 'file',
-                'max:102400',
+                'max:307200',
                 'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm',
             ],
         ]);
@@ -143,7 +143,7 @@ class PortfolioController extends Controller
             'media' => [
                 'nullable',
                 'file',
-                'max:102400',
+                'max:307200',
                 'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm',
             ],
         ]);
