@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import GradientOrb from '@/components/UI/GradientOrb';
 
 type Testimonial = {
     id: string;
@@ -338,6 +339,16 @@ export default function SpotlightCarousel() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
+            {/* Background Glows */}
+            <GradientOrb
+                className="top-1/4 right-0 h-80 w-80 rotate-12"
+                color="rgb(124 58 237 / 0.08)"
+            />
+            <GradientOrb
+                className="bottom-1/4 left-0 h-80 w-80 -rotate-12"
+                color="rgb(6 182 212 / 0.08)"
+            />
+
             <div
                 ref={containerRef}
                 className="relative mx-auto max-w-6xl px-4"

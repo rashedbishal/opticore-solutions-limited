@@ -2,6 +2,7 @@ import type { Variants } from 'framer-motion';
 import { Head, Link, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
+import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 
 interface PortfolioItem {
@@ -68,7 +69,18 @@ export default function PortfolioSubCategoryShow({
             </Head>
 
             {/* Hero */}
-            <section className="section-shell pt-32 md:pt-36 lg:pt-40">
+            <div className="relative overflow-hidden">
+                {/* Background Glows */}
+                <GradientOrb
+                    className="top-0 left-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2"
+                    color="rgb(124 58 237 / 0.15)"
+                />
+                <GradientOrb
+                    className="top-0 right-0 h-[600px] w-[600px] translate-x-1/2 -translate-y-1/2"
+                    color="rgb(6 182 212 / 0.15)"
+                />
+
+                <section className="relative z-10 section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
@@ -281,6 +293,7 @@ export default function PortfolioSubCategoryShow({
                     </div>
                 </div>
             </section>
+            </div>
         </>
     );
 }

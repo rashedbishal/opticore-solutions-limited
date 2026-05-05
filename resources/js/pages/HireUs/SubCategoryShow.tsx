@@ -40,6 +40,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import Modal from '@/components/UI/Modal';
+import GradientOrb from '@/components/UI/GradientOrb';
 
 interface PortfolioItem {
     id: number;
@@ -1187,6 +1188,16 @@ export default function SubCategoryShow({
             <Head title={`${subCategory.name} — Hire Opticore`} />
 
             <div className="relative min-h-screen pb-36 lg:pb-24">
+                {/* Background Glows */}
+                <GradientOrb
+                    className="top-0 right-0 h-[800px] w-[800px] translate-x-1/4 -translate-y-1/4"
+                    color="rgb(6 182 212 / 0.12)"
+                />
+                <GradientOrb
+                    className="bottom-0 left-0 h-[800px] w-[800px] -translate-x-1/4 translate-y-1/4"
+                    color="rgb(124 58 237 / 0.12)"
+                />
+
                 {/* ── CINEMATIC HERO GALLERY (full-width) ── */}
                 <motion.div
                     initial={{ opacity: 0 }}
