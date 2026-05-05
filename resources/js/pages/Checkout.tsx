@@ -87,8 +87,8 @@ export default function Checkout({ item }: Props) {
             <Head title="Checkout — Opticore" />
 
             <div className="relative min-h-screen pb-24">
-                <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-cyan-500/5 blur-[140px]" />
-                <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] rounded-full bg-violet-600/5 blur-[140px]" />
+                <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] bg-radial from-cyan-500/5 to-transparent" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] bg-radial from-violet-600/5 to-transparent" />
 
                 <div className="relative mx-auto max-w-4xl px-4 pt-32">
                     <motion.div

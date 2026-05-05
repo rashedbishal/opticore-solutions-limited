@@ -19,11 +19,11 @@ export default function AppLayout({ children }: PropsWithChildren) {
             <div className="app-shell bg-grain">
                 {/* Background effects */}
                 <div className="pointer-events-none absolute inset-0 z-5 overflow-hidden">
-                    <div className="absolute inset-x-0 top-0 h-[800px] bg-linear-to-b from-violet-500/[0.35] via-cyan-400/[0.18] to-transparent blur-3xl dark:from-violet-500/10 dark:via-cyan-400/5" />
-                    <div className="absolute top-[12%] right-[-12rem] h-[700px] w-[700px] rounded-full bg-cyan-400/[0.35] blur-[160px] dark:bg-cyan-400/12" />
-                    <div className="absolute top-[35%] left-[-10rem] h-[700px] w-[700px] rounded-full bg-violet-500/[0.32] blur-[160px] dark:bg-violet-500/12" />
-                    <div className="absolute top-[60%] right-[-8rem] h-[600px] w-[600px] rounded-full bg-fuchsia-400/[0.28] blur-[150px] dark:bg-fuchsia-500/8" />
-                    <div className="absolute right-[20%] bottom-[5%] h-[600px] w-[600px] rounded-full bg-cyan-300/[0.25] blur-[150px] dark:bg-fuchsia-500/10" />
+                    <div className="absolute inset-x-0 top-0 h-[800px] bg-linear-to-b from-violet-500/[0.35] via-cyan-400/[0.18] to-transparent dark:from-violet-500/10 dark:via-cyan-400/5" />
+                    <div className="absolute top-[12%] right-[-12rem] h-[700px] w-[700px] bg-radial from-cyan-400/35 to-transparent dark:from-cyan-400/12" />
+                    <div className="absolute top-[35%] left-[-10rem] h-[700px] w-[700px] bg-radial from-violet-500/30 to-transparent dark:from-violet-500/12" />
+                    <div className="absolute top-[60%] right-[-8rem] h-[600px] w-[600px] bg-radial from-fuchsia-400/30 to-transparent dark:from-fuchsia-500/8" />
+                    <div className="absolute right-[20%] bottom-[5%] h-[600px] w-[600px] bg-radial from-cyan-300/25 to-transparent dark:from-fuchsia-500/10" />
                 </div>
 
                 <Navbar />

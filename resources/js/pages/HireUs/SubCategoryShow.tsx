@@ -379,7 +379,6 @@ const SLOT_STYLES = {
         opacity: 0,
         scale: 0.9,
         borderRadius: '16px',
-        filter: 'blur(12px)',
     },
     'peek-left': {
         left: '2%',
@@ -389,7 +388,6 @@ const SLOT_STYLES = {
         opacity: 0.5,
         scale: 0.95,
         borderRadius: '16px',
-        filter: 'blur(6px)',
     },
     center: {
         left: '22%',
@@ -399,7 +397,6 @@ const SLOT_STYLES = {
         opacity: 1,
         scale: 1.0,
         borderRadius: '0px',
-        filter: 'blur(0px)',
     },
     'peek-right': {
         left: '78%',
@@ -409,7 +406,6 @@ const SLOT_STYLES = {
         opacity: 0.5,
         scale: 0.95,
         borderRadius: '16px',
-        filter: 'blur(6px)',
     },
     'exit-right': {
         left: '100%',
@@ -419,7 +415,6 @@ const SLOT_STYLES = {
         opacity: 0,
         scale: 0.9,
         borderRadius: '16px',
-        filter: 'blur(12px)',
     },
 } as const;
 
@@ -1426,8 +1421,8 @@ export default function SubCategoryShow({
                             {/* Subtle dot grid */}
                             <div className="dot-grid pointer-events-none absolute inset-0 opacity-20" />
                             {/* Glow orbs */}
-                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
-                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-violet-500/10 blur-[80px]" />
+                            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 bg-radial from-cyan-500/10 to-transparent" />
+                            <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 bg-radial from-violet-500/10 to-transparent" />
 
                             <div className="relative z-10">
                                 {/* Header label */}
@@ -1520,10 +1515,10 @@ export default function SubCategoryShow({
                 <div className="relative w-full overflow-hidden py-24">
                     {/* Decorative background elements */}
                     <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/2">
-                        <div className="h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
+                        <div className="h-[500px] w-[500px] bg-radial from-cyan-500/5 to-transparent" />
                     </div>
                     <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/2">
-                        <div className="h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-[120px]" />
+                        <div className="h-[500px] w-[500px] bg-radial from-violet-500/5 to-transparent" />
                     </div>
 
                     <motion.div

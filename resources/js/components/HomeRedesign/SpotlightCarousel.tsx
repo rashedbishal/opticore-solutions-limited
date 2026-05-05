@@ -291,35 +291,15 @@ export default function SpotlightCarousel() {
         (pos: CardPosition) => {
             switch (pos) {
                 case 'center':
-                    return { x: 0, scale: 1, opacity: 1, filter: 'blur(0px)' };
+                    return { x: 0, scale: 1, opacity: 1 };
                 case 'left':
-                    return {
-                        x: -sideOffset,
-                        scale: 0.83,
-                        opacity: 0.58,
-                        filter: 'blur(1px)',
-                    };
+                    return { x: -sideOffset, scale: 0.83, opacity: 0.58 };
                 case 'right':
-                    return {
-                        x: sideOffset,
-                        scale: 0.83,
-                        opacity: 0.58,
-                        filter: 'blur(1px)',
-                    };
+                    return { x: sideOffset, scale: 0.83, opacity: 0.58 };
                 case 'hidden-left':
-                    return {
-                        x: -(containerWidth * 0.78),
-                        scale: 0.65,
-                        opacity: 0,
-                        filter: 'blur(6px)',
-                    };
+                    return { x: -(containerWidth * 0.78), scale: 0.65, opacity: 0 };
                 case 'hidden-right':
-                    return {
-                        x: containerWidth * 0.78,
-                        scale: 0.65,
-                        opacity: 0,
-                        filter: 'blur(6px)',
-                    };
+                    return { x: containerWidth * 0.78, scale: 0.65, opacity: 0 };
             }
         },
         [sideOffset, containerWidth],

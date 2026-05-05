@@ -47,38 +47,17 @@ export default function LiquidShuffle() {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={active.id}
-                                initial={{
-                                    opacity: 0,
-                                    scale: 0.8,
-                                    filter: 'blur(20px)',
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    scale: 1,
-                                    filter: 'blur(0px)',
-                                }}
-                                exit={{
-                                    opacity: 0,
-                                    scale: 1.2,
-                                    filter: 'blur(20px)',
-                                }}
+                                initial={{ opacity: 0, scale: 0.88, y: 16 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 1.06, y: -12 }}
                                 transition={{
-                                    duration: 0.8,
+                                    duration: 0.6,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
                                 className="absolute inset-0 flex flex-col items-center justify-center"
                             >
-                                <motion.div
-                                    className={`absolute inset-0 bg-linear-to-br ${active.color} -z-10 rounded-full opacity-40 blur-[100px]`}
-                                    animate={{
-                                        scale: [1, 1.2, 1],
-                                        rotate: [0, 90, 0],
-                                    }}
-                                    transition={{
-                                        duration: 10,
-                                        repeat: Infinity,
-                                        times: [0, 0.5, 1],
-                                    }}
+                                <div
+                                    className={`absolute inset-0 bg-radial ${active.color} -z-10 opacity-40`}
                                 />
 
                                 <p className="mb-12 text-3xl leading-tight font-bold text-foreground italic md:text-5xl">

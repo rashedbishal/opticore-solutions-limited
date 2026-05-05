@@ -13,10 +13,9 @@ interface SectionHeaderProps {
 }
 
 const blurReveal: Variants = {
-    hidden: { opacity: 0, filter: 'blur(12px)', y: 30 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
         opacity: 1,
-        filter: 'blur(0px)',
         y: 0,
         transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
     },
@@ -146,17 +145,13 @@ function SelectedWorkTitle({ text }: { text: string }) {
         <span className="block overflow-visible py-2 leading-[1.15]">
             <motion.span
                 variants={{
-                    hidden: { opacity: 0, filter: 'blur(20px)', scaleX: 0.6 },
-                    visible: { 
-                        opacity: 1, 
-                        filter: 'blur(0px)', 
-                        scaleX: 1 
-                    },
+                    hidden: { opacity: 0, scaleX: 0.6, x: -20 },
+                    visible: { opacity: 1, scaleX: 1, x: 0 },
                 }}
-                transition={{ 
-                    duration: 1.4, 
-                    type: 'spring', 
-                    bounce: 0.5 
+                transition={{
+                    duration: 1.4,
+                    type: 'spring',
+                    bounce: 0.5
                 }}
                 className="inline-block origin-left bg-linear-to-r from-orange-400 via-rose-500 to-pink-600 bg-clip-text text-transparent py-1"
             >

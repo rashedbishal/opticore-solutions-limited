@@ -36,13 +36,13 @@ export default function MessageFromMd() {
 
             <section className="section-shell relative overflow-hidden pt-32 md:pt-40 lg:pt-48">
                 {/* Background Decorations */}
-                <div className="pointer-events-none absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 opacity-20 blur-3xl">
+                <div className="pointer-events-none absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 opacity-20">
                     <GradientOrb
                         color="var(--color-primary)"
                         className="h-150 w-150"
                     />
                 </div>
-                <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 opacity-10 blur-3xl">
+                <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 opacity-10">
                     <GradientOrb
                         color="var(--color-secondary)"
                         className="h-125 w-125"
@@ -334,7 +334,7 @@ export default function MessageFromMd() {
                                 </div>
 
                                 {/* Background Glow */}
-                                <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 bg-primary/20 blur-[100px]" />
+                                <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 bg-radial from-primary/20 to-transparent" />
                             </motion.div>
                         </div>
                     </div>
