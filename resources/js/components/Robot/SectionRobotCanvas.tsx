@@ -28,10 +28,30 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
                 });
             } else if (animation === 'circle') {
                 const tl = gsap.timeline({ repeat: -1 });
-                tl.to(groupRef.current.position, { x: 0.5, z: 0.5, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: 0, z: 1, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: -0.5, z: 0.5, duration: 2, ease: 'sine.inOut' })
-                    .to(groupRef.current.position, { x: 0, z: 0, duration: 2, ease: 'sine.inOut' });
+                tl.to(groupRef.current.position, {
+                    x: 0.5,
+                    z: 0.5,
+                    duration: 2,
+                    ease: 'sine.inOut',
+                })
+                    .to(groupRef.current.position, {
+                        x: 0,
+                        z: 1,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    })
+                    .to(groupRef.current.position, {
+                        x: -0.5,
+                        z: 0.5,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    })
+                    .to(groupRef.current.position, {
+                        x: 0,
+                        z: 0,
+                        duration: 2,
+                        ease: 'sine.inOut',
+                    });
 
                 gsap.to(groupRef.current.rotation, {
                     y: Math.PI * 2,
@@ -53,7 +73,9 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
                     ref={ref}
                     modelPath="/models/quaternius_cc0-george-1063.glb"
                     initialAnimation={
-                        animation === 'spin' || animation === 'circle' ? 'idle' : animation
+                        animation === 'spin' || animation === 'circle'
+                            ? 'idle'
+                            : animation
                     }
                 />
             </group>
@@ -63,7 +85,9 @@ const RobotInScene = React.forwardRef<RobotModelRef, { animation: string }>(
 
 RobotInScene.displayName = 'RobotInScene';
 
-export default function SectionRobotCanvas({ animation }: SectionRobotCanvasProps) {
+export default function SectionRobotCanvas({
+    animation,
+}: SectionRobotCanvasProps) {
     const robotModelRef = useRef<RobotModelRef>(null);
 
     return (

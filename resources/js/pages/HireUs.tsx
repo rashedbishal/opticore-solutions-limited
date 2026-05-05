@@ -1,7 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Sparkles,
     ArrowRight,
     PenTool,
     Globe,
@@ -117,6 +116,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             {services.map((service) => {
                                 const Icon = service.icon;
                                 const isActive = activeTab === service.id;
+
                                 return (
                                     <button
                                         key={service.id}
@@ -125,7 +125,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                         className={`flex shrink-0 items-center gap-3 rounded-2xl border px-6 py-4 transition-all duration-300 ${
                                             isActive
                                                 ? 'border-violet-500/50 bg-violet-500/10 text-theme'
-                                                : 'border-theme bg-theme-surface text-theme-muted hover:border-theme-hover hover:text-theme'
+                                                : 'hover:border-theme-hover border-theme bg-theme-surface text-theme-muted hover:text-theme'
                                         }`}
                                     >
                                         <div
@@ -196,14 +196,14 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <h3 className="mb-6 text-2xl font-black tracking-tight text-theme group-hover:text-violet-500 transition-colors">
+                                                <h3 className="mb-6 text-2xl font-black tracking-tight text-theme transition-colors group-hover:text-violet-500">
                                                     {item.name}
                                                 </h3>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-sm font-bold text-theme-muted group-hover:text-theme transition-colors">
+                                                    <span className="text-sm font-bold text-theme-muted transition-colors group-hover:text-theme">
                                                         View Marketplace
                                                     </span>
-                                                    <div className="rounded-full bg-theme-surface p-3 text-theme group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+                                                    <div className="rounded-full bg-theme-surface p-3 text-theme transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white">
                                                         <ArrowRight className="h-5 w-5" />
                                                     </div>
                                                 </div>

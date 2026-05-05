@@ -27,13 +27,17 @@ export default function SectionRobot({
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const containerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
-    const [selectedAnimation, setSelectedAnimation] = useState(animation || 'idle');
+    const [selectedAnimation, setSelectedAnimation] = useState(
+        animation || 'idle',
+    );
 
     useEffect(() => {
         if (!animation) {
             const animations = ['idle', 'dance', 'punch', 'jump'];
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSelectedAnimation(animations[Math.floor(Math.random() * animations.length)]);
+            setSelectedAnimation(
+                animations[Math.floor(Math.random() * animations.length)],
+            );
         }
     }, [animation]);
 
