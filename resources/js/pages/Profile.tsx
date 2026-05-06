@@ -244,11 +244,11 @@ export default function Profile() {
 
                         <Tabs defaultValue="overview" className="w-full">
                             <div className="relative">
-                                {/* Scroll Indicator Fade */}
-                                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-background/80 to-transparent sm:hidden" />
-                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-background/80 to-transparent sm:hidden" />
+                                {/* Scroll Indicators: Stronger "Peek" effect */}
+                                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background via-background/60 to-transparent sm:hidden" />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background via-background/60 to-transparent sm:hidden" />
 
-                                <TabsList className="neo-tab-list hide-scrollbar mb-8 gap-4 overflow-x-auto sm:gap-6">
+                                <TabsList className="neo-tab-list mb-8 gap-4 overflow-x-auto overflow-y-hidden sm:gap-6">
                                     {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                     {(
                                         [
