@@ -100,6 +100,48 @@ function InvoiceCard({
     };
     const PayIcon = payment.icon;
 
+    const downloadInvoice = () => {
+        // Minimal valid PDF structure for demo purposes
+        const pdfContent = `%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /MediaBox [0 0 595 842] /Contents 4 0 R >> endobj
+4 0 obj << /Length 400 >> stream
+BT
+/F1 18 Tf 50 800 Td (OPTICORE SOLUTIONS LTD - INVOICE) Tj
+/F1 12 Tf 0 -40 Td (Invoice ID: #${invoice.invoice_id}) Tj
+0 -20 Td (Service: ${invoice.service}) Tj
+0 -20 Td (Plan: ${invoice.plan}) Tj
+0 -20 Td (Price: ${invoice.price}) Tj
+0 -20 Td (Ordered at: ${invoice.ordered_at}) Tj
+0 -20 Td (Status: PAID) Tj
+0 -60 Td (Thank you for choosing Opticore Solutions Ltd!) Tj
+0 -20 Td (This is a frontend demo generated invoice.) Tj
+ET
+endstream endobj
+xref
+0 5
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000282 00000 n 
+trailer << /Size 5 /Root 1 0 R >>
+startxref
+550
+%%EOF`;
+
+        const blob = new Blob([pdfContent], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Invoice-${invoice.invoice_id}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     const orderedDate = new Date(invoice.ordered_at).toLocaleDateString(
         'en-US',
         { year: 'numeric', month: 'long', day: 'numeric' },
@@ -161,6 +203,15 @@ function InvoiceCard({
                         <div className="font-mono text-[9px] text-theme-subtle sm:text-[10px]">
                             #{invoice.invoice_id}
                         </div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={downloadInvoice}
+                            className="neo-btn-ghost mt-2 h-7 w-fit rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
+                        >
+                            <FileText className="mr-1.5 h-3 w-3 text-cyan-500" />
+                            Download PDF
+                        </Button>
                     </div>
                 </div>
             </div>
