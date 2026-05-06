@@ -76,7 +76,19 @@ const AVATAR_GRADIENTS = [
     'from-amber-500 to-orange-600',
 ] as const;
 
-const EASING: [number, number, number, number] = [0.8, 0, 0.2, 1];
+const EASING_MANUAL: [number, number, number, number] = [0.7, 0, 0.2, 1];
+const EASING_AUTO: [number, number, number, number] = [0.3, 0.05, 0.1, 1];
+
+const MANUAL_TRANSITION = {
+    duration: 1.2,
+    ease: EASING_MANUAL,
+};
+
+const AUTO_TRANSITION = {
+    duration: 3.8,
+    ease: EASING_AUTO,
+};
+
 
 const CARD_HEIGHT = 340;
 const STAGE_HEIGHT = 400;
@@ -224,6 +236,8 @@ export default function SpotlightCarousel() {
     const [containerWidth, setContainerWidth] = useState(960);
     const dragStartX = useRef(0);
     const hasDragged = useRef(false);
+    const slideMode = useRef<'auto' | 'manual'>('auto');
+    const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 
     const total = TESTIMONIALS.length;
 
@@ -258,23 +272,31 @@ export default function SpotlightCarousel() {
     const resetAutoSlide = useCallback(() => setAutoSlideKey((k) => k + 1), []);
 
     const next = useCallback(() => {
+        slideMode.current = 'manual';
         resetAutoSlide();
         setActiveIndex((i) => (i + 1) % total);
     }, [total, resetAutoSlide]);
 
     const prev = useCallback(() => {
+        slideMode.current = 'manual';
         resetAutoSlide();
         setActiveIndex((i) => (i - 1 + total) % total);
     }, [total, resetAutoSlide]);
 
-    // Auto-rotation — resets after any manual interaction
+    // Auto-rotation — pauses when a side card is hovered
     const nextRef = useRef(next);
     nextRef.current = next;
 
     useEffect(() => {
-        const interval = setInterval(() => nextRef.current(), 5000);
+        if (hoveredCardIndex !== null) {
+            return;
+        }
+        const interval = setInterval(() => {
+            slideMode.current = 'auto';
+            nextRef.current();
+        }, 5000);
         return () => clearInterval(interval);
-    }, [autoSlideKey]);
+    }, [autoSlideKey, hoveredCardIndex]);
 
 
     // Keyboard navigation
@@ -383,7 +405,8 @@ export default function SpotlightCarousel() {
                         const isCenter = position === 'center';
                         const isSide =
                             position === 'left' || position === 'right';
-                        const zIndex = isCenter ? 20 : isSide ? 10 : 0;
+                        const isHoveredSide = isSide && hoveredCardIndex === i;
+                        const zIndex = isHoveredSide ? 30 : isCenter ? 20 : isSide ? 10 : 0;
 
                         return (
                             <motion.div
@@ -398,11 +421,20 @@ export default function SpotlightCarousel() {
                                     cursor: isSide ? 'pointer' : 'default',
                                 }}
                                 animate={animate}
-                                transition={{
-                                    duration: 1.4,
-                                    ease: EASING,
-                                    opacity: { duration: 1.2 },
+                                whileHover={
+                                    isSide
+                                        ? { scale: 0.96, opacity: 1, y: -12 }
+                                        : undefined
+                                }
+                                onHoverStart={() => {
+                                    if (isSide) setHoveredCardIndex(i);
                                 }}
+                                onHoverEnd={() => setHoveredCardIndex(null)}
+                                transition={
+                                    slideMode.current === 'auto'
+                                        ? AUTO_TRANSITION
+                                        : MANUAL_TRANSITION
+                                }
                                 onClick={() => {
                                     if (hasDragged.current) {
                                         return;
@@ -416,6 +448,10 @@ export default function SpotlightCarousel() {
                                 }}
                                 aria-hidden={!isCenter}
                             >
+                                {/* Hover ring for side cards */}
+                                {isHoveredSide && (
+                                    <div className="pointer-events-none absolute inset-0 z-10 rounded-3xl shadow-[0_0_0_2px_rgba(139,92,246,0.7),0_0_24px_rgba(139,92,246,0.25)]" />
+                                )}
                                 <TestimonialCard
                                     item={item}
                                     colorIndex={i}
