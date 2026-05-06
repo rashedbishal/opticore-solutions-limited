@@ -89,7 +89,6 @@ const AUTO_TRANSITION = {
     ease: EASING_AUTO,
 };
 
-
 const CARD_HEIGHT = 340;
 const STAGE_HEIGHT = 400;
 
@@ -236,8 +235,10 @@ export default function SpotlightCarousel() {
     const [containerWidth, setContainerWidth] = useState(960);
     const dragStartX = useRef(0);
     const hasDragged = useRef(false);
-    const slideMode = useRef<'auto' | 'manual'>('auto');
-    const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
+    const [slideMode, setSlideMode] = useState<'auto' | 'manual'>('auto');
+    const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(
+        null,
+    );
 
     const total = TESTIMONIALS.length;
 
@@ -271,33 +272,50 @@ export default function SpotlightCarousel() {
     const [autoSlideKey, setAutoSlideKey] = useState(0);
     const resetAutoSlide = useCallback(() => setAutoSlideKey((k) => k + 1), []);
 
-    const next = useCallback(() => {
-        slideMode.current = 'manual';
-        resetAutoSlide();
-        setActiveIndex((i) => (i + 1) % total);
-    }, [total, resetAutoSlide]);
+    const next = useCallback(
+        (mode: 'auto' | 'manual' = 'manual') => {
+            setSlideMode(mode);
 
-    const prev = useCallback(() => {
-        slideMode.current = 'manual';
-        resetAutoSlide();
-        setActiveIndex((i) => (i - 1 + total) % total);
-    }, [total, resetAutoSlide]);
+            if (mode === 'manual') {
+                resetAutoSlide();
+            }
+
+            setActiveIndex((i) => (i + 1) % total);
+        },
+        [total, resetAutoSlide],
+    );
+
+    const prev = useCallback(
+        (mode: 'auto' | 'manual' = 'manual') => {
+            setSlideMode(mode);
+
+            if (mode === 'manual') {
+                resetAutoSlide();
+            }
+
+            setActiveIndex((i) => (i - 1 + total) % total);
+        },
+        [total, resetAutoSlide],
+    );
 
     // Auto-rotation — pauses when a side card is hovered
     const nextRef = useRef(next);
-    nextRef.current = next;
+
+    useEffect(() => {
+        nextRef.current = next;
+    }, [next]);
 
     useEffect(() => {
         if (hoveredCardIndex !== null) {
             return;
         }
+
         const interval = setInterval(() => {
-            slideMode.current = 'auto';
-            nextRef.current();
+            nextRef.current('auto');
         }, 5000);
+
         return () => clearInterval(interval);
     }, [autoSlideKey, hoveredCardIndex]);
-
 
     // Keyboard navigation
     useEffect(() => {
@@ -367,9 +385,7 @@ export default function SpotlightCarousel() {
     );
 
     return (
-        <div
-            className="relative py-16 select-none"
-        >
+        <div className="relative py-16 select-none">
             {/* Background Glows */}
             <GradientOrb
                 className="top-1/4 right-0 h-80 w-80 rotate-12"
@@ -406,7 +422,13 @@ export default function SpotlightCarousel() {
                         const isSide =
                             position === 'left' || position === 'right';
                         const isHoveredSide = isSide && hoveredCardIndex === i;
-                        const zIndex = isHoveredSide ? 30 : isCenter ? 20 : isSide ? 10 : 0;
+                        const zIndex = isHoveredSide
+                            ? 30
+                            : isCenter
+                              ? 20
+                              : isSide
+                                ? 10
+                                : 0;
 
                         return (
                             <motion.div
@@ -427,11 +449,13 @@ export default function SpotlightCarousel() {
                                         : undefined
                                 }
                                 onHoverStart={() => {
-                                    if (isSide) setHoveredCardIndex(i);
+                                    if (isSide) {
+                                        setHoveredCardIndex(i);
+                                    }
                                 }}
                                 onHoverEnd={() => setHoveredCardIndex(null)}
                                 transition={
-                                    slideMode.current === 'auto'
+                                    slideMode === 'auto'
                                         ? AUTO_TRANSITION
                                         : MANUAL_TRANSITION
                                 }
@@ -465,7 +489,7 @@ export default function SpotlightCarousel() {
                 {/* ── Controls ── */}
                 <div className="mt-8 flex items-center justify-center gap-5">
                     <button
-                        onClick={prev}
+                        onClick={() => prev('manual')}
                         aria-label="Previous testimonial"
                         className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >
@@ -498,7 +522,7 @@ export default function SpotlightCarousel() {
                     </div>
 
                     <button
-                        onClick={next}
+                        onClick={() => next('manual')}
                         aria-label="Next testimonial"
                         className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >

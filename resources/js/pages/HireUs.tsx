@@ -114,45 +114,47 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     <section className="mb-20 px-4">
                         <div className="neo-panel-elevated mx-auto max-w-full rounded-[2.5rem] p-2 sm:w-max">
                             <div className="flex w-full flex-wrap items-center justify-center gap-3 px-2 py-2">
-                            {services.map((service) => {
-                                const Icon = service.icon;
-                                const isActive = activeTab === service.id;
+                                {services.map((service) => {
+                                    const Icon = service.icon;
+                                    const isActive = activeTab === service.id;
 
-                                return (
-                                    <button
-                                        key={service.id}
-                                        type="button"
-                                        onClick={() => setActiveTab(service.id)}
-                                        className={`group relative flex shrink-0 items-center gap-3 rounded-2xl px-6 py-4 transition-all duration-500 active:scale-95 ${
-                                            isActive
-                                                ? 'neo-btn-violet z-10'
-                                                : 'neo-btn-ghost hover:-translate-y-1 hover:z-10'
-                                        }`}
-                                    >
-                                        {/* Icon Container */}
-                                        <div
-                                            className={`drop-icon relative flex items-center justify-center rounded-xl p-2 transition-all duration-500 ${
+                                    return (
+                                        <button
+                                            key={service.id}
+                                            type="button"
+                                            onClick={() =>
+                                                setActiveTab(service.id)
+                                            }
+                                            className={`group relative flex shrink-0 items-center gap-3 rounded-2xl px-6 py-4 transition-all duration-500 active:scale-95 ${
                                                 isActive
-                                                    ? 'bg-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2)]'
-                                                    : `${service.bg} ${service.color} group-hover:scale-110 group-hover:bg-theme-surface`
+                                                    ? 'neo-btn-violet z-10'
+                                                    : 'neo-btn-ghost hover:z-10 hover:-translate-y-1'
                                             }`}
                                         >
-                                            <Icon className="h-5 w-5" />
-                                        </div>
-                                        
-                                        {/* Label */}
-                                        <span
-                                            className={`font-bold whitespace-nowrap transition-all duration-500 ${
-                                                isActive
-                                                    ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]'
-                                                    : 'text-theme-muted group-hover:text-theme'
-                                            }`}
-                                        >
-                                            {service.name}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                                            {/* Icon Container */}
+                                            <div
+                                                className={`drop-icon relative flex items-center justify-center rounded-xl p-2 transition-all duration-500 ${
+                                                    isActive
+                                                        ? 'bg-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2)]'
+                                                        : `${service.bg} ${service.color} group-hover:scale-110 group-hover:bg-theme-surface`
+                                                }`}
+                                            >
+                                                <Icon className="h-5 w-5" />
+                                            </div>
+
+                                            {/* Label */}
+                                            <span
+                                                className={`font-bold whitespace-nowrap transition-all duration-500 ${
+                                                    isActive
+                                                        ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]'
+                                                        : 'text-theme-muted group-hover:text-theme'
+                                                }`}
+                                            >
+                                                {service.name}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </section>

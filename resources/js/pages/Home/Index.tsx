@@ -693,7 +693,9 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                     <div className="w-full">
                         <Marquee
                             items={
-                                brands && brands.length > 0 ? brands : clientLogos
+                                brands && brands.length > 0
+                                    ? brands
+                                    : clientLogos
                             }
                         />
                     </div>
@@ -714,8 +716,11 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                             </span>
 
                             <h2 className="text-3xl font-black tracking-tight text-balance text-theme sm:text-4xl md:text-5xl lg:text-6xl">
-                                Hire the Industry's <br className="hidden sm:block" />
-                                <span className="text-violet-600 dark:text-violet-400">Finest Talent</span>
+                                Hire the Industry's{' '}
+                                <br className="hidden sm:block" />
+                                <span className="text-violet-600 dark:text-violet-400">
+                                    Finest Talent
+                                </span>
                             </h2>
 
                             <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-theme-muted sm:text-lg">
@@ -732,7 +737,8 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                         ariaLabel="Hire Opticore Solutions Ltd. now"
                                         className="neo-btn-primary rounded-full px-10 py-4 text-base font-black tracking-tight shadow-xl"
                                     >
-                                        Hire Us <ArrowRight className="drop-icon ml-2 h-5 w-5" />
+                                        Hire Us{' '}
+                                        <ArrowRight className="drop-icon ml-2 h-5 w-5" />
                                     </MagneticButton>
                                 </div>
                             </div>
