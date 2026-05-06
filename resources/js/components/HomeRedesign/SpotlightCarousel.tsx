@@ -220,7 +220,6 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
 
 export default function SpotlightCarousel() {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(960);
     const dragStartX = useRef(0);
@@ -254,25 +253,29 @@ export default function SpotlightCarousel() {
         [containerWidth],
     );
 
-    const next = useCallback(
-        () => setActiveIndex((i) => (i + 1) % total),
-        [total],
-    );
-    const prev = useCallback(
-        () => setActiveIndex((i) => (i - 1 + total) % total),
-        [total],
-    );
+    // Resets the auto-slide timer on any manual interaction
+    const [autoSlideKey, setAutoSlideKey] = useState(0);
+    const resetAutoSlide = useCallback(() => setAutoSlideKey((k) => k + 1), []);
 
-    // Auto-rotation — pauses on hover
+    const next = useCallback(() => {
+        resetAutoSlide();
+        setActiveIndex((i) => (i + 1) % total);
+    }, [total, resetAutoSlide]);
+
+    const prev = useCallback(() => {
+        resetAutoSlide();
+        setActiveIndex((i) => (i - 1 + total) % total);
+    }, [total, resetAutoSlide]);
+
+    // Auto-rotation — resets after any manual interaction
+    const nextRef = useRef(next);
+    nextRef.current = next;
+
     useEffect(() => {
-        if (isHovered) {
-            return;
-        }
-
-        const interval = setInterval(next, 7000);
-
+        const interval = setInterval(() => nextRef.current(), 5000);
         return () => clearInterval(interval);
-    }, [next, isHovered]);
+    }, [autoSlideKey]);
+
 
     // Keyboard navigation
     useEffect(() => {
@@ -344,8 +347,6 @@ export default function SpotlightCarousel() {
     return (
         <div
             className="relative py-16 select-none"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
             {/* Background Glows */}
             <GradientOrb
@@ -447,7 +448,10 @@ export default function SpotlightCarousel() {
                                 role="tab"
                                 aria-selected={i === activeIndex}
                                 aria-label={`Testimonial ${i + 1}`}
-                                onClick={() => setActiveIndex(i)}
+                                onClick={() => {
+                                    resetAutoSlide();
+                                    setActiveIndex(i);
+                                }}
                                 className={`rounded-full transition-all duration-500 ease-out focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none ${
                                     i === activeIndex
                                         ? 'h-2 w-7 bg-violet-500'
