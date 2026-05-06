@@ -242,7 +242,7 @@ export default function Profile() {
 
                         <Tabs defaultValue="overview" className="w-full">
                             {/* L2 — Tabs bar: elevated card sitting on page */}
-                            <TabsList className="neo-tab-list hide-scrollbar mb-8 flex w-full justify-start overflow-x-auto">
+                            <TabsList className="neo-tab-list hide-scrollbar mb-8 gap-6 overflow-x-auto">
                                 {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                 {(
                                     [
