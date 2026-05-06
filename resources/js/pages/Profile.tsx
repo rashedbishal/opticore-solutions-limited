@@ -23,7 +23,7 @@ import {
     ToggleLeft,
     ToggleRight,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
 import { Label } from '@/components/UI/label';
@@ -179,6 +179,23 @@ export default function Profile() {
     const [successMsg, setSuccessMsg] = useState('');
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
     const [promoEmails, setPromoEmails] = useState(true);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
 
     const handleMockSubmit = (e: React.FormEvent, msg: string) => {
         e.preventDefault();
@@ -297,8 +314,16 @@ export default function Profile() {
                                     className="neo-panel flex flex-col items-start gap-6 p-6 sm:p-8 sm:flex-row sm:items-center"
                                 >
                                     {/* L2 — Avatar: elevated atop the card */}
-                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
-                                        <User className="drop-icon-sm h-10 w-10" />
+                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+                                        {previewImage ? (
+                                            <img
+                                                src={previewImage}
+                                                alt="Profile Preview"
+                                                className="h-full w-full object-cover"
+                                            />
+                                        ) : (
+                                            <User className="drop-icon-sm h-10 w-10" />
+                                        )}
                                     </div>
 
                                     <div className="flex-1 w-full">
@@ -417,18 +442,39 @@ export default function Profile() {
                                     </div>
 
                                     <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+                                        {/* Hidden File Input */}
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            accept="image/*"
+                                            className="hidden"
+                                        />
+
                                         {/* L2 — Avatar upload: 3D elevated container */}
-                                        <div className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                        <div
+                                            onClick={triggerFileInput}
+                                            className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]"
+                                        >
+                                            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <Camera className="h-6 w-6 text-white" />
                                             </div>
-                                            <User className="h-10 w-10 text-theme-muted" />
+                                            {previewImage ? (
+                                                <img
+                                                    src={previewImage}
+                                                    alt="Preview"
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            ) : (
+                                                <User className="h-10 w-10 text-theme-muted" />
+                                            )}
                                         </div>
                                         <div className="text-center sm:text-left">
                                             {/* L2 — Upload button: 3D */}
                                             <Button
                                                 type="button"
                                                 variant="outline"
+                                                onClick={triggerFileInput}
                                                 className="neo-btn-ghost rounded-xl text-zinc-600 transition-all hover:scale-[1.02] dark:text-zinc-300"
                                             >
                                                 Upload Avatar
