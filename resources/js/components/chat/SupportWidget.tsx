@@ -2,7 +2,7 @@ import type { SharedPageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
     Clock,
     CreditCard,
@@ -481,6 +481,32 @@ export default function SupportWidget({
         return null;
     }
 
+    const buttonVariants: Variants = {
+        idle: { 
+            y: 0,
+            scale: 1,
+            rotate: 0,
+            boxShadow: isOpen 
+                ? "0 4px 0 rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)" 
+                : "0 6px 0 rgba(8,145,178,0.4), 0 12px 24px rgba(8,145,178,0.3)"
+        },
+        hover: { 
+            y: -4,
+            scale: 1.05,
+            rotate: isOpen ? 90 : 0,
+            boxShadow: isOpen
+                ? "0 8px 0 rgba(0,0,0,0.3), 0 12px 24px rgba(0,0,0,0.2)"
+                : "0 10px 0 rgba(8,145,178,0.4), 0 16px 32px rgba(8,145,178,0.3)"
+        },
+        tap: { 
+            y: 4,
+            scale: 0.95,
+            boxShadow: isOpen
+                ? "0 1px 0 rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)"
+                : "0 2px 0 rgba(8,145,178,0.4), 0 4px 8px rgba(8,145,178,0.3)"
+        }
+    };
+
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     return (
@@ -773,31 +799,48 @@ export default function SupportWidget({
             </AnimatePresence>
 
             {/* Toggle button */}
-            <button
+            <motion.button
                 type="button"
                 onClick={() => onOpenChange(!isOpen)}
-                className={`relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 sm:h-16 sm:w-16 ${
+                variants={buttonVariants}
+                initial="idle"
+                animate="idle"
+                whileHover="hover"
+                whileTap="tap"
+                className={cn(
+                    "relative flex h-14 w-14 items-center justify-center rounded-full transition-all duration-200 sm:h-16 sm:w-16",
                     isOpen
-                        ? 'rotate-90 bg-foreground text-background'
-                        : 'bg-background text-cyan-600 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] dark:text-cyan-400'
-                }`}
+                        ? "bg-foreground text-background ring-1 ring-inset ring-white/10"
+                        : "bg-linear-to-br from-cyan-500 via-cyan-600 to-indigo-600 text-white ring-1 ring-inset ring-cyan-400/40"
+                )}
                 aria-label={isOpen ? 'Close chat' : 'Open chat'}
             >
+                {/* Surface Shine */}
+                <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 bg-linear-to-b from-white/20 to-transparent opacity-50" />
+                    <div className="absolute top-0 left-1/4 right-1/4 h-px bg-white/30 blur-[0.5px]" />
+                </div>
+
                 {isOpen ? (
-                    <X className="h-6 w-6 sm:h-7 sm:w-7" />
+                    <X className="h-6 w-6 sm:h-7 sm:w-7 drop-shadow-md" />
                 ) : (
-                    <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
+                    <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
                 )}
+                
                 {unread > 0 && !isOpen ? (
-                    <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold ring-2 ring-background">
+                    <motion.span 
+                        initial={{ scale: 0, y: 5 }}
+                        animate={{ scale: 1, y: 0 }}
+                        className="absolute -top-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-[11px] font-black text-white shadow-[0_3px_0_#991b1b,0_6px_12px_rgba(239,68,68,0.4)] ring-2 ring-background z-20"
+                    >
                         {unread}
-                    </span>
+                    </motion.span>
                 ) : (
                     !isOpen && (
-                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-500" />
+                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-400 opacity-75" />
                     )
                 )}
-            </button>
+            </motion.button>
         </div>
     );
 }
