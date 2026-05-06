@@ -133,32 +133,34 @@ function InvoiceCard({
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-xs">
+                    <div className="grid grid-cols-1 gap-y-2 gap-x-4 text-[10px] sm:flex sm:flex-wrap sm:text-xs">
                         <div className="flex items-center gap-1.5 text-theme-muted">
-                            <Clock className="h-3.5 w-3.5 text-cyan-500" />
+                            <Clock className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
                             Delivery: {invoice.delivery}
                         </div>
                         <div className="flex items-center gap-1.5 text-theme-muted">
-                            <PayIcon className="h-3.5 w-3.5 text-cyan-500" />
+                            <PayIcon className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
                             {payment.label}
                         </div>
                         <div className="flex items-center gap-1.5 text-theme-muted">
-                            <Calendar className="h-3.5 w-3.5 text-cyan-500" />
+                            <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
                             {orderedDate}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
-                    <span className="text-xl font-black text-theme">
+                <div className="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end">
+                    <span className="text-lg font-black text-theme sm:text-xl">
                         {invoice.price}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold text-emerald-500">
-                        <CheckCircle className="h-3 w-3" />
-                        Paid
-                    </span>
-                    <div className="font-mono text-[10px] text-theme-subtle">
-                        #{invoice.invoice_id}
+                    <div className="flex flex-col items-end gap-1">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold text-emerald-500 sm:px-3 sm:py-1 sm:text-[10px]">
+                            <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            Paid
+                        </span>
+                        <div className="font-mono text-[9px] text-theme-subtle sm:text-[10px]">
+                            #{invoice.invoice_id}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -287,7 +289,7 @@ export default function Profile() {
                             {/* Overview Tab */}
                             <TabsContent
                                 value="overview"
-                                className="space-y-10 outline-none"
+                                className="space-y-8 outline-none sm:space-y-10"
                             >
                                 {/* L1 — Profile Overview Card */}
                                 <motion.div
@@ -299,22 +301,22 @@ export default function Profile() {
                                         <User className="drop-icon-sm h-10 w-10" />
                                     </div>
 
-                                    <div className="flex-1">
+                                    <div className="flex-1 w-full">
                                         <div className="flex flex-wrap items-center gap-2">
                                             <h1 className="text-xl font-black text-theme sm:text-2xl">
                                                 {auth.user?.name}
                                             </h1>
                                             <BadgeCheck className="h-5 w-5 text-cyan-500" />
                                         </div>
-                                        <div className="mt-1 flex items-center gap-2 text-sm text-theme-muted">
-                                            <Mail className="h-4 w-4" />
+                                        <div className="mt-1 flex items-center gap-2 text-sm text-theme-muted break-all">
+                                            <Mail className="h-4 w-4 shrink-0" />
                                             {auth.user?.email}
                                         </div>
-                                        <div className="mt-3 flex flex-wrap gap-3">
-                                            <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-cyan-500 uppercase">
+                                        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                                            <span className="w-fit rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[9px] font-bold tracking-widest text-cyan-500 uppercase sm:text-[10px]">
                                                 Verified Client
                                             </span>
-                                            <span className="rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
+                                            <span className="w-fit rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[9px] font-bold tracking-widest text-theme-muted uppercase sm:text-[10px]">
                                                 Member since{' '}
                                                 {new Date(
                                                     auth.user
@@ -340,7 +342,7 @@ export default function Profile() {
                                 <div className="space-y-6">
                                     <motion.div
                                         variants={fadeUp}
-                                        className="flex items-center justify-between"
+                                        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* L2 — Section icon: elevated */}
@@ -363,7 +365,7 @@ export default function Profile() {
                                         {/* L2 — Order More: 3D pill button */}
                                         <Link
                                             href="/hire-us"
-                                            className="neo-btn-ghost flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
+                                            className="neo-btn-ghost flex w-fit items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
                                         >
                                             <ShoppingBag className="h-3.5 w-3.5" />
                                             Order More
@@ -414,7 +416,7 @@ export default function Profile() {
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
                                         {/* L2 — Avatar upload: 3D elevated container */}
                                         <div className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]">
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
@@ -422,7 +424,7 @@ export default function Profile() {
                                             </div>
                                             <User className="h-10 w-10 text-theme-muted" />
                                         </div>
-                                        <div>
+                                        <div className="text-center sm:text-left">
                                             {/* L2 — Upload button: 3D */}
                                             <Button
                                                 type="button"
@@ -606,7 +608,7 @@ export default function Profile() {
                                         </div>
 
                                         {/* L2 — Toggle row: inner card */}
-                                        <div className="neo-row flex items-center justify-between p-6">
+                                        <div className="neo-row flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
                                             <div>
                                                 <div className="font-bold text-theme">
                                                     Secure your account
@@ -627,7 +629,7 @@ export default function Profile() {
                                                         !twoFactorEnabled,
                                                     )
                                                 }
-                                                className={`transition-colors ${twoFactorEnabled ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
+                                                className={`w-fit transition-colors ${twoFactorEnabled ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
                                             >
                                                 {twoFactorEnabled ? (
                                                     <ToggleRight className="h-10 w-10" />
@@ -666,7 +668,7 @@ export default function Profile() {
 
                                         <div className="space-y-4">
                                             {/* L2 — Notification rows: inner cards */}
-                                            <div className="neo-row flex items-center justify-between p-4">
+                                            <div className="neo-row flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Order Updates
@@ -679,7 +681,7 @@ export default function Profile() {
                                                 <ToggleRight className="drop-icon-emerald h-8 w-8 cursor-not-allowed text-emerald-500" />
                                             </div>
 
-                                            <div className="neo-row flex items-center justify-between p-4">
+                                            <div className="neo-row flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Promotional Emails
@@ -706,7 +708,7 @@ export default function Profile() {
                                                 </button>
                                             </div>
 
-                                            <div className="neo-row flex items-center justify-between p-4">
+                                            <div className="neo-row flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                                                 <div>
                                                     <div className="text-sm font-bold text-theme">
                                                         Security Alerts
@@ -754,7 +756,8 @@ export default function Profile() {
                                     </motion.div>
                                 </motion.div>
                             </TabsContent>
-                        </Tabs>
+                        <div className="mb-24 sm:mb-0" />
+                         </Tabs>
                     </motion.div>
                 </div>
             </div>
