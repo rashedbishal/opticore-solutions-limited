@@ -197,7 +197,7 @@ export default function Profile() {
                 <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] bg-radial from-cyan-500/5 to-transparent" />
                 <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] bg-radial from-violet-600/5 to-transparent" />
 
-                <div className="relative mx-auto max-w-5xl px-4 pt-32">
+                <div className="relative mx-auto max-w-5xl px-4 pt-20 sm:pt-32">
                     <motion.div
                         variants={stagger}
                         initial="hidden"
@@ -212,7 +212,7 @@ export default function Profile() {
                                     initial={{ opacity: 0, y: -20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    className="flex items-center gap-4 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-4"
+                                    className="flex items-center gap-4 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 sm:px-6 sm:py-4"
                                 >
                                     <CheckCircle className="h-6 w-6 shrink-0 text-emerald-500" />
                                     <div>
@@ -241,43 +241,48 @@ export default function Profile() {
                         </AnimatePresence>
 
                         <Tabs defaultValue="overview" className="w-full">
-                            {/* L2 — Tabs bar: elevated card sitting on page */}
-                            <TabsList className="neo-tab-list hide-scrollbar mb-8 gap-6 overflow-x-auto">
-                                {/* L3 — Tab triggers: 3D buttons atop the bar */}
-                                {(
-                                    [
-                                        {
-                                            value: 'overview',
-                                            icon: User,
-                                            label: 'Overview',
-                                        },
-                                        {
-                                            value: 'settings',
-                                            icon: Settings,
-                                            label: 'Account Settings',
-                                        },
-                                        {
-                                            value: 'security',
-                                            icon: Shield,
-                                            label: 'Security',
-                                        },
-                                        {
-                                            value: 'preferences',
-                                            icon: Bell,
-                                            label: 'Preferences',
-                                        },
-                                    ] as const
-                                ).map(({ value, icon: Icon, label }) => (
-                                    <TabsTrigger
-                                        key={value}
-                                        value={value}
-                                        className="neo-tab-item flex items-center gap-2 px-6 py-3 text-sm transition-all duration-300 hover:scale-[1.02]"
-                                    >
-                                        <Icon className="drop-icon-sm h-4 w-4" />
-                                        {label}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
+                            <div className="relative">
+                                {/* Scroll Indicator Fade */}
+                                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-background/80 to-transparent sm:hidden" />
+                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-background/80 to-transparent sm:hidden" />
+
+                                <TabsList className="neo-tab-list hide-scrollbar mb-8 gap-4 overflow-x-auto sm:gap-6">
+                                    {/* L3 — Tab triggers: 3D buttons atop the bar */}
+                                    {(
+                                        [
+                                            {
+                                                value: 'overview',
+                                                icon: User,
+                                                label: 'Overview',
+                                            },
+                                            {
+                                                value: 'settings',
+                                                icon: Settings,
+                                                label: 'Account Settings',
+                                            },
+                                            {
+                                                value: 'security',
+                                                icon: Shield,
+                                                label: 'Security',
+                                            },
+                                            {
+                                                value: 'preferences',
+                                                icon: Bell,
+                                                label: 'Preferences',
+                                            },
+                                        ] as const
+                                    ).map(({ value, icon: Icon, label }) => (
+                                        <TabsTrigger
+                                            key={value}
+                                            value={value}
+                                            className="neo-tab-item flex items-center gap-2 px-4 py-2.5 text-xs sm:px-6 sm:py-3 sm:text-sm transition-all duration-300 hover:scale-[1.02]"
+                                        >
+                                            <Icon className="drop-icon-sm h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                            {label}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </div>
 
                             {/* Overview Tab */}
                             <TabsContent
@@ -287,7 +292,7 @@ export default function Profile() {
                                 {/* L1 — Profile Overview Card */}
                                 <motion.div
                                     variants={fadeUp}
-                                    className="neo-panel flex flex-col items-start gap-6 p-8 sm:flex-row sm:items-center"
+                                    className="neo-panel flex flex-col items-start gap-6 p-6 sm:p-8 sm:flex-row sm:items-center"
                                 >
                                     {/* L2 — Avatar: elevated atop the card */}
                                     <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
@@ -296,7 +301,7 @@ export default function Profile() {
 
                                     <div className="flex-1">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <h1 className="text-2xl font-black text-theme">
+                                            <h1 className="text-xl font-black text-theme sm:text-2xl">
                                                 {auth.user?.name}
                                             </h1>
                                             <BadgeCheck className="h-5 w-5 text-cyan-500" />
@@ -397,12 +402,12 @@ export default function Profile() {
                                             'Profile information updated successfully.',
                                         )
                                     }
-                                    className="neo-panel space-y-8 p-8"
+                                    className="neo-panel space-y-8 p-6 sm:p-8"
                                 >
                                     <div>
-                                        <h2 className="text-xl font-bold text-theme">
-                                            Account Settings
-                                        </h2>
+                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
+                                                Account Settings
+                                            </h2>
                                         <p className="text-sm text-theme-muted">
                                             Update your personal information and
                                             profile picture.
@@ -514,10 +519,10 @@ export default function Profile() {
                                                 'Password changed successfully.',
                                             )
                                         }
-                                        className="neo-panel space-y-8 p-8"
+                                        className="neo-panel space-y-8 p-6 sm:p-8"
                                     >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">
+                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
                                                 Change Password
                                             </h2>
                                             <p className="text-sm text-theme-muted">
@@ -587,10 +592,10 @@ export default function Profile() {
                                     {/* L1 — 2FA card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="neo-panel space-y-6 p-8"
+                                        className="neo-panel space-y-6 p-6 sm:p-8"
                                     >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">
+                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
                                                 Two-Factor Authentication
                                             </h2>
                                             <p className="text-sm text-theme-muted">
@@ -647,10 +652,10 @@ export default function Profile() {
                                     {/* L1 — Notifications card */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="neo-panel space-y-6 p-8"
+                                        className="neo-panel space-y-6 p-6 sm:p-8"
                                     >
                                         <div>
-                                            <h2 className="text-xl font-bold text-theme">
+                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
                                                 Notifications
                                             </h2>
                                             <p className="text-sm text-theme-muted">
@@ -720,7 +725,7 @@ export default function Profile() {
                                     {/* Danger Zone */}
                                     <motion.div
                                         variants={fadeUp}
-                                        className="relative overflow-hidden rounded-[2rem] border border-red-500/20 bg-gradient-to-b from-red-500/5 to-red-500/10 p-8 shadow-[0_8px_32px_rgba(239,68,68,0.06),inset_0_0_0_1px_rgba(239,68,68,0.1),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(239,68,68,0.04),inset_0_0_0_1px_rgba(239,68,68,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]"
+                                        className="relative overflow-hidden rounded-[2rem] border border-red-500/20 bg-gradient-to-b from-red-500/5 to-red-500/10 p-6 sm:p-8 shadow-[0_8px_32px_rgba(239,68,68,0.06),inset_0_0_0_1px_rgba(239,68,68,0.1),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(239,68,68,0.04),inset_0_0_0_1px_rgba(239,68,68,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]"
                                     >
                                         <div className="absolute top-0 right-0 p-8 opacity-10">
                                             <Trash2 className="h-32 w-32 text-red-500" />
