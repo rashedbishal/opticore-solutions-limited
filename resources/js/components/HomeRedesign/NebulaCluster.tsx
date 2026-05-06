@@ -37,7 +37,7 @@ const items: NebulaEntry[] = [
             'A holistic brand identity crafted for modern businesses — from logo systems and colour palettes to typography and comprehensive brand guidelines that stand the test of time.',
         src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=900',
         left: '50%',
-        top: '48%',
+        top: '50%',
         depth: 0.8,
         isCenter: true,
         href: '/portfolio/graphic-design',
@@ -49,8 +49,8 @@ const items: NebulaEntry[] = [
         description:
             'Dynamic motion graphics and animation sequences that captivate audiences and bring brand stories to life across every platform and format.',
         src: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=900',
-        left: '18%',
-        top: '20%',
+        left: '11%',
+        top: '17%',
         depth: 1.8,
         isCenter: false,
         href: '/portfolio/video-editing',
@@ -62,8 +62,8 @@ const items: NebulaEntry[] = [
         description:
             'Clean, data-rich interfaces that surface insights at a glance — designed for clarity, speed, and delightful interactions across all devices.',
         src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900',
-        left: '80%',
-        top: '20%',
+        left: '88%',
+        top: '27%',
         depth: 2.0,
         isCenter: false,
         href: '/portfolio/web-development',
@@ -75,8 +75,8 @@ const items: NebulaEntry[] = [
         description:
             'Photorealistic 3D visuals and art direction that elevate product launches, campaigns, and immersive brand experiences.',
         src: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=900',
-        left: '18%',
-        top: '76%',
+        left: '14%',
+        top: '82%',
         depth: 2.2,
         isCenter: false,
         href: '/portfolio/3d-production',
@@ -88,8 +88,8 @@ const items: NebulaEntry[] = [
         description:
             'High-impact social content and campaign visuals designed to stop the scroll, drive engagement, and grow your audience organically.',
         src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=900',
-        left: '80%',
-        top: '76%',
+        left: '83%',
+        top: '70%',
         depth: 2.4,
         isCenter: false,
         href: '/portfolio/digital-marketing',
@@ -235,8 +235,8 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                         style={{ x, y, rotateX, rotateY }}
                         className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${
                             item.isCenter
-                                ? 'w-[min(300px,34vw)]'
-                                : 'w-[min(220px,24vw)]'
+                                ? 'w-[min(380px,42vw)]'
+                                : 'w-[min(290px,32vw)]'
                         } aspect-[4/3]`}
                         whileHover={{ scale: 1.07 }}
                         onClick={onSelect}
