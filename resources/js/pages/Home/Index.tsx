@@ -557,7 +557,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         className="bottom-0 left-0 h-[500px] w-[500px] -translate-x-1/3 translate-y-1/3"
                         color="rgb(6 182 212 / 0.14)"
                     />
-                    <section className="border-t border-theme bg-background/60 py-20">
+                    {/* <section className="border-t border-theme bg-background/60 py-20">
                         <div className="mx-auto max-w-7xl px-4 text-center">
                             <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                                 Portfolio Concept 2
@@ -569,7 +569,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                 Move your mouse to interact with the cluster
                             </p>
                         </div>
-                    </section>
+                    </section> */}
                     <LazySection minHeightClassName="min-h-[90vh]">
                         <NebulaCluster />
                     </LazySection>
@@ -629,7 +629,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         className="right-0 bottom-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
                         color="rgb(6 182 212 / 0.12)"
                     />
-                    <section className="border-t border-theme bg-background/60 py-20">
+                    {/* <section className="border-t border-theme bg-background/60 py-20">
                         <div className="mx-auto max-w-7xl px-4 text-center">
                             <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
                                 Testimonial Concept 3
@@ -642,7 +642,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                                 to step
                             </p>
                         </div>
-                    </section>
+                    </section> */}
                     <LazySection minHeightClassName="min-h-[70vh]">
                         <SpotlightCarousel />
                     </LazySection>
