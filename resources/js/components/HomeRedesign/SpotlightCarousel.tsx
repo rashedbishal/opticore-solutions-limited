@@ -430,9 +430,9 @@ export default function SpotlightCarousel() {
                     <button
                         onClick={prev}
                         aria-label="Previous testimonial"
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
+                        className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >
-                        <ChevronLeft className="h-4 w-4" />
+                        <ChevronLeft className="drop-icon h-5 w-5 text-violet-500 dark:text-violet-400" />
                     </button>
 
                     {/* Pill dots */}
@@ -460,9 +460,9 @@ export default function SpotlightCarousel() {
                     <button
                         onClick={next}
                         aria-label="Next testimonial"
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-theme bg-theme-surface text-theme-muted transition-colors hover:border-violet-500/60 hover:text-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
+                        className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
                     >
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="drop-icon h-5 w-5 text-violet-500 dark:text-violet-400" />
                     </button>
                 </div>
             </div>

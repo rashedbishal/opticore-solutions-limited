@@ -430,11 +430,11 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         variants={blurReveal}
                         initial="hidden"
                         animate="visible"
-                        className="inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-3 py-1 text-xs font-semibold text-theme-muted sm:text-sm"
+                        className="neo-btn-ghost inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-black tracking-widest uppercase sm:text-sm"
                     >
-                        <Sparkles className="h-3.5 w-3.5 text-cyan-500 dark:text-cyan-300" />
+                        <Sparkles className="drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
                         <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,var(--theme-text-muted),var(--theme-text),var(--theme-text-muted))] bg-[length:200%_100%] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))]">
-                            ✦ Premium Digital Agency
+                            Premium Digital Agency
                         </span>
                     </motion.span>
 
@@ -461,14 +461,15 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         className="mt-10 flex w-full max-w-md flex-col gap-4 sm:max-w-none sm:flex-row sm:justify-center"
                     >
                         <MagneticButton
-                            href="/request-appointment"
+                            href="/hire-us"
                             ariaLabel="Start a project with Opticore Solutions Ltd."
+                            className="neo-btn-primary min-w-[180px] rounded-full px-8 py-4 text-base font-black shadow-lg transition-all hover:scale-105"
                         >
                             Start a Project
                         </MagneticButton>
                         <Link
                             href={portfolio.url()}
-                            className="touch-target inline-flex items-center justify-center rounded-full border border-theme bg-theme-surface px-6 py-3 text-sm font-semibold text-theme transition-colors hover:bg-theme-surface-hover"
+                            className="neo-btn-ghost touch-target inline-flex min-w-[180px] items-center justify-center rounded-full px-8 py-4 text-base font-black text-theme transition-all hover:scale-105 hover:bg-theme-surface-hover"
                         >
                             See Our Work
                         </Link>
@@ -696,25 +697,40 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-6 text-center sm:p-10 lg:p-14">
-                        <p className="section-kicker">Ready to Scale?</p>
-                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
-                            Hire the Industry's Finest Talent
-                        </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
-                            Whether you need a full brand system, campaign
-                            creative, motion production, or a web experience
-                            that performs, we can shape the right scope with
-                            you.
-                        </p>
-                        <div className="mt-8 flex justify-center">
-                            <MagneticButton
-                                href="/hire-us"
-                                ariaLabel="Hire Opticore Solutions Ltd. now"
-                                fullWidth={!desktop}
-                            >
-                                Hire Us <ArrowRight className="ml-2 h-4 w-4" />
-                            </MagneticButton>
+                    <div className="neo-panel-elevated relative overflow-hidden px-6 py-12 text-center sm:px-10 sm:py-16 lg:px-14">
+                        {/* Background Gradients */}
+                        <div className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl dark:bg-violet-500/5" />
+                        <div className="pointer-events-none absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl dark:bg-cyan-500/5" />
+
+                        <div className="relative z-10 flex flex-col items-center">
+                            <span className="neo-btn-ghost mb-8 inline-flex items-center gap-2 rounded-full px-5 py-2 text-[10px] font-black tracking-widest text-theme-muted uppercase sm:text-[11px]">
+                                <Sparkles className="drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
+                                Ready to Scale?
+                            </span>
+
+                            <h2 className="text-3xl font-black tracking-tight text-balance text-theme sm:text-4xl md:text-5xl lg:text-6xl">
+                                Hire the Industry's <br className="hidden sm:block" />
+                                <span className="text-violet-600 dark:text-violet-400">Finest Talent</span>
+                            </h2>
+
+                            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-theme-muted sm:text-lg">
+                                Whether you need a full brand system, campaign
+                                creative, motion production, or a web experience
+                                that performs, we can shape the right scope with
+                                you.
+                            </p>
+
+                            <div className="mt-12 flex justify-center">
+                                <div className="flex items-center rounded-full border border-slate-300 bg-linear-to-b from-slate-100 to-slate-200 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                                    <MagneticButton
+                                        href="/hire-us"
+                                        ariaLabel="Hire Opticore Solutions Ltd. now"
+                                        className="neo-btn-primary rounded-full px-10 py-4 text-base font-black tracking-tight shadow-xl"
+                                    >
+                                        Hire Us <ArrowRight className="drop-icon ml-2 h-5 w-5" />
+                                    </MagneticButton>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
