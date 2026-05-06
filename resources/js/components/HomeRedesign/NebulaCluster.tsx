@@ -38,7 +38,7 @@ const items: NebulaEntry[] = [
         src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=900',
         left: '50%',
         top: '48%',
-        depth: 0,
+        depth: 0.8,
         isCenter: true,
         href: '/portfolio/graphic-design',
     },
@@ -51,7 +51,7 @@ const items: NebulaEntry[] = [
         src: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=900',
         left: '18%',
         top: '20%',
-        depth: 1.4,
+        depth: 1.8,
         isCenter: false,
         href: '/portfolio/video-editing',
     },
@@ -64,7 +64,7 @@ const items: NebulaEntry[] = [
         src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900',
         left: '80%',
         top: '20%',
-        depth: 1.6,
+        depth: 2.0,
         isCenter: false,
         href: '/portfolio/web-development',
     },
@@ -77,7 +77,7 @@ const items: NebulaEntry[] = [
         src: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=900',
         left: '18%',
         top: '76%',
-        depth: 1.8,
+        depth: 2.2,
         isCenter: false,
         href: '/portfolio/3d-production',
     },
@@ -90,7 +90,7 @@ const items: NebulaEntry[] = [
         src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=900',
         left: '80%',
         top: '76%',
-        depth: 2.0,
+        depth: 2.4,
         isCenter: false,
         href: '/portfolio/digital-marketing',
     },
@@ -127,7 +127,7 @@ function ExpandModal({
                             damping: 28,
                             stiffness: 320,
                         }}
-                        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-theme bg-theme-surface shadow-2xl"
+                        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
                         onPointerDown={(e) => e.stopPropagation()}
                     >
                         <div className="aspect-video w-full overflow-hidden">
@@ -139,13 +139,13 @@ function ExpandModal({
                             />
                         </div>
                         <div className="p-6">
-                            <p className="text-xs font-bold tracking-widest text-cyan-400 uppercase">
+                            <p className="text-xs font-bold tracking-widest text-cyan-600 uppercase dark:text-cyan-400">
                                 {item.category}
                             </p>
-                            <h3 className="mt-2 text-2xl font-extrabold text-theme">
+                            <h3 className="mt-2 text-2xl font-extrabold text-zinc-900 dark:text-zinc-100">
                                 {item.title}
                             </h3>
-                            <p className="mt-3 leading-relaxed text-theme-muted">
+                            <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-400">
                                 {item.description}
                             </p>
 
@@ -191,11 +191,13 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
     const maxX = item.depth * 28 * intensity;
     const maxY = item.depth * 22 * intensity;
 
-    // Parallax driven by mouse — depth:0 (center) produces zero movement here
-    const x = useTransform(dx, [-0.5, 0.5], [-maxX, maxX]);
-    const y = useTransform(dy, [-0.5, 0.5], [-maxY, maxY]);
-    const rotateX = useTransform(dy, [-0.5, 0.5], [8, -8]);
-    const rotateY = useTransform(dx, [-0.5, 0.5], [-8, 8]);
+    // Parallax driven by mouse — Inverted for "attraction" (pulling towards the mouse)
+    const x = useTransform(dx, [-0.5, 0.5], [maxX, -maxX]);
+    const y = useTransform(dy, [-0.5, 0.5], [maxY, -maxY]);
+
+    // Enhanced tilt — "attraction" style (tilting towards the mouse)
+    const rotateX = useTransform(dy, [-0.5, 0.5], [25, -25]);
+    const rotateY = useTransform(dx, [-0.5, 0.5], [-25, 25]);
 
     return (
         <div
