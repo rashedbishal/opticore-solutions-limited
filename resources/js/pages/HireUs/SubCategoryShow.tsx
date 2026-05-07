@@ -1102,7 +1102,10 @@ export default function SubCategoryShow({
                 price: hasPrice ? cms!.price : plan.price,
                 delivery: hasDelivery ? cms!.delivery : plan.delivery,
                 features: hasFeatures
-                    ? cms!.features.map((label) => ({ label, Icon: CheckCircle }))
+                    ? cms!.features.map((label) => ({
+                          label,
+                          Icon: CheckCircle,
+                      }))
                     : plan.features,
             };
         });
@@ -1191,14 +1194,34 @@ export default function SubCategoryShow({
         });
     };
 
-    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-        Palette, Clock, MessageSquare, FileText, Shield, CheckCircle,
-        Star, Zap, Globe, Repeat, Layers, Crown, FileCode, Headset,
-        DollarSign, PenLine, RotateCcw, Info, User,
+    const iconMap: Record<
+        string,
+        React.ComponentType<{ className?: string }>
+    > = {
+        Palette,
+        Clock,
+        MessageSquare,
+        FileText,
+        Shield,
+        CheckCircle,
+        Star,
+        Zap,
+        Globe,
+        Repeat,
+        Layers,
+        Crown,
+        FileCode,
+        Headset,
+        DollarSign,
+        PenLine,
+        RotateCcw,
+        Info,
+        User,
     };
 
     const descriptionFeatures =
-        subCategory.description_points && subCategory.description_points.length === 6
+        subCategory.description_points &&
+        subCategory.description_points.length === 6
             ? subCategory.description_points.map((p) => ({
                   label: p.label,
                   Icon: iconMap[p.icon] ?? CheckCircle,
@@ -2313,7 +2336,6 @@ export default function SubCategoryShow({
                     </motion.div>
                 )}
             </AnimatePresence>
-
         </>
     );
 }

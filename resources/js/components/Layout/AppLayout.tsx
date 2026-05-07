@@ -15,7 +15,9 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
     useEffect(() => {
         const handler = () => {
-            setOpenWidget((current) => (current === 'support' ? current : 'support'));
+            setOpenWidget((current) =>
+                current === 'support' ? current : 'support',
+            );
         };
         window.addEventListener('open-support-chat', handler);
 

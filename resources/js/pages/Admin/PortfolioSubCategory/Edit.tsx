@@ -53,7 +53,6 @@ const PLAN_TIERS: { id: keyof Plans; label: string; accent: string }[] = [
     { id: 'premium', label: 'Premium', accent: 'text-violet-400' },
 ];
 
-
 export default function PortfolioSubCategoryEdit({
     subCategory,
     categories,
@@ -158,7 +157,9 @@ export default function PortfolioSubCategoryEdit({
     };
 
     const removeFeature = (tier: keyof Plans, index: number) => {
-        const features = data.plans[tier].features.filter((_, i) => i !== index);
+        const features = data.plans[tier].features.filter(
+            (_, i) => i !== index,
+        );
         setData('plans', {
             ...data.plans,
             [tier]: { ...data.plans[tier], features },
@@ -526,7 +527,10 @@ export default function PortfolioSubCategoryEdit({
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        removeFeature(tier.id, i)
+                                                        removeFeature(
+                                                            tier.id,
+                                                            i,
+                                                        )
                                                     }
                                                     className="shrink-0 rounded p-1 text-zinc-500 hover:bg-red-500/10 hover:text-red-400"
                                                 >
@@ -836,7 +840,7 @@ export default function PortfolioSubCategoryEdit({
 
                                 {/* Caption overlay */}
                                 {item.alt && (
-                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 pb-1.5 pt-4">
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1.5">
                                         <p className="truncate text-xs text-white">
                                             {item.alt}
                                         </p>
@@ -848,7 +852,7 @@ export default function PortfolioSubCategoryEdit({
                                     type="button"
                                     onClick={() => removeMedia(item.id)}
                                     disabled={destroyProcessing}
-                                    className="absolute top-2 right-2 rounded bg-red-600/80 p-1 text-white opacity-0 transition-opacity hover:bg-red-500 group-hover:opacity-100 disabled:opacity-50"
+                                    className="absolute top-2 right-2 rounded bg-red-600/80 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-500 disabled:opacity-50"
                                     title="Remove from gallery"
                                 >
                                     <Trash2 className="h-3.5 w-3.5" />
