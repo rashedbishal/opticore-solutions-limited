@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
-import { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Film, ImageIcon, Minus, Plus, Trash2, Upload } from 'lucide-react';
+import { useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -170,10 +170,13 @@ export default function PortfolioSubCategoryEdit({
         const incomplete = data.description_points.some(
             (p) => p.label.trim() === '',
         );
+
         if (incomplete) {
             alert('All 6 service description points must have a label.');
+
             return;
         }
+
         post(adminRoutes.subCategories.update.url(subCategory.slug), {
             forceFormData: true,
         });

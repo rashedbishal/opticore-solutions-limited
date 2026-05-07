@@ -1,6 +1,6 @@
-import type React from 'react';
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
+import type React from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -1090,11 +1090,13 @@ export default function SubCategoryShow({
         portfolios?.length > 0 ? portfolios : MOCK_PORTFOLIOS;
     const resolvedPlans = useMemo(() => {
         const cmsPlans = subCategory.plans;
+
         return PLANS.map((plan) => {
             const cms = cmsPlans?.[plan.id as keyof typeof cmsPlans];
             const hasPrice = cms?.price && cms.price.trim() !== '';
             const hasDelivery = cms?.delivery && cms.delivery.trim() !== '';
             const hasFeatures = cms?.features && cms.features.length > 0;
+
             return {
                 ...plan,
                 price: hasPrice ? cms!.price : plan.price,

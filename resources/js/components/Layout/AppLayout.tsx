@@ -18,6 +18,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
             setOpenWidget((current) => (current === 'support' ? current : 'support'));
         };
         window.addEventListener('open-support-chat', handler);
+
         return () => window.removeEventListener('open-support-chat', handler);
     }, []);
 
