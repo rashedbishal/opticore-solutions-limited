@@ -18,13 +18,13 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
         price: '',
         rating: '5.0',
         reviews_count: 0,
-        image: '',
+        image: null as File | null,
         sort_order: 0,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.portfolioSubCategories.store.url());
+        post(adminRoutes.subCategories.store.url(), { forceFormData: true });
     };
 
     return (
@@ -189,14 +189,15 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     <div>
                         <label className="block text-sm font-medium text-zinc-300">
-                            Image URL
+                            Image
                         </label>
                         <input
-                            type="url"
-                            value={data.image}
-                            onChange={(e) => setData('image', e.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                                setData('image', e.target.files?.[0] ?? null)
+                            }
+                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500 focus:outline-none"
                         />
                         {errors.image && (
                             <p className="mt-1 text-sm text-red-400">
@@ -237,7 +238,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             Create Sub-Category
                         </button>
                         <Link
-                            href={adminRoutes.portfolioSubCategories.index.url()}
+                            href={adminRoutes.subCategories.index.url()}
                             className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
                         >
                             Cancel

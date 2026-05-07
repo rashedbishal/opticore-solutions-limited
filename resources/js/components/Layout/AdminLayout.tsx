@@ -75,8 +75,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         },
         { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
         {
-            name: 'Sub-Categories',
-            href: '/admin/portfolio-sub-categories',
+            name: 'Sub Categories',
+            href: '/admin/sub-categories',
             icon: Layers,
         },
         { name: 'Blogs', href: '/admin/blogs', icon: FileText },

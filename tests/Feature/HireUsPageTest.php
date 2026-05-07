@@ -2,6 +2,8 @@
 
 use App\Models\Admin;
 use App\Models\PortfolioSubCategory;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 it('renders hire us sub-categories from cms data', function () {
@@ -12,7 +14,7 @@ it('renders hire us sub-categories from cms data', function () {
         'price' => '2500 BDT',
         'rating' => 4.9,
         'reviews_count' => 156,
-        'image' => 'https://example.com/logo-design.jpg',
+        'image' => 'sub-categories/logo-design.jpg',
     ]);
 
     $this->get('/hire-us')
@@ -24,15 +26,17 @@ it('renders hire us sub-categories from cms data', function () {
             ->where('subCategories.graphic-design.0.price', $subCategory->price)
             ->where('subCategories.graphic-design.0.rating', 4.9)
             ->where('subCategories.graphic-design.0.reviews', 156)
-            ->where('subCategories.graphic-design.0.image', $subCategory->image)
+            ->where('subCategories.graphic-design.0.image', asset('storage/'.$subCategory->image))
         );
 });
 
 it('allows admins to create update and delete hire us sub-categories', function () {
+    Storage::fake('public');
+
     $admin = Admin::factory()->create();
 
     $this->actingAs($admin, 'admin')
-        ->post(route('admin.portfolio-sub-categories.store'), [
+        ->post(route('admin.sub-categories.store'), [
             'category_slug' => 'graphic-design',
             'name' => 'Thumbnail Design',
             'slug' => 'thumbnail-design',
@@ -40,17 +44,22 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '300 BDT',
             'rating' => '4.8',
             'reviews_count' => 84,
-            'image' => 'https://example.com/thumbnail.jpg',
+            'image' => UploadedFile::fake()->image('thumbnail.jpg'),
             'sort_order' => 2,
         ])
-        ->assertRedirect(route('admin.portfolio-sub-categories.index'));
+        ->assertRedirect(route('admin.sub-categories.index'));
 
     $subCategory = PortfolioSubCategory::query()->firstWhere('slug', 'thumbnail-design');
 
     expect($subCategory)->not->toBeNull();
+    expect($subCategory->image)->toStartWith('sub-categories/');
+
+    Storage::disk('public')->assertExists($subCategory->image);
+
+    $oldImagePath = $subCategory->image;
 
     $this->actingAs($admin, 'admin')
-        ->put(route('admin.portfolio-sub-categories.update', $subCategory), [
+        ->put(route('admin.sub-categories.update', $subCategory), [
             'category_slug' => 'graphic-design',
             'name' => 'Thumbnail Design Pro',
             'slug' => 'thumbnail-design-pro',
@@ -58,10 +67,18 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '500 BDT',
             'rating' => '5.0',
             'reviews_count' => 100,
-            'image' => 'https://example.com/thumbnail-pro.jpg',
+            'image' => UploadedFile::fake()->image('thumbnail-pro.jpg'),
             'sort_order' => 1,
+            'description_points' => [
+                ['label' => 'Custom Designs', 'icon' => 'Palette'],
+                ['label' => 'Fast Turnaround', 'icon' => 'Clock'],
+                ['label' => 'Expert Consultation', 'icon' => 'MessageSquare'],
+                ['label' => 'Source Files Included', 'icon' => 'FileText'],
+                ['label' => 'Commercial License', 'icon' => 'Shield'],
+                ['label' => 'Revisions Guaranteed', 'icon' => 'CheckCircle'],
+            ],
         ])
-        ->assertRedirect(route('admin.portfolio-sub-categories.index'));
+        ->assertRedirect(route('admin.sub-categories.index'));
 
     $subCategory->refresh();
 
@@ -70,13 +87,20 @@ it('allows admins to create update and delete hire us sub-categories', function 
     expect($subCategory->price)->toBe('500 BDT');
     expect((float) $subCategory->rating)->toBe(5.0);
     expect($subCategory->reviews_count)->toBe(100);
-    expect($subCategory->image)->toBe('https://example.com/thumbnail-pro.jpg');
+    expect($subCategory->image)->toStartWith('sub-categories/');
+
+    Storage::disk('public')->assertMissing($oldImagePath);
+    Storage::disk('public')->assertExists($subCategory->image);
+
+    $finalImagePath = $subCategory->image;
 
     $this->actingAs($admin, 'admin')
-        ->delete(route('admin.portfolio-sub-categories.destroy', $subCategory))
+        ->delete(route('admin.sub-categories.destroy', $subCategory))
         ->assertRedirect();
 
     $this->assertDatabaseMissing('portfolio_sub_categories', [
         'id' => $subCategory->id,
     ]);
+
+    Storage::disk('public')->assertMissing($finalImagePath);
 });

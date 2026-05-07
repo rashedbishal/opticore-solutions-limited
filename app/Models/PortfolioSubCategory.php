@@ -20,6 +20,9 @@ class PortfolioSubCategory extends Model
         'reviews_count',
         'image',
         'sort_order',
+        'plans',
+        'faqs',
+        'description_points',
     ];
 
     /**
@@ -33,6 +36,9 @@ class PortfolioSubCategory extends Model
             'rating' => 'decimal:1',
             'reviews_count' => 'integer',
             'sort_order' => 'integer',
+            'plans' => 'array',
+            'faqs' => 'array',
+            'description_points' => 'array',
         ];
     }
 

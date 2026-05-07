@@ -173,7 +173,9 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
-    Route::resource('portfolio-sub-categories', PortfolioSubCategoryController::class);
+    Route::resource('sub-categories', PortfolioSubCategoryController::class);
+    Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
+    Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');
     Route::resource('blogs', AdminBlogController::class);
     Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);

@@ -2,7 +2,7 @@ import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SupportWidget from '@/components/chat/SupportWidget';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
@@ -12,6 +12,14 @@ import ChatWidget from '@/components/UI/ChatWidget';
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
     const [openWidget, setOpenWidget] = useState<'ai' | 'support' | null>(null);
+
+    useEffect(() => {
+        const handler = () => {
+            setOpenWidget((current) => (current === 'support' ? current : 'support'));
+        };
+        window.addEventListener('open-support-chat', handler);
+        return () => window.removeEventListener('open-support-chat', handler);
+    }, []);
 
     return (
         <SmoothScroll>

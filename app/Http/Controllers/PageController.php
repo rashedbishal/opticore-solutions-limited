@@ -45,7 +45,7 @@ class PageController extends Controller
                             'price' => $subCategory->price ?: 'Custom Quote',
                             'rating' => $subCategory->rating !== null ? (float) $subCategory->rating : 5.0,
                             'reviews' => $subCategory->reviews_count ?? 0,
-                            'image' => $subCategory->image ?: 'https://placehold.co/800x600/111111/FFFFFF?text=Opticore',
+                            'image' => $subCategory->image ? asset('storage/'.$subCategory->image) : 'https://placehold.co/800x600/111111/FFFFFF?text=Opticore',
                         ])
                         ->values()
                         ->toArray();

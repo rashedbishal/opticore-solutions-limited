@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
@@ -40,7 +41,6 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import GradientOrb from '@/components/UI/GradientOrb';
-import Modal from '@/components/UI/Modal';
 
 interface PortfolioItem {
     id: number;
@@ -55,12 +55,29 @@ interface FaqItem {
     answer: string;
 }
 
+interface CmsPlanData {
+    price: string;
+    delivery: string;
+    features: string[];
+}
+
+interface DescriptionPoint {
+    label: string;
+    icon: string;
+}
+
 interface SubCategory {
     id: number;
     name: string;
     slug: string;
     description: string | null;
+    description_points?: DescriptionPoint[] | null;
     faqs?: FaqItem[];
+    plans?: {
+        basic?: CmsPlanData | null;
+        standard?: CmsPlanData | null;
+        premium?: CmsPlanData | null;
+    } | null;
 }
 
 interface Category {
@@ -1071,8 +1088,28 @@ export default function SubCategoryShow({
     const { auth } = usePage<SharedPageProps>().props;
     const displayPortfolios =
         portfolios?.length > 0 ? portfolios : MOCK_PORTFOLIOS;
+    const resolvedPlans = useMemo(() => {
+        const cmsPlans = subCategory.plans;
+        return PLANS.map((plan) => {
+            const cms = cmsPlans?.[plan.id as keyof typeof cmsPlans];
+            const hasPrice = cms?.price && cms.price.trim() !== '';
+            const hasDelivery = cms?.delivery && cms.delivery.trim() !== '';
+            const hasFeatures = cms?.features && cms.features.length > 0;
+            return {
+                ...plan,
+                price: hasPrice ? cms!.price : plan.price,
+                delivery: hasDelivery ? cms!.delivery : plan.delivery,
+                features: hasFeatures
+                    ? cms!.features.map((label) => ({ label, Icon: CheckCircle }))
+                    : plan.features,
+            };
+        });
+    }, [subCategory.plans]);
+
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
-    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const openSupportChat = useCallback(() => {
+        window.dispatchEvent(new CustomEvent('open-support-chat'));
+    }, []);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     // const [reviewPage, setReviewPage] = useState(1);
@@ -1132,7 +1169,7 @@ export default function SubCategoryShow({
         });
 
     const handleHireNow = (planId: PlanId = selectedPlan) => {
-        const plan = PLANS.find((p) => p.id === planId)!;
+        const plan = resolvedPlans.find((p) => p.id === planId)!;
 
         if (!auth.user) {
             router.visit('/login');
@@ -1152,14 +1189,26 @@ export default function SubCategoryShow({
         });
     };
 
-    const descriptionFeatures = [
-        { label: 'Custom Designs', Icon: Palette },
-        { label: 'Fast Turnaround', Icon: Clock },
-        { label: 'Expert Consultation', Icon: MessageSquare },
-        { label: 'Source Files Included', Icon: FileText },
-        { label: 'Commercial License', Icon: Shield },
-        { label: 'Revisions Guaranteed', Icon: CheckCircle },
-    ];
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+        Palette, Clock, MessageSquare, FileText, Shield, CheckCircle,
+        Star, Zap, Globe, Repeat, Layers, Crown, FileCode, Headset,
+        DollarSign, PenLine, RotateCcw, Info, User,
+    };
+
+    const descriptionFeatures =
+        subCategory.description_points && subCategory.description_points.length === 6
+            ? subCategory.description_points.map((p) => ({
+                  label: p.label,
+                  Icon: iconMap[p.icon] ?? CheckCircle,
+              }))
+            : [
+                  { label: 'Custom Designs', Icon: Palette },
+                  { label: 'Fast Turnaround', Icon: Clock },
+                  { label: 'Expert Consultation', Icon: MessageSquare },
+                  { label: 'Source Files Included', Icon: FileText },
+                  { label: 'Commercial License', Icon: Shield },
+                  { label: 'Revisions Guaranteed', Icon: CheckCircle },
+              ];
 
     const faqs =
         subCategory.faqs && subCategory.faqs.length > 0
@@ -1297,7 +1346,7 @@ export default function SubCategoryShow({
                             <span className="text-theme-subtle">·</span>
                             <button
                                 type="button"
-                                onClick={() => setIsContactModalOpen(true)}
+                                onClick={openSupportChat}
                                 className="neo-btn-ghost group flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-zinc-700 transition-all duration-300 hover:scale-105 dark:text-zinc-300"
                             >
                                 <MessageSquare className="drop-icon h-4 w-4 text-cyan-500" />
@@ -1323,7 +1372,7 @@ export default function SubCategoryShow({
                         Choose Your Plan
                     </p>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        {PLANS.map((plan) => (
+                        {resolvedPlans.map((plan) => (
                             <div
                                 key={plan.id}
                                 onClick={() => setSelectedPlan(plan.id)}
@@ -1405,7 +1454,7 @@ export default function SubCategoryShow({
                     <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
                         <button
                             type="button"
-                            onClick={() => setIsContactModalOpen(true)}
+                            onClick={openSupportChat}
                             className="neo-btn-ghost group flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-zinc-700 transition-all duration-300 hover:scale-105 dark:text-zinc-300"
                         >
                             <MessageSquare className="drop-icon h-5 w-5 text-cyan-500" />
@@ -1588,7 +1637,7 @@ export default function SubCategoryShow({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setIsContactModalOpen(true)}
+                                onClick={openSupportChat}
                                 className="neo-btn-outline group flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold"
                             >
                                 <MessageSquare className="h-4 w-4" />
@@ -1700,9 +1749,7 @@ export default function SubCategoryShow({
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                setIsContactModalOpen(true)
-                                            }
+                                            onClick={openSupportChat}
                                             className="neo-btn-outline group flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold"
                                         >
                                             <MessageSquare className="h-4 w-4" />
@@ -1757,7 +1804,7 @@ export default function SubCategoryShow({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setIsContactModalOpen(true)}
+                                onClick={openSupportChat}
                                 className="neo-btn-outline group flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold"
                             >
                                 <MessageSquare className="h-4 w-4" />
@@ -2265,32 +2312,6 @@ export default function SubCategoryShow({
                 )}
             </AnimatePresence>
 
-            {/* ── Custom Quote Modal ── */}
-            <Modal
-                open={isContactModalOpen}
-                onClose={() => setIsContactModalOpen(false)}
-                title="Discuss Your Project"
-            >
-                <div className="space-y-5 p-6">
-                    <p className="text-sm text-theme-muted">
-                        Tell us more about your custom requirements for{' '}
-                        <span className="font-bold text-theme">
-                            {subCategory.name}
-                        </span>
-                        .
-                    </p>
-                    <textarea
-                        placeholder="Describe what you need — scope, timeline, budget…"
-                        className="neo-field h-32 w-full rounded-2xl p-4 text-sm placeholder-zinc-400 transition-all focus:ring-4 focus:ring-cyan-500/10 dark:placeholder-zinc-500"
-                    />
-                    <button
-                        type="button"
-                        className="neo-btn-accent w-full rounded-2xl py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                        <span className="drop-icon">Send Message</span>
-                    </button>
-                </div>
-            </Modal>
         </>
     );
 }

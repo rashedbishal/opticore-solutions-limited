@@ -32,7 +32,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                 'Are you sure you want to delete this sub-category? This will only work if no portfolios are assigned to it.',
             )
         ) {
-            destroy(adminRoutes.portfolioSubCategories.destroy.url(slug));
+            destroy(adminRoutes.subCategories.destroy.url(slug));
         }
     };
 
@@ -40,10 +40,10 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-white">
-                    Portfolio Sub-Categories
+                    Sub Categories
                 </h1>
                 <Link
-                    href={adminRoutes.portfolioSubCategories.create.url()}
+                    href={adminRoutes.subCategories.create.url()}
                     className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
                 >
                     <Plus className="h-4 w-4" /> Add Sub-Category
@@ -101,7 +101,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                 </td>
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <Link
-                                        href={adminRoutes.portfolioSubCategories.edit.url(
+                                        href={adminRoutes.subCategories.edit.url(
                                             sub.slug,
                                         )}
                                         className="mr-4 inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300"
@@ -142,5 +142,5 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
 }
 
 PortfolioSubCategoryIndex.layout = (page: ReactNode) => (
-    <AdminLayout title="Portfolio Sub-Categories">{page}</AdminLayout>
+    <AdminLayout title="Sub Categories">{page}</AdminLayout>
 );
