@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClientReview;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
@@ -222,12 +223,23 @@ class PortfolioSubCategoryController extends Controller
 
     public function destroy(PortfolioSubCategory $subCategory): RedirectResponse
     {
-        if ($subCategory->portfolios()->exists()) {
-            return back()->with('error', 'Cannot delete a sub-category that has gallery items. Remove all gallery items first.');
-        }
-
         $categorySlug = $subCategory->category_slug;
 
+        // Delete all gallery media files before removing Portfolio records.
+        $subCategory->portfolios()->each(function (Portfolio $portfolio) {
+            if ($portfolio->media_path) {
+                Storage::disk('public')->delete($portfolio->media_path);
+            }
+            $portfolio->delete();
+        });
+
+        // Delete client review images (records cascade-delete with the subcategory).
+        ClientReview::where('sub_category_id', $subCategory->id)
+            ->whereNotNull('image_path')
+            ->pluck('image_path')
+            ->each(fn (string $path) => Storage::disk('public')->delete($path));
+
+        // Delete the subcategory thumbnail.
         if ($subCategory->image) {
             Storage::disk('public')->delete($subCategory->image);
         }

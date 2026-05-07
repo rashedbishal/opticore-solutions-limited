@@ -136,7 +136,7 @@ export default function PortfolioEdit({
                                 No sub-categories found for this category.
                                 Please{' '}
                                 <Link
-                                    href={adminRoutes.portfolioSubCategories.create.url()}
+                                    href={adminRoutes.subCategories.create.url()}
                                     className="underline"
                                 >
                                     create one first

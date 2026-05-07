@@ -7,6 +7,7 @@ use App\Models\ClientReview;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -76,6 +77,11 @@ class ClientReviewController extends Controller
     public function destroy(ClientReview $clientReview): RedirectResponse
     {
         $subCategoryId = $clientReview->sub_category_id;
+
+        if ($clientReview->image_path) {
+            Storage::disk('public')->delete($clientReview->image_path);
+        }
+
         $clientReview->delete();
 
         $this->recalculateSubCategoryStats($subCategoryId);
