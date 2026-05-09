@@ -222,7 +222,7 @@ export default function Footer() {
                                     target="_blank"
                                     rel="noreferrer"
                                     aria-label={label}
-                                    className="group inline-flex h-9 w-9 items-center justify-center rounded-xl border border-theme bg-theme-surface text-theme-muted transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-theme"
+                                    className="neo-btn-ghost group relative inline-flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 transition-all duration-300 hover:-translate-y-1 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-400"
                                 >
                                     <Icon className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                                 </a>
