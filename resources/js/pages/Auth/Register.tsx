@@ -1,9 +1,23 @@
 import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Register() {
+    const [countryCode, setCountryCode] = useState('+880');
+    const [localPhone, setLocalPhone] = useState('');
+
+    const COUNTRY_CODES = [
+        { code: '+880', label: 'BD (+880)' },
+        { code: '+1', label: 'US/CA (+1)' },
+        { code: '+44', label: 'UK (+44)' },
+        { code: '+61', label: 'AU (+61)' },
+        { code: '+91', label: 'IN (+91)' },
+        { code: '+971', label: 'UAE (+971)' },
+        { code: '+65', label: 'SG (+65)' },
+        { code: '+49', label: 'DE (+49)' },
+    ];
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
@@ -40,6 +54,45 @@ export default function Register() {
                 onSubmit={submit}
                 className="space-y-2.5 sm:space-y-3 [@media(max-height:500px)]:space-y-1.5"
             >
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 [@media(max-height:400px)]:hidden">
+                    <a
+                        href="/auth/google/redirect"
+                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
+                    >
+                        <img
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            className="h-4 w-4 sm:h-5 sm:w-5"
+                            alt="Google"
+                        />
+                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
+                            Google
+                        </span>
+                    </a>
+                    <a
+                        href="/auth/facebook/redirect"
+                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
+                    >
+                        <svg
+                            className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
+                        </svg>
+                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
+                            Facebook
+                        </span>
+                    </a>
+                </div>
+
+                <div className="flex items-center gap-3 py-0.5 sm:gap-4 sm:py-1 [@media(max-height:400px)]:hidden">
+                    <div className="flex-1 border-t border-theme"></div>
+                    <span className="text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
+                        Or sign up with email
+                    </span>
+                    <div className="flex-1 border-t border-theme"></div>
+                </div>
+
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-1.5">
                     <div className="group relative">
                         <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
@@ -82,19 +135,59 @@ export default function Register() {
                     </div>
 
                     <div className="group relative sm:col-span-2 [@media(max-height:500px)]:col-span-2">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
+                        <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
                             <Phone className="h-4 w-4" />
                         </div>
-                        <input
-                            type="tel"
-                            name="phone_number"
-                            value={data.phone_number}
-                            onChange={(e) =>
-                                setData('phone_number', e.target.value)
-                            }
-                            placeholder="Phone Number"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                        />
+                        <div className="flex w-full overflow-hidden rounded-xl border border-theme bg-theme-surface transition-all focus-within:border-cyan-500/50">
+                            <select
+                                value={countryCode}
+                                onChange={(e) => {
+                                    setCountryCode(e.target.value);
+
+                                    if (localPhone) {
+                                        setData(
+                                            'phone_number',
+                                            `${e.target.value}${localPhone}`,
+                                        );
+                                    }
+                                }}
+                                className="cursor-pointer border-y-0 border-r border-l-0 border-theme bg-transparent py-2.5 pr-8 pl-11 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                            >
+                                {COUNTRY_CODES.map((country) => (
+                                    <option
+                                        key={country.code}
+                                        value={country.code}
+                                    >
+                                        {country.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                type="tel"
+                                value={localPhone}
+                                onChange={(e) => {
+                                    // Only allow digits
+                                    const val = e.target.value.replace(
+                                        /\D/g,
+                                        '',
+                                    );
+                                    setLocalPhone(val);
+
+                                    if (val) {
+                                        setData(
+                                            'phone_number',
+                                            `${countryCode}${val}`,
+                                        );
+                                    } else {
+                                        setData('phone_number', '');
+                                    }
+                                }}
+                                pattern="[0-9]*"
+                                inputMode="numeric"
+                                placeholder="Phone Number"
+                                className="w-full border-none bg-transparent px-4 py-2.5 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                            />
+                        </div>
                         {errors.phone_number && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
                                 {errors.phone_number}
@@ -174,48 +267,18 @@ export default function Register() {
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-lg transition-all hover:bg-cyan-400 hover:text-white sm:py-3.5 sm:text-sm [@media(max-height:500px)]:py-2"
                 >
-                    {processing ? 'Creating...' : 'Create Account'}{' '}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    {processing ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Creating...
+                        </>
+                    ) : (
+                        <>
+                            Create Account
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </>
+                    )}
                 </button>
-
-                <div className="flex items-center gap-3 py-0.5 sm:gap-4 sm:py-1 [@media(max-height:400px)]:hidden">
-                    <div className="flex-1 border-t border-theme"></div>
-                    <span className="text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
-                        Or sign up with
-                    </span>
-                    <div className="flex-1 border-t border-theme"></div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 [@media(max-height:400px)]:hidden">
-                    <a
-                        href="/auth/google/redirect"
-                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
-                    >
-                        <img
-                            src="https://www.svgrepo.com/show/475656/google-color.svg"
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            alt="Google"
-                        />
-                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
-                            Google
-                        </span>
-                    </a>
-                    <a
-                        href="/auth/facebook/redirect"
-                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
-                    >
-                        <svg
-                            className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
-                        </svg>
-                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
-                            Facebook
-                        </span>
-                    </a>
-                </div>
             </form>
 
             <div className="mt-[min(2vh,2rem)] text-center [@media(max-height:500px)]:mt-1.5">

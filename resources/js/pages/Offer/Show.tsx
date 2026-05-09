@@ -303,7 +303,7 @@ function ClientView({
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 py-10">
+        <div className="min-h-screen bg-slate-950 pt-24 pb-10 sm:pt-32">
             <div className="mx-auto max-w-2xl px-4">
                 {/* Header */}
                 <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
@@ -556,17 +556,43 @@ function ClientView({
                         </div>
                     </div>
                 ) : offer.status !== 'pending' ? (
-                    <div
-                        className={`rounded-2xl border p-5 text-center text-sm ${STATUS_CONFIG[offer.status].cls}`}
-                    >
-                        <StatusBadge status={offer.status} />
-                        <p className="mt-3 text-xs">
-                            {offer.status === 'accepted'
-                                ? 'You accepted this offer. The team will be in touch shortly.'
-                                : offer.status === 'declined'
-                                  ? 'You declined this offer.'
-                                  : 'This offer has expired.'}
-                        </p>
+                    <div className="mt-8 flex justify-center">
+                        <div
+                            className={`w-full max-w-md rounded-2xl border p-8 text-center sm:p-10 ${
+                                offer.status === 'accepted'
+                                    ? 'border-green-500/20 bg-green-500/10 shadow-[0_0_40px_-10px_rgba(34,197,94,0.15)]'
+                                    : offer.status === 'declined'
+                                      ? 'border-red-500/20 bg-red-500/10 shadow-[0_0_40px_-10px_rgba(239,68,68,0.15)]'
+                                      : 'border-slate-500/20 bg-slate-500/10 shadow-[0_0_40px_-10px_rgba(100,116,139,0.15)]'
+                            }`}
+                        >
+                            <div
+                                className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border ${
+                                    offer.status === 'accepted'
+                                        ? 'border-green-500/30 bg-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.2)]'
+                                        : offer.status === 'declined'
+                                          ? 'border-red-500/30 bg-red-500/20 text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+                                          : 'border-slate-500/30 bg-slate-500/20 text-slate-400 shadow-[0_0_20px_rgba(100,116,139,0.2)]'
+                                }`}
+                            >
+                                {(() => {
+                                    const Icon =
+                                        STATUS_CONFIG[offer.status].Icon;
+
+                                    return <Icon size={32} strokeWidth={2.5} />;
+                                })()}
+                            </div>
+                            <h3 className="mb-2 text-xl font-bold text-white">
+                                Offer {STATUS_CONFIG[offer.status].label}
+                            </h3>
+                            <p className="text-sm leading-relaxed text-slate-400">
+                                {offer.status === 'accepted'
+                                    ? 'You accepted this offer. The team will be in touch shortly.'
+                                    : offer.status === 'declined'
+                                      ? 'You declined this offer.'
+                                      : 'This offer has expired.'}
+                            </p>
+                        </div>
                     </div>
                 ) : null}
             </div>

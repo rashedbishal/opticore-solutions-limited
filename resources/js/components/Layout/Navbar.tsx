@@ -15,6 +15,7 @@ import {
     LogIn,
     Home,
     Briefcase,
+    Loader2,
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
@@ -89,6 +90,7 @@ export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
     const [visible, setVisible] = useState(true);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const lastScrollY = useRef(0);
     const { user } = props.auth;
 
@@ -202,10 +204,21 @@ export default function Navbar() {
                                             href="/logout"
                                             method="post"
                                             as="button"
-                                            className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
+                                            onStart={() =>
+                                                setIsLoggingOut(true)
+                                            }
+                                            onFinish={() =>
+                                                setIsLoggingOut(false)
+                                            }
+                                            disabled={isLoggingOut}
+                                            className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 disabled:opacity-50"
                                             aria-label="Sign out"
                                         >
-                                            <LogOut className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
+                                            {isLoggingOut ? (
+                                                <Loader2 className="drop-icon dark:drop-icon h-4 w-4 animate-spin text-violet-500 dark:text-violet-400" />
+                                            ) : (
+                                                <LogOut className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
+                                            )}
                                         </Link>
                                     </>
                                 ) : (
@@ -220,25 +233,26 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            aria-label={
-                                open
-                                    ? 'Close navigation menu'
-                                    : 'Open navigation menu'
-                            }
-                            className={cn(
-                                'touch-target inline-flex items-center justify-center rounded-full transition-all duration-300 md:hidden',
-                                'h-11 w-11 border border-slate-300 bg-slate-100 text-zinc-800 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
-                            )}
-                            onClick={() => setOpen((current) => !current)}
-                        >
-                            {open ? (
-                                <X className="h-5 w-5" />
-                            ) : (
-                                <Menu className="h-5 w-5" />
-                            )}
-                        </button>
+                        {/* Mobile Toggle & Theme Switcher */}
+                        <div className="flex h-11 items-center gap-1.5 rounded-full border border-slate-300 bg-slate-100 p-1.5 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] md:hidden dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                            <ThemeSwitcher className="[&>svg]:drop-icon dark:[&>svg]:drop-icon h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]" />
+                            <button
+                                type="button"
+                                aria-label={
+                                    open
+                                        ? 'Close navigation menu'
+                                        : 'Open navigation menu'
+                                }
+                                className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
+                                onClick={() => setOpen((current) => !current)}
+                            >
+                                {open ? (
+                                    <X className="drop-icon dark:drop-icon h-4 w-4 text-zinc-600 dark:text-zinc-300" />
+                                ) : (
+                                    <Menu className="drop-icon dark:drop-icon h-4 w-4 text-zinc-600 dark:text-zinc-300" />
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </nav>
             </header>
@@ -300,9 +314,10 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-slate-200 px-2 py-2.5 transition-colors active:bg-slate-300 md:px-3 md:py-3 lg:px-4 lg:py-3.5 dark:border-zinc-700 dark:bg-zinc-800 dark:active:bg-zinc-700',
-                                                    url === item.href &&
-                                                        'border-violet-500/40 bg-violet-500/10 dark:border-violet-400/40',
+                                                    'flex w-full items-center justify-center rounded-2xl border px-2 py-2.5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] md:px-3 md:py-3 lg:px-4 lg:py-3.5',
+                                                    url === item.href
+                                                        ? 'neo-btn-primary border-violet-500/40'
+                                                        : 'border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                                                 )}
                                                 onClick={() => setOpen(false)}
                                             >
@@ -348,56 +363,73 @@ export default function Navbar() {
                                     transition={{ delay: 0.25 }}
                                     className="mx-auto w-full max-w-md"
                                 >
-                                    <div className="flex items-start gap-3">
-                                        <ThemeSwitcher className="shrink-0" />
-                                        <div className="flex-1">
-                                            {user ? (
-                                                <div className="flex flex-col gap-3">
-                                                    <Link
-                                                        href="/profile"
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className={cn(
-                                                            'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all',
-                                                            url === '/profile'
-                                                                ? 'bg-violet-600 text-white'
-                                                                : 'bg-slate-200 text-zinc-900 dark:bg-zinc-800 dark:text-white',
-                                                        )}
-                                                    >
-                                                        <User className="h-5 w-5" />
-                                                        Profile
-                                                    </Link>
-                                                    <Link
-                                                        href="/logout"
-                                                        method="post"
-                                                        as="button"
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
-                                                    >
-                                                        <LogOut className="h-5 w-5" />
-                                                        Sign out
-                                                    </Link>
-                                                </div>
-                                            ) : (
-                                                <MagneticButton
-                                                    href="/login"
-                                                    fullWidth
-                                                    ariaLabel="Sign in to your account"
+                                    <div className="flex-1">
+                                        {user ? (
+                                            <div className="flex flex-col gap-3">
+                                                <Link
+                                                    href="/profile"
                                                     onClick={() =>
                                                         setOpen(false)
                                                     }
-                                                    className="py-4 text-base font-bold tracking-wide uppercase"
+                                                    className={cn(
+                                                        'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]',
+                                                        url === '/profile'
+                                                            ? 'neo-btn-primary'
+                                                            : 'border border-slate-300 bg-slate-100 text-zinc-900 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
+                                                    )}
                                                 >
-                                                    <div className="flex items-center gap-2">
-                                                        <LogIn className="h-5 w-5" />
-                                                        Sign in
-                                                    </div>
-                                                </MagneticButton>
-                                            )}
-                                        </div>
+                                                    <User className="h-5 w-5" />
+                                                    Profile
+                                                </Link>
+                                                <Link
+                                                    href="/logout"
+                                                    method="post"
+                                                    as="button"
+                                                    onStart={() =>
+                                                        setIsLoggingOut(true)
+                                                    }
+                                                    onFinish={() =>
+                                                        setIsLoggingOut(false)
+                                                    }
+                                                    disabled={isLoggingOut}
+                                                    onClick={(e) => {
+                                                        if (isLoggingOut) {
+                                                            e.preventDefault();
+
+                                                            return;
+                                                        }
+
+                                                        setOpen(false);
+                                                    }}
+                                                    className="neo-btn-primary flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide text-white uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                                                >
+                                                    {isLoggingOut ? (
+                                                        <>
+                                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                                            Signing out...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <LogOut className="h-5 w-5" />
+                                                            Sign out
+                                                        </>
+                                                    )}
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <MagneticButton
+                                                href="/login"
+                                                fullWidth
+                                                ariaLabel="Sign in to your account"
+                                                onClick={() => setOpen(false)}
+                                                className="neo-btn-primary py-4 text-base font-bold tracking-wide uppercase"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <LogIn className="h-5 w-5" />
+                                                    Sign in
+                                                </div>
+                                            </MagneticButton>
+                                        )}
                                     </div>
                                 </motion.div>
                             </div>

@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Lock } from 'lucide-react';
+import { ArrowRight, Lock, Loader2 } from 'lucide-react';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({
@@ -101,10 +101,17 @@ export default function Login() {
                             disabled={processing}
                             className="group relative flex w-full justify-center rounded-full bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white transition-all hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 disabled:opacity-50 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-2"
                         >
-                            <span className="flex items-center gap-2">
-                                Sign in
-                                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 sm:h-4 sm:w-4" />
-                            </span>
+                            {processing ? (
+                                <span className="flex items-center gap-2">
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin sm:h-4 sm:w-4" />
+                                    Signing in...
+                                </span>
+                            ) : (
+                                <span className="flex items-center gap-2">
+                                    Sign in
+                                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 sm:h-4 sm:w-4" />
+                                </span>
+                            )}
                         </button>
                     </form>
                 </motion.div>

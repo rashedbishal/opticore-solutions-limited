@@ -17,6 +17,7 @@ import {
     Palette,
     Pin,
     Music,
+    Loader2,
 } from 'lucide-react';
 import React from 'react';
 import HandwritingText from '@/components/text-animations/handwriting-text';
@@ -450,7 +451,10 @@ export default function Contact() {
                                                     className="h-16 text-base font-bold"
                                                 >
                                                     {form.processing ? (
-                                                        'Sending...'
+                                                        <span className="flex items-center gap-2">
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                            Sending...
+                                                        </span>
                                                     ) : (
                                                         <span className="flex items-center gap-2">
                                                             Send Message

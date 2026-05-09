@@ -1,7 +1,7 @@
 import type { CareerFormData } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Modal from '@/components/UI/Modal';
@@ -290,9 +290,14 @@ export default function Career() {
                             fullWidth
                             disabled={form.processing}
                         >
-                            {form.processing
-                                ? 'Submitting...'
-                                : 'Submit Application'}
+                            {form.processing ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Submitting...
+                                </span>
+                            ) : (
+                                'Submit Application'
+                            )}
                         </MagneticButton>
                     </form>
                 )}

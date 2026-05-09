@@ -127,7 +127,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                             }
                                             className={`group relative flex shrink-0 items-center gap-3 rounded-2xl px-6 py-4 transition-all duration-500 active:scale-95 ${
                                                 isActive
-                                                    ? 'neo-btn-violet z-10'
+                                                    ? 'neo-btn-primary z-10'
                                                     : 'neo-btn-ghost hover:z-10 hover:-translate-y-1'
                                             }`}
                                         >

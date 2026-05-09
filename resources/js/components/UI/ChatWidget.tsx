@@ -155,7 +155,7 @@ setSessionId(data.session_id);
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         data-lenis-prevent
-                        className="border-theme bg-background flex max-h-[min(calc(100dvh-88px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-[0_0_50px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                        className="flex max-h-[min(calc(100dvh-88px),640px)] w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] flex-col overflow-hidden rounded-3xl border border-violet-200/40 dark:border-violet-800/25 bg-background shadow-[0_0_0_1px_rgba(124,58,237,0.08),0_8px_24px_rgba(0,0,0,0.1),0_32px_64px_rgba(0,0,0,0.06)] dark:shadow-[0_0_0_1px_rgba(124,58,237,0.18),0_8px_24px_rgba(0,0,0,0.45),0_32px_64px_rgba(0,0,0,0.3)] [background-image:linear-gradient(135deg,rgba(124,58,237,0.025)_0%,transparent_50%)] dark:[background-image:linear-gradient(135deg,rgba(124,58,237,0.05)_0%,transparent_50%)]"
                     >
                         {/* Header */}
                         <div className="relative bg-linear-to-r from-violet-600 via-indigo-500 to-cyan-500 px-5 py-5 shrink-0">
@@ -201,7 +201,7 @@ setSessionId(data.session_id);
 
                         {/* Messages Area */}
                         <div
-                            className="flex-1 overflow-y-auto bg-theme-surface p-4 scroll-smooth"
+                            className="flex-1 overflow-y-auto bg-theme-surface p-4 scroll-smooth [background-image:linear-gradient(to_bottom,rgba(124,58,237,0.05)_0%,transparent_45%)] dark:[background-image:linear-gradient(to_bottom,rgba(124,58,237,0.09)_0%,transparent_45%)] shadow-[inset_0_4px_10px_rgba(0,0,0,0.03)] dark:shadow-[inset_0_4px_10px_rgba(0,0,0,0.12)]"
                         >
                             {messages.length === 1 && (
                                 <div className="border-theme bg-theme-surface-hover mb-4 rounded-2xl border p-4 backdrop-blur-sm">
@@ -255,15 +255,19 @@ setSessionId(data.session_id);
 
                                                 <div
                                                     className={cn(
-                                                        "max-w-[80%] rounded-[20px] px-4 py-3 text-sm leading-relaxed shadow-sm",
+                                                        "w-fit max-w-[80%] rounded-[18px] px-3.5 py-2 text-sm leading-relaxed",
                                                         isUser
                                                             ? cn(
-                                                                "bg-linear-to-br from-violet-600 to-indigo-600 text-white shadow-violet-500/10",
-                                                                isFirstInGroup && "rounded-tr-none"
+                                                                "bg-linear-to-br from-violet-600 to-indigo-600 text-white",
+                                                                "shadow-[0_2px_0_rgba(67,56,202,0.4),0_4px_10px_rgba(109,40,217,0.12),inset_0_1px_0_rgba(255,255,255,0.2)]",
+                                                                !isFirstInGroup && "rounded-tr-[5px]",
+                                                                !isLastInGroup && "rounded-br-[5px]",
                                                             )
                                                             : cn(
-                                                                "border border-theme bg-background text-theme backdrop-blur-xl",
-                                                                isFirstInGroup && "rounded-tl-none"
+                                                                "bg-violet-50/80 dark:bg-violet-950/30 border border-violet-200/60 dark:border-violet-800/30 text-theme",
+                                                                "shadow-[0_1px_3px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.04)]",
+                                                                !isFirstInGroup && "rounded-tl-[5px]",
+                                                                !isLastInGroup && "rounded-bl-[5px]",
                                                             )
                                                     )}
                                                 >
@@ -302,7 +306,7 @@ setSessionId(data.session_id);
                                         <div className="flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
                                             <Bot size={16} className="text-violet-500" />
                                         </div>
-                                        <div className="border-theme bg-background flex items-center gap-1.5 rounded-[20px] rounded-tl-none border px-5 py-4 backdrop-blur-xl shadow-sm">
+                                        <div className="bg-violet-50/80 dark:bg-violet-950/30 border border-violet-200/60 dark:border-violet-800/30 flex items-center gap-1.5 rounded-[18px] px-4 py-3 shadow-[0_1px_3px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.04)]">
                                             <motion.div
                                                 className="h-1.5 w-1.5 rounded-full bg-violet-500"
                                                 animate={{ y: [0, -4, 0] }}

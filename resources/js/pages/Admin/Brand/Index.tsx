@@ -8,6 +8,7 @@ import {
     X,
     Upload,
     Image as ImageIcon,
+    Loader2,
 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -312,11 +313,16 @@ export default function BrandIndex({ brands }: Props) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
+                                        className="flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
                                     >
-                                        {processing
-                                            ? 'Saving...'
-                                            : 'Save Brand'}
+                                        {processing ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            'Save Brand'
+                                        )}
                                     </button>
                                 </div>
                             </form>

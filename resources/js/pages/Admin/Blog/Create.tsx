@@ -1,6 +1,6 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Save, X } from 'lucide-react';
+import { Save, X, Loader2 } from 'lucide-react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -184,7 +184,16 @@ export default function BlogCreate() {
                             type="submit"
                             className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 py-3 text-sm font-semibold text-black shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all hover:bg-cyan-400 disabled:opacity-50"
                         >
-                            <Save className="h-4 w-4" /> Save Post
+                            {processing ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="h-4 w-4" /> Save Post
+                                </>
+                            )}
                         </button>
                         <Link
                             href={adminRoutes.blogs.index.url()}
