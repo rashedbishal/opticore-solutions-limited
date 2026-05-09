@@ -943,5 +943,22 @@ function SupportWidgetEchoListener({
         ),
     );
 
+    useEcho<{ offer: Offer }>(
+        `conversations.${conversation.id}`,
+        'OfferUpdated',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.offer?.id === e.offer.id
+                            ? { ...msg, offer: e.offer }
+                            : msg,
+                    ),
+                );
+            },
+            [setMessages],
+        ),
+    );
+
     return null;
 }

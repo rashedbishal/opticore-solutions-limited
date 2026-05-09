@@ -37,7 +37,7 @@ class CustomerConversationController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
             })
-            ->orderBy('last_message_at', 'desc')
+            ->orderByRaw('last_message_at DESC NULLS LAST')
             ->paginate(50);
 
         $conversations->getCollection()->transform(function (Conversation $conversation) {

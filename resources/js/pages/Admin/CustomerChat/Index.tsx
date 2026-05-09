@@ -705,9 +705,18 @@ export default function Index() {
                                     <h3 className="truncate font-semibold text-white">
                                         {activeConv.user.name}
                                     </h3>
-                                    <p className="truncate text-xs text-slate-400">
-                                        {activeConv.user.email}
-                                    </p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="truncate text-xs text-slate-400">
+                                            {activeConv.user.email}
+                                        </p>
+                                        {onlineUsers[activeConv.user_id] !==
+                                            undefined && (
+                                            <span className="flex shrink-0 items-center gap-1 text-xs text-green-400">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                                                Online
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <button
@@ -1107,6 +1116,23 @@ function AdminConversationEchoListener({
             (e) => {
                 setMessages((prev) =>
                     prev.filter((m) => m.id !== e.message_id),
+                );
+            },
+            [setMessages],
+        ),
+    );
+
+    useEcho<{ offer: Offer }>(
+        'admin.conversations',
+        'OfferUpdated',
+        useCallback(
+            (e) => {
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.offer?.id === e.offer.id
+                            ? { ...msg, offer: e.offer }
+                            : msg,
+                    ),
                 );
             },
             [setMessages],

@@ -613,6 +613,7 @@ function AdminView({ offer }: { offer: Offer }) {
     );
 
     const [isSaving, setIsSaving] = useState(false);
+    const [savedOk, setSavedOk] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -662,7 +663,41 @@ function AdminView({ offer }: { offer: Offer }) {
                 }));
             }
 
-            await axios.put<Offer>(`/offer/${offer.offer_token}`, payload);
+            const { data: fresh } = await axios.put<Offer>(
+                `/offer/${offer.offer_token}`,
+                payload,
+            );
+
+            // Sync form to confirmed server state
+            setCategory(
+                (fresh.sub_category?.category_slug ??
+                    fresh.category_slug) as CategorySlug | null,
+            );
+            setPaymentType(fresh.payment_type);
+            setDescription(fresh.description);
+            setRequestReqs(fresh.request_requirements);
+            setPrice(fresh.price ?? '');
+            setDeliveryDays(fresh.delivery_days?.toString() ?? '');
+            setRevisions(fresh.revisions?.toString() ?? '0');
+            setHasExpiry(!!fresh.expires_at);
+            setExpiresAt(
+                fresh.expires_at
+                    ? new Date(fresh.expires_at).toISOString().split('T')[0]
+                    : '',
+            );
+            setMilestones(
+                fresh.milestones.length > 0
+                    ? fresh.milestones.map((m) => ({
+                          name: m.name,
+                          description: m.description ?? '',
+                          revisions: m.revisions.toString(),
+                          delivery_days: m.delivery_days.toString(),
+                          price: parseFloat(m.price).toString(),
+                      }))
+                    : [emptyMilestone()],
+            );
+
+            setSavedOk(true);
             window.close();
         } catch (err: unknown) {
             const serverErrors = (err as any)?.response?.data?.errors ?? {};
@@ -696,6 +731,15 @@ function AdminView({ offer }: { offer: Offer }) {
                     </div>
                     <StatusBadge status={offer.status} />
                 </div>
+
+                {/* Save success */}
+                {savedOk && (
+                    <div className="mb-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+                        <Check size={15} />
+                        Changes saved — the client's view has been updated
+                        instantly.
+                    </div>
+                )}
 
                 {/* Save error */}
                 {saveError && (
