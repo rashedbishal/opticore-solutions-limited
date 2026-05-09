@@ -922,6 +922,7 @@ export default function PortfolioSubCategoryEdit({
                                 accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/x-msvideo,video/webm"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null;
+
                                     if (file && file.size > 300 * 1024 * 1024) {
                                         setFileSizeError(
                                             `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 300 MB.`,
