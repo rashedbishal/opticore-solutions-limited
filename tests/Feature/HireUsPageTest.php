@@ -69,6 +69,11 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'reviews_count' => 100,
             'image' => UploadedFile::fake()->create('thumbnail-pro.jpg', 100, 'image/jpeg'),
             'sort_order' => 1,
+            'plans' => [
+                'basic' => ['price' => '$99', 'delivery' => '3 Days', 'features' => ['Custom Thumbnail Design']],
+                'standard' => ['price' => '$199', 'delivery' => '5 Days', 'features' => ['Custom Thumbnail Design', 'Multiple Revisions']],
+                'premium' => ['price' => '$299', 'delivery' => '7 Days', 'features' => ['Custom Thumbnail Design', 'Multiple Revisions', 'Priority Support']],
+            ],
             'description_points' => [
                 ['label' => 'Custom Designs', 'icon' => 'Palette'],
                 ['label' => 'Fast Turnaround', 'icon' => 'Clock'],
