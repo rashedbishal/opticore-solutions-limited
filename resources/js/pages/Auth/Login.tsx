@@ -168,7 +168,6 @@ export default function Login({ status }: { status?: string }) {
                         </>
                     )}
                 </button>
-
             </form>
 
             <div className="mt-[min(2vh,2.5rem)] text-center [@media(max-height:500px)]:mt-2">

@@ -317,7 +317,8 @@ export default function BrandIndex({ brands }: Props) {
                                     >
                                         {processing ? (
                                             <>
-                                                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                                                <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                                Saving...
                                             </>
                                         ) : (
                                             'Save Brand'

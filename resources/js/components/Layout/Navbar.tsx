@@ -204,8 +204,12 @@ export default function Navbar() {
                                             href="/logout"
                                             method="post"
                                             as="button"
-                                            onStart={() => setIsLoggingOut(true)}
-                                            onFinish={() => setIsLoggingOut(false)}
+                                            onStart={() =>
+                                                setIsLoggingOut(true)
+                                            }
+                                            onFinish={() =>
+                                                setIsLoggingOut(false)
+                                            }
                                             disabled={isLoggingOut}
                                             className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 disabled:opacity-50"
                                             aria-label="Sign out"
@@ -310,10 +314,10 @@ export default function Navbar() {
                                             <Link
                                                 href={item.href}
                                                 className={cn(
-                                                    'flex w-full items-center justify-center rounded-2xl border transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] px-2 py-2.5 md:px-3 md:py-3 lg:px-4 lg:py-3.5',
+                                                    'flex w-full items-center justify-center rounded-2xl border px-2 py-2.5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] md:px-3 md:py-3 lg:px-4 lg:py-3.5',
                                                     url === item.href
                                                         ? 'neo-btn-primary border-violet-500/40'
-                                                        : 'border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]'
+                                                        : 'border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                                                 )}
                                                 onClick={() => setOpen(false)}
                                             >
@@ -371,7 +375,7 @@ export default function Navbar() {
                                                         'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]',
                                                         url === '/profile'
                                                             ? 'neo-btn-primary'
-                                                            : 'border border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] dark:text-white',
+                                                            : 'border border-slate-300 bg-slate-100 text-zinc-900 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
                                                     )}
                                                 >
                                                     <User className="h-5 w-5" />
@@ -381,17 +385,23 @@ export default function Navbar() {
                                                     href="/logout"
                                                     method="post"
                                                     as="button"
-                                                    onStart={() => setIsLoggingOut(true)}
-                                                    onFinish={() => setIsLoggingOut(false)}
+                                                    onStart={() =>
+                                                        setIsLoggingOut(true)
+                                                    }
+                                                    onFinish={() =>
+                                                        setIsLoggingOut(false)
+                                                    }
                                                     disabled={isLoggingOut}
                                                     onClick={(e) => {
                                                         if (isLoggingOut) {
                                                             e.preventDefault();
+
                                                             return;
                                                         }
+
                                                         setOpen(false);
                                                     }}
-                                                    className="neo-btn-primary flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide text-white uppercase disabled:opacity-50 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                                                    className="neo-btn-primary flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide text-white uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
                                                 >
                                                     {isLoggingOut ? (
                                                         <>
@@ -411,9 +421,7 @@ export default function Navbar() {
                                                 href="/login"
                                                 fullWidth
                                                 ariaLabel="Sign in to your account"
-                                                onClick={() =>
-                                                    setOpen(false)
-                                                }
+                                                onClick={() => setOpen(false)}
                                                 className="neo-btn-primary py-4 text-base font-bold tracking-wide uppercase"
                                             >
                                                 <div className="flex items-center gap-2">

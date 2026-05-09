@@ -238,7 +238,8 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" /> Creating...
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Creating...
                                 </>
                             ) : (
                                 'Create Sub-Category'

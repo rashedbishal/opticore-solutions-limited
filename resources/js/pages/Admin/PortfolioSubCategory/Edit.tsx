@@ -1,6 +1,14 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Film, ImageIcon, Minus, Plus, Trash2, Upload, Loader2 } from 'lucide-react';
+import {
+    Film,
+    ImageIcon,
+    Minus,
+    Plus,
+    Trash2,
+    Upload,
+    Loader2,
+} from 'lucide-react';
 import { useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
@@ -425,7 +433,8 @@ export default function PortfolioSubCategoryEdit({
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" /> Updating...
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Updating...
                                 </>
                             ) : (
                                 'Update Sub-Category'
@@ -939,7 +948,8 @@ export default function PortfolioSubCategoryEdit({
                         >
                             {galleryProcessing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" /> Uploading…
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Uploading…
                                 </>
                             ) : (
                                 <>

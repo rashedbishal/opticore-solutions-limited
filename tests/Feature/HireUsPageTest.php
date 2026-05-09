@@ -44,7 +44,7 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '300 BDT',
             'rating' => '4.8',
             'reviews_count' => 84,
-            'image' => UploadedFile::fake()->image('thumbnail.jpg'),
+            'image' => UploadedFile::fake()->create('thumbnail.jpg', 100, 'image/jpeg'),
             'sort_order' => 2,
         ])
         ->assertRedirect(route('admin.sub-categories.index'));
@@ -67,7 +67,7 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '500 BDT',
             'rating' => '5.0',
             'reviews_count' => 100,
-            'image' => UploadedFile::fake()->image('thumbnail-pro.jpg'),
+            'image' => UploadedFile::fake()->create('thumbnail-pro.jpg', 100, 'image/jpeg'),
             'sort_order' => 1,
             'description_points' => [
                 ['label' => 'Custom Designs', 'icon' => 'Palette'],

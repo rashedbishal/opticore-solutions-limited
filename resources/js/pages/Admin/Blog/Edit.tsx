@@ -190,7 +190,8 @@ export default function BlogEdit({ blog }: Props) {
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" /> Updating...
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Updating...
                                 </>
                             ) : (
                                 'Update Blog'

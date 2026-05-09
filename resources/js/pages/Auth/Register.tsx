@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Mail, Lock, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Register() {
@@ -142,14 +143,21 @@ export default function Register() {
                                 value={countryCode}
                                 onChange={(e) => {
                                     setCountryCode(e.target.value);
+
                                     if (localPhone) {
-                                        setData('phone_number', `${e.target.value}${localPhone}`);
+                                        setData(
+                                            'phone_number',
+                                            `${e.target.value}${localPhone}`,
+                                        );
                                     }
                                 }}
-                                className="cursor-pointer border-y-0 border-l-0 border-r border-theme bg-transparent py-2.5 pl-11 pr-8 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                className="cursor-pointer border-y-0 border-r border-l-0 border-theme bg-transparent py-2.5 pr-8 pl-11 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
                             >
                                 {COUNTRY_CODES.map((country) => (
-                                    <option key={country.code} value={country.code}>
+                                    <option
+                                        key={country.code}
+                                        value={country.code}
+                                    >
                                         {country.label}
                                     </option>
                                 ))}
@@ -159,10 +167,17 @@ export default function Register() {
                                 value={localPhone}
                                 onChange={(e) => {
                                     // Only allow digits
-                                    const val = e.target.value.replace(/\D/g, '');
+                                    const val = e.target.value.replace(
+                                        /\D/g,
+                                        '',
+                                    );
                                     setLocalPhone(val);
+
                                     if (val) {
-                                        setData('phone_number', `${countryCode}${val}`);
+                                        setData(
+                                            'phone_number',
+                                            `${countryCode}${val}`,
+                                        );
                                     } else {
                                         setData('phone_number', '');
                                     }
@@ -170,7 +185,7 @@ export default function Register() {
                                 pattern="[0-9]*"
                                 inputMode="numeric"
                                 placeholder="Phone Number"
-                                className="w-full border-none bg-transparent py-2.5 px-4 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                className="w-full border-none bg-transparent px-4 py-2.5 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
                             />
                         </div>
                         {errors.phone_number && (
@@ -264,7 +279,6 @@ export default function Register() {
                         </>
                     )}
                 </button>
-
             </form>
 
             <div className="mt-[min(2vh,2rem)] text-center [@media(max-height:500px)]:mt-1.5">

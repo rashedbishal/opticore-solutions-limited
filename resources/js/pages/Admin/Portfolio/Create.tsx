@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -192,7 +192,8 @@ export default function PortfolioCreate({
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Saving...
                                 </>
                             ) : (
                                 'Save Portfolio'

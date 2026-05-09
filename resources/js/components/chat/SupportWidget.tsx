@@ -532,7 +532,7 @@ export default function SupportWidget({
                             ease: [0.22, 1, 0.36, 1],
                         }}
                         data-lenis-prevent
-                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-cyan-200/40 dark:border-cyan-800/25 bg-background shadow-[0_0_0_1px_rgba(6,182,212,0.08),0_8px_24px_rgba(0,0,0,0.1),0_32px_64px_rgba(0,0,0,0.06)] dark:shadow-[0_0_0_1px_rgba(6,182,212,0.15),0_8px_24px_rgba(0,0,0,0.45),0_32px_64px_rgba(0,0,0,0.3)] [background-image:linear-gradient(135deg,rgba(6,182,212,0.025)_0%,transparent_50%)] dark:[background-image:linear-gradient(135deg,rgba(6,182,212,0.05)_0%,transparent_50%)] sm:w-[360px]"
+                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-cyan-200/40 bg-background [background-image:linear-gradient(135deg,rgba(6,182,212,0.025)_0%,transparent_50%)] shadow-[0_0_0_1px_rgba(6,182,212,0.08),0_8px_24px_rgba(0,0,0,0.1),0_32px_64px_rgba(0,0,0,0.06)] sm:w-[360px] dark:border-cyan-800/25 dark:[background-image:linear-gradient(135deg,rgba(6,182,212,0.05)_0%,transparent_50%)] dark:shadow-[0_0_0_1px_rgba(6,182,212,0.15),0_8px_24px_rgba(0,0,0,0.45),0_32px_64px_rgba(0,0,0,0.3)]"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between border-b border-theme bg-theme-surface px-5 py-4">
@@ -559,7 +559,7 @@ export default function SupportWidget({
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto bg-theme-surface p-5 [background-image:linear-gradient(to_bottom,rgba(6,182,212,0.05)_0%,transparent_45%)] dark:[background-image:linear-gradient(to_bottom,rgba(6,182,212,0.08)_0%,transparent_45%)] shadow-[inset_0_4px_10px_rgba(0,0,0,0.03)] dark:shadow-[inset_0_4px_10px_rgba(0,0,0,0.12)]">
+                        <div className="flex-1 overflow-y-auto bg-theme-surface [background-image:linear-gradient(to_bottom,rgba(6,182,212,0.05)_0%,transparent_45%)] p-5 shadow-[inset_0_4px_10px_rgba(0,0,0,0.03)] dark:[background-image:linear-gradient(to_bottom,rgba(6,182,212,0.08)_0%,transparent_45%)] dark:shadow-[inset_0_4px_10px_rgba(0,0,0,0.12)]">
                             {messages.map((msg, i) => {
                                 const isOffer = !!msg.offer;
                                 const isUser = msg.sender_type === 'user';
@@ -602,14 +602,18 @@ export default function SupportWidget({
                                                             ? cn(
                                                                   'bg-linear-to-br from-cyan-500 via-cyan-600 to-indigo-500 text-white',
                                                                   'shadow-[0_2px_0_rgba(6,148,162,0.4),0_4px_10px_rgba(6,182,212,0.15),inset_0_1px_0_rgba(255,255,255,0.25)]',
-                                                                  !isFirstInGroup && 'rounded-tr-[5px]',
-                                                                  !isLastInGroup && 'rounded-br-[5px]',
+                                                                  !isFirstInGroup &&
+                                                                      'rounded-tr-[5px]',
+                                                                  !isLastInGroup &&
+                                                                      'rounded-br-[5px]',
                                                               )
                                                             : cn(
-                                                                  'bg-cyan-50/70 dark:bg-cyan-950/25 border border-cyan-200/50 dark:border-cyan-900/40 text-theme',
+                                                                  'border border-cyan-200/50 bg-cyan-50/70 text-theme dark:border-cyan-900/40 dark:bg-cyan-950/25',
                                                                   'shadow-[0_1px_3px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.04)]',
-                                                                  !isFirstInGroup && 'rounded-tl-[5px]',
-                                                                  !isLastInGroup && 'rounded-bl-[5px]',
+                                                                  !isFirstInGroup &&
+                                                                      'rounded-tl-[5px]',
+                                                                  !isLastInGroup &&
+                                                                      'rounded-bl-[5px]',
                                                               ),
                                                     )}
                                                 >

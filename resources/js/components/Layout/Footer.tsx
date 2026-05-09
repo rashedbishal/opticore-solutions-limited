@@ -1,10 +1,16 @@
 import { Link } from '@inertiajs/react';
-import {
-    Mail,
-    MapPin,
-    Phone,
-} from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
+import {
+    FacebookIcon,
+    XIcon,
+    InstagramIcon,
+    LinkedInIcon,
+    YouTubeIcon,
+    BehanceIcon,
+    PinterestIcon,
+    TikTokIcon,
+} from '@/components/UI/SocialIcons';
 import {
     bangladeshPhoneLink,
     bangladeshPhoneNumber,
@@ -20,17 +26,6 @@ const companyLinks = [
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Terms & Conditions', href: '/terms-conditions' },
 ];
-
-import {
-    FacebookIcon,
-    XIcon,
-    InstagramIcon,
-    LinkedInIcon,
-    YouTubeIcon,
-    BehanceIcon,
-    PinterestIcon,
-    TikTokIcon,
-} from '@/components/UI/SocialIcons';
 
 const socialLinks = [
     {

@@ -303,7 +303,7 @@ function ClientView({
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 pb-10 pt-24 sm:pt-32">
+        <div className="min-h-screen bg-slate-950 pt-24 pb-10 sm:pt-32">
             <div className="mx-auto max-w-2xl px-4">
                 {/* Header */}
                 <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
