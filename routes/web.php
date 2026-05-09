@@ -34,6 +34,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Middleware\RedirectAdminToPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -52,88 +53,91 @@ Route::post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);
 })->middleware(['web', 'auth:web,admin']);
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/blogs', [BlogController::class, 'index'])->name('blogs');
-Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blogShow');
-Route::get('/graphic-design', [ServiceController::class, 'graphicDesign'])->name('graphicDesign');
-Route::get('/digital-marketing', [ServiceController::class, 'digitalMarketing'])->name('digitalMarketing');
-Route::get('/video-editing', [ServiceController::class, 'videoEditing'])->name('videoEditing');
-Route::get('/3d-production', [ServiceController::class, 'threeDProduction'])->name('threeDProduction');
-Route::get('/web-development', [ServiceController::class, 'webDevelopment'])->name('webDevelopment');
-Route::get('/about-us', [PageController::class, 'aboutUs'])->name('aboutUs');
-Route::get('/career', [PageController::class, 'career'])->name('career');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-Route::get('/message-from-md', [PageController::class, 'messageFromMd'])->name('messageFromMd');
-Route::get('/request-appointment', [PageController::class, 'requestAppointment'])->name('requestAppointment');
-Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
-Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
+// All website (non-admin) routes — admins are redirected to the panel.
+Route::middleware(RedirectAdminToPanel::class)->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/blogs', [BlogController::class, 'index'])->name('blogs');
+    Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blogShow');
+    Route::get('/graphic-design', [ServiceController::class, 'graphicDesign'])->name('graphicDesign');
+    Route::get('/digital-marketing', [ServiceController::class, 'digitalMarketing'])->name('digitalMarketing');
+    Route::get('/video-editing', [ServiceController::class, 'videoEditing'])->name('videoEditing');
+    Route::get('/3d-production', [ServiceController::class, 'threeDProduction'])->name('threeDProduction');
+    Route::get('/web-development', [ServiceController::class, 'webDevelopment'])->name('webDevelopment');
+    Route::get('/about-us', [PageController::class, 'aboutUs'])->name('aboutUs');
+    Route::get('/career', [PageController::class, 'career'])->name('career');
+    Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+    Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+    Route::get('/message-from-md', [PageController::class, 'messageFromMd'])->name('messageFromMd');
+    Route::get('/request-appointment', [PageController::class, 'requestAppointment'])->name('requestAppointment');
+    Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
+    Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
-// Hire Us Page Routes
-Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
-Route::get('/hire-us/{category}/{subcategory}', [HireUsController::class, 'showSubCategory'])
-    ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
-    ->name('hireUsSubCategory');
+    // Hire Us Page Routes
+    Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
+    Route::get('/hire-us/{category}/{subcategory}', [HireUsController::class, 'showSubCategory'])
+        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->name('hireUsSubCategory');
 
-// Portfolio public routes
-Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
-Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
-    ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
-    ->name('portfolioCategory');
-Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
-    ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
-    ->name('portfolioSubCategory');
-Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
+    // Portfolio public routes
+    Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
+    Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
+        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->name('portfolioCategory');
+    Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
+        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->name('portfolioSubCategory');
+    Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
-Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
-Route::post('/api/appointment', [OriginalAppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
-Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
-Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:30,1');
+    Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
+    Route::post('/api/appointment', [OriginalAppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
+    Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
+    Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:30,1');
 
-// User Auth Routes
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store']);
-    Route::get('/register', [RegisterController::class, 'create'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store']);
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
-    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+    // User Auth Routes
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [LoginController::class, 'create'])->name('login');
+        Route::post('/login', [LoginController::class, 'store']);
+        Route::get('/register', [RegisterController::class, 'create'])->name('register');
+        Route::post('/register', [RegisterController::class, 'store']);
+        Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+        Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
+        Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 
-    // Social Auth
-    Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])->name('social.redirect');
-    Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])->name('social.callback');
-});
+        // Social Auth
+        Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])->name('social.redirect');
+        Route::get('/auth/{provider}/callback', [SocialController::class, 'callback'])->name('social.callback');
+    });
 
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
-    Route::get('/verify-email', [VerifyEmailController::class, 'notice'])->name('verification.notice');
-    Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])->middleware('signed')->name('verification.verify');
-    Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+        Route::get('/verify-email', [VerifyEmailController::class, 'notice'])->name('verification.notice');
+        Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])->middleware('signed')->name('verification.verify');
+        Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
 
-    // User Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        // User Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Profile
-    Route::get('/profile', function () {
-        return Inertia::render('Profile');
-    })->name('profile');
+        // Profile
+        Route::get('/profile', function () {
+            return Inertia::render('Profile');
+        })->name('profile');
 
-    // Checkout
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+        // Checkout
+        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+        Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
-    // Client Reviews
-    Route::post('/reviews', [ClientReviewController::class, 'store'])->name('reviews.store')->middleware('throttle:5,1');
+        // Client Reviews
+        Route::post('/reviews', [ClientReviewController::class, 'store'])->name('reviews.store')->middleware('throttle:5,1');
 
-    // User Chat Routes
-    Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init');
-    Route::get('/user-chat/{conversation}/messages', [ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
-    Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
-    Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
-    Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
-    Route::post('/user-chat/offline', [ConversationController::class, 'goOffline'])->name('user.chat.offline');
+        // User Chat Routes
+        Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init');
+        Route::get('/user-chat/{conversation}/messages', [ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
+        Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
+        Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
+        Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
+        Route::post('/user-chat/offline', [ConversationController::class, 'goOffline'])->name('user.chat.offline');
+    });
 });
 
 Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])

@@ -11,13 +11,21 @@ use Inertia\Response;
 
 class LoginController extends Controller
 {
-    public function create(): Response
+    public function create(): Response|RedirectResponse
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
         return Inertia::render('Admin/Auth/Login');
     }
 
     public function store(Request $request): RedirectResponse
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
