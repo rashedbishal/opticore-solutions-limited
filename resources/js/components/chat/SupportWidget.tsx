@@ -591,13 +591,13 @@ export default function SupportWidget({
                                                   : 'mt-0.5',
                                         )}
                                     >
-                                        <div className="w-fit max-w-[85%]">
+                                        <div className="max-w-[85%]">
                                             {msg.offer ? (
                                                 <OfferCard offer={msg.offer} />
                                             ) : (
                                                 <div
                                                     className={cn(
-                                                        'w-fit max-w-full rounded-[18px] p-2.5 text-sm',
+                                                        '[max-width:fit-content] rounded-[18px] p-2.5 text-sm',
                                                         isUser
                                                             ? cn(
                                                                   'bg-linear-to-br from-cyan-500 via-cyan-600 to-indigo-500 text-white',
