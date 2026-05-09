@@ -86,6 +86,7 @@ export default function PortfolioSubCategoryEdit({
     });
 
     const [fileInputKey, setFileInputKey] = useState(0);
+    const [fileSizeError, setFileSizeError] = useState<string | null>(null);
 
     const {
         data: galleryData,
@@ -182,6 +183,21 @@ export default function PortfolioSubCategoryEdit({
 
         if (incomplete) {
             alert('All 6 service description points must have a label.');
+
+            return;
+        }
+
+        const tiersWithNoFeatures = PLAN_TIERS.filter(
+            (tier) =>
+                data.plans[tier.id].features.filter((f) => f.trim() !== '')
+                    .length === 0,
+        );
+
+        if (tiersWithNoFeatures.length > 0) {
+            const names = tiersWithNoFeatures.map((t) => t.label).join(', ');
+            alert(
+                `Each pricing plan must have at least one feature. Missing features in: ${names}.`,
+            );
 
             return;
         }
@@ -904,15 +920,26 @@ export default function PortfolioSubCategoryEdit({
                                 key={fileInputKey}
                                 type="file"
                                 accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/x-msvideo,video/webm"
-                                onChange={(e) =>
-                                    setGalleryData(
-                                        'media',
-                                        e.target.files?.[0] ?? null,
-                                    )
-                                }
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null;
+                                    if (file && file.size > 300 * 1024 * 1024) {
+                                        setFileSizeError(
+                                            `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 300 MB.`,
+                                        );
+                                        setGalleryData('media', null);
+                                    } else {
+                                        setFileSizeError(null);
+                                        setGalleryData('media', file);
+                                    }
+                                }}
                                 className="block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500 focus:outline-none"
                                 required
                             />
+                            {fileSizeError && (
+                                <p className="mt-1 text-xs text-red-400">
+                                    {fileSizeError}
+                                </p>
+                            )}
                             {galleryErrors.media && (
                                 <p className="mt-1 text-xs text-red-400">
                                     {galleryErrors.media}
@@ -943,7 +970,11 @@ export default function PortfolioSubCategoryEdit({
                         </div>
                         <button
                             type="submit"
-                            disabled={galleryProcessing || !galleryData.media}
+                            disabled={
+                                galleryProcessing ||
+                                !galleryData.media ||
+                                !!fileSizeError
+                            }
                             className="flex shrink-0 items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
                         >
                             {galleryProcessing ? (
