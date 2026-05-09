@@ -1,16 +1,8 @@
 import { Link } from '@inertiajs/react';
 import {
-    BriefcaseBusiness,
-    Camera,
-    Globe,
     Mail,
     MapPin,
-    Music,
-    Palette,
     Phone,
-    Pin,
-    Play,
-    Send,
 } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import {
@@ -29,42 +21,53 @@ const companyLinks = [
     { label: 'Terms & Conditions', href: '/terms-conditions' },
 ];
 
+import {
+    FacebookIcon,
+    XIcon,
+    InstagramIcon,
+    LinkedInIcon,
+    YouTubeIcon,
+    BehanceIcon,
+    PinterestIcon,
+    TikTokIcon,
+} from '@/components/UI/SocialIcons';
+
 const socialLinks = [
     {
         href: 'https://www.facebook.com/opticoresolutionsltd',
         label: 'Facebook',
-        icon: Globe,
+        icon: FacebookIcon,
     },
-    { href: 'https://x.com/osl_opticore', label: 'X (Twitter)', icon: Send },
+    { href: 'https://x.com/osl_opticore', label: 'X (Twitter)', icon: XIcon },
     {
         href: 'https://www.instagram.com/opticoresolutionsltd',
         label: 'Instagram',
-        icon: Camera,
+        icon: InstagramIcon,
     },
     {
         href: 'https://www.linkedin.com/in/opticoresolutionsltd',
         label: 'LinkedIn',
-        icon: BriefcaseBusiness,
+        icon: LinkedInIcon,
     },
     {
         href: 'https://www.youtube.com/@OpticoreSolutionsLtd',
         label: 'YouTube',
-        icon: Play,
+        icon: YouTubeIcon,
     },
     {
         href: 'https://www.behance.net/opticorsolutionsltd#',
         label: 'Behance',
-        icon: Palette,
+        icon: BehanceIcon,
     },
     {
         href: 'https://www.pinterest.com/opticoresolutionsltd',
         label: 'Pinterest',
-        icon: Pin,
+        icon: PinterestIcon,
     },
     {
         href: 'https://www.tiktok.com/@opticoresolutionsltd',
         label: 'TikTok',
-        icon: Music,
+        icon: TikTokIcon,
     },
 ];
 
