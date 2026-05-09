@@ -119,13 +119,17 @@ export default function Register() {
                                 type="tel"
                                 value={localPhone}
                                 onChange={(e) => {
-                                    setLocalPhone(e.target.value);
-                                    if (e.target.value) {
-                                        setData('phone_number', `${countryCode}${e.target.value}`);
+                                    // Only allow digits
+                                    const val = e.target.value.replace(/\D/g, '');
+                                    setLocalPhone(val);
+                                    if (val) {
+                                        setData('phone_number', `${countryCode}${val}`);
                                     } else {
                                         setData('phone_number', '');
                                     }
                                 }}
+                                pattern="[0-9]*"
+                                inputMode="numeric"
                                 placeholder="Phone Number"
                                 className="w-full border-none bg-transparent py-2.5 px-4 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
                             />
