@@ -53,6 +53,45 @@ export default function Register() {
                 onSubmit={submit}
                 className="space-y-2.5 sm:space-y-3 [@media(max-height:500px)]:space-y-1.5"
             >
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 [@media(max-height:400px)]:hidden">
+                    <a
+                        href="/auth/google/redirect"
+                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
+                    >
+                        <img
+                            src="https://www.svgrepo.com/show/475656/google-color.svg"
+                            className="h-4 w-4 sm:h-5 sm:w-5"
+                            alt="Google"
+                        />
+                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
+                            Google
+                        </span>
+                    </a>
+                    <a
+                        href="/auth/facebook/redirect"
+                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
+                    >
+                        <svg
+                            className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
+                        </svg>
+                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
+                            Facebook
+                        </span>
+                    </a>
+                </div>
+
+                <div className="flex items-center gap-3 py-0.5 sm:gap-4 sm:py-1 [@media(max-height:400px)]:hidden">
+                    <div className="flex-1 border-t border-theme"></div>
+                    <span className="text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
+                        Or sign up with email
+                    </span>
+                    <div className="flex-1 border-t border-theme"></div>
+                </div>
+
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-1.5">
                     <div className="group relative">
                         <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
@@ -226,44 +265,6 @@ export default function Register() {
                     )}
                 </button>
 
-                <div className="flex items-center gap-3 py-0.5 sm:gap-4 sm:py-1 [@media(max-height:400px)]:hidden">
-                    <div className="flex-1 border-t border-theme"></div>
-                    <span className="text-[10px] font-bold tracking-widest text-theme-subtle uppercase">
-                        Or sign up with
-                    </span>
-                    <div className="flex-1 border-t border-theme"></div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 [@media(max-height:400px)]:hidden">
-                    <a
-                        href="/auth/google/redirect"
-                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
-                    >
-                        <img
-                            src="https://www.svgrepo.com/show/475656/google-color.svg"
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            alt="Google"
-                        />
-                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
-                            Google
-                        </span>
-                    </a>
-                    <a
-                        href="/auth/facebook/redirect"
-                        className="flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface py-2.5 transition-colors hover:bg-theme-surface-hover sm:gap-3 sm:py-3 [@media(max-height:500px)]:py-2"
-                    >
-                        <svg
-                            className="h-4 w-4 text-blue-500 sm:h-5 sm:w-5"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
-                        </svg>
-                        <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
-                            Facebook
-                        </span>
-                    </a>
-                </div>
             </form>
 
             <div className="mt-[min(2vh,2rem)] text-center [@media(max-height:500px)]:mt-1.5">
