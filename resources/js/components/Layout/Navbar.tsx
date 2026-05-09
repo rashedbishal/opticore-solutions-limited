@@ -15,6 +15,7 @@ import {
     LogIn,
     Home,
     Briefcase,
+    Loader2,
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
@@ -89,6 +90,7 @@ export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
     const [visible, setVisible] = useState(true);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const lastScrollY = useRef(0);
     const { user } = props.auth;
 
@@ -202,10 +204,17 @@ export default function Navbar() {
                                             href="/logout"
                                             method="post"
                                             as="button"
-                                            className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
+                                            onStart={() => setIsLoggingOut(true)}
+                                            onFinish={() => setIsLoggingOut(false)}
+                                            disabled={isLoggingOut}
+                                            className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 disabled:opacity-50"
                                             aria-label="Sign out"
                                         >
-                                            <LogOut className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
+                                            {isLoggingOut ? (
+                                                <Loader2 className="drop-icon dark:drop-icon h-4 w-4 animate-spin text-violet-500 dark:text-violet-400" />
+                                            ) : (
+                                                <LogOut className="drop-icon dark:drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
+                                            )}
                                         </Link>
                                     </>
                                 ) : (
@@ -372,13 +381,29 @@ export default function Navbar() {
                                                         href="/logout"
                                                         method="post"
                                                         as="button"
-                                                        onClick={() =>
-                                                            setOpen(false)
-                                                        }
-                                                        className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase"
+                                                        onStart={() => setIsLoggingOut(true)}
+                                                        onFinish={() => setIsLoggingOut(false)}
+                                                        disabled={isLoggingOut}
+                                                        onClick={(e) => {
+                                                            if (isLoggingOut) {
+                                                                e.preventDefault();
+                                                                return;
+                                                            }
+                                                            setOpen(false);
+                                                        }}
+                                                        className="flex w-full items-center justify-center gap-3 rounded-full bg-linear-to-r from-violet-600 to-cyan-500 py-4 text-base font-bold tracking-wide text-white uppercase disabled:opacity-50"
                                                     >
-                                                        <LogOut className="h-5 w-5" />
-                                                        Sign out
+                                                        {isLoggingOut ? (
+                                                            <>
+                                                                <Loader2 className="h-5 w-5 animate-spin" />
+                                                                Signing out...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <LogOut className="h-5 w-5" />
+                                                                Sign out
+                                                            </>
+                                                        )}
                                                     </Link>
                                                 </div>
                                             ) : (

@@ -1,7 +1,7 @@
 import type { AppointmentFormData } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -333,11 +333,16 @@ export default function RequestAppointment() {
                                             fullWidth
                                             disabled={form.processing}
                                         >
-                                            {step === 1
-                                                ? 'Continue'
-                                                : form.processing
-                                                  ? 'Submitting...'
-                                                  : 'Request Appointment'}
+                                            {step === 1 ? (
+                                                'Continue'
+                                            ) : form.processing ? (
+                                                <span className="flex items-center gap-2">
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                    Submitting...
+                                                </span>
+                                            ) : (
+                                                'Request Appointment'
+                                            )}
                                         </MagneticButton>
                                     </div>
                                 </form>

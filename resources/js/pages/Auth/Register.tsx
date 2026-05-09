@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Register() {
@@ -174,8 +174,17 @@ export default function Register() {
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-lg transition-all hover:bg-cyan-400 hover:text-white sm:py-3.5 sm:text-sm [@media(max-height:500px)]:py-2"
                 >
-                    {processing ? 'Creating...' : 'Create Account'}{' '}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    {processing ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Creating...
+                        </>
+                    ) : (
+                        <>
+                            Create Account
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </>
+                    )}
                 </button>
 
                 <div className="flex items-center gap-3 py-0.5 sm:gap-4 sm:py-1 [@media(max-height:400px)]:hidden">

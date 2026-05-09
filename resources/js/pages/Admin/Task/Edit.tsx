@@ -1,6 +1,6 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
@@ -350,7 +350,13 @@ export default function EditTask({
                             disabled={processing}
                             className="flex items-center gap-2 rounded-lg bg-violet-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500 disabled:opacity-50"
                         >
-                            {processing ? 'Saving...' : 'Update Task'}
+                            {processing ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                                </>
+                            ) : (
+                                'Update Task'
+                            )}
                         </button>
                     </div>
                 </form>

@@ -1,6 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -187,9 +188,15 @@ export default function PortfolioCreate({
                         <button
                             disabled={processing}
                             type="submit"
-                            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
                         >
-                            Save Portfolio
+                            {processing ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                                </>
+                            ) : (
+                                'Save Portfolio'
+                            )}
                         </button>
                         <Link
                             href={adminRoutes.portfolios.index.url()}

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function ResetPassword({
@@ -108,8 +108,17 @@ export default function ResetPassword({
                     disabled={processing}
                     className="group flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-xs font-black tracking-widest text-background uppercase shadow-lg transition-all hover:bg-cyan-400 hover:text-white sm:rounded-2xl sm:py-4 sm:text-sm sm:shadow-2xl [@media(max-height:500px)]:py-2"
                 >
-                    {processing ? 'Updating Password...' : 'Reset Password'}{' '}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
+                    {processing ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
+                            Updating Password...
+                        </>
+                    ) : (
+                        <>
+                            Reset Password
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
+                        </>
+                    )}
                 </button>
             </form>
         </>
