@@ -1,9 +1,22 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Mail, Lock, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
 import GuestLayout from '@/components/Layout/GuestLayout';
 
 export default function Register() {
+    const [countryCode, setCountryCode] = useState('+880');
+    const [localPhone, setLocalPhone] = useState('');
+
+    const COUNTRY_CODES = [
+        { code: '+880', label: 'BD (+880)' },
+        { code: '+1', label: 'US/CA (+1)' },
+        { code: '+44', label: 'UK (+44)' },
+        { code: '+61', label: 'AU (+61)' },
+        { code: '+91', label: 'IN (+91)' },
+        { code: '+971', label: 'UAE (+971)' },
+        { code: '+65', label: 'SG (+65)' },
+        { code: '+49', label: 'DE (+49)' },
+    ];
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
@@ -82,19 +95,41 @@ export default function Register() {
                     </div>
 
                     <div className="group relative sm:col-span-2 [@media(max-height:500px)]:col-span-2">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
+                        <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
                             <Phone className="h-4 w-4" />
                         </div>
-                        <input
-                            type="tel"
-                            name="phone_number"
-                            value={data.phone_number}
-                            onChange={(e) =>
-                                setData('phone_number', e.target.value)
-                            }
-                            placeholder="Phone Number"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                        />
+                        <div className="flex w-full overflow-hidden rounded-xl border border-theme bg-theme-surface transition-all focus-within:border-cyan-500/50">
+                            <select
+                                value={countryCode}
+                                onChange={(e) => {
+                                    setCountryCode(e.target.value);
+                                    if (localPhone) {
+                                        setData('phone_number', `${e.target.value}${localPhone}`);
+                                    }
+                                }}
+                                className="cursor-pointer border-y-0 border-l-0 border-r border-theme bg-transparent py-2.5 pl-11 pr-8 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                            >
+                                {COUNTRY_CODES.map((country) => (
+                                    <option key={country.code} value={country.code}>
+                                        {country.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                type="tel"
+                                value={localPhone}
+                                onChange={(e) => {
+                                    setLocalPhone(e.target.value);
+                                    if (e.target.value) {
+                                        setData('phone_number', `${countryCode}${e.target.value}`);
+                                    } else {
+                                        setData('phone_number', '');
+                                    }
+                                }}
+                                placeholder="Phone Number"
+                                className="w-full border-none bg-transparent py-2.5 px-4 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                            />
+                        </div>
                         {errors.phone_number && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
                                 {errors.phone_number}
