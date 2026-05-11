@@ -1,7 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
 import { usePage } from '@inertiajs/react';
-import { useEcho } from '@laravel/echo-react';
+import { echo, useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -317,6 +317,8 @@ export default function SupportWidget({
     const [attachment, setAttachment] = useState<File | null>(null);
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
+    const [isAdminTyping, setIsAdminTyping] = useState(false);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -399,6 +401,28 @@ export default function SupportWidget({
         };
     }, [conversation]);
 
+    useEffect(() => {
+        if (isAdminTyping) scrollToBottom();
+    }, [isAdminTyping, scrollToBottom]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewMessage(e.target.value);
+        if (!conversation) return;
+        try {
+            echo()
+                .private(`conversations.${conversation.id}`)
+                .whisper('typing', { typing: true });
+        } catch {}
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+            try {
+                echo()
+                    .private(`conversations.${conversation.id}`)
+                    .whisper('typing', { typing: false });
+            } catch {}
+        }, 2000);
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
 
@@ -469,6 +493,15 @@ export default function SupportWidget({
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
+            try {
+                echo()
+                    .private(`conversations.${conversation!.id}`)
+                    .whisper('typing', { typing: false });
+            } catch {}
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = null;
+            }
         } catch (error: any) {
             const msg =
                 error?.response?.data?.message || 'Failed to send message.';
@@ -519,6 +552,7 @@ export default function SupportWidget({
                     setUnread={setUnread}
                     isOpenRef={isOpenRef}
                     scrollToBottom={scrollToBottom}
+                    setIsAdminTyping={setIsAdminTyping}
                 />
             )}
             <AnimatePresence>
@@ -690,6 +724,30 @@ export default function SupportWidget({
                                     </div>
                                 );
                             })}
+                            {isAdminTyping && (
+                                <div className="mt-3 flex flex-col items-start">
+                                    <div className="[max-width:fit-content] rounded-[18px] rounded-tl-[5px] border border-cyan-200/50 bg-cyan-50/70 p-3 shadow-[0_1px_3px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-cyan-900/40 dark:bg-cyan-950/25 dark:shadow-[0_1px_4px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.04)]">
+                                        <div className="flex items-center gap-1">
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{ animationDelay: '0ms' }}
+                                            />
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{
+                                                    animationDelay: '160ms',
+                                                }}
+                                            />
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{
+                                                    animationDelay: '320ms',
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
@@ -779,9 +837,7 @@ export default function SupportWidget({
                                     <input
                                         type="text"
                                         value={newMessage}
-                                        onChange={(e) =>
-                                            setNewMessage(e.target.value)
-                                        }
+                                        onChange={handleInputChange}
                                         placeholder="Type a message..."
                                         className="placeholder-theme-subtle w-full rounded-xl border border-theme bg-theme-surface py-3 pr-12 pl-10 text-sm text-theme focus:border-cyan-500/50 focus:outline-none"
                                     />
@@ -858,6 +914,7 @@ interface EchoListenerProps {
     setUnread: React.Dispatch<React.SetStateAction<number>>;
     isOpenRef: React.MutableRefObject<boolean>;
     scrollToBottom: () => void;
+    setIsAdminTyping: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function SupportWidgetEchoListener({
@@ -866,7 +923,36 @@ function SupportWidgetEchoListener({
     setUnread,
     isOpenRef,
     scrollToBottom,
+    setIsAdminTyping,
 }: EchoListenerProps) {
+    const adminTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null,
+    );
+
+    useEffect(() => {
+        try {
+            const channel = echo().private(`conversations.${conversation.id}`);
+            channel.listenForWhisper('typing', (e: { typing: boolean }) => {
+                setIsAdminTyping(e.typing);
+                if (adminTypingTimeoutRef.current)
+                    clearTimeout(adminTypingTimeoutRef.current);
+                if (e.typing) {
+                    adminTypingTimeoutRef.current = setTimeout(
+                        () => setIsAdminTyping(false),
+                        3000,
+                    );
+                }
+            });
+            return () => {
+                try {
+                    channel.stopListeningForWhisper('typing');
+                } catch {}
+                if (adminTypingTimeoutRef.current)
+                    clearTimeout(adminTypingTimeoutRef.current);
+            };
+        } catch {}
+    }, [conversation.id, setIsAdminTyping]);
+
     useEcho(
         `conversations.${conversation.id}`,
         'MessageSent',
@@ -882,6 +968,7 @@ function SupportWidgetEchoListener({
                 });
 
                 if (incoming.sender_type === 'admin') {
+                    setIsAdminTyping(false);
                     if (!isOpenRef.current) {
                         setUnread((u) => u + 1);
                     } else {
@@ -895,6 +982,7 @@ function SupportWidgetEchoListener({
                 conversation.id,
                 isOpenRef,
                 scrollToBottom,
+                setIsAdminTyping,
                 setMessages,
                 setUnread,
             ],

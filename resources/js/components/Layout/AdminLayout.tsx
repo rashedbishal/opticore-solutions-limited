@@ -237,6 +237,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                         className={`mr-3 h-5 w-5 shrink-0 transition-colors ${active ? 'text-cyan-400' : 'text-slate-500 group-hover:text-slate-300'}`}
                                     />
                                     {item.name}
+                                    {item.href === CHAT_PAGE_PATH &&
+                                        notificationCount > 0 &&
+                                        !isOnChatPage && (
+                                            <span className="ml-auto h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
+                                        )}
                                 </Link>
                             );
                         })}

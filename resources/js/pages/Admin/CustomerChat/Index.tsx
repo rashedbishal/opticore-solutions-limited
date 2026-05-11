@@ -1,6 +1,6 @@
 import type { Offer, OfferMessage } from '@/components/Offer/CreateOfferModal';
 import type { ReactNode } from 'react';
-import { useEcho } from '@laravel/echo-react';
+import { echo, useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -312,6 +312,10 @@ export default function Index() {
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
+    const [isUserTyping, setIsUserTyping] = useState(false);
+    const adminTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null,
+    );
     // userId → timestamp of last received presence ping (ms). Used for green dot.
     const [onlineUsers, setOnlineUsers] = useState<Record<number, number>>({});
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
@@ -425,6 +429,37 @@ export default function Index() {
         }, 100);
     };
 
+    useEffect(() => {
+        setIsUserTyping(false);
+    }, [activeConv?.id]);
+
+    useEffect(() => {
+        if (isUserTyping) scrollToBottom();
+    }, [isUserTyping]);
+
+    const handleAdminInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        setNewMessage(e.target.value);
+        if (!activeConv) return;
+        try {
+            echo()
+                .private(`conversations.${activeConv.id}`)
+                .whisper('typing', { typing: true });
+        } catch {}
+        if (adminTypingTimeoutRef.current)
+            clearTimeout(adminTypingTimeoutRef.current);
+        adminTypingTimeoutRef.current = setTimeout(() => {
+            try {
+                if (activeConv) {
+                    echo()
+                        .private(`conversations.${activeConv.id}`)
+                        .whisper('typing', { typing: false });
+                }
+            } catch {}
+        }, 2000);
+    };
+
     const handleSelectConv = (conv: Conversation) => {
         setActiveConv(conv);
         // Optimistically clear unread badge
@@ -531,6 +566,15 @@ export default function Index() {
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
+            try {
+                echo()
+                    .private(`conversations.${activeConv.id}`)
+                    .whisper('typing', { typing: false });
+            } catch {}
+            if (adminTypingTimeoutRef.current) {
+                clearTimeout(adminTypingTimeoutRef.current);
+                adminTypingTimeoutRef.current = null;
+            }
         } catch (error: unknown) {
             const msg =
                 (error as any)?.response?.data?.message ||
@@ -591,6 +635,14 @@ export default function Index() {
                     setFilteredConversations={setFilteredConversations}
                     setMessages={setMessages}
                     setOnlineUsers={setOnlineUsers}
+                    setIsUserTyping={setIsUserTyping}
+                />
+            )}
+            {echoReady && activeConv && (
+                <AdminTypingEchoListener
+                    key={activeConv.id}
+                    conversationId={activeConv.id}
+                    setIsUserTyping={setIsUserTyping}
                 />
             )}
 
@@ -804,6 +856,32 @@ export default function Index() {
                                     </div>
                                 </div>
                             ))}
+                            {isUserTyping && (
+                                <div className="flex justify-start">
+                                    <div className="max-w-[75%]">
+                                        <div className="flex items-center gap-1 rounded-2xl rounded-bl-none border border-white/5 bg-slate-800 px-5 py-3 text-sm text-slate-200 shadow-sm">
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{
+                                                    animationDelay: '0ms',
+                                                }}
+                                            />
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{
+                                                    animationDelay: '160ms',
+                                                }}
+                                            />
+                                            <span
+                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                style={{
+                                                    animationDelay: '320ms',
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
@@ -891,9 +969,7 @@ export default function Index() {
                                     <input
                                         type="text"
                                         value={newMessage}
-                                        onChange={(e) =>
-                                            setNewMessage(e.target.value)
-                                        }
+                                        onChange={handleAdminInputChange}
                                         placeholder={`Reply to ${activeConv.user.name}...`}
                                         className="flex-1 border-none bg-transparent px-2 py-2 text-sm text-white placeholder:text-slate-500 focus:ring-0"
                                     />
@@ -939,6 +1015,7 @@ interface AdminConversationEchoListenerProps {
     setOnlineUsers: React.Dispatch<
         React.SetStateAction<Record<number, number>>
     >;
+    setIsUserTyping: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function AdminConversationEchoListener({
@@ -948,6 +1025,7 @@ function AdminConversationEchoListener({
     setFilteredConversations,
     setMessages,
     setOnlineUsers,
+    setIsUserTyping,
 }: AdminConversationEchoListenerProps) {
     useEcho(
         'admin.conversations',
@@ -1039,6 +1117,7 @@ function AdminConversationEchoListener({
                     scrollToBottom();
 
                     if (incoming.sender_type === 'user') {
+                        setIsUserTyping(false);
                         axios.post(
                             `/admin/api/customer-conversations/${currentConv!.id}/read`,
                         );
@@ -1050,6 +1129,7 @@ function AdminConversationEchoListener({
                 scrollToBottom,
                 setConversations,
                 setFilteredConversations,
+                setIsUserTyping,
                 setMessages,
             ],
         ),
@@ -1138,6 +1218,43 @@ function AdminConversationEchoListener({
             [setMessages],
         ),
     );
+
+    return null;
+}
+
+function AdminTypingEchoListener({
+    conversationId,
+    setIsUserTyping,
+}: {
+    conversationId: number;
+    setIsUserTyping: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        try {
+            const channel = echo().private(`conversations.${conversationId}`);
+            channel.listenForWhisper('typing', (e: { typing: boolean }) => {
+                setIsUserTyping(e.typing);
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                if (e.typing) {
+                    timeoutRef.current = setTimeout(
+                        () => setIsUserTyping(false),
+                        3000,
+                    );
+                }
+            });
+            return () => {
+                try {
+                    channel.stopListeningForWhisper('typing');
+                    echo().leave(`conversations.${conversationId}`);
+                } catch {}
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            };
+        } catch {
+            return;
+        }
+    }, [conversationId, setIsUserTyping]);
 
     return null;
 }
