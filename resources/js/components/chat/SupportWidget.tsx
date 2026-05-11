@@ -402,24 +402,38 @@ export default function SupportWidget({
     }, [conversation]);
 
     useEffect(() => {
-        if (isAdminTyping) scrollToBottom();
+        if (isAdminTyping) {
+            scrollToBottom();
+        }
     }, [isAdminTyping, scrollToBottom]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);
-        if (!conversation) return;
+
+        if (!conversation) {
+            return;
+        }
+
         try {
             echo()
                 .private(`conversations.${conversation.id}`)
                 .whisper('typing', { typing: true });
-        } catch {}
-        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        } catch {
+            // noop
+        }
+
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
         typingTimeoutRef.current = setTimeout(() => {
             try {
                 echo()
                     .private(`conversations.${conversation.id}`)
                     .whisper('typing', { typing: false });
-            } catch {}
+            } catch {
+                // noop
+            }
         }, 2000);
     };
 
@@ -493,11 +507,15 @@ export default function SupportWidget({
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
+
             try {
                 echo()
                     .private(`conversations.${conversation!.id}`)
                     .whisper('typing', { typing: false });
-            } catch {}
+            } catch {
+                // noop
+            }
+
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
                 typingTimeoutRef.current = null;
@@ -932,10 +950,14 @@ function SupportWidgetEchoListener({
     useEffect(() => {
         try {
             const channel = echo().private(`conversations.${conversation.id}`);
+
             channel.listenForWhisper('typing', (e: { typing: boolean }) => {
                 setIsAdminTyping(e.typing);
-                if (adminTypingTimeoutRef.current)
+
+                if (adminTypingTimeoutRef.current) {
                     clearTimeout(adminTypingTimeoutRef.current);
+                }
+
                 if (e.typing) {
                     adminTypingTimeoutRef.current = setTimeout(
                         () => setIsAdminTyping(false),
@@ -943,14 +965,21 @@ function SupportWidgetEchoListener({
                     );
                 }
             });
+
             return () => {
                 try {
                     channel.stopListeningForWhisper('typing');
-                } catch {}
-                if (adminTypingTimeoutRef.current)
+                } catch {
+                    // noop
+                }
+
+                if (adminTypingTimeoutRef.current) {
                     clearTimeout(adminTypingTimeoutRef.current);
+                }
             };
-        } catch {}
+        } catch {
+            // noop
+        }
     }, [conversation.id, setIsAdminTyping]);
 
     useEcho(
@@ -969,6 +998,7 @@ function SupportWidgetEchoListener({
 
                 if (incoming.sender_type === 'admin') {
                     setIsAdminTyping(false);
+
                     if (!isOpenRef.current) {
                         setUnread((u) => u + 1);
                     } else {

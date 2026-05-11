@@ -434,21 +434,32 @@ export default function Index() {
     }, [activeConv?.id]);
 
     useEffect(() => {
-        if (isUserTyping) scrollToBottom();
+        if (isUserTyping) {
+            scrollToBottom();
+        }
     }, [isUserTyping]);
 
     const handleAdminInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
     ) => {
         setNewMessage(e.target.value);
-        if (!activeConv) return;
+
+        if (!activeConv) {
+            return;
+        }
+
         try {
             echo()
                 .private(`conversations.${activeConv.id}`)
                 .whisper('typing', { typing: true });
-        } catch {}
-        if (adminTypingTimeoutRef.current)
+        } catch {
+            // noop
+        }
+
+        if (adminTypingTimeoutRef.current) {
             clearTimeout(adminTypingTimeoutRef.current);
+        }
+
         adminTypingTimeoutRef.current = setTimeout(() => {
             try {
                 if (activeConv) {
@@ -456,7 +467,9 @@ export default function Index() {
                         .private(`conversations.${activeConv.id}`)
                         .whisper('typing', { typing: false });
                 }
-            } catch {}
+            } catch {
+                // noop
+            }
         }, 2000);
     };
 
@@ -566,11 +579,15 @@ export default function Index() {
             setNewMessage('');
             handleRemoveAttachment();
             scrollToBottom();
+
             try {
                 echo()
                     .private(`conversations.${activeConv.id}`)
                     .whisper('typing', { typing: false });
-            } catch {}
+            } catch {
+                // noop
+            }
+
             if (adminTypingTimeoutRef.current) {
                 clearTimeout(adminTypingTimeoutRef.current);
                 adminTypingTimeoutRef.current = null;
@@ -1118,6 +1135,7 @@ function AdminConversationEchoListener({
 
                     if (incoming.sender_type === 'user') {
                         setIsUserTyping(false);
+
                         axios.post(
                             `/admin/api/customer-conversations/${currentConv!.id}/read`,
                         );
@@ -1234,9 +1252,14 @@ function AdminTypingEchoListener({
     useEffect(() => {
         try {
             const channel = echo().private(`conversations.${conversationId}`);
+
             channel.listenForWhisper('typing', (e: { typing: boolean }) => {
                 setIsUserTyping(e.typing);
-                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                }
+
                 if (e.typing) {
                     timeoutRef.current = setTimeout(
                         () => setIsUserTyping(false),
@@ -1244,12 +1267,18 @@ function AdminTypingEchoListener({
                     );
                 }
             });
+
             return () => {
                 try {
                     channel.stopListeningForWhisper('typing');
                     echo().leave(`conversations.${conversationId}`);
-                } catch {}
-                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                } catch {
+                    // noop
+                }
+
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                }
             };
         } catch {
             return;
