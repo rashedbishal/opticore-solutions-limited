@@ -439,9 +439,7 @@ export default function Index() {
         }
     }, [isUserTyping]);
 
-    const handleAdminInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleAdminInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);
 
         if (!activeConv) {

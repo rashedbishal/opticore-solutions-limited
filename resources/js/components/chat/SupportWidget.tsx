@@ -748,7 +748,9 @@ export default function SupportWidget({
                                         <div className="flex items-center gap-1">
                                             <span
                                                 className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
-                                                style={{ animationDelay: '0ms' }}
+                                                style={{
+                                                    animationDelay: '0ms',
+                                                }}
                                             />
                                             <span
                                                 className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
