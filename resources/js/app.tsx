@@ -6,7 +6,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Opticore Solutions Ltd.';
+const appName = 'Opticore Solutions Ltd.';
 
 type InertiaPageComponent = ComponentType<any> & {
     layout?: (page: ReactNode) => ReactNode;
