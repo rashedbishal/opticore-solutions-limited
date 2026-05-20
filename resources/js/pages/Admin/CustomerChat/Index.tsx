@@ -1286,4 +1286,6 @@ function AdminTypingEchoListener({
     return null;
 }
 
-Index.layout = (page: ReactNode) => <AdminLayout title="Customer Support">{page}</AdminLayout>;
+Index.layout = (page: ReactNode) => (
+    <AdminLayout title="Customer Support">{page}</AdminLayout>
+);
