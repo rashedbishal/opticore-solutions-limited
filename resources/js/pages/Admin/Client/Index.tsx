@@ -50,9 +50,11 @@ const AVATAR_GRADIENTS = [
 
 function avatarGradient(name: string): string {
     let hash = 0;
+
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
+
     return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length];
 }
 
@@ -116,7 +118,11 @@ export default function ClientIndex({ clients }: Props) {
 
     function submitDelete(e: React.FormEvent) {
         e.preventDefault();
-        if (!deleteState) return;
+
+        if (!deleteState) {
+            return;
+        }
+
         destroy(adminRoutes.clients.destroy.url(deleteState.client.id), {
             onSuccess: closeModal,
         });
@@ -272,6 +278,7 @@ export default function ClientIndex({ clients }: Props) {
                 <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
                     {clients.links.map((link, i) => {
                         const label = decodePaginationLabel(link.label);
+
                         if (!link.url) {
                             return (
                                 <span
@@ -282,6 +289,7 @@ export default function ClientIndex({ clients }: Props) {
                                 </span>
                             );
                         }
+
                         return (
                             <a
                                 key={i}
