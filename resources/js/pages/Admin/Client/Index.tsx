@@ -90,8 +90,14 @@ export default function ClientIndex({ clients }: Props) {
     const [deleteState, setDeleteState] = useState<DeleteState | null>(null);
     const [showPassword, setShowPassword] = useState(false);
 
-    const { delete: destroy, data, setData, processing, errors, reset } =
-        useForm({ password: '' });
+    const {
+        delete: destroy,
+        data,
+        setData,
+        processing,
+        errors,
+        reset,
+    } = useForm({ password: '' });
 
     const hasPagination =
         clients.links.filter((l) => l.url !== null).length > 2;
@@ -133,8 +139,8 @@ export default function ClientIndex({ clients }: Props) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <p className="text-sm text-zinc-500">
-                    {clients.total}{' '}
-                    {clients.total === 1 ? 'client' : 'clients'} registered
+                    {clients.total} {clients.total === 1 ? 'client' : 'clients'}{' '}
+                    registered
                 </p>
             </div>
 
