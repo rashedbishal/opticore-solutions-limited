@@ -5,6 +5,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
+import LogoutOverlay from '@/components/UI/LogoutOverlay';
 
 const appName = 'Opticore Solutions Ltd.';
 
@@ -122,6 +123,7 @@ createInertiaApp({
 
         createRoot(el).render(
             <StrictMode>
+                <LogoutOverlay />
                 <App {...props} />
             </StrictMode>,
         );

@@ -210,6 +210,13 @@ export default function Navbar() {
                                             onFinish={() =>
                                                 setIsLoggingOut(false)
                                             }
+                                            onClick={() =>
+                                                window.dispatchEvent(
+                                                    new CustomEvent(
+                                                        'logout:start',
+                                                    ),
+                                                )
+                                            }
                                             disabled={isLoggingOut}
                                             className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 disabled:opacity-50"
                                             aria-label="Sign out"
@@ -399,6 +406,11 @@ export default function Navbar() {
                                                             return;
                                                         }
 
+                                                        window.dispatchEvent(
+                                                            new CustomEvent(
+                                                                'logout:start',
+                                                            ),
+                                                        );
                                                         setOpen(false);
                                                     }}
                                                     className="neo-btn-primary flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide text-white uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
