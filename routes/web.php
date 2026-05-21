@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ChatSessionController;
+use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\ClientReviewController as AdminClientReviewController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
@@ -185,6 +186,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class);
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy');
     Route::resource('tasks', TaskController::class);
 
     // Customer Support Chat Routes

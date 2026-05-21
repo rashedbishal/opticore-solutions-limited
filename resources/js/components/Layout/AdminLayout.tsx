@@ -7,6 +7,7 @@ import {
     FileText,
     MessageSquare,
     Users,
+    UserCheck,
     LogOut,
     Menu,
     X,
@@ -84,6 +85,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
         { name: 'Brands', href: '/admin/brands', icon: Briefcase },
         { name: 'Users', href: '/admin/users', icon: Users },
+        { name: 'Clients', href: '/admin/clients', icon: UserCheck },
         {
             name: 'Client Workflow',
             href: '/admin/tasks',

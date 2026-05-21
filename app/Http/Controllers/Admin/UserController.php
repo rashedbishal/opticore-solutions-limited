@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class UserController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/User/Index', [
-            'users' => User::latest()->paginate(10),
+            'users' => Admin::latest()->paginate(10),
         ]);
     }
 

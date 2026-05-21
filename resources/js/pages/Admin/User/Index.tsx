@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Edit2, Phone, Plus, Shield, Trash2, User } from 'lucide-react';
+import { Edit2, Plus, Trash2 } from 'lucide-react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -110,14 +110,8 @@ export default function UserIndex({ users, auth }: Props) {
                             <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
                                 User
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
-                                Role
-                            </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 md:table-cell">
-                                Phone
-                            </th>
                             <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 lg:table-cell">
-                                Joined
+                                Created
                             </th>
                             <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
                                 Actions
@@ -128,7 +122,7 @@ export default function UserIndex({ users, auth }: Props) {
                         {users.data.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan={5}
+                                    colSpan={3}
                                     className="px-6 py-16 text-center text-sm text-zinc-500"
                                 >
                                     No users found.
@@ -175,36 +169,7 @@ export default function UserIndex({ users, auth }: Props) {
                                         </div>
                                     </td>
 
-                                    {/* Role */}
-                                    <td className="hidden px-6 py-4 sm:table-cell">
-                                        {user.role === 'admin' ? (
-                                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-400">
-                                                <Shield className="h-3 w-3" />
-                                                Admin
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-zinc-400">
-                                                <User className="h-3 w-3" />
-                                                User
-                                            </span>
-                                        )}
-                                    </td>
-
-                                    {/* Phone */}
-                                    <td className="hidden px-6 py-4 md:table-cell">
-                                        {user.phone_number ? (
-                                            <span className="inline-flex items-center gap-1.5 text-sm text-zinc-300">
-                                                <Phone className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
-                                                {user.phone_number}
-                                            </span>
-                                        ) : (
-                                            <span className="text-zinc-600">
-                                                —
-                                            </span>
-                                        )}
-                                    </td>
-
-                                    {/* Joined */}
+                                    {/* Created */}
                                     <td className="hidden px-6 py-4 text-sm whitespace-nowrap text-zinc-500 lg:table-cell">
                                         {formatDate(user.created_at)}
                                     </td>
