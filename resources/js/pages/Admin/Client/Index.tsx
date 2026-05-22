@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
 import {
     AlertTriangle,
+    CheckCircle,
+    Clock,
     Eye,
     EyeOff,
     MessageSquare,
@@ -21,6 +23,7 @@ interface ClientRecord {
     avatar: string | null;
     role: string;
     created_at: string;
+    email_verified_at: string | null;
     conversations_count: number;
     tasks_count: number;
 }
@@ -158,6 +161,9 @@ export default function ClientIndex({ clients }: Props) {
                             <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
                                 Activity
                             </th>
+                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
+                                Status
+                            </th>
                             <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 lg:table-cell">
                                 Joined
                             </th>
@@ -170,7 +176,7 @@ export default function ClientIndex({ clients }: Props) {
                         {clients.data.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan={5}
+                                    colSpan={6}
                                     className="px-6 py-16 text-center text-sm text-zinc-500"
                                 >
                                     No clients found.
@@ -251,6 +257,21 @@ export default function ClientIndex({ clients }: Props) {
                                                     </span>
                                                 )}
                                         </div>
+                                    </td>
+
+                                    {/* Status */}
+                                    <td className="hidden px-6 py-4 sm:table-cell">
+                                        {client.email_verified_at ? (
+                                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+                                                <CheckCircle className="h-3 w-3" />
+                                                Verified
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400">
+                                                <Clock className="h-3 w-3" />
+                                                Unverified
+                                            </span>
+                                        )}
                                     </td>
 
                                     {/* Joined */}
