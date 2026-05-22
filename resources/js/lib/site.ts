@@ -916,7 +916,7 @@ export const privacySections = [
             'Our platform supports sign-in via third-party providers such as Google and Facebook. When you use these services to log in, we receive basic profile information including your name, email address, and profile picture.',
             'We do not store any additional Facebook data beyond what is required to authenticate and maintain your account on our platform.',
             'If you wish to have your account and all associated data permanently deleted, you may send a deletion request to info@opticoresolutions.com with the subject line "Data Deletion Request". We will process your request and confirm deletion within 30 days.',
-            'You may also remove our app\'s access to your Facebook account at any time by visiting Facebook\'s App Settings at facebook.com/settings?tab=applications and revoking access for Opticore Solutions. Your data will be deleted from our system upon request.',
+            "You may also remove our app's access to your Facebook account at any time by visiting Facebook's App Settings at facebook.com/settings?tab=applications and revoking access for Opticore Solutions. Your data will be deleted from our system upon request.",
         ],
     },
 ];
