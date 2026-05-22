@@ -100,6 +100,11 @@ export default function ResetPassword({
                             className="w-full rounded-xl border border-theme bg-theme-surface py-3 pr-5 pl-12 text-sm text-foreground transition-all placeholder:text-theme-subtle focus:border-violet-500/50 focus:outline-none sm:rounded-2xl sm:py-4 sm:pr-6 sm:pl-14 sm:text-base [@media(max-height:500px)]:py-2"
                             required
                         />
+                        {errors.password_confirmation && (
+                            <p className="mt-1 ml-4 text-[10px] text-red-500 sm:mt-2 sm:text-xs">
+                                {errors.password_confirmation}
+                            </p>
+                        )}
                     </div>
                 </div>
 
