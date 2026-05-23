@@ -137,11 +137,15 @@ class PortfolioSubCategoryController extends Controller
                 'reviews_count' => $subCategory->reviews_count,
                 'image_url' => $subCategory->image ? asset('storage/'.$subCategory->image) : null,
                 'sort_order' => $subCategory->sort_order,
-                'plans' => $subCategory->plans ?? [
-                    'basic' => ['price' => '', 'delivery' => '', 'features' => []],
-                    'standard' => ['price' => '', 'delivery' => '', 'features' => []],
-                    'premium' => ['price' => '', 'delivery' => '', 'features' => []],
-                ],
+                'plans' => (static function (array $stored): array {
+                    $default = ['price' => '', 'delivery' => '', 'features' => []];
+
+                    return [
+                        'basic' => array_merge($default, $stored['basic'] ?? []),
+                        'standard' => array_merge($default, $stored['standard'] ?? []),
+                        'premium' => array_merge($default, $stored['premium'] ?? []),
+                    ];
+                })($subCategory->plans ?? []),
                 'faqs' => $subCategory->faqs ?? [],
                 'description_points' => $subCategory->description_points ?? self::DEFAULT_DESCRIPTION_POINTS,
                 'gallery' => $gallery,
