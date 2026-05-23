@@ -47,7 +47,7 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'image' => UploadedFile::fake()->create('thumbnail.jpg', 100, 'image/jpeg'),
             'sort_order' => 2,
         ])
-        ->assertRedirect(route('admin.sub-categories.index'));
+        ->assertRedirect(route('admin.sub-categories.edit', 'thumbnail-design'));
 
     $subCategory = PortfolioSubCategory::query()->firstWhere('slug', 'thumbnail-design');
 
