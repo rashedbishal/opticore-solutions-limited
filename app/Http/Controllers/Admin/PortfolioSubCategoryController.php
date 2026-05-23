@@ -101,15 +101,15 @@ class PortfolioSubCategoryController extends Controller
             $validated['image'] = $request->file('image')->store('sub-categories', 'public');
         }
 
-        PortfolioSubCategory::create($validated);
+        $subCategory = PortfolioSubCategory::create($validated);
 
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$validated['category_slug']}");
         Cache::forget('hire-us.subcategories');
 
-        return redirect()->route('admin.sub-categories.index')
-            ->with('success', 'Sub-category created.');
+        return redirect()->route('admin.sub-categories.edit', $subCategory)
+            ->with('success', 'Sub-category created. Now fill in the plans, description points, and FAQs.');
     }
 
     public function edit(PortfolioSubCategory $subCategory): Response
