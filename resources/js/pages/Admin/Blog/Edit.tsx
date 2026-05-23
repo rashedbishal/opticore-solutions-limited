@@ -39,11 +39,12 @@ export default function BlogEdit({ blog }: Props) {
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Edit Blog Post
             </h1>
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Title
                             </label>
                             <input
@@ -52,18 +53,18 @@ export default function BlogEdit({ blog }: Props) {
                                 onChange={(e) =>
                                     setData('title', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             />
                             {errors.title && (
-                                <p className="mt-1 text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.title}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Category
                             </label>
                             <select
@@ -71,7 +72,7 @@ export default function BlogEdit({ blog }: Props) {
                                 onChange={(e) =>
                                     setData('category', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             >
                                 <option value="Graphic Design">
                                     Graphic Design
@@ -90,14 +91,14 @@ export default function BlogEdit({ blog }: Props) {
                                 </option>
                             </select>
                             {errors.category && (
-                                <p className="mt-1 text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.category}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Author
                             </label>
                             <input
@@ -106,12 +107,12 @@ export default function BlogEdit({ blog }: Props) {
                                 onChange={(e) =>
                                     setData('author', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Read Time (e.g., "5 min read")
                             </label>
                             <input
@@ -120,43 +121,43 @@ export default function BlogEdit({ blog }: Props) {
                                 onChange={(e) =>
                                     setData('read_time', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Excerpt
                         </label>
                         <textarea
                             value={data.excerpt}
                             onChange={(e) => setData('excerpt', e.target.value)}
                             rows={3}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         ></textarea>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Content (HTML allowed)
                         </label>
                         <textarea
                             value={data.content}
                             onChange={(e) => setData('content', e.target.value)}
                             rows={15}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 font-mono text-white focus:border-violet-500 focus:ring-violet-500 sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         ></textarea>
                         {errors.content && (
-                            <p className="mt-1 text-sm text-red-500">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.content}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Cover Image (Leave empty to keep current)
                         </label>
                         {blog.image && (
@@ -173,20 +174,20 @@ export default function BlogEdit({ blog }: Props) {
                             onChange={(e) =>
                                 setData('image', e.target.files?.[0] || null)
                             }
-                            className="mt-1 block w-full text-zinc-300 file:mr-4 file:rounded-full file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-500"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
                         />
                         {errors.image && (
-                            <p className="mt-1 text-sm text-red-500">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.image}
                             </p>
                         )}
                     </div>
 
-                    <div className="flex gap-4 border-t border-white/10 pt-4">
+                    <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -199,7 +200,7 @@ export default function BlogEdit({ blog }: Props) {
                         </button>
                         <Link
                             href={adminRoutes.blogs.index.url()}
-                            className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                         >
                             Cancel
                         </Link>

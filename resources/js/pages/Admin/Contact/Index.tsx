@@ -77,23 +77,24 @@ export default function ContactIndex({ contacts }: Props) {
             </p>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+            <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <table className="w-full">
-                    <thead className="bg-zinc-800/50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                    <thead>
+                        <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 From
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase sm:table-cell">
                                 Subject
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 lg:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase lg:table-cell">
                                 Message
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase sm:table-cell">
                                 Date
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
@@ -103,9 +104,9 @@ export default function ContactIndex({ contacts }: Props) {
                             <tr>
                                 <td
                                     colSpan={5}
-                                    className="px-6 py-16 text-center text-sm text-zinc-500"
+                                    className="px-6 py-16 text-center"
                                 >
-                                    No contact messages found.
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No messages found</p>
                                 </td>
                             </tr>
                         ) : (
@@ -119,10 +120,10 @@ export default function ContactIndex({ contacts }: Props) {
                                             onClick={() =>
                                                 toggleExpand(contact.id)
                                             }
-                                            className={`cursor-pointer border-b border-white/10 transition-colors ${
+                                            className={`cursor-pointer border-b border-white/4 transition-colors last:border-0 ${
                                                 isExpanded
-                                                    ? 'bg-white/[0.04]'
-                                                    : 'hover:bg-white/5'
+                                                    ? 'bg-violet-500/5'
+                                                    : 'hover:bg-violet-500/5'
                                             }`}
                                         >
                                             {/* From */}
@@ -171,12 +172,12 @@ export default function ContactIndex({ contacts }: Props) {
                                                             );
                                                         }}
                                                         title="Delete message"
-                                                        className="text-zinc-600 transition-colors hover:text-red-400"
+                                                        className="font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                     <ChevronDown
-                                                        className={`h-4 w-4 text-zinc-500 transition-transform duration-200 ${
+                                                        className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${
                                                             isExpanded
                                                                 ? 'rotate-180'
                                                                 : ''
@@ -216,7 +217,7 @@ export default function ContactIndex({ contacts }: Props) {
                                                                     'hidden',
                                                             }}
                                                         >
-                                                            <div className="border-b border-white/10 bg-zinc-800/30 px-6 py-5">
+                                                            <div className="border-b border-violet-500/10 bg-violet-500/5 px-6 py-5">
                                                                 {/* Subject on mobile (hidden in column) */}
                                                                 {contact.subject && (
                                                                     <p className="mb-3 flex items-center gap-1.5 text-xs font-medium text-cyan-400 sm:hidden">
@@ -293,8 +294,8 @@ export default function ContactIndex({ contacts }: Props) {
                                 href={link.url}
                                 className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
                                     link.active
-                                        ? 'border border-cyan-500/30 bg-cyan-500/15 text-cyan-400'
-                                        : 'border border-white/10 bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50 hover:text-white'
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
                                 }`}
                             >
                                 {label}

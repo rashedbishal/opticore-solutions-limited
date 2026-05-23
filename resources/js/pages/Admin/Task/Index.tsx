@@ -50,41 +50,42 @@ export default function TaskIndex({ tasks }: Props) {
                 </h1>
                 <Link
                     href={adminRoutes.tasks.create.url()}
-                    className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500"
                 >
                     <Plus className="h-4 w-4" /> Add Task
                 </Link>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
-                <table className="min-w-full divide-y divide-white/10">
-                    <thead className="bg-zinc-800/50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+            <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                <table className="min-w-full">
+                    <thead>
+                        <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Client
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Task Info
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Category
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Date
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Status
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/10">
+                    <tbody>
                         {tasks.data.map((task) => (
                             <tr
                                 key={task.id}
-                                className="transition-colors hover:bg-white/5"
+                                className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex flex-col">
@@ -128,7 +129,7 @@ export default function TaskIndex({ tasks }: Props) {
                                                 e.target.value,
                                             )
                                         }
-                                        className={`w-32 rounded-lg border-white/10 bg-zinc-800 px-3 py-1.5 text-sm font-medium focus:border-violet-500 focus:ring-violet-500 ${
+                                        className={`w-32 rounded-lg border border-white/8 bg-[#060c1a] px-3 py-1.5 text-sm font-medium outline-none focus:border-violet-500/50 ${
                                             task.state === 'pending'
                                                 ? 'text-yellow-400'
                                                 : task.state === 'in progress'
@@ -157,20 +158,24 @@ export default function TaskIndex({ tasks }: Props) {
                                     </select>
                                 </td>
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
-                                    <Link
-                                        href={adminRoutes.tasks.edit.url(
-                                            task.id,
-                                        )}
-                                        className="mr-4 inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300"
-                                    >
-                                        <Edit className="h-4 w-4" /> Edit
-                                    </Link>
-                                    <button
-                                        onClick={() => handleDelete(task.id)}
-                                        className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300"
-                                    >
-                                        <Trash2 className="h-4 w-4" /> Delete
-                                    </button>
+                                    <div className="flex items-center justify-end gap-3">
+                                        <Link
+                                            href={adminRoutes.tasks.edit.url(
+                                                task.id,
+                                            )}
+                                            className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/70 transition-colors hover:text-cyan-300"
+                                        >
+                                            <Edit className="h-3.5 w-3.5" />
+                                            <span className="hidden sm:inline">Edit</span>
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(task.id)}
+                                            className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                            <span className="hidden sm:inline">Delete</span>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -178,9 +183,9 @@ export default function TaskIndex({ tasks }: Props) {
                             <tr>
                                 <td
                                     colSpan={6}
-                                    className="px-6 py-8 text-center text-sm text-zinc-500"
+                                    className="px-6 py-16 text-center"
                                 >
-                                    No tasks found.
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No tasks found</p>
                                 </td>
                             </tr>
                         )}

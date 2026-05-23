@@ -83,8 +83,10 @@ export default function Dashboard({ stats }: DashboardProps) {
                             delay: index * 0.1,
                             ease: 'easeOut',
                         }}
-                        className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white/5 bg-white/5 p-6 backdrop-blur-xl transition-all duration-300 hover:border-white/10 hover:bg-white/10 ${card.glow}`}
+                        className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm transition-all hover:border-violet-500/30 ${card.glow}`}
                     >
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+
                         <div
                             className={`absolute -top-8 -right-8 h-32 w-32 rounded-full ${card.bg} pointer-events-none opacity-50 blur-3xl transition-opacity duration-500 group-hover:opacity-100`}
                         ></div>
@@ -100,7 +102,7 @@ export default function Dashboard({ stats }: DashboardProps) {
                         </div>
 
                         <div className="relative z-10">
-                            <h3 className="text-sm font-medium tracking-wide text-slate-400">
+                            <h3 className="text-sm font-medium tracking-wide text-zinc-400">
                                 {card.name}
                             </h3>
                             <div className="mt-1 flex items-baseline gap-2">
@@ -110,10 +112,10 @@ export default function Dashboard({ stats }: DashboardProps) {
                             </div>
                         </div>
 
-                        <div className="relative z-10 mt-6 flex items-center justify-between border-t border-white/5 pt-5">
+                        <div className="relative z-10 mt-6 flex items-center justify-between border-t border-violet-500/10 pt-5">
                             <Link
                                 href={card.href}
-                                className="group/link flex items-center gap-1.5 text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
+                                className="group/link flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/60 transition-colors hover:text-cyan-300"
                             >
                                 View Details
                                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-1" />

@@ -51,18 +51,19 @@ export default function ChatIndex({ sessions }: Props) {
             <div className="mb-2 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
                 <div>
                     <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">
-                        <Mail className="h-6 w-6 text-indigo-400" /> Inbox
+                        <Mail className="h-6 w-6 text-violet-400" /> Inbox
                         Archive
                     </h1>
                 </div>
-                <div className="flex items-center gap-2 rounded-full border border-indigo-500/20 bg-[#1a2333] px-3 py-1.5 text-xs font-medium text-indigo-300 backdrop-blur-md">
+                <div className="flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1.5 text-xs font-medium text-violet-300 backdrop-blur-md">
                     <Sparkles className="h-4 w-4" />
                     <span>{sessions.data.length} threads</span>
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f1523]/90 shadow-2xl backdrop-blur-2xl">
-                <div className="divide-y divide-white/5">
+            <div className="relative overflow-hidden rounded-2xl border border-violet-500/15 bg-[#060c1a]/80 shadow-2xl backdrop-blur-2xl">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                <div className="divide-y divide-white/4">
                     <AnimatePresence initial={false}>
                         {sessions.data.map((session) => {
                             const isExpanded = expandedId === session.id;
@@ -73,8 +74,8 @@ export default function ChatIndex({ sessions }: Props) {
                                     key={session.id}
                                     className={`group transition-colors duration-200 ${
                                         isExpanded
-                                            ? 'bg-white/[0.03]'
-                                            : 'hover:bg-white/[0.02]'
+                                            ? 'bg-violet-500/5'
+                                            : 'hover:bg-violet-500/5'
                                     }`}
                                 >
                                     {/* Email Row */}
@@ -84,16 +85,16 @@ export default function ChatIndex({ sessions }: Props) {
                                     >
                                         <div className="flex flex-none items-center gap-4">
                                             <div
-                                                className={`h-2 w-2 rounded-full transition-colors duration-300 ${isExpanded ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]' : 'bg-transparent group-hover:bg-indigo-500/30'}`}
+                                                className={`h-2 w-2 rounded-full transition-colors duration-300 ${isExpanded ? 'bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]' : 'bg-transparent group-hover:bg-violet-500/30'}`}
                                             />
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-indigo-500/20 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 text-indigo-300 shadow-inner">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/20 bg-gradient-to-br from-violet-500/20 to-indigo-500/20 text-violet-300 shadow-inner">
                                                 <User className="h-5 w-5" />
                                             </div>
                                         </div>
 
                                         <div className="grid min-w-0 flex-1 items-center gap-4 sm:grid-cols-[200px_1fr_auto]">
                                             <div
-                                                className={`truncate text-[15px] font-semibold transition-colors ${isExpanded ? 'text-indigo-300' : 'text-white'}`}
+                                                className={`truncate text-[15px] font-semibold transition-colors ${isExpanded ? 'text-violet-300' : 'text-white'}`}
                                             >
                                                 {session.title ||
                                                     `Session ${session.session_id.substring(0, 8)}`}
@@ -137,7 +138,7 @@ export default function ChatIndex({ sessions }: Props) {
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                     <ChevronDown
-                                                        className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-indigo-400' : 'text-slate-600'}`}
+                                                        className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-violet-400' : 'text-slate-600'}`}
                                                     />
                                                 </div>
                                             </div>
@@ -163,9 +164,9 @@ export default function ChatIndex({ sessions }: Props) {
                                                 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="mr-6 ml-16 border-t border-white/5 px-6 pt-2 pb-6">
-                                                    <div className="rounded-[20px] border border-white/5 bg-[#080b12]/80 p-8 shadow-inner backdrop-blur-md">
-                                                        <div className="mb-10 flex items-center justify-between border-b border-white/5 pb-6">
+                                                <div className="mr-6 ml-16 border-t border-violet-500/10 px-6 pt-2 pb-6">
+                                                    <div className="rounded-[20px] border border-violet-500/10 bg-[#060c1a]/80 p-8 shadow-inner backdrop-blur-md">
+                                                        <div className="mb-10 flex items-center justify-between border-b border-violet-500/10 pb-6">
                                                             <h3 className="text-xl font-bold tracking-tight text-white">
                                                                 {session.title ||
                                                                     `Chat Session ${session.session_id.substring(0, 8)}`}
@@ -230,7 +231,7 @@ export default function ChatIndex({ sessions }: Props) {
                                                                 session.messages
                                                                     .length ===
                                                                     0) && (
-                                                                <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 py-12 text-center text-slate-500">
+                                                                <div className="rounded-2xl border border-dashed border-violet-500/20 bg-violet-500/5 py-12 text-center text-slate-500">
                                                                     No messages
                                                                     found in
                                                                     this thread.
@@ -249,7 +250,7 @@ export default function ChatIndex({ sessions }: Props) {
 
                     {sessions.data.length === 0 && (
                         <div className="p-20 text-center">
-                            <Mail className="mx-auto mb-6 h-16 w-16 text-slate-700/50" />
+                            <Mail className="mx-auto mb-6 h-16 w-16 text-violet-400/20" />
                             <h3 className="mb-2 text-xl font-bold text-white">
                                 Inbox Empty
                             </h3>

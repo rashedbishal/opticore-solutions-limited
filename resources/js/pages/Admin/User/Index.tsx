@@ -95,7 +95,7 @@ export default function UserIndex({ users, auth }: Props) {
                 </p>
                 <Link
                     href={adminRoutes.users.create.url()}
-                    className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500"
                 >
                     <Plus className="h-4 w-4" />
                     Add User
@@ -103,17 +103,18 @@ export default function UserIndex({ users, auth }: Props) {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+            <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <table className="w-full">
-                    <thead className="bg-zinc-800/50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                    <thead>
+                        <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 User
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 lg:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase lg:table-cell">
                                 Created
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
@@ -121,18 +122,15 @@ export default function UserIndex({ users, auth }: Props) {
                     <tbody>
                         {users.data.length === 0 ? (
                             <tr>
-                                <td
-                                    colSpan={3}
-                                    className="px-6 py-16 text-center text-sm text-zinc-500"
-                                >
-                                    No users found.
+                                <td colSpan={3} className="px-6 py-16 text-center">
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No records found</p>
                                 </td>
                             </tr>
                         ) : (
                             users.data.map((user) => (
                                 <tr
                                     key={user.id}
-                                    className="border-b border-white/10 transition-colors last:border-0 hover:bg-white/5"
+                                    className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                                 >
                                     {/* User */}
                                     <td className="px-6 py-4">
@@ -157,7 +155,7 @@ export default function UserIndex({ users, auth }: Props) {
                                                     </p>
                                                     {auth.user.id ===
                                                         user.id && (
-                                                        <span className="hidden shrink-0 rounded-full bg-cyan-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-400 sm:inline">
+                                                        <span className="hidden shrink-0 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2 py-0.5 font-mono text-[9px] tracking-widest text-cyan-400 uppercase sm:inline">
                                                             You
                                                         </span>
                                                     )}
@@ -181,7 +179,7 @@ export default function UserIndex({ users, auth }: Props) {
                                                 href={adminRoutes.users.edit.url(
                                                     user.id,
                                                 )}
-                                                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:bg-blue-500/10 hover:text-blue-400"
+                                                className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/70 transition-colors hover:text-cyan-300"
                                             >
                                                 <Edit2 className="h-3.5 w-3.5" />
                                                 <span className="hidden sm:inline">
@@ -193,7 +191,7 @@ export default function UserIndex({ users, auth }: Props) {
                                                     onClick={() =>
                                                         handleDelete(user.id)
                                                     }
-                                                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                                    className="ml-3 inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
                                                 >
                                                     <Trash2 className="h-3.5 w-3.5" />
                                                     <span className="hidden sm:inline">
@@ -233,8 +231,8 @@ export default function UserIndex({ users, auth }: Props) {
                                 href={link.url}
                                 className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
                                     link.active
-                                        ? 'border border-cyan-500/30 bg-cyan-500/15 text-cyan-400'
-                                        : 'border border-white/10 bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50 hover:text-white'
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
                                 }`}
                             >
                                 {label}

@@ -148,26 +148,27 @@ export default function ClientIndex({ clients }: Props) {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-zinc-900/50">
+            <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <table className="w-full">
-                    <thead className="bg-zinc-800/50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                    <thead>
+                        <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Client
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 md:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase md:table-cell">
                                 Phone
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase sm:table-cell">
                                 Activity
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 sm:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase sm:table-cell">
                                 Status
                             </th>
-                            <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400 lg:table-cell">
+                            <th className="hidden px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase lg:table-cell">
                                 Joined
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
@@ -175,18 +176,15 @@ export default function ClientIndex({ clients }: Props) {
                     <tbody>
                         {clients.data.length === 0 ? (
                             <tr>
-                                <td
-                                    colSpan={6}
-                                    className="px-6 py-16 text-center text-sm text-zinc-500"
-                                >
-                                    No clients found.
+                                <td colSpan={6} className="px-6 py-16 text-center">
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No records found</p>
                                 </td>
                             </tr>
                         ) : (
                             clients.data.map((client) => (
                                 <tr
                                     key={client.id}
-                                    className="border-b border-white/10 transition-colors last:border-0 hover:bg-white/5"
+                                    className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                                 >
                                     {/* Client */}
                                     <td className="px-6 py-4">
@@ -285,7 +283,7 @@ export default function ClientIndex({ clients }: Props) {
                                             onClick={() =>
                                                 openDeleteFlow(client)
                                             }
-                                            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                            className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                             <span className="hidden sm:inline">
@@ -323,8 +321,8 @@ export default function ClientIndex({ clients }: Props) {
                                 href={link.url}
                                 className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
                                     link.active
-                                        ? 'border border-cyan-500/30 bg-cyan-500/15 text-cyan-400'
-                                        : 'border border-white/10 bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50 hover:text-white'
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
                                 }`}
                             >
                                 {label}
@@ -337,7 +335,8 @@ export default function ClientIndex({ clients }: Props) {
             {/* Delete Modal */}
             {deleteState && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900 p-6 shadow-2xl">
+                    <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-violet-500/20 bg-[#060c1a] p-6 shadow-2xl">
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                         {deleteState.step === 'warning' ? (
                             <>
                                 <div className="mb-5 flex items-center gap-3">
@@ -394,7 +393,7 @@ export default function ClientIndex({ clients }: Props) {
                                 <div className="flex gap-3">
                                     <button
                                         onClick={closeModal}
-                                        className="flex-1 rounded-lg border border-white/10 bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+                                        className="flex-1 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                                     >
                                         Cancel
                                     </button>
@@ -444,7 +443,7 @@ export default function ClientIndex({ clients }: Props) {
                                             }
                                             placeholder="Your admin password"
                                             autoFocus
-                                            className="w-full rounded-lg border border-white/10 bg-zinc-800 py-2.5 pr-10 pl-4 text-sm text-white placeholder:text-zinc-600 focus:border-red-500/50 focus:outline-none"
+                                            className="block w-full rounded-lg border border-white/8 bg-white/4 py-2.5 pr-10 pl-4 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-red-500/50 focus:bg-red-500/5"
                                         />
                                         <button
                                             type="button"
@@ -460,7 +459,7 @@ export default function ClientIndex({ clients }: Props) {
                                             )}
                                         </button>
                                         {errors.password && (
-                                            <p className="mt-1.5 text-xs text-red-400">
+                                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                                 {errors.password}
                                             </p>
                                         )}
@@ -470,7 +469,7 @@ export default function ClientIndex({ clients }: Props) {
                                         <button
                                             type="button"
                                             onClick={closeModal}
-                                            className="flex-1 rounded-lg border border-white/10 bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+                                            className="flex-1 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                                         >
                                             Cancel
                                         </button>

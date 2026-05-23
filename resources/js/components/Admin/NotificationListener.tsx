@@ -1,9 +1,8 @@
 import { useEcho } from '@laravel/echo-react';
-import { useCallback } from 'react';
 
 interface Props {
     isOnChatPage: boolean;
-    onNewMessage: () => void;
+    onNewMessage: (senderName?: string) => void;
 }
 
 export default function NotificationListener({
@@ -13,16 +12,18 @@ export default function NotificationListener({
     useEcho(
         'admin.conversations',
         'MessageSent',
-        useCallback(
-            (e: any) => {
-                const msg = e.message;
+        (e: any) => {
+            const msg = e.message;
 
-                if (msg.sender_type === 'user' && !isOnChatPage) {
-                    onNewMessage();
-                }
-            },
-            [isOnChatPage, onNewMessage],
-        ),
+            if (msg?.sender_type === 'user' && !isOnChatPage) {
+                const name: string | undefined =
+                    msg.conversation?.user?.name ??
+                    e?.user?.name ??
+                    undefined;
+                onNewMessage(name);
+            }
+        },
+        [isOnChatPage, onNewMessage],
     );
 
     return null;

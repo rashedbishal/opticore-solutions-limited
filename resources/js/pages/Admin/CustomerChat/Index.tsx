@@ -215,9 +215,10 @@ function OfferCard({
     };
 
     return (
-        <div className="w-full max-w-72 overflow-hidden rounded-xl border border-white/10 bg-slate-800/90 shadow-lg">
+        <div className="w-full max-w-72 overflow-hidden rounded-xl border border-violet-500/20 bg-[#060c1a]/95 shadow-2xl backdrop-blur-sm">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
+            <div className="flex items-center justify-between border-b border-violet-500/10 px-4 py-2.5">
                 <div className="flex items-center gap-1.5">
                     <Package size={13} className="text-cyan-400" />
                     <span className="text-[11px] font-semibold tracking-wide text-cyan-400 uppercase">
@@ -288,7 +289,7 @@ function OfferCard({
                     href={`/offer/${offer.offer_token}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-cyan-600 py-2 text-xs font-semibold text-white transition hover:bg-cyan-500"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 py-2 text-xs font-semibold text-white transition hover:from-violet-500 hover:to-cyan-500"
                 >
                     View Offer Details
                     <ExternalLink size={11} />
@@ -641,7 +642,7 @@ export default function Index() {
     };
 
     return (
-        <div className="flex h-[calc(100vh-10rem)] overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl md:h-[calc(100vh-12rem)]">
+        <div className="flex h-[calc(100vh-10rem)] overflow-hidden rounded-2xl border border-violet-500/15 bg-[#060c1a]/80 shadow-2xl backdrop-blur-xl md:h-[calc(100vh-12rem)]">
             {echoReady && (
                 <AdminConversationEchoListener
                     activeConvRef={activeConvRef}
@@ -675,23 +676,27 @@ export default function Index() {
 
             {/* Sidebar List — full-width on mobile, 1/3 on desktop */}
             <div
-                className={`${activeConv ? 'hidden md:flex' : 'flex'} w-full flex-col border-r border-white/5 bg-slate-900/50 md:w-1/3`}
+                className={`${activeConv ? 'hidden md:flex' : 'flex'} w-full flex-col border-r border-violet-500/10 bg-[#060c1a]/60 md:w-1/3`}
             >
-                <div className="border-b border-white/5 p-4">
-                    <h2 className="mb-4 text-lg font-semibold text-white">
-                        Customer Chats
+                {/* Sidebar header */}
+                <div className="relative border-b border-violet-500/10 px-4 pt-4 pb-3">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+                    <p className="mb-0.5 font-mono text-[9px] tracking-[0.28em] text-violet-400/40 uppercase">Neural Comms</p>
+                    <h2 className="mb-3 text-sm font-semibold tracking-wide text-white">
+                        Customer Channels
                     </h2>
                     <div className="relative">
-                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-violet-400/40" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search users..."
-                            className="w-full rounded-xl border border-white/10 bg-black/20 py-2 pr-4 pl-10 text-sm text-white placeholder-slate-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                            placeholder="Search channels..."
+                            className="w-full rounded-lg border border-white/8 bg-white/4 py-2 pr-4 pl-9 font-mono text-xs text-white placeholder-violet-400/30 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                     </div>
                 </div>
+
                 <div className="flex-1 overflow-y-auto p-2">
                     {/* The list uses layout animations so when one gets bumped to the top, it smoothly transitions over */}
                     {filteredConversations.map((conv) => (
@@ -701,40 +706,51 @@ export default function Index() {
                             animate={{ opacity: 1 }}
                             key={conv.id}
                             onClick={() => handleSelectConv(conv)}
-                            className={`mb-1 flex w-full items-center rounded-xl p-3 text-left transition-colors ${
+                            className={`relative mb-1 flex w-full items-center gap-3 overflow-hidden rounded-lg p-3 text-left transition-all ${
                                 activeConv?.id === conv.id
-                                    ? 'border border-cyan-500/30 bg-cyan-500/20'
-                                    : 'border border-transparent hover:bg-white/5'
+                                    ? 'border border-violet-500/25 bg-violet-500/8'
+                                    : 'border border-transparent hover:border-violet-500/10 hover:bg-violet-500/5'
                             }`}
                         >
+                            {/* Active left accent bar */}
+                            {activeConv?.id === conv.id && (
+                                <div className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
+                            )}
+
+                            {/* Initials avatar */}
+                            <div className="relative shrink-0">
+                                <div className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold ${
+                                    activeConv?.id === conv.id
+                                        ? 'bg-gradient-to-br from-violet-600/60 to-cyan-600/40 text-white'
+                                        : 'bg-violet-500/10 text-violet-300'
+                                }`}>
+                                    {conv.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                {onlineUsers[conv.user_id] !== undefined && (
+                                    <span
+                                        className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#060c1a] bg-green-400"
+                                        style={{ boxShadow: '0 0 6px rgba(74,222,128,0.9)' }}
+                                    />
+                                )}
+                            </div>
+
                             <div className="min-w-0 flex-1">
-                                <div className="mb-1 flex items-center justify-between">
-                                    <span className="flex min-w-0 items-center gap-1.5">
-                                        {onlineUsers[conv.user_id] !==
-                                            undefined && (
-                                            <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-green-500" />
-                                        )}
-                                        <span className="truncate font-medium text-slate-200">
-                                            {conv.user.name}
-                                        </span>
+                                <div className="mb-0.5 flex items-center justify-between gap-2">
+                                    <span className="truncate text-sm font-medium text-slate-200">
+                                        {conv.user.name}
                                     </span>
                                     {conv.last_message_at && (
-                                        <span className="ml-2 shrink-0 text-xs text-slate-500">
-                                            {new Date(
-                                                conv.last_message_at,
-                                            ).toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
+                                        <span className="shrink-0 font-mono text-[9px] text-violet-400/40">
+                                            {new Date(conv.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex items-center justify-between">
-                                    <p className="truncate pr-2 text-sm text-slate-400">
+                                <div className="flex items-center justify-between gap-2">
+                                    <p className="truncate font-mono text-[11px] text-slate-500">
                                         {conv.last_message || 'No messages yet'}
                                     </p>
                                     {conv.unread_count > 0 && (
-                                        <span className="shrink-0 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                                        <span className="shrink-0 rounded-full bg-violet-500 px-1.5 py-0.5 font-mono text-[9px] font-bold text-white" style={{ boxShadow: '0 0 8px rgba(139,92,246,0.5)' }}>
                                             {conv.unread_count}
                                         </span>
                                     )}
@@ -743,10 +759,11 @@ export default function Index() {
                         </motion.button>
                     ))}
                     {filteredConversations.length === 0 && (
-                        <div className="p-4 text-center text-sm text-slate-500">
-                            {searchQuery
-                                ? 'No users match your search'
-                                : 'No conversations yet'}
+                        <div className="p-6 text-center">
+                            <MessageSquare className="mx-auto mb-2 h-6 w-6 text-violet-500/20" />
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-violet-400/30 uppercase">
+                                {searchQuery ? 'No channels found' : 'No active channels'}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -754,13 +771,14 @@ export default function Index() {
 
             {/* Chat Window — hidden on mobile until a conversation is selected */}
             <div
-                className={`${activeConv ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-slate-900/30`}
+                className={`${activeConv ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-[#060c1a]/30`}
             >
                 {activeConv ? (
                     <>
                         {/* Chat Header */}
-                        <div className="flex items-center justify-between border-b border-white/5 bg-slate-900/50 p-4">
-                            <div className="flex min-w-0 items-center gap-2">
+                        <div className="relative flex items-center justify-between border-b border-violet-500/10 bg-[#060c1a]/60 px-4 py-3">
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+                            <div className="flex min-w-0 items-center gap-3">
                                 {/* Back to list — mobile only */}
                                 <button
                                     onClick={() => setActiveConv(null)}
@@ -768,18 +786,26 @@ export default function Index() {
                                 >
                                     <ArrowLeft size={18} />
                                 </button>
+                                {/* User avatar */}
+                                <div className="relative shrink-0 hidden sm:block">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600/50 to-cyan-600/30 text-sm font-bold text-white">
+                                        {activeConv.user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    {onlineUsers[activeConv.user_id] !== undefined && (
+                                        <span className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#060c1a] bg-green-400" style={{ boxShadow: '0 0 6px rgba(74,222,128,0.9)' }} />
+                                    )}
+                                </div>
                                 <div className="min-w-0">
-                                    <h3 className="truncate font-semibold text-white">
+                                    <h3 className="truncate text-sm font-semibold text-white">
                                         {activeConv.user.name}
                                     </h3>
                                     <div className="flex items-center gap-2">
-                                        <p className="truncate text-xs text-slate-400">
+                                        <p className="truncate font-mono text-[10px] text-violet-400/50">
                                             {activeConv.user.email}
                                         </p>
-                                        {onlineUsers[activeConv.user_id] !==
-                                            undefined && (
-                                            <span className="flex shrink-0 items-center gap-1 text-xs text-green-400">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                                        {onlineUsers[activeConv.user_id] !== undefined && (
+                                            <span className="flex shrink-0 items-center gap-1 font-mono text-[9px] tracking-wider text-green-400">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-green-400" style={{ boxShadow: '0 0 5px rgba(74,222,128,0.8)' }} />
                                                 Online
                                             </span>
                                         )}
@@ -788,7 +814,7 @@ export default function Index() {
                             </div>
                             <button
                                 onClick={() => setShowOfferModal(true)}
-                                className="flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-400 transition hover:border-cyan-500/50 hover:bg-cyan-500/20"
+                                className="flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition hover:border-violet-500/50 hover:bg-violet-500/20"
                             >
                                 <Package size={13} />
                                 Create an Offer
@@ -819,8 +845,8 @@ export default function Index() {
                                             <div
                                                 className={`rounded-2xl px-5 py-3 text-sm shadow-sm ${
                                                     msg.sender_type === 'admin'
-                                                        ? 'rounded-br-none bg-cyan-600 text-white'
-                                                        : 'rounded-bl-none border border-white/5 bg-slate-800 text-slate-200'
+                                                        ? 'rounded-br-none bg-gradient-to-br from-violet-600 to-violet-700 text-white shadow-[0_4px_20px_rgba(124,58,237,0.25)]'
+                                                        : 'rounded-bl-none border border-violet-500/10 bg-[#060c1a]/80 text-slate-200'
                                                 }`}
                                             >
                                                 {msg.attachment_path && (
@@ -864,7 +890,7 @@ export default function Index() {
                                         {msg.sender_type === 'admin' &&
                                             msg.id ===
                                                 latestOutgoingMessageId && (
-                                                <p className="mt-1 px-1 text-right text-[11px] text-slate-500">
+                                                <p className="mt-1 px-1 text-right font-mono text-[10px] tracking-wide text-violet-400/40">
                                                     {getMessageStatusLabel(msg)}
                                                 </p>
                                             )}
@@ -874,23 +900,26 @@ export default function Index() {
                             {isUserTyping && (
                                 <div className="flex justify-start">
                                     <div className="max-w-[75%]">
-                                        <div className="flex items-center gap-1 rounded-2xl rounded-bl-none border border-white/5 bg-slate-800 px-5 py-3 text-sm text-slate-200 shadow-sm">
+                                        <div className="flex items-center gap-1 rounded-2xl rounded-bl-none border border-violet-500/10 bg-[#060c1a]/80 px-5 py-3 text-sm text-slate-200 shadow-sm">
                                             <span
-                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '0ms',
+                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                             <span
-                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '160ms',
+                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                             <span
-                                                className="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                                                className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '320ms',
+                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                         </div>
@@ -900,7 +929,7 @@ export default function Index() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className="border-t border-white/5 bg-slate-900/50 p-4">
+                        <div className="border-t border-violet-500/10 bg-[#060c1a]/60 p-4">
                             <form
                                 onSubmit={handleSend}
                                 className="relative flex flex-col gap-2"
@@ -937,7 +966,7 @@ export default function Index() {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
-                                            className="absolute -top-12 left-0 z-10 flex w-fit items-center justify-between gap-4 rounded-lg border border-white/10 bg-slate-800 px-3 py-1.5 text-xs text-slate-300 shadow-xl"
+                                            className="absolute -top-12 left-0 z-10 flex w-fit items-center justify-between gap-4 rounded-lg border border-violet-500/20 bg-[#060c1a]/95 px-3 py-1.5 text-xs text-slate-300 shadow-xl backdrop-blur-sm"
                                         >
                                             <Paperclip
                                                 size={13}
@@ -965,7 +994,7 @@ export default function Index() {
                                     )}
                                 </AnimatePresence>
 
-                                <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/20 p-1.5 transition-colors focus-within:border-cyan-500/50">
+                                <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/20 p-1.5 transition-colors focus-within:border-violet-500/50">
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -994,7 +1023,8 @@ export default function Index() {
                                             isSending ||
                                             (!newMessage.trim() && !attachment)
                                         }
-                                        className="transform rounded-full bg-cyan-600 p-2.5 text-white transition hover:bg-cyan-500 active:scale-95 disabled:opacity-50"
+                                        className="transform rounded-full bg-gradient-to-r from-violet-600 to-violet-500 p-2.5 text-white transition hover:from-violet-500 hover:to-cyan-500 active:scale-95 disabled:opacity-50"
+                                        style={{ boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}
                                     >
                                         <Send
                                             size={18}
@@ -1006,12 +1036,15 @@ export default function Index() {
                         </div>
                     </>
                 ) : (
-                    <div className="flex flex-1 flex-col items-center justify-center text-slate-500">
-                        <MessageSquare
-                            size={48}
-                            className="mb-4 text-cyan-500/50 opacity-50"
-                        />
-                        <p>Select a conversation to start chatting</p>
+                    <div className="flex flex-1 flex-col items-center justify-center gap-3">
+                        <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/5">
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet-600/10 to-cyan-600/5" />
+                            <MessageSquare size={28} className="relative text-violet-400/40" />
+                        </div>
+                        <div className="text-center">
+                            <p className="font-mono text-[10px] tracking-[0.25em] text-violet-400/40 uppercase">No Channel Selected</p>
+                            <p className="mt-1 text-xs text-slate-600">Select a customer channel to begin</p>
+                        </div>
                     </div>
                 )}
             </div>

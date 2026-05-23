@@ -44,47 +44,48 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                 </h1>
                 <Link
                     href={adminRoutes.subCategories.create.url()}
-                    className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500"
                 >
                     <Plus className="h-4 w-4" /> Add Sub-Category
                 </Link>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/50">
-                <table className="min-w-full divide-y divide-white/10">
-                    <thead className="bg-zinc-800/50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+            <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                <table className="min-w-full">
+                    <thead>
+                        <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Name
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Category
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Slug
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Order
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Items
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-zinc-400">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/10">
+                    <tbody>
                         {subCategories.map((sub) => (
                             <tr
                                 key={sub.id}
-                                className="transition-colors hover:bg-white/5"
+                                className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
                                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-white">
                                     {sub.name}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className="inline-flex items-center rounded-full bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-400">
+                                    <span className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-0.5 font-mono text-[10px] tracking-wide text-violet-400">
                                         {sub.category_label}
                                     </span>
                                 </td>
@@ -104,13 +105,13 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                         href={adminRoutes.subCategories.edit.url(
                                             sub.slug,
                                         )}
-                                        className="mr-4 inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300"
+                                        className="mr-4 inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/70 transition-colors hover:text-cyan-300"
                                     >
                                         <Edit className="h-4 w-4" /> Edit
                                     </Link>
                                     <button
                                         onClick={() => handleDelete(sub.slug)}
-                                        className="inline-flex items-center gap-1.5 text-red-400 hover:text-red-300 disabled:opacity-50"
+                                        className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-30"
                                         disabled={sub.portfolios_count > 0}
                                         title={
                                             sub.portfolios_count > 0
@@ -125,12 +126,8 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                         ))}
                         {subCategories.length === 0 && (
                             <tr>
-                                <td
-                                    colSpan={6}
-                                    className="px-6 py-8 text-center text-sm text-zinc-500"
-                                >
-                                    No sub-categories found. Create one to get
-                                    started.
+                                <td colSpan={6} className="px-6 py-16 text-center">
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No records found</p>
                                 </td>
                             </tr>
                         )}

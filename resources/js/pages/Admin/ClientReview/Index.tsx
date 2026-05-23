@@ -82,7 +82,7 @@ function ReviewCard({
                 transition={{
                     layout: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
                 }}
-                className="flex items-start gap-4 rounded-2xl border border-white/10 bg-zinc-900/60 p-4"
+                className="flex items-start gap-4 rounded-xl border border-violet-500/12 bg-[#060c1a]/60 p-4"
             >
                 {/* Sort controls */}
                 <div className="flex shrink-0 flex-col gap-1">
@@ -92,7 +92,7 @@ function ReviewCard({
                         onClick={() => onMoveUp(review.id)}
                         title="Move up"
                         whileTap={{ scale: 0.85 }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-25"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-violet-500/15 hover:text-violet-400 disabled:cursor-not-allowed disabled:opacity-25"
                     >
                         <ArrowUp className="h-3.5 w-3.5" />
                     </motion.button>
@@ -102,7 +102,7 @@ function ReviewCard({
                         onClick={() => onMoveDown(review.id)}
                         title="Move down"
                         whileTap={{ scale: 0.85 }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-25"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-slate-400 transition-colors hover:bg-violet-500/15 hover:text-violet-400 disabled:cursor-not-allowed disabled:opacity-25"
                     >
                         <ArrowDown className="h-3.5 w-3.5" />
                     </motion.button>
@@ -120,7 +120,7 @@ function ReviewCard({
                             {review.username}
                         </span>
                         {review.client_type === 'repeat' && (
-                            <span className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold tracking-widest text-cyan-400 uppercase">
+                            <span className="rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2 py-0.5 font-mono text-[9px] tracking-widest text-cyan-400 uppercase">
                                 Repeat Client
                             </span>
                         )}
@@ -288,18 +288,19 @@ function ClientReviewIndex({ grouped: serverGrouped }: Props) {
     return (
         <AdminLayout title="Client Review Control">
             <div className="space-y-6">
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-zinc-400">
                     Manage, sort, and delete client reviews per service. Order
                     changes are reflected immediately on the public pages.
                 </p>
 
                 {categoryKeys.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/40 py-20 text-center">
-                        <Star className="h-10 w-10 text-slate-600" />
-                        <p className="font-semibold text-slate-400">
+                    <div className="relative flex flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 py-20 text-center backdrop-blur-sm">
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                        <Star className="h-10 w-10 text-violet-400/20" />
+                        <p className="font-semibold text-zinc-400">
                             No reviews yet
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-zinc-500">
                             Reviews appear here once clients submit them after
                             task delivery.
                         </p>
@@ -357,15 +358,15 @@ function CategorySection({
     );
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0A1222]/60 backdrop-blur-sm">
+        <div className="overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
             {/* Category header */}
             <button
                 type="button"
                 onClick={() => setExpanded((v) => !v)}
-                className="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
+                className="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-violet-500/5"
             >
                 <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold tracking-wider text-cyan-400 uppercase">
+                    <span className="font-mono text-xs font-bold tracking-[0.2em] text-violet-300 uppercase">
                         {label}
                     </span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-slate-400">
@@ -388,7 +389,7 @@ function CategorySection({
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden"
                     >
-                        <div className="space-y-6 border-t border-white/10 p-6">
+                        <div className="space-y-6 border-t border-violet-500/10 p-6">
                             {subCategoryGroups.map((group) => (
                                 <div
                                     key={group.sub_category_id}
@@ -447,7 +448,7 @@ function CategorySection({
                                     </LayoutGroup>
 
                                     {group.reviews.length === 0 && (
-                                        <p className="py-4 text-center text-sm text-slate-500">
+                                        <p className="py-4 text-center font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
                                             No reviews in this sub-category.
                                         </p>
                                     )}

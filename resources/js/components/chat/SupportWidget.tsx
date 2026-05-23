@@ -584,7 +584,7 @@ export default function SupportWidget({
                             ease: [0.22, 1, 0.36, 1],
                         }}
                         data-lenis-prevent
-                        className="glass-panel mb-4 flex h-[520px] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-cyan-200/40 bg-background [background-image:linear-gradient(135deg,rgba(6,182,212,0.025)_0%,transparent_50%)] shadow-[0_0_0_1px_rgba(6,182,212,0.08),0_8px_24px_rgba(0,0,0,0.1),0_32px_64px_rgba(0,0,0,0.06)] sm:w-[360px] dark:border-cyan-800/25 dark:[background-image:linear-gradient(135deg,rgba(6,182,212,0.05)_0%,transparent_50%)] dark:shadow-[0_0_0_1px_rgba(6,182,212,0.15),0_8px_24px_rgba(0,0,0,0.45),0_32px_64px_rgba(0,0,0,0.3)]"
+                        className="glass-panel mb-4 flex h-[min(520px,calc(100dvh-9rem))] w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-cyan-200/40 bg-background [background-image:linear-gradient(135deg,rgba(6,182,212,0.025)_0%,transparent_50%)] shadow-[0_0_0_1px_rgba(6,182,212,0.08),0_8px_24px_rgba(0,0,0,0.1),0_32px_64px_rgba(0,0,0,0.06)] sm:w-[360px] dark:border-cyan-800/25 dark:[background-image:linear-gradient(135deg,rgba(6,182,212,0.05)_0%,transparent_50%)] dark:shadow-[0_0_0_1px_rgba(6,182,212,0.15),0_8px_24px_rgba(0,0,0,0.45),0_32px_64px_rgba(0,0,0,0.3)]"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between border-b border-theme bg-theme-surface px-5 py-4">
@@ -612,6 +612,17 @@ export default function SupportWidget({
 
                         {/* Messages */}
                         <div className="flex-1 overflow-y-auto bg-theme-surface [background-image:linear-gradient(to_bottom,rgba(6,182,212,0.05)_0%,transparent_45%)] p-5 shadow-[inset_0_4px_10px_rgba(0,0,0,0.03)] dark:[background-image:linear-gradient(to_bottom,rgba(6,182,212,0.08)_0%,transparent_45%)] dark:shadow-[inset_0_4px_10px_rgba(0,0,0,0.12)]">
+                            {messages.length === 0 && (
+                                <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
+                                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-cyan-500/10">
+                                        <MessageSquare className="h-6 w-6 text-cyan-500/60" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-theme">Start a conversation</p>
+                                        <p className="mt-1 text-xs text-theme-muted">Our team typically replies in minutes.</p>
+                                    </div>
+                                </div>
+                            )}
                             {messages.map((msg, i) => {
                                 const isOffer = !!msg.offer;
                                 const isUser = msg.sender_type === 'user';

@@ -81,18 +81,19 @@ export default function EditTask({
             <div className="flex items-center gap-4">
                 <Link
                     href={adminRoutes.tasks.index.url()}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-zinc-900 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-slate-400 transition-colors hover:bg-violet-500/10 hover:text-violet-400"
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </Link>
                 <h1 className="text-2xl font-bold text-white">Edit Task</h1>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Client Name
                             </label>
                             <input
@@ -102,19 +103,19 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('client_name', e.target.value)
                                 }
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter client name"
                                 required
                             />
                             {errors.client_name && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.client_name}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Client Email (User)
                             </label>
                             <select
@@ -126,87 +127,87 @@ export default function EditTask({
                                         parseInt(e.target.value, 10),
                                     )
                                 }
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             >
-                                <option value="">Select a user</option>
+                                <option value="" className="bg-[#060c1a]">Select a user</option>
                                 {users.map((user) => (
-                                    <option key={user.id} value={user.id}>
+                                    <option key={user.id} value={user.id} className="bg-[#060c1a]">
                                         {user.name} ({user.email})
                                     </option>
                                 ))}
                             </select>
                             {errors.user_id && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.user_id}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Category
                             </label>
                             <select
                                 name="category"
                                 value={data.category}
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 onChange={(e) => {
                                     setData('category', e.target.value);
                                     setData('sub_category_id', '');
                                 }}
                                 required
                             >
-                                <option value="">Select Category</option>
+                                <option value="" className="bg-[#060c1a]">Select Category</option>
                                 {Object.entries(categories).map(
                                     ([slug, label]) => (
-                                        <option key={slug} value={slug}>
+                                        <option key={slug} value={slug} className="bg-[#060c1a]">
                                             {label}
                                         </option>
                                     ),
                                 )}
                             </select>
                             {errors.category && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.category}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Sub-Category
                             </label>
                             <select
                                 name="sub_category_id"
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500 disabled:opacity-50"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5 disabled:opacity-50"
                                 disabled={!data.category}
                                 value={data.sub_category_id}
                                 onChange={(e) =>
                                     setData('sub_category_id', e.target.value)
                                 }
                             >
-                                <option value="">
+                                <option value="" className="bg-[#060c1a]">
                                     Select Sub-Category (Optional)
                                 </option>
                                 {data.category &&
                                     subCategoriesByCategory[
                                         data.category as string
                                     ]?.map((sub) => (
-                                        <option key={sub.id} value={sub.id}>
+                                        <option key={sub.id} value={sub.id} className="bg-[#060c1a]">
                                             {sub.name}
                                         </option>
                                     ))}
                             </select>
                             {errors.sub_category_id && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.sub_category_id}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Task Name
                             </label>
                             <input
@@ -216,19 +217,19 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('task_name', e.target.value)
                                 }
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter task name"
                                 required
                             />
                             {errors.task_name && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.task_name}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Date
                             </label>
                             <input
@@ -248,18 +249,18 @@ export default function EditTask({
                                     }
                                 }}
                                 style={{ colorScheme: 'dark' }}
-                                className="w-full cursor-pointer rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full cursor-pointer rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             />
                             {errors.date && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.date}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 State
                             </label>
                             <select
@@ -268,15 +269,15 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('state', e.target.value as any)
                                 }
-                                className="w-full rounded-lg border-white/10 bg-zinc-800 px-4 py-2 text-white focus:border-violet-500 focus:ring-violet-500"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             >
-                                <option value="pending">Pending</option>
-                                <option value="in progress">In Progress</option>
-                                <option value="delivered">Delivered</option>
+                                <option value="pending" className="bg-[#060c1a]">Pending</option>
+                                <option value="in progress" className="bg-[#060c1a]">In Progress</option>
+                                <option value="delivered" className="bg-[#060c1a]">Delivered</option>
                             </select>
                             {errors.state && (
-                                <p className="text-sm text-red-500">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.state}
                                 </p>
                             )}
@@ -284,9 +285,9 @@ export default function EditTask({
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-sm font-medium text-slate-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Task Image{' '}
-                            <span className="text-xs text-slate-500">
+                            <span className="normal-case text-zinc-500">
                                 (Used as review image)
                             </span>
                         </label>
@@ -329,26 +330,26 @@ export default function EditTask({
                                         : task.image_url,
                                 );
                             }}
-                            className="w-full rounded-lg border border-white/10 bg-zinc-800 px-4 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-slate-300 outline-none file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
                         />
                         {errors.image && (
-                            <p className="text-sm text-red-500">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.image}
                             </p>
                         )}
                     </div>
 
-                    <div className="flex items-center justify-end gap-4 border-t border-white/10 pt-6">
+                    <div className="flex items-center justify-end gap-4 border-t border-violet-500/10 pt-6">
                         <Link
                             href={adminRoutes.tasks.index.url()}
-                            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                         >
                             Cancel
                         </Link>
                         <button
                             type="submit"
                             disabled={processing}
-                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {processing ? (
                                 <>

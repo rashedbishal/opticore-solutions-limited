@@ -34,10 +34,10 @@ export default function ChatShow({ chatSession, sessions }: Props) {
     };
 
     return (
-        <div className="flex h-[calc(100vh-130px)] overflow-hidden rounded-xl border border-white/10 bg-black">
+        <div className="flex h-[calc(100vh-130px)] overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
             {/* Mailbox Left Sidebar */}
-            <div className="flex w-1/3 flex-col border-r border-white/10 bg-zinc-950">
-                <div className="flex items-center justify-between border-b border-white/10 p-4">
+            <div className="flex w-1/3 flex-col border-r border-violet-500/10 bg-[#060c1a]/60">
+                <div className="flex items-center justify-between border-b border-violet-500/10 p-4">
                     <h2 className="text-lg font-semibold text-white">
                         History
                     </h2>
@@ -53,7 +53,7 @@ export default function ChatShow({ chatSession, sessions }: Props) {
                         <Link
                             key={session.id}
                             href={adminRoutes.chats.show.url(session.id)}
-                            className={`block border-b border-white/5 p-4 transition-colors hover:bg-white/5 ${chatSession.id === session.id ? 'border-l-2 border-l-violet-500 bg-violet-600/10' : ''}`}
+                            className={`block border-b border-white/4 p-4 transition-colors hover:bg-violet-500/5 ${chatSession.id === session.id ? 'border-l-2 border-l-violet-500 bg-violet-600/10' : ''}`}
                         >
                             <p
                                 className={`truncate text-sm font-semibold ${chatSession.id === session.id ? 'text-violet-400' : 'text-zinc-300'}`}
@@ -73,9 +73,9 @@ export default function ChatShow({ chatSession, sessions }: Props) {
             </div>
 
             {/* Main Chat Area */}
-            <div className="flex flex-1 flex-col bg-zinc-900/50">
+            <div className="flex flex-1 flex-col bg-[#060c1a]/40">
                 {/* Chat Header */}
-                <div className="z-10 flex items-center justify-between border-b border-white/10 bg-zinc-950/50 p-4 shadow-sm">
+                <div className="z-10 flex items-center justify-between border-b border-violet-500/10 bg-[#060c1a]/60 p-4 shadow-sm">
                     <div>
                         <h2 className="text-lg font-bold text-white">
                             {chatSession.title ||

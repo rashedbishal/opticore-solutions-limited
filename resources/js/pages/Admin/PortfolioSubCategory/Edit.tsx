@@ -237,11 +237,12 @@ export default function PortfolioSubCategoryEdit({
             <h1 className="text-2xl font-bold text-white">Edit Sub-Category</h1>
 
             {/* Main details form */}
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="max-w-2xl space-y-6">
                     {/* Category */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Parent Category
                         </label>
                         <select
@@ -249,7 +250,7 @@ export default function PortfolioSubCategoryEdit({
                             onChange={(e) =>
                                 setData('category_slug', e.target.value)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
@@ -259,7 +260,7 @@ export default function PortfolioSubCategoryEdit({
                             ))}
                         </select>
                         {errors.category_slug && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.category_slug}
                             </p>
                         )}
@@ -267,18 +268,18 @@ export default function PortfolioSubCategoryEdit({
 
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Name
                         </label>
                         <input
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.name && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.name}
                             </p>
                         )}
@@ -286,18 +287,18 @@ export default function PortfolioSubCategoryEdit({
 
                     {/* Slug */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Slug
                         </label>
                         <input
                             type="text"
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 font-mono text-xs text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.slug && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.slug}
                             </p>
                         )}
@@ -305,7 +306,7 @@ export default function PortfolioSubCategoryEdit({
 
                     {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Description
                         </label>
                         <textarea
@@ -314,27 +315,27 @@ export default function PortfolioSubCategoryEdit({
                                 setData('description', e.target.value)
                             }
                             rows={3}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.description && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.description}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Starting Price
                         </label>
                         <input
                             type="text"
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.price && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.price}
                             </p>
                         )}
@@ -342,7 +343,7 @@ export default function PortfolioSubCategoryEdit({
 
                     <div className="grid gap-6 sm:grid-cols-2">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Rating
                             </label>
                             <input
@@ -354,17 +355,17 @@ export default function PortfolioSubCategoryEdit({
                                 onChange={(e) =>
                                     setData('rating', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.rating && (
-                                <p className="mt-1 text-sm text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.rating}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Reviews Count
                             </label>
                             <input
@@ -377,10 +378,10 @@ export default function PortfolioSubCategoryEdit({
                                         Number.parseInt(e.target.value) || 0,
                                     )
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.reviews_count && (
-                                <p className="mt-1 text-sm text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.reviews_count}
                                 </p>
                             )}
@@ -388,7 +389,7 @@ export default function PortfolioSubCategoryEdit({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Thumbnail Image
                         </label>
                         {subCategory.image_url && (
@@ -404,7 +405,7 @@ export default function PortfolioSubCategoryEdit({
                             onChange={(e) =>
                                 setData('image', e.target.files?.[0] ?? null)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500 focus:outline-none"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
                         />
                         {subCategory.image_url && (
                             <p className="mt-1 text-xs text-zinc-500">
@@ -412,7 +413,7 @@ export default function PortfolioSubCategoryEdit({
                             </p>
                         )}
                         {errors.image && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.image}
                             </p>
                         )}
@@ -420,7 +421,7 @@ export default function PortfolioSubCategoryEdit({
 
                     {/* Sort Order */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Sort Order
                         </label>
                         <input
@@ -432,20 +433,20 @@ export default function PortfolioSubCategoryEdit({
                                     Number.parseInt(e.target.value) || 0,
                                 )
                             }
-                            className="mt-1 block w-64 rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.sort_order && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.sort_order}
                             </p>
                         )}
                     </div>
 
-                    <div className="flex gap-4 border-t border-white/10 pt-4">
+                    <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -458,7 +459,7 @@ export default function PortfolioSubCategoryEdit({
                         </button>
                         <Link
                             href={adminRoutes.subCategories.index.url()}
-                            className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                         >
                             Cancel
                         </Link>
@@ -467,9 +468,10 @@ export default function PortfolioSubCategoryEdit({
             </div>
 
             {/* Pricing Plans section */}
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <div className="mb-5">
-                    <h2 className="text-lg font-semibold text-white">
+                    <h2 className="mb-5 text-base font-semibold tracking-wide text-white">
                         Pricing Plans
                     </h2>
                     <p className="mt-0.5 text-sm text-zinc-400">
@@ -482,7 +484,7 @@ export default function PortfolioSubCategoryEdit({
                     {PLAN_TIERS.map((tier) => (
                         <div
                             key={tier.id}
-                            className="rounded-lg border border-white/10 bg-zinc-800/50 p-4"
+                            className="rounded-lg border border-white/8 bg-white/4 p-4"
                         >
                             <p
                                 className={`mb-4 text-sm font-bold tracking-widest uppercase ${tier.accent}`}
@@ -492,7 +494,7 @@ export default function PortfolioSubCategoryEdit({
 
                             {/* Price */}
                             <div className="mb-3">
-                                <label className="mb-1 block text-xs text-zinc-400">
+                                <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                     Price
                                 </label>
                                 <input
@@ -506,13 +508,13 @@ export default function PortfolioSubCategoryEdit({
                                         )
                                     }
                                     placeholder="e.g. $99"
-                                    className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 />
                             </div>
 
                             {/* Delivery */}
                             <div className="mb-4">
-                                <label className="mb-1 block text-xs text-zinc-400">
+                                <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                     Delivery Time
                                 </label>
                                 <input
@@ -526,13 +528,13 @@ export default function PortfolioSubCategoryEdit({
                                         )
                                     }
                                     placeholder="e.g. 3 Days"
-                                    className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                 />
                             </div>
 
                             {/* Features */}
                             <div>
-                                <label className="mb-2 block text-xs text-zinc-400">
+                                <label className="mb-2 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                     Features
                                 </label>
                                 <div className="space-y-1.5">
@@ -553,7 +555,7 @@ export default function PortfolioSubCategoryEdit({
                                                         )
                                                     }
                                                     placeholder="Feature description"
-                                                    className="block w-full rounded-md border border-white/10 bg-zinc-900 px-2.5 py-1.5 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-2.5 py-1.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                                 />
                                                 <button
                                                     type="button"
@@ -591,9 +593,10 @@ export default function PortfolioSubCategoryEdit({
             </div>
 
             {/* Service Description Points section */}
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <div className="mb-5">
-                    <h2 className="text-lg font-semibold text-white">
+                    <h2 className="mb-5 text-base font-semibold tracking-wide text-white">
                         Service Description Points
                     </h2>
                     <p className="mt-0.5 text-sm text-zinc-400">
@@ -606,15 +609,15 @@ export default function PortfolioSubCategoryEdit({
                     {data.description_points.map((point, index) => (
                         <div
                             key={index}
-                            className="rounded-lg border border-white/10 bg-zinc-800/50 p-4"
+                            className="rounded-lg border border-white/8 bg-white/4 p-4"
                         >
-                            <p className="mb-3 text-xs font-semibold text-zinc-500">
+                            <p className="mb-3 font-mono text-[10px] font-semibold tracking-[0.18em] text-violet-400/50 uppercase">
                                 Point {index + 1}
                             </p>
 
                             <div className="space-y-3">
                                 <div>
-                                    <label className="mb-1 block text-xs text-zinc-400">
+                                    <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                         Icon
                                     </label>
                                     <select
@@ -626,7 +629,7 @@ export default function PortfolioSubCategoryEdit({
                                                 e.target.value,
                                             )
                                         }
-                                        className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                     >
                                         {allowed_icons.map((icon) => (
                                             <option key={icon} value={icon}>
@@ -637,7 +640,7 @@ export default function PortfolioSubCategoryEdit({
                                 </div>
 
                                 <div>
-                                    <label className="mb-1 block text-xs text-zinc-400">
+                                    <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                         Label{' '}
                                         <span className="text-red-400">*</span>
                                     </label>
@@ -652,13 +655,13 @@ export default function PortfolioSubCategoryEdit({
                                             )
                                         }
                                         placeholder="e.g. Custom Designs"
-                                        className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                         required
                                     />
                                     {errors[
                                         `description_points.${index}.label` as keyof typeof errors
                                     ] && (
-                                        <p className="mt-1 text-xs text-red-400">
+                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                             {
                                                 errors[
                                                     `description_points.${index}.label` as keyof typeof errors
@@ -679,10 +682,11 @@ export default function PortfolioSubCategoryEdit({
             </div>
 
             {/* FAQ section */}
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <div className="mb-5 flex items-center justify-between">
                     <div>
-                        <h2 className="text-lg font-semibold text-white">
+                        <h2 className="mb-5 text-base font-semibold tracking-wide text-white">
                             FAQs
                         </h2>
                         <p className="mt-0.5 text-sm text-zinc-400">
@@ -690,7 +694,7 @@ export default function PortfolioSubCategoryEdit({
                             the public page.
                         </p>
                     </div>
-                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-400">
+                    <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 font-mono text-[10px] tracking-wide text-violet-400">
                         {data.faqs.length}{' '}
                         {data.faqs.length === 1 ? 'question' : 'questions'}
                     </span>
@@ -700,10 +704,10 @@ export default function PortfolioSubCategoryEdit({
                     {data.faqs.map((faq, index) => (
                         <div
                             key={index}
-                            className="rounded-lg border border-white/10 bg-zinc-800/50 p-4"
+                            className="rounded-lg border border-white/8 bg-white/4 p-4"
                         >
                             <div className="mb-3 flex items-start justify-between gap-3">
-                                <span className="mt-0.5 text-xs font-semibold text-zinc-500">
+                                <span className="mt-0.5 font-mono text-[10px] font-semibold tracking-wider text-violet-400/50">
                                     #{index + 1}
                                 </span>
                                 <button
@@ -718,7 +722,7 @@ export default function PortfolioSubCategoryEdit({
 
                             <div className="space-y-3">
                                 <div>
-                                    <label className="mb-1 block text-xs text-zinc-400">
+                                    <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                         Question
                                     </label>
                                     <input
@@ -732,12 +736,12 @@ export default function PortfolioSubCategoryEdit({
                                             )
                                         }
                                         placeholder="e.g. How long does it take?"
-                                        className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
                                     {errors[
                                         `faqs.${index}.question` as keyof typeof errors
                                     ] && (
-                                        <p className="mt-1 text-xs text-red-400">
+                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                             {
                                                 errors[
                                                     `faqs.${index}.question` as keyof typeof errors
@@ -748,7 +752,7 @@ export default function PortfolioSubCategoryEdit({
                                 </div>
 
                                 <div>
-                                    <label className="mb-1 block text-xs text-zinc-400">
+                                    <label className="mb-1 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                         Answer
                                     </label>
                                     <textarea
@@ -762,12 +766,12 @@ export default function PortfolioSubCategoryEdit({
                                         }
                                         rows={3}
                                         placeholder="Provide a clear, helpful answer…"
-                                        className="block w-full rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
                                     {errors[
                                         `faqs.${index}.answer` as keyof typeof errors
                                     ] && (
-                                        <p className="mt-1 text-xs text-red-400">
+                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                             {
                                                 errors[
                                                     `faqs.${index}.answer` as keyof typeof errors
@@ -782,9 +786,7 @@ export default function PortfolioSubCategoryEdit({
 
                     {data.faqs.length === 0 && (
                         <div className="rounded-lg border border-dashed border-white/10 py-8 text-center">
-                            <p className="text-sm text-zinc-500">
-                                No FAQs yet. Add your first question below.
-                            </p>
+                            <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No FAQs yet</p>
                         </div>
                     )}
                 </div>
@@ -792,7 +794,7 @@ export default function PortfolioSubCategoryEdit({
                 <button
                     type="button"
                     onClick={addFaq}
-                    className="mt-4 flex items-center gap-2 rounded-lg border border-white/10 bg-zinc-800/50 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700/50 hover:text-white"
+                    className="mt-4 flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                 >
                     <Plus className="h-4 w-4" />
                     Add FAQ
@@ -805,10 +807,11 @@ export default function PortfolioSubCategoryEdit({
             </div>
 
             {/* Gallery section */}
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <div className="mb-5 flex items-center justify-between">
                     <div>
-                        <h2 className="text-lg font-semibold text-white">
+                        <h2 className="mb-5 text-base font-semibold tracking-wide text-white">
                             Gallery
                         </h2>
                         <p className="mt-0.5 text-sm text-zinc-400">
@@ -816,7 +819,7 @@ export default function PortfolioSubCategoryEdit({
                             public page. Newest items appear first.
                         </p>
                     </div>
-                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-400">
+                    <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 font-mono text-[10px] tracking-wide text-violet-400">
                         {subCategory.gallery.length}{' '}
                         {subCategory.gallery.length === 1 ? 'item' : 'items'}
                     </span>
@@ -894,25 +897,23 @@ export default function PortfolioSubCategoryEdit({
                 ) : (
                     <div className="mb-6 rounded-lg border border-dashed border-white/10 py-10 text-center">
                         <ImageIcon className="mx-auto mb-2 h-8 w-8 text-zinc-600" />
-                        <p className="text-sm text-zinc-500">
-                            No gallery items yet. Upload images or videos below.
-                        </p>
+                        <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No gallery items yet</p>
                     </div>
                 )}
 
                 {/* Upload form */}
                 <form
                     onSubmit={uploadMedia}
-                    className="border-t border-white/10 pt-5"
+                    className="border-t border-violet-500/10 pt-5"
                 >
                     <p className="mb-3 text-sm font-medium text-zinc-300">
                         Add Media
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                         <div className="flex-1">
-                            <label className="mb-1 block text-xs text-zinc-400">
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                 File{' '}
-                                <span className="text-zinc-500">
+                                <span className="font-normal normal-case text-zinc-500">
                                     (JPG, PNG, WEBP, GIF, MP4, MOV — max 300MB)
                                 </span>
                             </label>
@@ -933,24 +934,24 @@ export default function PortfolioSubCategoryEdit({
                                         setGalleryData('media', file);
                                     }
                                 }}
-                                className="block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500 focus:outline-none"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
                                 required
                             />
                             {fileSizeError && (
-                                <p className="mt-1 text-xs text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {fileSizeError}
                                 </p>
                             )}
                             {galleryErrors.media && (
-                                <p className="mt-1 text-xs text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {galleryErrors.media}
                                 </p>
                             )}
                         </div>
                         <div className="sm:w-56">
-                            <label className="mb-1 block text-xs text-zinc-400">
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                 Caption{' '}
-                                <span className="text-zinc-500">
+                                <span className="font-normal normal-case text-zinc-500">
                                     (shown in gallery)
                                 </span>
                             </label>
@@ -961,10 +962,10 @@ export default function PortfolioSubCategoryEdit({
                                     setGalleryData('caption', e.target.value)
                                 }
                                 placeholder="e.g. Brand Identity — TechFlow"
-                                className="block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {galleryErrors.caption && (
-                                <p className="mt-1 text-xs text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {galleryErrors.caption}
                                 </p>
                             )}
@@ -976,7 +977,7 @@ export default function PortfolioSubCategoryEdit({
                                 !galleryData.media ||
                                 !!fileSizeError
                             }
-                            className="flex shrink-0 items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex shrink-0 items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {galleryProcessing ? (
                                 <>

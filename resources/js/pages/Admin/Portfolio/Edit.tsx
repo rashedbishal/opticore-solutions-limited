@@ -71,22 +71,23 @@ export default function PortfolioEdit({
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Edit Portfolio
             </h1>
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
                     {/* Title */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Title
                         </label>
                         <input
                             type="text"
                             value={data.title}
                             onChange={(e) => setData('title', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.title && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.title}
                             </p>
                         )}
@@ -94,7 +95,7 @@ export default function PortfolioEdit({
 
                     {/* Category Selection (UI only, to filter sub-categories) */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Category
                         </label>
                         <select
@@ -102,7 +103,7 @@ export default function PortfolioEdit({
                             onChange={(e) =>
                                 setSelectedCategory(e.target.value)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         >
                             {Object.entries(categories).map(([slug, label]) => (
                                 <option key={slug} value={slug}>
@@ -114,7 +115,7 @@ export default function PortfolioEdit({
 
                     {/* Sub-Category Selection (Actual field sent to server) */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Sub-Category
                         </label>
                         <select
@@ -122,7 +123,7 @@ export default function PortfolioEdit({
                             onChange={(e) =>
                                 setData('sub_category_id', e.target.value)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         >
                             <option value="">Select a sub-category</option>
@@ -146,7 +147,7 @@ export default function PortfolioEdit({
                             </p>
                         )}
                         {errors.sub_category_id && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.sub_category_id}
                             </p>
                         )}
@@ -154,21 +155,21 @@ export default function PortfolioEdit({
 
                     {/* Alt / Description */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Alt / Description
                         </label>
                         <input
                             type="text"
                             value={data.alt}
                             onChange={(e) => setData('alt', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                     </div>
 
                     {/* Current Media Preview */}
                     {portfolio.media_path && (
                         <div>
-                            <p className="mb-1 text-xs font-medium tracking-wider text-zinc-400 uppercase">
+                            <p className="mb-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Current Media
                             </p>
                             {portfolio.media_type === 'video' ? (
@@ -190,13 +191,13 @@ export default function PortfolioEdit({
 
                     {/* Media Upload */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Replace Media{' '}
-                            <span className="font-normal text-zinc-500">
+                            <span className="font-normal normal-case text-zinc-500">
                                 (Leave empty to keep current)
                             </span>
                         </label>
-                        <p className="mt-0.5 text-xs text-zinc-500">
+                        <p className="mb-2 text-xs text-zinc-500">
                             Accepted: JPG, PNG, WEBP, GIF, MP4, MOV, AVI, WEBM ·
                             Max 100MB
                         </p>
@@ -206,20 +207,20 @@ export default function PortfolioEdit({
                             onChange={(e) =>
                                 setData('media', e.target.files?.[0] || null)
                             }
-                            className="mt-2 block w-full text-zinc-300 file:mr-4 file:rounded-full file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-500"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
                         />
                         {errors.media && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.media}
                             </p>
                         )}
                     </div>
 
-                    <div className="flex gap-4 border-t border-white/10 pt-4">
+                    <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -232,7 +233,7 @@ export default function PortfolioEdit({
                         </button>
                         <Link
                             href={adminRoutes.portfolios.index.url()}
-                            className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                         >
                             Cancel
                         </Link>

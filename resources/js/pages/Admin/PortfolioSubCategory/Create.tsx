@@ -33,11 +33,12 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Create Sub-Category
             </h1>
-            <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-6">
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
                     {/* Category */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Parent Category
                         </label>
                         <select
@@ -45,7 +46,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             onChange={(e) =>
                                 setData('category_slug', e.target.value)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
@@ -55,7 +56,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             ))}
                         </select>
                         {errors.category_slug && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.category_slug}
                             </p>
                         )}
@@ -63,7 +64,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Name
                         </label>
                         <input
@@ -71,11 +72,11 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="e.g. Logo & Identity"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.name && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.name}
                             </p>
                         )}
@@ -83,9 +84,9 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     {/* Slug */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Slug{' '}
-                            <span className="font-normal text-zinc-500">
+                            <span className="font-normal normal-case text-zinc-500">
                                 (Leave empty to auto-generate)
                             </span>
                         </label>
@@ -94,10 +95,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
                             placeholder="e.g. logo-identity"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 font-mono text-xs text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.slug && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.slug}
                             </p>
                         )}
@@ -105,7 +106,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Description
                         </label>
                         <textarea
@@ -114,17 +115,17 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 setData('description', e.target.value)
                             }
                             rows={3}
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.description && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.description}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Starting Price
                         </label>
                         <input
@@ -132,10 +133,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
                             placeholder="e.g. 500 BDT"
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.price && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.price}
                             </p>
                         )}
@@ -143,7 +144,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     <div className="grid gap-6 sm:grid-cols-2">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Rating
                             </label>
                             <input
@@ -155,17 +156,17 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 onChange={(e) =>
                                     setData('rating', e.target.value)
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.rating && (
-                                <p className="mt-1 text-sm text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.rating}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Reviews Count
                             </label>
                             <input
@@ -178,10 +179,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                         Number.parseInt(e.target.value) || 0,
                                     )
                                 }
-                                className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.reviews_count && (
-                                <p className="mt-1 text-sm text-red-400">
+                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {errors.reviews_count}
                                 </p>
                             )}
@@ -189,7 +190,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Image
                         </label>
                         <input
@@ -198,10 +199,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             onChange={(e) =>
                                 setData('image', e.target.files?.[0] ?? null)
                             }
-                            className="mt-1 block w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500 focus:outline-none"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
                         />
                         {errors.image && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.image}
                             </p>
                         )}
@@ -209,7 +210,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
                     {/* Sort Order */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300">
+                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Sort Order
                         </label>
                         <input
@@ -221,20 +222,20 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                     Number.parseInt(e.target.value) || 0,
                                 )
                             }
-                            className="mt-1 block w-64 rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-white focus:border-violet-500 focus:outline-none sm:text-sm"
+                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.sort_order && (
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                 {errors.sort_order}
                             </p>
                         )}
                     </div>
 
-                    <div className="flex gap-4 border-t border-white/10 pt-4">
+                    <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -247,7 +248,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         </button>
                         <Link
                             href={adminRoutes.subCategories.index.url()}
-                            className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
                         >
                             Cancel
                         </Link>

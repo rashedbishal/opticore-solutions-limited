@@ -16,8 +16,10 @@ import {
     Briefcase,
     Layers,
     Star,
+    CheckCircle2,
+    AlertCircle,
 } from 'lucide-react';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NotificationListener from '@/components/Admin/NotificationListener';
 import useEchoReady from '@/hooks/useEchoReady';
 import adminRoutes from '@/routes/admin';
@@ -29,11 +31,28 @@ interface AdminLayoutProps {
 
 const CHAT_PAGE_PATH = '/admin/customer-conversations';
 
+const NAV_ITEMS = [
+    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Customer Support', href: '/admin/customer-conversations', icon: MessageSquare },
+    { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
+    { name: 'Sub Categories', href: '/admin/sub-categories', icon: Layers },
+    { name: 'Blogs', href: '/admin/blogs', icon: FileText },
+    { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
+    { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
+    { name: 'Brands', href: '/admin/brands', icon: Briefcase },
+    { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Clients', href: '/admin/clients', icon: UserCheck },
+    { name: 'Client Workflow', href: '/admin/tasks', icon: Briefcase },
+    { name: 'Client Review Control', href: '/admin/client-reviews', icon: Star },
+];
+
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [msgToast, setMsgToast] = useState<{ show: boolean; name?: string }>({ show: false });
+    const msgToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const echoReady = useEchoReady();
     const [notificationCount, setNotificationCount] = useState(0);
 
@@ -42,66 +61,45 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     useEffect(() => {
         return router.on('navigate', (event) => {
             setSidebarOpen(false);
-
             if (event.detail.page.url.startsWith(CHAT_PAGE_PATH)) {
                 setNotificationCount(0);
             }
         });
     }, []);
 
-    const handleNewNotification = useCallback(() => {
+    const handleNewNotification = useCallback((senderName?: string) => {
         setNotificationCount((prev) => prev + 1);
+        setMsgToast({ show: true, name: senderName });
+        if (msgToastTimerRef.current) clearTimeout(msgToastTimerRef.current);
+        msgToastTimerRef.current = setTimeout(() => setMsgToast({ show: false }), 6000);
     }, []);
 
     useEffect(() => {
-        if (!flash?.success) {
-            return;
-        }
-
+        if (!flash?.success) return;
         const showTimer = setTimeout(() => setShowToast(true), 0);
-        const hideTimer = setTimeout(() => setShowToast(false), 4000);
-
-        return () => {
-            clearTimeout(showTimer);
-            clearTimeout(hideTimer);
-        };
+        const hideTimer = setTimeout(() => setShowToast(false), 4500);
+        return () => { clearTimeout(showTimer); clearTimeout(hideTimer); };
     }, [flash]);
 
-    const navigation = [
-        { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-        {
-            name: 'Customer Support',
-            href: '/admin/customer-conversations',
-            icon: MessageSquare,
-        },
-        { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
-        {
-            name: 'Sub Categories',
-            href: '/admin/sub-categories',
-            icon: Layers,
-        },
-        { name: 'Blogs', href: '/admin/blogs', icon: FileText },
-        { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
-        { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
-        { name: 'Brands', href: '/admin/brands', icon: Briefcase },
-        { name: 'Users', href: '/admin/users', icon: Users },
-        { name: 'Clients', href: '/admin/clients', icon: UserCheck },
-        {
-            name: 'Client Workflow',
-            href: '/admin/tasks',
-            icon: Briefcase,
-        },
-        {
-            name: 'Client Review Control',
-            href: '/admin/client-reviews',
-            icon: Star,
-        },
-    ];
-
     return (
-        <div className="min-h-screen bg-[#050B14] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.15),rgba(255,255,255,0))] font-sans text-slate-200 selection:bg-cyan-500/30">
-            {title && <Head title={`${title} - Admin Panel`} />}
+        <div className="relative min-h-screen overflow-x-hidden bg-[#03050d] font-sans text-slate-200 selection:bg-violet-500/30">
+            {title && <Head title={`${title} — CMS`} />}
 
+            {/* ── Global ambient background ── */}
+            <div className="pointer-events-none fixed inset-0 z-0">
+                <div
+                    className="absolute inset-0 opacity-[0.035]"
+                    style={{
+                        backgroundImage:
+                            'linear-gradient(rgba(139,92,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,1) 1px, transparent 1px)',
+                        backgroundSize: '64px 64px',
+                    }}
+                />
+                <div className="absolute -top-60 -left-60 h-[640px] w-[640px] rounded-full bg-violet-700/12 blur-[180px]" />
+                <div className="absolute -bottom-60 -right-60 h-[520px] w-[520px] rounded-full bg-cyan-700/8 blur-[160px]" />
+            </div>
+
+            {/* ── Echo / notification listener ── */}
             {echoReady && (
                 <NotificationListener
                     isOnChatPage={isOnChatPage}
@@ -109,218 +107,288 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 />
             )}
 
-            {/* General App Toast / Flash Notification */}
+            {/* ── Toast notifications ── */}
             <AnimatePresence>
                 {showToast && flash?.success && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        key="toast-success"
+                        initial={{ opacity: 0, y: -16, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{
-                            opacity: 0,
-                            scale: 0.95,
-                            transition: { duration: 0.15 },
-                        }}
-                        className="fixed top-6 right-6 z-[100] flex min-w-[300px] items-center rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 shadow-2xl backdrop-blur-xl"
+                        exit={{ opacity: 0, y: -8, scale: 0.95, transition: { duration: 0.2 } }}
+                        className="fixed top-5 right-5 z-[200] flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-emerald-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
+                        style={{ boxShadow: '0 0 40px rgba(16,185,129,0.12)' }}
                     >
-                        <div className="mr-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                            <svg
-                                className="h-5 w-5 text-emerald-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                />
-                            </svg>
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15">
+                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                         </div>
-                        <div className="flex-1">
-                            <h4 className="text-sm font-semibold text-emerald-400">
-                                Success
-                            </h4>
-                            <p className="mt-0.5 text-sm text-zinc-200">
-                                {flash.success}
-                            </p>
+                        <div className="min-w-0 flex-1">
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase">Success</p>
+                            <p className="mt-0.5 text-sm text-slate-200">{flash.success}</p>
                         </div>
-                        <button
-                            onClick={() => setShowToast(false)}
-                            className="ml-4 p-1 text-emerald-400/60 transition-colors hover:text-emerald-400"
-                        >
-                            <X className="h-5 w-5" />
+                        <button onClick={() => setShowToast(false)} className="shrink-0 text-slate-500 hover:text-slate-300">
+                            <X className="h-4 w-4" />
                         </button>
                     </motion.div>
                 )}
                 {flash?.error && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        key="toast-error"
+                        initial={{ opacity: 0, y: -16, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{
-                            opacity: 0,
-                            scale: 0.95,
-                            transition: { duration: 0.15 },
-                        }}
-                        className="fixed top-6 right-6 z-[100] flex min-w-[300px] items-center rounded-2xl border border-red-500/30 bg-red-500/10 p-4 shadow-2xl backdrop-blur-xl"
+                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                        className="fixed top-5 right-5 z-[200] flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-red-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
+                        style={{ boxShadow: '0 0 40px rgba(239,68,68,0.1)' }}
                     >
-                        <div className="mr-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/20">
-                            <X className="h-5 w-5 text-red-400" />
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-500/15">
+                            <AlertCircle className="h-4 w-4 text-red-400" />
                         </div>
-                        <div className="flex-1">
-                            <h4 className="text-sm font-semibold text-red-400">
-                                Error
-                            </h4>
-                            <p className="mt-0.5 text-sm text-zinc-200">
-                                {flash.error}
-                            </p>
+                        <div className="min-w-0 flex-1">
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-red-400 uppercase">Error</p>
+                            <p className="mt-0.5 text-sm text-slate-200">{flash.error}</p>
                         </div>
+                    </motion.div>
+                )}
+
+                {/* ── New message notification toast ── */}
+                {msgToast.show && (
+                    <motion.div
+                        key="toast-new-message"
+                        initial={{ opacity: 0, x: 60, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 60, scale: 0.95, transition: { duration: 0.25 } }}
+                        className="fixed top-20 right-5 z-[200] w-80 overflow-hidden rounded-xl border border-cyan-500/30 bg-[#060c1a]/98 shadow-2xl backdrop-blur-xl"
+                        style={{ boxShadow: '0 0 50px rgba(6,182,212,0.18), 0 0 100px rgba(6,182,212,0.06)' }}
+                    >
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+                        <Link
+                            href={CHAT_PAGE_PATH}
+                            onClick={() => setMsgToast({ show: false })}
+                            className="flex items-start gap-3 p-4"
+                        >
+                            <div className="relative shrink-0">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/15">
+                                    <MessageSquare className="h-4 w-4 text-cyan-400" />
+                                </div>
+                                <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5 items-center justify-center">
+                                    <span className="absolute inline-flex h-2.5 w-2.5 animate-ping rounded-full bg-cyan-400 opacity-60" />
+                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                                </span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="font-mono text-[9px] tracking-[0.25em] text-cyan-400/80 uppercase">Incoming Transmission</p>
+                                <p className="mt-0.5 text-sm font-medium text-white">
+                                    {msgToast.name ? msgToast.name : 'A customer'}{' '}
+                                    <span className="font-normal text-slate-300">sent a message</span>
+                                </p>
+                                <p className="mt-1.5 font-mono text-[9px] tracking-[0.18em] text-violet-400/60 uppercase">Tap to open channel →</p>
+                            </div>
+                        </Link>
+                        <button
+                            onClick={() => setMsgToast({ show: false })}
+                            className="absolute top-3 right-3 rounded p-0.5 text-slate-600 transition-colors hover:text-slate-300"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Mobile sidebar overlay */}
-            {sidebarOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-[#050B14]/80 backdrop-blur-sm transition-opacity lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
+            {/* ── Mobile overlay ── */}
+            <AnimatePresence>
+                {sidebarOpen && (
+                    <motion.div
+                        key="overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                )}
+            </AnimatePresence>
 
-            {/* Sidebar */}
+            {/* ── Sidebar ── */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/5 bg-[#0A1222]/80 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col transform border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
-                <div className="flex h-20 items-center justify-between border-b border-white/5 px-6">
-                    <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-                            <span className="text-lg leading-none font-bold text-white">
-                                O
-                            </span>
+                {/* Sidebar inner grid */}
+                <div
+                    className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                    style={{
+                        backgroundImage:
+                            'linear-gradient(rgba(139,92,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,1) 1px, transparent 1px)',
+                        backgroundSize: '32px 32px',
+                    }}
+                />
+                {/* Sidebar top glow */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/60 to-transparent" />
+
+                {/* Logo */}
+                <div className="relative flex h-16 shrink-0 items-center justify-between border-b border-violet-500/10 px-5">
+                    <div className="flex items-center gap-3">
+                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+                                className="absolute inset-0 rounded-lg border border-dashed border-violet-500/40"
+                            />
+                            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-violet-600/30 to-cyan-600/20" />
+                            <img src="/favicon.ico" alt="Opticore" className="relative h-5 w-5 object-contain" />
                         </div>
-                        <span className="text-xl font-semibold tracking-tight text-white">
-                            Opticore CMS
-                        </span>
+                        <div>
+                            <p className="text-[11px] font-bold leading-tight tracking-[0.08em] text-white uppercase">Opticore Solutions</p>
+                            <p className="font-mono text-[9px] tracking-[0.22em] text-violet-400/60 uppercase">Limited</p>
+                        </div>
                     </div>
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="text-slate-400 transition-colors hover:text-white lg:hidden"
+                        className="text-slate-500 transition-colors hover:text-slate-200 lg:hidden"
                     >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                <div className="h-[calc(100vh-80px-90px)] overflow-y-auto p-4">
-                    <p className="mb-4 px-2 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                        Menu
+                {/* Navigation */}
+                <div className="relative flex-1 overflow-y-auto px-3 py-4">
+                    <p className="mb-3 px-3 font-mono text-[9px] font-semibold tracking-[0.28em] text-violet-400/40 uppercase">
+                        Navigation
                     </p>
-                    <nav className="space-y-1">
-                        {navigation.map((item) => {
+                    <nav className="space-y-0.5">
+                        {NAV_ITEMS.map((item) => {
                             const active =
-                                window.location.pathname.startsWith(
-                                    item.href,
-                                ) &&
-                                (item.href !== '/admin' ||
-                                    window.location.pathname === '/admin');
+                                window.location.pathname.startsWith(item.href) &&
+                                (item.href !== '/admin' || window.location.pathname === '/admin');
 
                             return (
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`group flex items-center rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200 ${
+                                    className={`group relative flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                                         active
-                                            ? 'border border-blue-500/20 bg-blue-500/10 text-cyan-400 shadow-[inset_0_0_20px_rgba(59,130,246,0.05)]'
-                                            : 'border border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                                            ? 'border border-violet-500/20 bg-violet-500/8 text-violet-200'
+                                            : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
                                     }`}
                                 >
+                                    {active && (
+                                        <div className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
+                                    )}
                                     <item.icon
-                                        className={`mr-3 h-5 w-5 shrink-0 transition-colors ${active ? 'text-cyan-400' : 'text-slate-500 group-hover:text-slate-300'}`}
+                                        className={`mr-3 h-4 w-4 shrink-0 transition-colors ${
+                                            active ? 'text-violet-400' : 'text-slate-600 group-hover:text-slate-400'
+                                        }`}
                                     />
-                                    {item.name}
-                                    {item.href === CHAT_PAGE_PATH &&
-                                        notificationCount > 0 &&
-                                        !isOnChatPage && (
-                                            <span className="ml-auto h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
-                                        )}
+                                    <span className="truncate font-mono text-sm tracking-[0.04em]">{item.name}</span>
+                                    {item.href === CHAT_PAGE_PATH && notificationCount > 0 && !isOnChatPage && (
+                                        <span className="relative ml-auto flex h-3 w-3 shrink-0 items-center justify-center">
+                                            <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-rose-400 opacity-60" />
+                                            <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" style={{ boxShadow: '0 0 8px rgba(244,63,94,1), 0 0 16px rgba(244,63,94,0.5)' }} />
+                                        </span>
+                                    )}
                                 </Link>
                             );
                         })}
                     </nav>
                 </div>
 
-                {/* Profile Section in Sidebar Bottom */}
-                <div className="absolute bottom-0 w-full border-t border-white/5 bg-[#0A1222]/90 p-4 backdrop-blur-xl">
-                    <div className="mb-3 flex items-center gap-3 px-2">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-indigo-500 to-blue-500 font-semibold text-white shadow-lg shadow-blue-500/20">
-                            {auth.user?.name?.charAt(0) || 'A'}
+                {/* Sidebar footer */}
+                <div className="relative shrink-0 border-t border-violet-500/10 p-4">
+                    {/* System status */}
+                    <div className="mb-3 flex items-center gap-2 px-1">
+                        <motion.div
+                            animate={{ opacity: [1, 0.3, 1] }}
+                            transition={{ duration: 1.8, repeat: Infinity }}
+                            className="h-1.5 w-1.5 rounded-full bg-green-400"
+                        />
+                        <span className="font-mono text-[9px] tracking-[0.2em] text-green-400/70 uppercase">System Online</span>
+                    </div>
+
+                    {/* User info */}
+                    <div className="mb-2 flex items-center gap-3 rounded-lg border border-white/5 bg-white/4 px-3 py-2.5">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-cyan-600 text-xs font-bold text-white">
+                            {auth.user?.name?.charAt(0)?.toUpperCase() || 'A'}
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium text-white">
+                            <p className="truncate text-xs font-semibold text-white">
                                 {auth.user?.name || 'Admin User'}
                             </p>
-                            <p className="truncate text-xs text-slate-400">
-                                Administrator
-                            </p>
+                            <p className="font-mono text-[9px] tracking-wide text-violet-400/60 uppercase">Administrator</p>
                         </div>
                     </div>
+
                     <Link
                         href={adminRoutes.logout.url()}
                         method="post"
                         as="button"
-                        className="flex w-full items-center justify-center rounded-xl px-3 py-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-400"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/10 bg-red-500/5 py-2 text-xs font-medium text-red-400/70 transition-all hover:border-red-500/25 hover:bg-red-500/10 hover:text-red-400"
                     >
-                        <LogOut className="mr-2 h-4 w-4 shrink-0" />
+                        <LogOut className="h-3.5 w-3.5" />
                         Sign Out
                     </Link>
                 </div>
             </div>
 
-            {/* Main content */}
-            <div className="flex min-h-screen flex-col lg:pl-64">
-                <header className="sticky top-0 z-30 flex h-20 shrink-0 items-center gap-x-4 border-b border-white/5 bg-[#050B14]/60 px-4 backdrop-blur-xl sm:gap-x-6 sm:px-6 lg:px-8">
+            {/* ── Main area ── */}
+            <div className="relative z-10 flex min-h-screen flex-col lg:pl-64">
+                {/* Header */}
+                <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-violet-500/10 bg-[#03050d]/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+                    <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+
                     <button
                         type="button"
-                        className="-m-2.5 p-2.5 text-slate-400 transition-colors hover:text-white lg:hidden"
+                        className="-m-2 rounded-lg p-2 text-slate-500 transition-colors hover:text-slate-200 lg:hidden"
                         onClick={() => setSidebarOpen(true)}
                     >
                         <span className="sr-only">Open sidebar</span>
-                        <Menu className="h-6 w-6" aria-hidden="true" />
+                        <Menu className="h-5 w-5" />
                     </button>
 
-                    <div className="flex flex-1 items-center justify-end gap-x-4 self-stretch lg:gap-x-6">
-                        {/* Top Right Actions */}
-                        <div className="flex items-center gap-x-4 lg:gap-x-6">
-                            <Link
-                                href={CHAT_PAGE_PATH}
-                                className="relative -m-2.5 p-2.5 text-slate-400 transition-colors hover:text-cyan-400"
-                            >
-                                <span className="sr-only">
-                                    View notifications
+                    {/* Breadcrumb / page indicator */}
+                    <div className="hidden items-center gap-2 lg:flex">
+                        <span className="font-mono text-[10px] tracking-[0.2em] text-violet-400/40 uppercase">CMS</span>
+                        {title && (
+                            <>
+                                <span className="text-violet-500/30">›</span>
+                                <span className="font-mono text-[10px] tracking-[0.15em] text-violet-400/60 uppercase">{title}</span>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="flex flex-1 items-center justify-end gap-4">
+                        <Link
+                            href={CHAT_PAGE_PATH}
+                            className={`relative -m-2 rounded-lg p-2 transition-colors ${
+                                notificationCount > 0 && !isOnChatPage
+                                    ? 'text-violet-400 hover:text-violet-300'
+                                    : 'text-slate-500 hover:text-violet-400'
+                            }`}
+                        >
+                            <span className="sr-only">Notifications</span>
+                            <Bell className="h-5 w-5" />
+                            {notificationCount > 0 && !isOnChatPage && (
+                                <span className="absolute -right-1 -top-1">
+                                    <span className="absolute inline-flex h-5 w-5 animate-ping rounded-full bg-rose-400 opacity-40" />
+                                    <motion.span
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 1.0, repeat: Infinity }}
+                                        className="relative flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-0.5 font-mono text-[9px] font-bold text-white"
+                                        style={{ boxShadow: '0 0 10px rgba(244,63,94,0.9), 0 0 20px rgba(244,63,94,0.4)' }}
+                                    >
+                                        {notificationCount > 99 ? '99+' : notificationCount}
+                                    </motion.span>
                                 </span>
-                                <Bell className="h-5 w-5" aria-hidden="true" />
-                                {notificationCount > 0 && !isOnChatPage && (
-                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] leading-none font-bold text-white shadow-[0_0_8px_rgba(239,68,68,0.7)]">
-                                        {notificationCount > 99
-                                            ? '99+'
-                                            : notificationCount}
-                                    </span>
-                                )}
-                            </Link>
-                        </div>
+                            )}
+                        </Link>
                     </div>
                 </header>
 
-                <main className="flex-1 py-4 md:py-8">
+                {/* Page content */}
+                <main className="flex-1 py-6 md:py-8">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        {title && (
-                            <div className="mb-8 flex items-center justify-between">
-                                <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                                    {title}
-                                </h1>
-                            </div>
-                        )}
                         {children}
                     </div>
                 </main>
