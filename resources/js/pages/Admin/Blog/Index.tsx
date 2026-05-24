@@ -33,7 +33,7 @@ export default function BlogIndex({ blogs }: Props) {
                 <h1 className="text-2xl font-bold text-white">Blogs</h1>
                 <Link
                     href={adminRoutes.blogs.create.url()}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500"
+                    className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full"
                 >
                     <Plus className="h-4 w-4" /> Add Blog Post
                 </Link>
@@ -53,13 +53,13 @@ export default function BlogIndex({ blogs }: Props) {
                             <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Title
                             </th>
-                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase whitespace-nowrap">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] whitespace-nowrap text-violet-400/60 uppercase">
                                 Category
                             </th>
-                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase whitespace-nowrap">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] whitespace-nowrap text-violet-400/60 uppercase">
                                 Author
                             </th>
-                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase whitespace-nowrap">
+                            <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] whitespace-nowrap text-violet-400/60 uppercase">
                                 Actions
                             </th>
                         </tr>
@@ -71,9 +71,7 @@ export default function BlogIndex({ blogs }: Props) {
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
                                 <td className="max-w-0 px-6 py-4 text-sm text-white">
-                                    <p className="truncate">
-                                        {blog.title}
-                                    </p>
+                                    <p className="truncate">{blog.title}</p>
                                 </td>
                                 <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
                                     {blog.category}
@@ -101,8 +99,13 @@ export default function BlogIndex({ blogs }: Props) {
                         ))}
                         {blogs.data.length === 0 && (
                             <tr>
-                                <td colSpan={4} className="px-6 py-16 text-center">
-                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No records found</p>
+                                <td
+                                    colSpan={4}
+                                    className="px-6 py-16 text-center"
+                                >
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                                        No records found
+                                    </p>
                                 </td>
                             </tr>
                         )}

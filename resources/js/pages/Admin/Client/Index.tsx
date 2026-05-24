@@ -176,8 +176,13 @@ export default function ClientIndex({ clients }: Props) {
                     <tbody>
                         {clients.data.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="px-6 py-16 text-center">
-                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No records found</p>
+                                <td
+                                    colSpan={6}
+                                    className="px-6 py-16 text-center"
+                                >
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                                        No records found
+                                    </p>
                                 </td>
                             </tr>
                         ) : (
@@ -393,13 +398,13 @@ export default function ClientIndex({ clients }: Props) {
                                 <div className="flex gap-3">
                                     <button
                                         onClick={closeModal}
-                                        className="flex-1 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                                        className="relative flex-1 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={proceedToPassword}
-                                        className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+                                        className="relative flex-1 overflow-hidden rounded-lg border border-red-500/30 bg-gradient-to-br from-red-600 to-rose-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_18px_rgba(239,68,68,0.28),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-red-400/50 hover:from-red-500 hover:to-rose-400 hover:shadow-[0_0_28px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.15)] hover:before:translate-x-full"
                                     >
                                         Proceed Anyway
                                     </button>
@@ -443,7 +448,7 @@ export default function ClientIndex({ clients }: Props) {
                                             }
                                             placeholder="Your admin password"
                                             autoFocus
-                                            className="block w-full rounded-lg border border-white/8 bg-white/4 py-2.5 pr-10 pl-4 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-red-500/50 focus:bg-red-500/5"
+                                            className="block w-full rounded-lg border border-white/8 bg-white/4 py-2.5 pr-10 pl-4 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-red-500/50 focus:bg-red-500/5"
                                         />
                                         <button
                                             type="button"
@@ -469,7 +474,7 @@ export default function ClientIndex({ clients }: Props) {
                                         <button
                                             type="button"
                                             onClick={closeModal}
-                                            className="flex-1 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                                            className="relative flex-1 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                                         >
                                             Cancel
                                         </button>
@@ -478,7 +483,7 @@ export default function ClientIndex({ clients }: Props) {
                                             disabled={
                                                 processing || !data.password
                                             }
-                                            className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="relative flex-1 overflow-hidden rounded-lg border border-red-500/30 bg-gradient-to-br from-red-600 to-rose-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_18px_rgba(239,68,68,0.28),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-red-400/50 hover:from-red-500 hover:to-rose-400 hover:shadow-[0_0_28px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.15)] hover:before:translate-x-full disabled:cursor-not-allowed disabled:opacity-50"
                                         >
                                             {processing
                                                 ? 'Deleting...'

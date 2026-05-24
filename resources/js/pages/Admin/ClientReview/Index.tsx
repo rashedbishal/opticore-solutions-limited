@@ -286,7 +286,7 @@ function ClientReviewIndex({ grouped: serverGrouped }: Props) {
     const categoryKeys = Object.keys(grouped);
 
     return (
-        <AdminLayout title="Client Review Control">
+        <AdminLayout title="Review Control">
             <div className="space-y-6">
                 <p className="text-sm text-zinc-400">
                     Manage, sort, and delete client reviews per service. Order

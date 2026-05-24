@@ -74,7 +74,7 @@ class TaskController extends Controller
         return Inertia::render('Admin/Task/Create', [
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
-            'users' => User::orderBy('name')->get(['id', 'name', 'email']),
+            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 
@@ -130,7 +130,7 @@ class TaskController extends Controller
             ],
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
-            'users' => User::orderBy('name')->get(['id', 'name', 'email']),
+            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 

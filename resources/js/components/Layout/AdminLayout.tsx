@@ -33,17 +33,21 @@ const CHAT_PAGE_PATH = '/admin/customer-conversations';
 
 const NAV_ITEMS = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Customer Support', href: '/admin/customer-conversations', icon: MessageSquare },
+    {
+        name: 'Customer Support',
+        href: '/admin/customer-conversations',
+        icon: MessageSquare,
+    },
     { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
     { name: 'Sub Categories', href: '/admin/sub-categories', icon: Layers },
     { name: 'Blogs', href: '/admin/blogs', icon: FileText },
     { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
-    { name: 'Contacts & Feedback', href: '/admin/contacts', icon: Mail },
+    { name: 'Contacts', href: '/admin/contacts', icon: Mail },
     { name: 'Brands', href: '/admin/brands', icon: Briefcase },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Clients', href: '/admin/clients', icon: UserCheck },
     { name: 'Client Workflow', href: '/admin/tasks', icon: Briefcase },
-    { name: 'Client Review Control', href: '/admin/client-reviews', icon: Star },
+    { name: 'Review Control', href: '/admin/client-reviews', icon: Star },
 ];
 
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
@@ -51,7 +55,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const { auth, flash } = page.props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
-    const [msgToast, setMsgToast] = useState<{ show: boolean; name?: string }>({ show: false });
+    const [msgToast, setMsgToast] = useState<{ show: boolean; name?: string }>({
+        show: false,
+    });
     const msgToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const echoReady = useEchoReady();
     const [notificationCount, setNotificationCount] = useState(0);
@@ -61,6 +67,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     useEffect(() => {
         return router.on('navigate', (event) => {
             setSidebarOpen(false);
+
             if (event.detail.page.url.startsWith(CHAT_PAGE_PATH)) {
                 setNotificationCount(0);
             }
@@ -70,15 +77,29 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const handleNewNotification = useCallback((senderName?: string) => {
         setNotificationCount((prev) => prev + 1);
         setMsgToast({ show: true, name: senderName });
-        if (msgToastTimerRef.current) clearTimeout(msgToastTimerRef.current);
-        msgToastTimerRef.current = setTimeout(() => setMsgToast({ show: false }), 6000);
+
+        if (msgToastTimerRef.current) {
+            clearTimeout(msgToastTimerRef.current);
+        }
+
+        msgToastTimerRef.current = setTimeout(
+            () => setMsgToast({ show: false }),
+            6000,
+        );
     }, []);
 
     useEffect(() => {
-        if (!flash?.success) return;
+        if (!flash?.success) {
+            return;
+        }
+
         const showTimer = setTimeout(() => setShowToast(true), 0);
         const hideTimer = setTimeout(() => setShowToast(false), 4500);
-        return () => { clearTimeout(showTimer); clearTimeout(hideTimer); };
+
+        return () => {
+            clearTimeout(showTimer);
+            clearTimeout(hideTimer);
+        };
     }, [flash]);
 
     return (
@@ -96,7 +117,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     }}
                 />
                 <div className="absolute -top-60 -left-60 h-[640px] w-[640px] rounded-full bg-violet-700/12 blur-[180px]" />
-                <div className="absolute -bottom-60 -right-60 h-[520px] w-[520px] rounded-full bg-cyan-700/8 blur-[160px]" />
+                <div className="absolute -right-60 -bottom-60 h-[520px] w-[520px] rounded-full bg-cyan-700/8 blur-[160px]" />
             </div>
 
             {/* ── Echo / notification listener ── */}
@@ -114,8 +135,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         key="toast-success"
                         initial={{ opacity: 0, y: -16, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.95, transition: { duration: 0.2 } }}
-                        className="fixed top-5 right-5 z-[200] flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-emerald-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
+                        exit={{
+                            opacity: 0,
+                            y: -8,
+                            scale: 0.95,
+                            transition: { duration: 0.2 },
+                        }}
+                        className="fixed top-5 right-5 z-[200] flex max-w-sm min-w-[300px] items-start gap-3 overflow-hidden rounded-xl border border-emerald-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
                         style={{ boxShadow: '0 0 40px rgba(16,185,129,0.12)' }}
                     >
                         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
@@ -123,10 +149,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase">Success</p>
-                            <p className="mt-0.5 text-sm text-slate-200">{flash.success}</p>
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase">
+                                Success
+                            </p>
+                            <p className="mt-0.5 text-sm text-slate-200">
+                                {flash.success}
+                            </p>
                         </div>
-                        <button onClick={() => setShowToast(false)} className="shrink-0 text-slate-500 hover:text-slate-300">
+                        <button
+                            onClick={() => setShowToast(false)}
+                            className="shrink-0 text-slate-500 hover:text-slate-300"
+                        >
                             <X className="h-4 w-4" />
                         </button>
                     </motion.div>
@@ -136,8 +169,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         key="toast-error"
                         initial={{ opacity: 0, y: -16, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                        className="fixed top-5 right-5 z-[200] flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-red-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
+                        exit={{
+                            opacity: 0,
+                            scale: 0.95,
+                            transition: { duration: 0.2 },
+                        }}
+                        className="fixed top-5 right-5 z-[200] flex max-w-sm min-w-[300px] items-start gap-3 overflow-hidden rounded-xl border border-red-500/25 bg-[#060c1a]/95 p-4 shadow-2xl backdrop-blur-xl"
                         style={{ boxShadow: '0 0 40px rgba(239,68,68,0.1)' }}
                     >
                         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
@@ -145,8 +182,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             <AlertCircle className="h-4 w-4 text-red-400" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[10px] tracking-[0.2em] text-red-400 uppercase">Error</p>
-                            <p className="mt-0.5 text-sm text-slate-200">{flash.error}</p>
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-red-400 uppercase">
+                                Error
+                            </p>
+                            <p className="mt-0.5 text-sm text-slate-200">
+                                {flash.error}
+                            </p>
                         </div>
                     </motion.div>
                 )}
@@ -157,9 +198,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         key="toast-new-message"
                         initial={{ opacity: 0, x: 60, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
-                        exit={{ opacity: 0, x: 60, scale: 0.95, transition: { duration: 0.25 } }}
+                        exit={{
+                            opacity: 0,
+                            x: 60,
+                            scale: 0.95,
+                            transition: { duration: 0.25 },
+                        }}
                         className="fixed top-20 right-5 z-[200] w-80 overflow-hidden rounded-xl border border-cyan-500/30 bg-[#060c1a]/98 shadow-2xl backdrop-blur-xl"
-                        style={{ boxShadow: '0 0 50px rgba(6,182,212,0.18), 0 0 100px rgba(6,182,212,0.06)' }}
+                        style={{
+                            boxShadow:
+                                '0 0 50px rgba(6,182,212,0.18), 0 0 100px rgba(6,182,212,0.06)',
+                        }}
                     >
                         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
                         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
@@ -172,18 +221,26 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/15">
                                     <MessageSquare className="h-4 w-4 text-cyan-400" />
                                 </div>
-                                <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5 items-center justify-center">
+                                <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center">
                                     <span className="absolute inline-flex h-2.5 w-2.5 animate-ping rounded-full bg-cyan-400 opacity-60" />
                                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-400" />
                                 </span>
                             </div>
                             <div className="min-w-0 flex-1">
-                                <p className="font-mono text-[9px] tracking-[0.25em] text-cyan-400/80 uppercase">Incoming Transmission</p>
-                                <p className="mt-0.5 text-sm font-medium text-white">
-                                    {msgToast.name ? msgToast.name : 'A customer'}{' '}
-                                    <span className="font-normal text-slate-300">sent a message</span>
+                                <p className="font-mono text-[9px] tracking-[0.25em] text-cyan-400/80 uppercase">
+                                    Incoming Transmission
                                 </p>
-                                <p className="mt-1.5 font-mono text-[9px] tracking-[0.18em] text-violet-400/60 uppercase">Tap to open channel →</p>
+                                <p className="mt-0.5 text-sm font-medium text-white">
+                                    {msgToast.name
+                                        ? msgToast.name
+                                        : 'A customer'}{' '}
+                                    <span className="font-normal text-slate-300">
+                                        sent a message
+                                    </span>
+                                </p>
+                                <p className="mt-1.5 font-mono text-[9px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                    Tap to open channel →
+                                </p>
                             </div>
                         </Link>
                         <button
@@ -212,7 +269,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
             {/* ── Sidebar ── */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col transform border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
@@ -234,15 +291,27 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         <div className="relative flex h-8 w-8 shrink-0 items-center justify-center">
                             <motion.div
                                 animate={{ rotate: 360 }}
-                                transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+                                transition={{
+                                    duration: 12,
+                                    repeat: Infinity,
+                                    ease: 'linear',
+                                }}
                                 className="absolute inset-0 rounded-lg border border-dashed border-violet-500/40"
                             />
                             <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-violet-600/30 to-cyan-600/20" />
-                            <img src="/favicon.ico" alt="Opticore" className="relative h-5 w-5 object-contain" />
+                            <img
+                                src="/favicon.ico"
+                                alt="Opticore"
+                                className="relative h-5 w-5 object-contain"
+                            />
                         </div>
                         <div>
-                            <p className="text-[11px] font-bold leading-tight tracking-[0.08em] text-white uppercase">Opticore Solutions</p>
-                            <p className="font-mono text-[9px] tracking-[0.22em] text-violet-400/60 uppercase">Limited</p>
+                            <p className="text-[11px] leading-tight font-bold tracking-[0.08em] text-white uppercase">
+                                Opticore Solutions
+                            </p>
+                            <p className="font-mono text-[9px] tracking-[0.22em] text-violet-400/60 uppercase">
+                                Limited
+                            </p>
                         </div>
                     </div>
                     <button
@@ -261,8 +330,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     <nav className="space-y-0.5">
                         {NAV_ITEMS.map((item) => {
                             const active =
-                                window.location.pathname.startsWith(item.href) &&
-                                (item.href !== '/admin' || window.location.pathname === '/admin');
+                                window.location.pathname.startsWith(
+                                    item.href,
+                                ) &&
+                                (item.href !== '/admin' ||
+                                    window.location.pathname === '/admin');
 
                             return (
                                 <Link
@@ -275,20 +347,32 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                     }`}
                                 >
                                     {active && (
-                                        <div className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
+                                        <div className="absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
                                     )}
                                     <item.icon
                                         className={`mr-3 h-4 w-4 shrink-0 transition-colors ${
-                                            active ? 'text-violet-400' : 'text-slate-600 group-hover:text-slate-400'
+                                            active
+                                                ? 'text-violet-400'
+                                                : 'text-slate-600 group-hover:text-slate-400'
                                         }`}
                                     />
-                                    <span className="truncate font-mono text-sm tracking-[0.04em]">{item.name}</span>
-                                    {item.href === CHAT_PAGE_PATH && notificationCount > 0 && !isOnChatPage && (
-                                        <span className="relative ml-auto flex h-3 w-3 shrink-0 items-center justify-center">
-                                            <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-rose-400 opacity-60" />
-                                            <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" style={{ boxShadow: '0 0 8px rgba(244,63,94,1), 0 0 16px rgba(244,63,94,0.5)' }} />
-                                        </span>
-                                    )}
+                                    <span className="truncate font-mono text-sm tracking-[0.04em]">
+                                        {item.name}
+                                    </span>
+                                    {item.href === CHAT_PAGE_PATH &&
+                                        notificationCount > 0 &&
+                                        !isOnChatPage && (
+                                            <span className="relative ml-auto flex h-3 w-3 shrink-0 items-center justify-center">
+                                                <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-rose-400 opacity-60" />
+                                                <span
+                                                    className="relative inline-flex h-2 w-2 rounded-full bg-rose-500"
+                                                    style={{
+                                                        boxShadow:
+                                                            '0 0 8px rgba(244,63,94,1), 0 0 16px rgba(244,63,94,0.5)',
+                                                    }}
+                                                />
+                                            </span>
+                                        )}
                                 </Link>
                             );
                         })}
@@ -304,7 +388,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             transition={{ duration: 1.8, repeat: Infinity }}
                             className="h-1.5 w-1.5 rounded-full bg-green-400"
                         />
-                        <span className="font-mono text-[9px] tracking-[0.2em] text-green-400/70 uppercase">System Online</span>
+                        <span className="font-mono text-[9px] tracking-[0.2em] text-green-400/70 uppercase">
+                            System Online
+                        </span>
                     </div>
 
                     {/* User info */}
@@ -316,7 +402,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             <p className="truncate text-xs font-semibold text-white">
                                 {auth.user?.name || 'Admin User'}
                             </p>
-                            <p className="font-mono text-[9px] tracking-wide text-violet-400/60 uppercase">Administrator</p>
+                            <p className="font-mono text-[9px] tracking-wide text-violet-400/60 uppercase">
+                                Administrator
+                            </p>
                         </div>
                     </div>
 
@@ -349,11 +437,15 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
                     {/* Breadcrumb / page indicator */}
                     <div className="hidden items-center gap-2 lg:flex">
-                        <span className="font-mono text-[10px] tracking-[0.2em] text-violet-400/40 uppercase">CMS</span>
+                        <span className="font-mono text-[10px] tracking-[0.2em] text-violet-400/40 uppercase">
+                            CMS
+                        </span>
                         {title && (
                             <>
                                 <span className="text-violet-500/30">›</span>
-                                <span className="font-mono text-[10px] tracking-[0.15em] text-violet-400/60 uppercase">{title}</span>
+                                <span className="font-mono text-[10px] tracking-[0.15em] text-violet-400/60 uppercase">
+                                    {title}
+                                </span>
                             </>
                         )}
                     </div>
@@ -370,15 +462,23 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             <span className="sr-only">Notifications</span>
                             <Bell className="h-5 w-5" />
                             {notificationCount > 0 && !isOnChatPage && (
-                                <span className="absolute -right-1 -top-1">
+                                <span className="absolute -top-1 -right-1">
                                     <span className="absolute inline-flex h-5 w-5 animate-ping rounded-full bg-rose-400 opacity-40" />
                                     <motion.span
                                         animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ duration: 1.0, repeat: Infinity }}
+                                        transition={{
+                                            duration: 1.0,
+                                            repeat: Infinity,
+                                        }}
                                         className="relative flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-0.5 font-mono text-[9px] font-bold text-white"
-                                        style={{ boxShadow: '0 0 10px rgba(244,63,94,0.9), 0 0 20px rgba(244,63,94,0.4)' }}
+                                        style={{
+                                            boxShadow:
+                                                '0 0 10px rgba(244,63,94,0.9), 0 0 20px rgba(244,63,94,0.4)',
+                                        }}
                                     >
-                                        {notificationCount > 99 ? '99+' : notificationCount}
+                                        {notificationCount > 99
+                                            ? '99+'
+                                            : notificationCount}
                                     </motion.span>
                                 </span>
                             )}

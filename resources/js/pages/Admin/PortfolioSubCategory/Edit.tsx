@@ -250,7 +250,7 @@ export default function PortfolioSubCategoryEdit({
                             onChange={(e) =>
                                 setData('category_slug', e.target.value)
                             }
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
@@ -275,7 +275,7 @@ export default function PortfolioSubCategoryEdit({
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.name && (
@@ -294,7 +294,7 @@ export default function PortfolioSubCategoryEdit({
                             type="text"
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.slug && (
@@ -315,7 +315,7 @@ export default function PortfolioSubCategoryEdit({
                                 setData('description', e.target.value)
                             }
                             rows={3}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.description && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -332,7 +332,7 @@ export default function PortfolioSubCategoryEdit({
                             type="text"
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.price && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -355,7 +355,7 @@ export default function PortfolioSubCategoryEdit({
                                 onChange={(e) =>
                                     setData('rating', e.target.value)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.rating && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -378,7 +378,7 @@ export default function PortfolioSubCategoryEdit({
                                         Number.parseInt(e.target.value) || 0,
                                     )
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.reviews_count && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -405,7 +405,7 @@ export default function PortfolioSubCategoryEdit({
                             onChange={(e) =>
                                 setData('image', e.target.files?.[0] ?? null)
                             }
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                         />
                         {subCategory.image_url && (
                             <p className="mt-1 text-xs text-zinc-500">
@@ -433,7 +433,7 @@ export default function PortfolioSubCategoryEdit({
                                     Number.parseInt(e.target.value) || 0,
                                 )
                             }
-                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.sort_order && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -446,7 +446,7 @@ export default function PortfolioSubCategoryEdit({
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
+                            className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -459,7 +459,7 @@ export default function PortfolioSubCategoryEdit({
                         </button>
                         <Link
                             href={adminRoutes.subCategories.index.url()}
-                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                            className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                         >
                             Cancel
                         </Link>
@@ -508,7 +508,7 @@ export default function PortfolioSubCategoryEdit({
                                         )
                                     }
                                     placeholder="e.g. $99"
-                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 />
                             </div>
 
@@ -528,7 +528,7 @@ export default function PortfolioSubCategoryEdit({
                                         )
                                     }
                                     placeholder="e.g. 3 Days"
-                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 />
                             </div>
 
@@ -555,7 +555,7 @@ export default function PortfolioSubCategoryEdit({
                                                         )
                                                     }
                                                     placeholder="Feature description"
-                                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-2.5 py-1.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-2.5 py-1.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                                 />
                                                 <button
                                                     type="button"
@@ -629,7 +629,7 @@ export default function PortfolioSubCategoryEdit({
                                                 e.target.value,
                                             )
                                         }
-                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     >
                                         {allowed_icons.map((icon) => (
                                             <option key={icon} value={icon}>
@@ -655,7 +655,7 @@ export default function PortfolioSubCategoryEdit({
                                             )
                                         }
                                         placeholder="e.g. Custom Designs"
-                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                         required
                                     />
                                     {errors[
@@ -736,7 +736,7 @@ export default function PortfolioSubCategoryEdit({
                                             )
                                         }
                                         placeholder="e.g. How long does it take?"
-                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
                                     {errors[
                                         `faqs.${index}.question` as keyof typeof errors
@@ -766,7 +766,7 @@ export default function PortfolioSubCategoryEdit({
                                         }
                                         rows={3}
                                         placeholder="Provide a clear, helpful answer…"
-                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                        className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
                                     {errors[
                                         `faqs.${index}.answer` as keyof typeof errors
@@ -786,7 +786,9 @@ export default function PortfolioSubCategoryEdit({
 
                     {data.faqs.length === 0 && (
                         <div className="rounded-lg border border-dashed border-white/10 py-8 text-center">
-                            <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No FAQs yet</p>
+                            <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                                No FAQs yet
+                            </p>
                         </div>
                     )}
                 </div>
@@ -794,7 +796,7 @@ export default function PortfolioSubCategoryEdit({
                 <button
                     type="button"
                     onClick={addFaq}
-                    className="mt-4 flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                    className="relative mt-4 flex items-center gap-2 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                 >
                     <Plus className="h-4 w-4" />
                     Add FAQ
@@ -897,7 +899,9 @@ export default function PortfolioSubCategoryEdit({
                 ) : (
                     <div className="mb-6 rounded-lg border border-dashed border-white/10 py-10 text-center">
                         <ImageIcon className="mx-auto mb-2 h-8 w-8 text-zinc-600" />
-                        <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No gallery items yet</p>
+                        <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                            No gallery items yet
+                        </p>
                     </div>
                 )}
 
@@ -913,7 +917,7 @@ export default function PortfolioSubCategoryEdit({
                         <div className="flex-1">
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                 File{' '}
-                                <span className="font-normal normal-case text-zinc-500">
+                                <span className="font-normal text-zinc-500 normal-case">
                                     (JPG, PNG, WEBP, GIF, MP4, MOV — max 300MB)
                                 </span>
                             </label>
@@ -934,7 +938,7 @@ export default function PortfolioSubCategoryEdit({
                                         setGalleryData('media', file);
                                     }
                                 }}
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                                 required
                             />
                             {fileSizeError && (
@@ -951,7 +955,7 @@ export default function PortfolioSubCategoryEdit({
                         <div className="sm:w-56">
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
                                 Caption{' '}
-                                <span className="font-normal normal-case text-zinc-500">
+                                <span className="font-normal text-zinc-500 normal-case">
                                     (shown in gallery)
                                 </span>
                             </label>
@@ -962,7 +966,7 @@ export default function PortfolioSubCategoryEdit({
                                     setGalleryData('caption', e.target.value)
                                 }
                                 placeholder="e.g. Brand Identity — TechFlow"
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {galleryErrors.caption && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -977,7 +981,7 @@ export default function PortfolioSubCategoryEdit({
                                 !galleryData.media ||
                                 !!fileSizeError
                             }
-                            className="flex shrink-0 items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
+                            className="relative flex shrink-0 items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
                         >
                             {galleryProcessing ? (
                                 <>

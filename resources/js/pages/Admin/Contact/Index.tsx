@@ -106,7 +106,9 @@ export default function ContactIndex({ contacts }: Props) {
                                     colSpan={5}
                                     className="px-6 py-16 text-center"
                                 >
-                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">No messages found</p>
+                                    <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                                        No messages found
+                                    </p>
                                 </td>
                             </tr>
                         ) : (
@@ -309,5 +311,5 @@ export default function ContactIndex({ contacts }: Props) {
 }
 
 ContactIndex.layout = (page: ReactNode) => (
-    <AdminLayout title="Contacts & Feedback">{page}</AdminLayout>
+    <AdminLayout title="Contacts">{page}</AdminLayout>
 );

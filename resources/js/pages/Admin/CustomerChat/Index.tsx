@@ -289,7 +289,7 @@ function OfferCard({
                     href={`/offer/${offer.offer_token}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 py-2 text-xs font-semibold text-white transition hover:from-violet-500 hover:to-cyan-500"
+                    className="relative flex w-full items-center justify-center gap-1.5 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 py-2 text-xs font-semibold text-white transition before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:from-violet-500 hover:to-cyan-500 hover:before:translate-x-full"
                 >
                     View Offer Details
                     <ExternalLink size={11} />
@@ -681,7 +681,9 @@ export default function Index() {
                 {/* Sidebar header */}
                 <div className="relative border-b border-violet-500/10 px-4 pt-4 pb-3">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
-                    <p className="mb-0.5 font-mono text-[9px] tracking-[0.28em] text-violet-400/40 uppercase">Neural Comms</p>
+                    <p className="mb-0.5 font-mono text-[9px] tracking-[0.28em] text-violet-400/40 uppercase">
+                        Neural Comms
+                    </p>
                     <h2 className="mb-3 text-sm font-semibold tracking-wide text-white">
                         Customer Channels
                     </h2>
@@ -692,7 +694,7 @@ export default function Index() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search channels..."
-                            className="w-full rounded-lg border border-white/8 bg-white/4 py-2 pr-4 pl-9 font-mono text-xs text-white placeholder-violet-400/30 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="w-full rounded-lg border border-white/8 bg-white/4 py-2 pr-4 pl-9 font-mono text-xs text-white placeholder-violet-400/30 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                     </div>
                 </div>
@@ -714,22 +716,27 @@ export default function Index() {
                         >
                             {/* Active left accent bar */}
                             {activeConv?.id === conv.id && (
-                                <div className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
+                                <div className="absolute top-1/2 left-0 h-6 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
                             )}
 
                             {/* Initials avatar */}
                             <div className="relative shrink-0">
-                                <div className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold ${
-                                    activeConv?.id === conv.id
-                                        ? 'bg-gradient-to-br from-violet-600/60 to-cyan-600/40 text-white'
-                                        : 'bg-violet-500/10 text-violet-300'
-                                }`}>
+                                <div
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold ${
+                                        activeConv?.id === conv.id
+                                            ? 'bg-gradient-to-br from-violet-600/60 to-cyan-600/40 text-white'
+                                            : 'bg-violet-500/10 text-violet-300'
+                                    }`}
+                                >
                                     {conv.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 {onlineUsers[conv.user_id] !== undefined && (
                                     <span
                                         className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#060c1a] bg-green-400"
-                                        style={{ boxShadow: '0 0 6px rgba(74,222,128,0.9)' }}
+                                        style={{
+                                            boxShadow:
+                                                '0 0 6px rgba(74,222,128,0.9)',
+                                        }}
                                     />
                                 )}
                             </div>
@@ -741,7 +748,12 @@ export default function Index() {
                                     </span>
                                     {conv.last_message_at && (
                                         <span className="shrink-0 font-mono text-[9px] text-violet-400/40">
-                                            {new Date(conv.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {new Date(
+                                                conv.last_message_at,
+                                            ).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
                                         </span>
                                     )}
                                 </div>
@@ -750,7 +762,13 @@ export default function Index() {
                                         {conv.last_message || 'No messages yet'}
                                     </p>
                                     {conv.unread_count > 0 && (
-                                        <span className="shrink-0 rounded-full bg-violet-500 px-1.5 py-0.5 font-mono text-[9px] font-bold text-white" style={{ boxShadow: '0 0 8px rgba(139,92,246,0.5)' }}>
+                                        <span
+                                            className="shrink-0 rounded-full bg-violet-500 px-1.5 py-0.5 font-mono text-[9px] font-bold text-white"
+                                            style={{
+                                                boxShadow:
+                                                    '0 0 8px rgba(139,92,246,0.5)',
+                                            }}
+                                        >
                                             {conv.unread_count}
                                         </span>
                                     )}
@@ -762,7 +780,9 @@ export default function Index() {
                         <div className="p-6 text-center">
                             <MessageSquare className="mx-auto mb-2 h-6 w-6 text-violet-500/20" />
                             <p className="font-mono text-[10px] tracking-[0.2em] text-violet-400/30 uppercase">
-                                {searchQuery ? 'No channels found' : 'No active channels'}
+                                {searchQuery
+                                    ? 'No channels found'
+                                    : 'No active channels'}
                             </p>
                         </div>
                     )}
@@ -787,12 +807,21 @@ export default function Index() {
                                     <ArrowLeft size={18} />
                                 </button>
                                 {/* User avatar */}
-                                <div className="relative shrink-0 hidden sm:block">
+                                <div className="relative hidden shrink-0 sm:block">
                                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600/50 to-cyan-600/30 text-sm font-bold text-white">
-                                        {activeConv.user.name.charAt(0).toUpperCase()}
+                                        {activeConv.user.name
+                                            .charAt(0)
+                                            .toUpperCase()}
                                     </div>
-                                    {onlineUsers[activeConv.user_id] !== undefined && (
-                                        <span className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#060c1a] bg-green-400" style={{ boxShadow: '0 0 6px rgba(74,222,128,0.9)' }} />
+                                    {onlineUsers[activeConv.user_id] !==
+                                        undefined && (
+                                        <span
+                                            className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#060c1a] bg-green-400"
+                                            style={{
+                                                boxShadow:
+                                                    '0 0 6px rgba(74,222,128,0.9)',
+                                            }}
+                                        />
                                     )}
                                 </div>
                                 <div className="min-w-0">
@@ -803,9 +832,16 @@ export default function Index() {
                                         <p className="truncate font-mono text-[10px] text-violet-400/50">
                                             {activeConv.user.email}
                                         </p>
-                                        {onlineUsers[activeConv.user_id] !== undefined && (
+                                        {onlineUsers[activeConv.user_id] !==
+                                            undefined && (
                                             <span className="flex shrink-0 items-center gap-1 font-mono text-[9px] tracking-wider text-green-400">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-green-400" style={{ boxShadow: '0 0 5px rgba(74,222,128,0.8)' }} />
+                                                <span
+                                                    className="h-1.5 w-1.5 rounded-full bg-green-400"
+                                                    style={{
+                                                        boxShadow:
+                                                            '0 0 5px rgba(74,222,128,0.8)',
+                                                    }}
+                                                />
                                                 Online
                                             </span>
                                         )}
@@ -905,21 +941,24 @@ export default function Index() {
                                                 className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '0ms',
-                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
+                                                    boxShadow:
+                                                        '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                             <span
                                                 className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '160ms',
-                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
+                                                    boxShadow:
+                                                        '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                             <span
                                                 className="h-2 w-2 animate-bounce rounded-full bg-violet-400"
                                                 style={{
                                                     animationDelay: '320ms',
-                                                    boxShadow: '0 0 4px rgba(167,139,250,0.8)',
+                                                    boxShadow:
+                                                        '0 0 4px rgba(167,139,250,0.8)',
                                                 }}
                                             />
                                         </div>
@@ -1023,8 +1062,11 @@ export default function Index() {
                                             isSending ||
                                             (!newMessage.trim() && !attachment)
                                         }
-                                        className="transform rounded-full bg-gradient-to-r from-violet-600 to-violet-500 p-2.5 text-white transition hover:from-violet-500 hover:to-cyan-500 active:scale-95 disabled:opacity-50"
-                                        style={{ boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}
+                                        className="relative transform overflow-hidden rounded-full border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 p-2.5 text-white transition before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:from-violet-500 hover:to-cyan-500 hover:before:translate-x-full active:scale-95 disabled:opacity-50"
+                                        style={{
+                                            boxShadow:
+                                                '0 0 16px rgba(124,58,237,0.4)',
+                                        }}
                                     >
                                         <Send
                                             size={18}
@@ -1039,11 +1081,18 @@ export default function Index() {
                     <div className="flex flex-1 flex-col items-center justify-center gap-3">
                         <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/5">
                             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet-600/10 to-cyan-600/5" />
-                            <MessageSquare size={28} className="relative text-violet-400/40" />
+                            <MessageSquare
+                                size={28}
+                                className="relative text-violet-400/40"
+                            />
                         </div>
                         <div className="text-center">
-                            <p className="font-mono text-[10px] tracking-[0.25em] text-violet-400/40 uppercase">No Channel Selected</p>
-                            <p className="mt-1 text-xs text-slate-600">Select a customer channel to begin</p>
+                            <p className="font-mono text-[10px] tracking-[0.25em] text-violet-400/40 uppercase">
+                                No Channel Selected
+                            </p>
+                            <p className="mt-1 text-xs text-slate-600">
+                                Select a customer channel to begin
+                            </p>
                         </div>
                     </div>
                 )}

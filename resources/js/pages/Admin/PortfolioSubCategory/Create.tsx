@@ -46,7 +46,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             onChange={(e) =>
                                 setData('category_slug', e.target.value)
                             }
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
@@ -72,7 +72,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="e.g. Logo & Identity"
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             required
                         />
                         {errors.name && (
@@ -86,7 +86,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                     <div>
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Slug{' '}
-                            <span className="font-normal normal-case text-zinc-500">
+                            <span className="font-normal text-zinc-500 normal-case">
                                 (Leave empty to auto-generate)
                             </span>
                         </label>
@@ -95,7 +95,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
                             placeholder="e.g. logo-identity"
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.slug && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -115,7 +115,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 setData('description', e.target.value)
                             }
                             rows={3}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.description && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -133,7 +133,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
                             placeholder="e.g. 500 BDT"
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.price && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -156,7 +156,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 onChange={(e) =>
                                     setData('rating', e.target.value)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.rating && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -179,7 +179,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                         Number.parseInt(e.target.value) || 0,
                                     )
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                             {errors.reviews_count && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -199,7 +199,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             onChange={(e) =>
                                 setData('image', e.target.files?.[0] ?? null)
                             }
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500 outline-none"
+                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                         />
                         {errors.image && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -222,7 +222,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                     Number.parseInt(e.target.value) || 0,
                                 )
                             }
-                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                            className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
                         {errors.sort_order && (
                             <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -235,7 +235,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         <button
                             disabled={processing}
                             type="submit"
-                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
+                            className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
                         >
                             {processing ? (
                                 <>
@@ -248,7 +248,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         </button>
                         <Link
                             href={adminRoutes.subCategories.index.url()}
-                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                            className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                         >
                             Cancel
                         </Link>

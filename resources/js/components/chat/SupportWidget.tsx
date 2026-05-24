@@ -81,19 +81,19 @@ const STATUS_BADGE: Record<
 > = {
     pending: {
         label: 'Pending',
-        className: 'bg-yellow-500/15 text-yellow-400',
+        className: 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400',
     },
     accepted: {
         label: 'Accepted',
-        className: 'bg-green-500/15 text-green-400',
+        className: 'bg-green-500/15 text-green-600 dark:text-green-400',
     },
     declined: {
         label: 'Declined',
-        className: 'bg-red-500/15 text-red-400',
+        className: 'bg-red-500/15 text-red-600 dark:text-red-400',
     },
     expired: {
         label: 'Expired',
-        className: 'bg-slate-500/15 text-slate-400',
+        className: 'bg-slate-500/15 text-slate-600 dark:text-slate-400',
     },
 };
 
@@ -141,9 +141,9 @@ function OfferCard({ offer }: { offer: Offer }) {
     const badge = STATUS_BADGE[offer.status];
 
     return (
-        <div className="mb-2 w-full max-w-[280px] overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-lg sm:max-w-[300px]">
+        <div className="mb-2 w-full max-w-[280px] overflow-hidden rounded-xl border border-theme bg-card-surface shadow-sm sm:max-w-[300px]">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
+            <div className="flex items-center justify-between border-b border-theme px-3 py-2">
                 <div className="flex items-center gap-1.5">
                     <Package size={12} className="text-violet-400" />
                     <span className="text-[10px] font-semibold tracking-wide text-violet-400 uppercase">
@@ -161,7 +161,7 @@ function OfferCard({ offer }: { offer: Offer }) {
             <div className="p-3">
                 {/* Category / sub-category */}
                 {(offer.sub_category || offer.category_slug) && (
-                    <p className="mb-1 text-sm font-semibold text-white">
+                    <p className="mb-1 text-sm font-semibold text-theme">
                         {offer.sub_category?.name ??
                             CATEGORY_LABELS[offer.category_slug ?? ''] ??
                             offer.category_slug}
@@ -169,15 +169,18 @@ function OfferCard({ offer }: { offer: Offer }) {
                 )}
 
                 {/* Description preview */}
-                <p className="mb-3 line-clamp-2 text-xs text-slate-400">
+                <p className="mb-3 line-clamp-2 text-xs text-theme-muted">
                     {offer.description}
                 </p>
 
                 {/* Stats */}
-                <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-400">
+                <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-theme-muted">
                     <span className="flex items-center gap-1">
-                        <DollarSign size={10} className="text-green-400" />
-                        <span className="font-semibold text-white">
+                        <DollarSign
+                            size={10}
+                            className="text-green-500 dark:text-green-400"
+                        />
+                        <span className="font-semibold text-theme">
                             ${totalPrice.toFixed(2)}
                         </span>
                     </span>
@@ -618,8 +621,13 @@ export default function SupportWidget({
                                         <MessageSquare className="h-6 w-6 text-cyan-500/60" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-theme">Start a conversation</p>
-                                        <p className="mt-1 text-xs text-theme-muted">Our team typically replies in minutes.</p>
+                                        <p className="text-sm font-semibold text-theme">
+                                            Start a conversation
+                                        </p>
+                                        <p className="mt-1 text-xs text-theme-muted">
+                                            Our team typically replies in
+                                            minutes.
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -654,7 +662,11 @@ export default function SupportWidget({
                                                   : 'mt-0.5',
                                         )}
                                     >
-                                        <div className="max-w-[85%]">
+                                        <div
+                                            className={cn(
+                                                !msg.offer && 'max-w-[85%]',
+                                            )}
+                                        >
                                             {msg.offer ? (
                                                 <OfferCard offer={msg.offer} />
                                             ) : (
@@ -723,33 +735,24 @@ export default function SupportWidget({
                                                     )}
                                                 </div>
                                             )}
-                                            {msg.sender_type === 'user' &&
-                                            msg.id ===
-                                                latestOutgoingMessageId ? (
-                                                <p className="mt-1 px-1 text-right text-[11px] text-theme-subtle">
-                                                    {getMessageStatusLabel(msg)}{' '}
-                                                    ·{' '}
+                                        </div>
+                                        {msg.sender_type === 'user' &&
+                                        msg.id === latestOutgoingMessageId ? (
+                                            <p className="mt-1 px-1 text-[11px] text-theme-subtle">
+                                                {getMessageStatusLabel(msg)} ·{' '}
+                                                {formatMessageTime(
+                                                    msg.created_at,
+                                                )}
+                                            </p>
+                                        ) : (
+                                            isLastInGroup && (
+                                                <p className="text-theme-subtle/60 mt-1 px-1 text-[10px]">
                                                     {formatMessageTime(
                                                         msg.created_at,
                                                     )}
                                                 </p>
-                                            ) : (
-                                                isLastInGroup && (
-                                                    <p
-                                                        className={cn(
-                                                            'text-theme-subtle/60 mt-1 px-1 text-[10px]',
-                                                            isUser
-                                                                ? 'text-right'
-                                                                : 'text-left',
-                                                        )}
-                                                    >
-                                                        {formatMessageTime(
-                                                            msg.created_at,
-                                                        )}
-                                                    </p>
-                                                )
-                                            )}
-                                        </div>
+                                            )
+                                        )}
                                     </div>
                                 );
                             })}
@@ -915,25 +918,65 @@ export default function SupportWidget({
                     <div className="absolute top-0 right-1/4 left-1/4 h-px bg-white/30 blur-[0.5px]" />
                 </div>
 
-                {isOpen ? (
-                    <X className="h-6 w-6 drop-shadow-md sm:h-7 sm:w-7" />
-                ) : (
-                    <MessageSquare className="h-6 w-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] sm:h-7 sm:w-7" />
-                )}
+                <AnimatePresence mode="wait" initial={false}>
+                    {isOpen ? (
+                        <motion.span
+                            key="close-icon"
+                            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                            transition={{
+                                duration: 0.18,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="flex items-center justify-center"
+                        >
+                            <X className="h-6 w-6 drop-shadow-md sm:h-7 sm:w-7" />
+                        </motion.span>
+                    ) : (
+                        <motion.span
+                            key="chat-icon"
+                            initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                            exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                            transition={{
+                                duration: 0.18,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="flex items-center justify-center"
+                        >
+                            <MessageSquare className="h-6 w-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] sm:h-7 sm:w-7" />
+                        </motion.span>
+                    )}
+                </AnimatePresence>
 
-                {unread > 0 && !isOpen ? (
-                    <motion.span
-                        initial={{ scale: 0, y: 5 }}
-                        animate={{ scale: 1, y: 0 }}
-                        className="absolute -top-1.5 -right-1.5 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-[11px] font-black text-white shadow-[0_3px_0_#991b1b,0_6px_12px_rgba(239,68,68,0.4)] ring-2 ring-background"
-                    >
-                        {unread}
-                    </motion.span>
-                ) : (
-                    !isOpen && (
-                        <span className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-400 opacity-75" />
-                    )
-                )}
+                <AnimatePresence>
+                    {unread > 0 && !isOpen && (
+                        <motion.span
+                            key="unread-badge"
+                            initial={{ scale: 0, y: 5 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0, y: 5 }}
+                            transition={{
+                                duration: 0.2,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="absolute -top-1.5 -right-1.5 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-[11px] font-black text-white shadow-[0_3px_0_#991b1b,0_6px_12px_rgba(239,68,68,0.4)] ring-2 ring-background"
+                        >
+                            {unread}
+                        </motion.span>
+                    )}
+                    {unread === 0 && !isOpen && (
+                        <motion.span
+                            key="ping-dot"
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 0.75, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute -top-0.5 -right-0.5 h-4 w-4 animate-ping rounded-full bg-cyan-400"
+                        />
+                    )}
+                </AnimatePresence>
             </motion.button>
         </div>
     );

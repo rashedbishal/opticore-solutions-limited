@@ -17,9 +17,7 @@ export default function NotificationListener({
 
             if (msg?.sender_type === 'user' && !isOnChatPage) {
                 const name: string | undefined =
-                    msg.conversation?.user?.name ??
-                    e?.user?.name ??
-                    undefined;
+                    msg.conversation?.user?.name ?? e?.user?.name ?? undefined;
                 onNewMessage(name);
             }
         },

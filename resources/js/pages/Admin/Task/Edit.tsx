@@ -103,7 +103,7 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('client_name', e.target.value)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter client name"
                                 required
                             />
@@ -127,12 +127,18 @@ export default function EditTask({
                                         parseInt(e.target.value, 10),
                                     )
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             >
-                                <option value="" className="bg-[#060c1a]">Select a user</option>
+                                <option value="" className="bg-[#060c1a]">
+                                    Select a user
+                                </option>
                                 {users.map((user) => (
-                                    <option key={user.id} value={user.id} className="bg-[#060c1a]">
+                                    <option
+                                        key={user.id}
+                                        value={user.id}
+                                        className="bg-[#060c1a]"
+                                    >
                                         {user.name} ({user.email})
                                     </option>
                                 ))}
@@ -151,17 +157,23 @@ export default function EditTask({
                             <select
                                 name="category"
                                 value={data.category}
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 onChange={(e) => {
                                     setData('category', e.target.value);
                                     setData('sub_category_id', '');
                                 }}
                                 required
                             >
-                                <option value="" className="bg-[#060c1a]">Select Category</option>
+                                <option value="" className="bg-[#060c1a]">
+                                    Select Category
+                                </option>
                                 {Object.entries(categories).map(
                                     ([slug, label]) => (
-                                        <option key={slug} value={slug} className="bg-[#060c1a]">
+                                        <option
+                                            key={slug}
+                                            value={slug}
+                                            className="bg-[#060c1a]"
+                                        >
                                             {label}
                                         </option>
                                     ),
@@ -180,7 +192,7 @@ export default function EditTask({
                             </label>
                             <select
                                 name="sub_category_id"
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5 disabled:opacity-50"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5 disabled:opacity-50"
                                 disabled={!data.category}
                                 value={data.sub_category_id}
                                 onChange={(e) =>
@@ -194,7 +206,11 @@ export default function EditTask({
                                     subCategoriesByCategory[
                                         data.category as string
                                     ]?.map((sub) => (
-                                        <option key={sub.id} value={sub.id} className="bg-[#060c1a]">
+                                        <option
+                                            key={sub.id}
+                                            value={sub.id}
+                                            className="bg-[#060c1a]"
+                                        >
                                             {sub.name}
                                         </option>
                                     ))}
@@ -217,7 +233,7 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('task_name', e.target.value)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter task name"
                                 required
                             />
@@ -249,7 +265,7 @@ export default function EditTask({
                                     }
                                 }}
                                 style={{ colorScheme: 'dark' }}
-                                className="block w-full cursor-pointer rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full cursor-pointer rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             />
                             {errors.date && (
@@ -269,12 +285,27 @@ export default function EditTask({
                                 onChange={(e) =>
                                     setData('state', e.target.value as any)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-violet-500/50 focus:bg-violet-500/5"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 required
                             >
-                                <option value="pending" className="bg-[#060c1a]">Pending</option>
-                                <option value="in progress" className="bg-[#060c1a]">In Progress</option>
-                                <option value="delivered" className="bg-[#060c1a]">Delivered</option>
+                                <option
+                                    value="pending"
+                                    className="bg-[#060c1a]"
+                                >
+                                    Pending
+                                </option>
+                                <option
+                                    value="in progress"
+                                    className="bg-[#060c1a]"
+                                >
+                                    In Progress
+                                </option>
+                                <option
+                                    value="delivered"
+                                    className="bg-[#060c1a]"
+                                >
+                                    Delivered
+                                </option>
                             </select>
                             {errors.state && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
@@ -287,7 +318,7 @@ export default function EditTask({
                     <div className="space-y-3">
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Task Image{' '}
-                            <span className="normal-case text-zinc-500">
+                            <span className="text-zinc-500 normal-case">
                                 (Used as review image)
                             </span>
                         </label>
@@ -342,14 +373,14 @@ export default function EditTask({
                     <div className="flex items-center justify-end gap-4 border-t border-violet-500/10 pt-6">
                         <Link
                             href={adminRoutes.tasks.index.url()}
-                            className="rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/8 hover:text-white"
+                            className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-500/25 hover:bg-violet-500/[0.08] hover:text-white hover:shadow-[0_0_14px_rgba(124,58,237,0.1)] hover:before:translate-x-full"
                         >
                             Cancel
                         </Link>
                         <button
                             type="submit"
                             disabled={processing}
-                            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-cyan-500 disabled:opacity-50"
+                            className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
                         >
                             {processing ? (
                                 <>

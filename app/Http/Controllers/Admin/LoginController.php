@@ -13,17 +13,17 @@ class LoginController extends Controller
 {
     public function create(): Response|RedirectResponse
     {
-        if (Auth::check()) {
-            return redirect()->route('home');
+        if (Auth::guard('admin')->check()) {
+            return redirect()->intended('/admin');
         }
 
         return Inertia::render('Admin/Auth/Login');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): Response|RedirectResponse
     {
-        if (Auth::check()) {
-            return redirect()->route('home');
+        if (Auth::guard('admin')->check()) {
+            return redirect()->intended('/admin');
         }
 
         $credentials = $request->validate([
@@ -34,7 +34,11 @@ class LoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/admin');
+            $admin = Auth::guard('admin')->user();
+
+            return Inertia::render('Admin/Auth/Login', [
+                'successName' => $admin->name,
+            ]);
         }
 
         return back()->withErrors([
