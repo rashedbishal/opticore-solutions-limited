@@ -63,13 +63,6 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env
-          sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' .env
-          sed -i 's/^CACHE_STORE=.*/CACHE_STORE=array/' .env
-          sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env
-          sed -i 's/^QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
-          # Patch phpunit.xml to use 127.0.0.1 for CI
-          sed -i 's/192.168.0.114/127.0.0.1/g' phpunit.xml
 
       - name: Create admin test database
         run: PGPASSWORD=password psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE opticoresolutions_admin_test;"
@@ -94,3 +87,13 @@ jobs:
 
       - name: Run tests
         run: ./vendor/bin/pest --ci
+
+      # Upload the verified build so the deploy job uses the exact same artifact.
+      # This guarantees production runs the same frontend that passed all checks.
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          name: frontend-build-${{ github.sha }}
+          path: public/build
+          retention-days: 7

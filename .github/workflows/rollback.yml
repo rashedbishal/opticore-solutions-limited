@@ -1,0 +1,77 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: >
+          Release name to roll back to (e.g. 20260524_120015_abc1234).
+          Leave blank to roll back to the previous release automatically.
+        required: false
+        default: ''
+      confirm:
+        description: Type "yes" to confirm you want to roll back production.
+        required: true
+        default: ''
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: Roll Back Production
+    runs-on: self-hosted
+    environment: production
+
+    if: github.event.inputs.confirm == 'yes'
+
+    env:
+      DEPLOY_BASE: /var/www/opticore
+      APP_URL: https://opticore.solutions
+
+    steps:
+      - name: Show available releases
+        run: |
+          echo "Available releases on VPS:"
+          ls -dt "${DEPLOY_BASE}/releases"/* 2>/dev/null | while read -r dir; do
+            name=$(basename "$dir")
+            marker=""
+            [ "$(readlink "${DEPLOY_BASE}/current")" = "$dir" ] && marker=" ← current"
+            prev=$(cat "${DEPLOY_BASE}/PREVIOUS_RELEASE" 2>/dev/null || echo "")
+            [ "$name" = "$prev" ] && marker="$marker ← previous"
+            echo "  $name$marker"
+          done
+
+      - name: Run rollback script
+        run: |
+          chmod +x "${DEPLOY_BASE}/current/scripts/deploy/rollback.sh"
+          bash "${DEPLOY_BASE}/current/scripts/deploy/rollback.sh" \
+            "${{ github.event.inputs.release }}"
+
+      - name: Write rollback summary
+        if: success()
+        run: |
+          {
+            echo "## Rollback Successful"
+            echo ""
+            CURRENT=$(cat "${DEPLOY_BASE}/CURRENT_RELEASE" 2>/dev/null || echo "unknown")
+            echo "Production is now running release: \`${CURRENT}\`"
+            echo ""
+            echo "Triggered by: @${{ github.actor }} at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write failure summary
+        if: failure()
+        run: |
+          {
+            echo "## Rollback FAILED"
+            echo ""
+            echo "Manual SSH intervention required."
+            echo ""
+            echo "Connect to the VPS and run:"
+            echo "\`\`\`bash"
+            echo "DEPLOY_BASE=${DEPLOY_BASE} APP_URL=${APP_URL} \\"
+            echo "  bash ${DEPLOY_BASE}/current/scripts/deploy/rollback.sh"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"

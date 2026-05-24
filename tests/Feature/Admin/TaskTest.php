@@ -4,10 +4,7 @@ use App\Models\Admin;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-
-uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->admin = Admin::factory()->create();

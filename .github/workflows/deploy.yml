@@ -7,38 +7,145 @@ on:
     types:
       - completed
 
+# Only one deployment may run at a time.
+# If a new push lands while a deploy is in progress, the in-progress deploy
+# finishes first; the new one queues and runs afterward.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
-    name: Deploy to VPS (Self-hosted)
+    name: Deploy to Production (Self-hosted)
     runs-on: self-hosted
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    # Only deploy when CI passed on main, not on PRs or failed CI runs.
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+
+    environment: production
+
+    env:
+      DEPLOY_BASE: /var/www/opticore
+      APP_URL: https://opticoresolutionsltd.com
 
     steps:
-      - name: Pull latest code
+      # -----------------------------------------------------------------
+      # 1. Fetch source at the exact SHA that passed CI.
+      # -----------------------------------------------------------------
+      - name: Checkout source at CI commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          path: _checkout
+
+      # -----------------------------------------------------------------
+      # 2. Download the frontend artifact verified by CI.
+      #    Production runs the exact same compiled assets that passed all
+      #    lint, type-check, and bundle-budget checks in CI.
+      # -----------------------------------------------------------------
+      - name: Download verified frontend build from CI
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build-${{ github.event.workflow_run.head_sha }}
+          path: _frontend_build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      # -----------------------------------------------------------------
+      # 3. Derive a deterministic release name: timestamp + short SHA.
+      # -----------------------------------------------------------------
+      - name: Set release name
+        id: release
         run: |
-          cd /var/www/opticoresolutionsltd
-          git pull origin main
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          RELEASE_NAME="$(date -u '+%Y%m%d_%H%M%S')_${SHORT_SHA}"
+          echo "name=${RELEASE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
 
-      - name: Install dependencies
+      # -----------------------------------------------------------------
+      # 4. Copy source into the new release directory and export paths.
+      # -----------------------------------------------------------------
+      - name: Copy source to release directory
         run: |
-          cd /var/www/opticoresolutionsltd
-          composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
-          npm ci
-          npm run build
+          RELEASE_DIR="${DEPLOY_BASE}/releases/${{ steps.release.outputs.name }}"
+          mkdir -p "$RELEASE_DIR"
+          rsync -a --exclude='.git' _checkout/ "$RELEASE_DIR/"
+          echo "RELEASE_DIR=${RELEASE_DIR}" >> "$GITHUB_ENV"
+          echo "FRONTEND_BUILD_DIR=$(pwd)/_frontend_build" >> "$GITHUB_ENV"
 
-      - name: Laravel Production Setup
+      # -----------------------------------------------------------------
+      # 5. Run the atomic deployment script. It:
+      #      - Links shared .env and storage
+      #      - Installs Composer deps (--no-dev)
+      #      - Places the pre-built frontend
+      #      - Enables maintenance mode
+      #      - Runs migrations (both DB connections)
+      #      - Caches config, routes, views, events
+      #      - Atomically swaps the symlink
+      #      - Disables maintenance mode
+      #      - Reloads PHP-FPM, restarts Reverb, signals queue:restart
+      #      - Runs a health check against /up
+      #      - Auto-rolls back on any failure after the symlink swap
+      #      - Cleans up old releases (keeps last 5)
+      # -----------------------------------------------------------------
+      - name: Run atomic deployment
         run: |
-          cd /var/www/opticoresolutionsltd
-          php artisan migrate --force
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          rm -rf public/storage
-          ln -sfn ../storage/app/public public/storage
-          php artisan queue:restart
+          chmod +x "$RELEASE_DIR/scripts/deploy/deploy.sh"
+          bash "$RELEASE_DIR/scripts/deploy/deploy.sh" \
+            "${{ steps.release.outputs.name }}" \
+            "${{ steps.release.outputs.sha }}"
+        env:
+          FRONTEND_BUILD_DIR: ${{ env.FRONTEND_BUILD_DIR }}
 
-      - name: Restart Reverb
-        run: sudo supervisorctl restart laravel-reverb
+      # -----------------------------------------------------------------
+      # 6. Clean up the workspace regardless of outcome.
+      # -----------------------------------------------------------------
+      - name: Clean up workspace
+        if: always()
+        run: rm -rf _checkout _frontend_build
 
-      - name: Reload PHP-FPM
-        run: sudo systemctl reload php8.3-fpm
+      # -----------------------------------------------------------------
+      # 7. GitHub Actions UI summary for quick reference.
+      # -----------------------------------------------------------------
+      - name: Write deployment summary
+        if: success()
+        run: |
+          {
+            echo "## Deployment Successful"
+            echo ""
+            echo "| Field | Value |"
+            echo "|-------|-------|"
+            echo "| Release | \`${{ steps.release.outputs.name }}\` |"
+            echo "| Commit | \`${{ steps.release.outputs.sha }}\` |"
+            echo "| Deployed at | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |"
+            echo "| App URL | ${{ env.APP_URL }} |"
+            echo ""
+            echo "### Recent releases on VPS"
+            echo '```'
+            ls -dt "${DEPLOY_BASE}/releases"/* 2>/dev/null | head -5 | while read -r dir; do
+              name=$(basename "$dir")
+              marker=""
+              [ "$(readlink "${DEPLOY_BASE}/current")" = "$dir" ] && marker=" ← current"
+              echo "$name$marker"
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write failure summary
+        if: failure()
+        run: |
+          {
+            echo "## Deployment FAILED — rollback was attempted"
+            echo ""
+            echo "- Release: \`${{ steps.release.outputs.name }}\`"
+            echo "- Commit: \`${{ steps.release.outputs.sha }}\`"
+            echo ""
+            echo "Check the VPS deploy log:"
+            echo "\`\`\`"
+            echo "cat ${DEPLOY_BASE}/DEPLOY_LOG"
+            echo "\`\`\`"
+            echo ""
+            echo "To manually roll back, trigger the **Rollback** workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
