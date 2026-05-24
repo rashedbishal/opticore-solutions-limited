@@ -7,6 +7,10 @@ on:
     types:
       - completed
 
+permissions:
+  actions: read
+  contents: read
+
 # Only one deployment may run at a time.
 # If a new push lands while a deploy is in progress, the in-progress deploy
 # finishes first; the new one queues and runs afterward.
