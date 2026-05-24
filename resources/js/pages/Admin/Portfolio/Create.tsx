@@ -2,6 +2,7 @@ import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -25,7 +26,8 @@ export default function PortfolioCreate({
         categoryKeys[0] ?? '',
     );
 
-    const { data, setData, post, processing, errors } = useForm({
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const { data, setData, post, processing } = useForm({
         title: '',
         sub_category_id: '' as string | number,
         alt: '',
@@ -54,11 +56,36 @@ export default function PortfolioCreate({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.portfolios.store.url());
+        const v: string[] = [];
+
+        if (!data.sub_category_id) {
+            v.push('Please select a sub-category.');
+        }
+
+        if (!data.media) {
+            v.push('A media file (image or video) is required.');
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
+
+            return;
+        }
+
+        post(adminRoutes.portfolios.store.url(), {
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
+        });
     };
 
     return (
         <div className="max-w-2xl">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Create Portfolio
             </h1>
@@ -75,13 +102,7 @@ export default function PortfolioCreate({
                             value={data.title}
                             onChange={(e) => setData('title', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.title && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.title}
-                            </p>
-                        )}
                     </div>
 
                     {/* Category Selection (UI only, to filter sub-categories) */}
@@ -115,7 +136,6 @@ export default function PortfolioCreate({
                                 setData('sub_category_id', e.target.value)
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         >
                             <option value="">Select a sub-category</option>
                             {currentSubCategories.map((sub) => (
@@ -135,11 +155,6 @@ export default function PortfolioCreate({
                                     create one first
                                 </Link>
                                 .
-                            </p>
-                        )}
-                        {errors.sub_category_id && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.sub_category_id}
                             </p>
                         )}
                     </div>
@@ -176,13 +191,7 @@ export default function PortfolioCreate({
                                 setData('media', e.target.files?.[0] || null)
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
-                            required
                         />
-                        {errors.media && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.media}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

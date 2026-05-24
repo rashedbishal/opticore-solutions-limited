@@ -1,7 +1,8 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { ChevronLeft, Loader2 } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -28,7 +29,7 @@ export default function CreateTask({
     subCategoriesByCategory,
     users,
 }: Props) {
-    const { data, setData, post, processing, errors } = useForm<{
+    const { data, setData, post, processing } = useForm<{
         client_name: string;
         user_id: string | number;
         category: string;
@@ -49,16 +50,53 @@ export default function CreateTask({
     });
 
     const imageInputRef = useRef<HTMLInputElement>(null);
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        const v: string[] = [];
+
+        if (!data.client_name.trim()) {
+            v.push('Client name is required.');
+        }
+
+        if (!data.user_id) {
+            v.push('Please select a client (user).');
+        }
+
+        if (!data.category) {
+            v.push('Please select a category.');
+        }
+
+        if (!data.task_name.trim()) {
+            v.push('Task name is required.');
+        }
+
+        if (!data.date) {
+            v.push('Date is required.');
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
+
+            return;
+        }
+
         post(adminRoutes.tasks.store.url(), {
             forceFormData: true,
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
         });
     };
 
     return (
         <div className="space-y-6">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
             <div className="flex items-center gap-4">
                 <Link
                     href={adminRoutes.tasks.index.url()}
@@ -86,13 +124,7 @@ export default function CreateTask({
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter client name"
-                                required
                             />
-                            {errors.client_name && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.client_name}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -109,7 +141,6 @@ export default function CreateTask({
                                     )
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                                required
                             >
                                 <option value="" className="bg-[#060c1a]">
                                     Select a user
@@ -124,11 +155,6 @@ export default function CreateTask({
                                     </option>
                                 ))}
                             </select>
-                            {errors.user_id && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.user_id}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -143,7 +169,6 @@ export default function CreateTask({
                                     setData('category', e.target.value);
                                     setData('sub_category_id', '');
                                 }}
-                                required
                             >
                                 <option value="" className="bg-[#060c1a]">
                                     Select Category
@@ -160,11 +185,6 @@ export default function CreateTask({
                                     ),
                                 )}
                             </select>
-                            {errors.category && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.category}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -196,11 +216,6 @@ export default function CreateTask({
                                         </option>
                                     ))}
                             </select>
-                            {errors.sub_category_id && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.sub_category_id}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -216,13 +231,7 @@ export default function CreateTask({
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                 placeholder="Enter task name"
-                                required
                             />
-                            {errors.task_name && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.task_name}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -247,13 +256,7 @@ export default function CreateTask({
                                 }}
                                 style={{ colorScheme: 'dark' }}
                                 className="block w-full cursor-pointer rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                                required
                             />
-                            {errors.date && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.date}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -267,7 +270,6 @@ export default function CreateTask({
                                     setData('state', e.target.value as any)
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                                required
                             >
                                 <option
                                     value="pending"
@@ -288,11 +290,6 @@ export default function CreateTask({
                                     Delivered
                                 </option>
                             </select>
-                            {errors.state && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.state}
-                                </p>
-                            )}
                         </div>
                     </div>
 
@@ -312,11 +309,6 @@ export default function CreateTask({
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-slate-300 outline-none file:mr-4 file:rounded file:border-0 file:bg-violet-600 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:bg-violet-500"
                         />
-                        {errors.image && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.image}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex items-center justify-end gap-4 border-t border-violet-500/10 pt-6">

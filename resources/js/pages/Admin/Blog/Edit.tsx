@@ -1,6 +1,8 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -18,7 +20,8 @@ interface Props {
 }
 
 export default function BlogEdit({ blog }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const { data, setData, post, processing } = useForm({
         _method: 'PUT',
         title: blog.title,
         category: blog.category,
@@ -31,11 +34,36 @@ export default function BlogEdit({ blog }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.blogs.update.url(blog.id));
+        const v: string[] = [];
+
+        if (!data.title.trim()) {
+            v.push('Post title is required.');
+        }
+
+        if (!data.content.trim()) {
+            v.push('Post content is required.');
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
+
+            return;
+        }
+
+        post(adminRoutes.blogs.update.url(blog.id), {
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
+        });
     };
 
     return (
         <div className="mx-auto max-w-4xl">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Edit Blog Post
             </h1>
@@ -54,13 +82,7 @@ export default function BlogEdit({ blog }: Props) {
                                     setData('title', e.target.value)
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                                required
                             />
-                            {errors.title && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.title}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -90,11 +112,6 @@ export default function BlogEdit({ blog }: Props) {
                                     Web Development
                                 </option>
                             </select>
-                            {errors.category && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.category}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -147,13 +164,7 @@ export default function BlogEdit({ blog }: Props) {
                             onChange={(e) => setData('content', e.target.value)}
                             rows={15}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         ></textarea>
-                        {errors.content && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.content}
-                            </p>
-                        )}
                     </div>
 
                     <div>
@@ -176,11 +187,6 @@ export default function BlogEdit({ blog }: Props) {
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                         />
-                        {errors.image && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.image}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

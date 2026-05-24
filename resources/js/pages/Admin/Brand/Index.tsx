@@ -11,6 +11,8 @@ import {
     Loader2,
 } from 'lucide-react';
 import React, { useState, useRef } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
 interface Brand {
@@ -30,16 +32,23 @@ export default function BrandIndex({ brands }: Props) {
     const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
-    const { data, setData, post, processing, errors, reset, clearErrors } =
-        useForm<{
-            name: string;
-            logo: File | null;
-            _method?: string;
-        }>({
-            name: '',
-            logo: null,
-        });
+    const { data, setData, post, processing, reset, clearErrors } = useForm<{
+        name: string;
+        logo: File | null;
+        _method?: string;
+    }>({
+        name: '',
+        logo: null,
+    });
 
     const openCreateModal = () => {
         clearErrors();
@@ -84,26 +93,42 @@ export default function BrandIndex({ brands }: Props) {
         e.preventDefault();
 
         if (editingBrand) {
-            // Use post with _method put for file uploads
             setData('_method', 'PUT');
             post(`/admin/brands/${editingBrand.id}`, {
                 onSuccess: () => closeModal(),
+                onError: (errs) =>
+                    setErrorMessages(
+                        Object.values(errs).filter(Boolean) as string[],
+                    ),
             });
         } else {
             post(`/admin/brands`, {
                 onSuccess: () => closeModal(),
+                onError: (errs) =>
+                    setErrorMessages(
+                        Object.values(errs).filter(Boolean) as string[],
+                    ),
             });
         }
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this brand?')) {
+        requestDelete(() => {
             router.delete(`/admin/brands/${id}`);
-        }
+        });
     };
 
     return (
         <div className="relative space-y-6">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-white">Brands</h1>
                 <button
@@ -248,11 +273,6 @@ export default function BrandIndex({ brands }: Props) {
                                             placeholder="e.g. Velocity Commerce"
                                             autoComplete="off"
                                         />
-                                        {errors.name && (
-                                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                                {errors.name}
-                                            </p>
-                                        )}
                                     </div>
 
                                     <div>
@@ -298,11 +318,6 @@ export default function BrandIndex({ brands }: Props) {
                                                 </div>
                                             )}
                                         </div>
-                                        {errors.logo && (
-                                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                                {errors.logo}
-                                            </p>
-                                        )}
                                     </div>
                                 </div>
 

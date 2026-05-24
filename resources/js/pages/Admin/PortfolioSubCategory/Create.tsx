@@ -1,6 +1,8 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -11,7 +13,8 @@ interface Props {
 export default function PortfolioSubCategoryCreate({ categories }: Props) {
     const categoryKeys = Object.keys(categories);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const { data, setData, post, processing } = useForm({
         category_slug: categoryKeys[0] ?? '',
         name: '',
         slug: '',
@@ -25,11 +28,37 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(adminRoutes.subCategories.store.url(), { forceFormData: true });
+        const v: string[] = [];
+
+        if (!data.category_slug) {
+            v.push('Please select a parent category.');
+        }
+
+        if (!data.name.trim()) {
+            v.push('Sub-category name is required.');
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
+
+            return;
+        }
+
+        post(adminRoutes.subCategories.store.url(), {
+            forceFormData: true,
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
+        });
     };
 
     return (
         <div className="max-w-2xl">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
             <h1 className="mb-6 text-2xl font-bold text-white">
                 Create Sub-Category
             </h1>
@@ -47,7 +76,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 setData('category_slug', e.target.value)
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
                                 <option key={slug} value={slug}>
@@ -55,11 +83,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 </option>
                             ))}
                         </select>
-                        {errors.category_slug && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.category_slug}
-                            </p>
-                        )}
                     </div>
 
                     {/* Name */}
@@ -73,13 +96,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="e.g. Logo & Identity"
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.name && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.name}
-                            </p>
-                        )}
                     </div>
 
                     {/* Slug */}
@@ -97,11 +114,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             placeholder="e.g. logo-identity"
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.slug && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.slug}
-                            </p>
-                        )}
                     </div>
 
                     {/* Description */}
@@ -117,11 +129,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             rows={3}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.description && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.description}
-                            </p>
-                        )}
                     </div>
 
                     <div>
@@ -135,11 +142,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             placeholder="e.g. 500 BDT"
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.price && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.price}
-                            </p>
-                        )}
                     </div>
 
                     <div className="grid gap-6 sm:grid-cols-2">
@@ -158,11 +160,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
-                            {errors.rating && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.rating}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -181,11 +178,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
-                            {errors.reviews_count && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.reviews_count}
-                                </p>
-                            )}
                         </div>
                     </div>
 
@@ -201,11 +193,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                         />
-                        {errors.image && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.image}
-                            </p>
-                        )}
                     </div>
 
                     {/* Sort Order */}
@@ -224,11 +211,6 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             }
                             className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.sort_order && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.sort_order}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

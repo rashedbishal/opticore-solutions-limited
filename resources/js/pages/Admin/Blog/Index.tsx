@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Plus, Trash2, Edit } from 'lucide-react';
+import { useState } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -20,15 +22,27 @@ interface Props {
 
 export default function BlogIndex({ blogs }: Props) {
     const { delete: destroy } = useForm();
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this blog post?')) {
+        requestDelete(() => {
             destroy(adminRoutes.blogs.destroy.url(id));
-        }
+        });
     };
 
     return (
         <div className="space-y-6">
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-white">Blogs</h1>
                 <Link

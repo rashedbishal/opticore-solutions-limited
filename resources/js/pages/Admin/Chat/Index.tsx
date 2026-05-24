@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Trash2, User, Bot, Mail, Sparkles, ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -32,14 +33,21 @@ interface Props {
 export default function ChatIndex({ sessions }: Props) {
     const { delete: destroy } = useForm();
     const [expandedId, setExpandedId] = useState<number | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
     const handleDelete = (id: number, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (confirm('Are you sure you want to delete this chat session?')) {
+        requestDelete(() => {
             destroy(adminRoutes.chats.destroy.url(id));
-        }
+        });
     };
 
     const toggleExpand = (id: number) => {
@@ -48,6 +56,11 @@ export default function ChatIndex({ sessions }: Props) {
 
     return (
         <div className="mx-auto max-w-6xl space-y-6">
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             <div className="mb-2 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
                 <div>
                     <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">

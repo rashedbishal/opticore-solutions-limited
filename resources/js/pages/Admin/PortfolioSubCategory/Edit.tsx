@@ -10,6 +10,8 @@ import {
     Loader2,
 } from 'lucide-react';
 import { useState } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -66,7 +68,16 @@ export default function PortfolioSubCategoryEdit({
     categories,
     allowed_icons,
 }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
+
+    const { data, setData, post, processing } = useForm({
         _method: 'PUT',
         category_slug: subCategory.category_slug,
         name: subCategory.name,
@@ -93,7 +104,6 @@ export default function PortfolioSubCategoryEdit({
         setData: setGalleryData,
         post: postGallery,
         processing: galleryProcessing,
-        errors: galleryErrors,
         reset: resetGallery,
     } = useForm({
         media: null as File | null,
@@ -177,14 +187,18 @@ export default function PortfolioSubCategoryEdit({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        const v: string[] = [];
+
+        if (!data.name.trim()) {
+            v.push('Sub-category name is required.');
+        }
+
         const incomplete = data.description_points.some(
             (p) => p.label.trim() === '',
         );
 
         if (incomplete) {
-            alert('All 6 service description points must have a label.');
-
-            return;
+            v.push('All 6 service description points must have a label.');
         }
 
         const tiersWithNoFeatures = PLAN_TIERS.filter(
@@ -195,15 +209,23 @@ export default function PortfolioSubCategoryEdit({
 
         if (tiersWithNoFeatures.length > 0) {
             const names = tiersWithNoFeatures.map((t) => t.label).join(', ');
-            alert(
-                `Each pricing plan must have at least one feature. Missing features in: ${names}.`,
+            v.push(
+                `Each pricing plan must have at least one feature. Missing: ${names}.`,
             );
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
 
             return;
         }
 
         post(adminRoutes.subCategories.update.url(subCategory.slug), {
             forceFormData: true,
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
         });
     };
 
@@ -217,23 +239,36 @@ export default function PortfolioSubCategoryEdit({
                     resetGallery();
                     setFileInputKey((k) => k + 1);
                 },
+                onError: (errs) =>
+                    setErrorMessages(
+                        Object.values(errs).filter(Boolean) as string[],
+                    ),
             },
         );
     };
 
     const removeMedia = (portfolioId: number) => {
-        if (confirm('Remove this item from the gallery?')) {
+        requestDelete(() => {
             destroyMedia(
                 adminRoutes.subCategories.gallery.destroy.url({
                     sub_category: subCategory.slug,
                     portfolio: portfolioId,
                 }),
             );
-        }
+        });
     };
 
     return (
         <div className="max-w-4xl space-y-8">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             <h1 className="text-2xl font-bold text-white">Edit Sub-Category</h1>
 
             {/* Main details form */}
@@ -251,7 +286,6 @@ export default function PortfolioSubCategoryEdit({
                                 setData('category_slug', e.target.value)
                             }
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         >
                             {Object.entries(categories).map(([slug, label]) => (
                                 <option key={slug} value={slug}>
@@ -259,11 +293,6 @@ export default function PortfolioSubCategoryEdit({
                                 </option>
                             ))}
                         </select>
-                        {errors.category_slug && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.category_slug}
-                            </p>
-                        )}
                     </div>
 
                     {/* Name */}
@@ -276,13 +305,7 @@ export default function PortfolioSubCategoryEdit({
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.name && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.name}
-                            </p>
-                        )}
                     </div>
 
                     {/* Slug */}
@@ -295,13 +318,7 @@ export default function PortfolioSubCategoryEdit({
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.slug && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.slug}
-                            </p>
-                        )}
                     </div>
 
                     {/* Description */}
@@ -317,11 +334,6 @@ export default function PortfolioSubCategoryEdit({
                             rows={3}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.description && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.description}
-                            </p>
-                        )}
                     </div>
 
                     <div>
@@ -334,11 +346,6 @@ export default function PortfolioSubCategoryEdit({
                             onChange={(e) => setData('price', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.price && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.price}
-                            </p>
-                        )}
                     </div>
 
                     <div className="grid gap-6 sm:grid-cols-2">
@@ -357,11 +364,6 @@ export default function PortfolioSubCategoryEdit({
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
-                            {errors.rating && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.rating}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -380,11 +382,6 @@ export default function PortfolioSubCategoryEdit({
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
-                            {errors.reviews_count && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {errors.reviews_count}
-                                </p>
-                            )}
                         </div>
                     </div>
 
@@ -412,11 +409,6 @@ export default function PortfolioSubCategoryEdit({
                                 Leave empty to keep the current image.
                             </p>
                         )}
-                        {errors.image && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.image}
-                            </p>
-                        )}
                     </div>
 
                     {/* Sort Order */}
@@ -435,11 +427,6 @@ export default function PortfolioSubCategoryEdit({
                             }
                             className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
-                        {errors.sort_order && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.sort_order}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">
@@ -656,19 +643,7 @@ export default function PortfolioSubCategoryEdit({
                                         }
                                         placeholder="e.g. Custom Designs"
                                         className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                                        required
                                     />
-                                    {errors[
-                                        `description_points.${index}.label` as keyof typeof errors
-                                    ] && (
-                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                            {
-                                                errors[
-                                                    `description_points.${index}.label` as keyof typeof errors
-                                                ]
-                                            }
-                                        </p>
-                                    )}
                                 </div>
                             </div>
                         </div>
@@ -738,17 +713,6 @@ export default function PortfolioSubCategoryEdit({
                                         placeholder="e.g. How long does it take?"
                                         className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
-                                    {errors[
-                                        `faqs.${index}.question` as keyof typeof errors
-                                    ] && (
-                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                            {
-                                                errors[
-                                                    `faqs.${index}.question` as keyof typeof errors
-                                                ]
-                                            }
-                                        </p>
-                                    )}
                                 </div>
 
                                 <div>
@@ -768,17 +732,6 @@ export default function PortfolioSubCategoryEdit({
                                         placeholder="Provide a clear, helpful answer…"
                                         className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     />
-                                    {errors[
-                                        `faqs.${index}.answer` as keyof typeof errors
-                                    ] && (
-                                        <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                            {
-                                                errors[
-                                                    `faqs.${index}.answer` as keyof typeof errors
-                                                ]
-                                            }
-                                        </p>
-                                    )}
                                 </div>
                             </div>
                         </div>
@@ -939,16 +892,10 @@ export default function PortfolioSubCategoryEdit({
                                     }
                                 }}
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
-                                required
                             />
                             {fileSizeError && (
                                 <p className="mt-1.5 font-mono text-[10px] text-red-400">
                                     {fileSizeError}
-                                </p>
-                            )}
-                            {galleryErrors.media && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {galleryErrors.media}
                                 </p>
                             )}
                         </div>
@@ -968,11 +915,6 @@ export default function PortfolioSubCategoryEdit({
                                 placeholder="e.g. Brand Identity — TechFlow"
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
-                            {galleryErrors.caption && (
-                                <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                    {galleryErrors.caption}
-                                </p>
-                            )}
                         </div>
                         <button
                             type="submit"

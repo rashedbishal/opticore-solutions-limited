@@ -1,6 +1,8 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -13,7 +15,8 @@ interface Props {
 }
 
 export default function UserEdit({ user }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const { data, setData, put, processing } = useForm({
         name: user.name,
         email: user.email,
         password: '',
@@ -21,11 +24,40 @@ export default function UserEdit({ user }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(adminRoutes.users.update.url(user.id));
+        const v: string[] = [];
+
+        if (!data.name.trim()) {
+            v.push('Name is required.');
+        }
+
+        if (!data.email.trim()) {
+            v.push('Email address is required.');
+        }
+
+        if (data.password && data.password.length < 8) {
+            v.push('New password must be at least 8 characters.');
+        }
+
+        if (v.length > 0) {
+            setErrorMessages(v);
+
+            return;
+        }
+
+        put(adminRoutes.users.update.url(user.id), {
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
+        });
     };
 
     return (
         <div className="max-w-2xl">
+            <CmsErrorDialog
+                messages={errorMessages}
+                onClose={() => setErrorMessages([])}
+            />
             <h1 className="mb-6 text-2xl font-bold text-white">Edit User</h1>
             <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
@@ -39,13 +71,7 @@ export default function UserEdit({ user }: Props) {
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.name && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.name}
-                            </p>
-                        )}
                     </div>
 
                     <div>
@@ -57,13 +83,7 @@ export default function UserEdit({ user }: Props) {
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            required
                         />
-                        {errors.email && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.email}
-                            </p>
-                        )}
                     </div>
 
                     <div>
@@ -79,11 +99,6 @@ export default function UserEdit({ user }: Props) {
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             minLength={8}
                         />
-                        {errors.password && (
-                            <p className="mt-1.5 font-mono text-[10px] text-red-400">
-                                {errors.password}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

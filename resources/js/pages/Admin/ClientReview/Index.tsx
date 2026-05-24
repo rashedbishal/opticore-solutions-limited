@@ -12,6 +12,7 @@ import {
     User,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -199,8 +200,15 @@ function ReviewCard({
 }
 
 function ClientReviewIndex({ grouped: serverGrouped }: Props) {
-    // Local state drives immediate animation; server call persists the order.
     const [grouped, setGrouped] = useState(serverGrouped);
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDeleteReview = (action: () => void) =>
+        setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
     // Keep in sync when Inertia refreshes props (e.g. after delete).
     useEffect(() => {
@@ -261,25 +269,24 @@ function ClientReviewIndex({ grouped: serverGrouped }: Props) {
         subCategoryId: number,
         reviewId: number,
     ) => {
-        if (!confirm('Delete this review? This cannot be undone.')) {
-            return;
-        }
+        requestDeleteReview(() => {
+            setGrouped((prev) => ({
+                ...prev,
+                [catSlug]: prev[catSlug].map((sg) =>
+                    sg.sub_category_id === subCategoryId
+                        ? {
+                              ...sg,
+                              reviews: sg.reviews.filter(
+                                  (r) => r.id !== reviewId,
+                              ),
+                          }
+                        : sg,
+                ),
+            }));
 
-        // Optimistic removal for instant feedback.
-        setGrouped((prev) => ({
-            ...prev,
-            [catSlug]: prev[catSlug].map((sg) =>
-                sg.sub_category_id === subCategoryId
-                    ? {
-                          ...sg,
-                          reviews: sg.reviews.filter((r) => r.id !== reviewId),
-                      }
-                    : sg,
-            ),
-        }));
-
-        router.delete(adminRoutes.clientReviews.destroy.url(reviewId), {
-            preserveScroll: true,
+            router.delete(adminRoutes.clientReviews.destroy.url(reviewId), {
+                preserveScroll: true,
+            });
         });
     };
 
@@ -287,6 +294,11 @@ function ClientReviewIndex({ grouped: serverGrouped }: Props) {
 
     return (
         <AdminLayout title="Review Control">
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             <div className="space-y-6">
                 <p className="text-sm text-zinc-400">
                     Manage, sort, and delete client reviews per service. Order

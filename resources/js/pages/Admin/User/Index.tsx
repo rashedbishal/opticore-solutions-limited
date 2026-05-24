@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Edit2, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -76,17 +78,29 @@ function decodePaginationLabel(label: string): string {
 
 export default function UserIndex({ users, auth }: Props) {
     const { delete: destroy } = useForm();
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this user?')) {
+        requestDelete(() => {
             destroy(adminRoutes.users.destroy.url(id));
-        }
+        });
     };
 
     const hasPagination = users.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="space-y-6">
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             {/* Header */}
             <div className="flex items-center justify-between">
                 <p className="text-sm text-zinc-500">

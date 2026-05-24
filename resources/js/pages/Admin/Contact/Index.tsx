@@ -3,6 +3,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, Mail, MessageSquare, Trash2 } from 'lucide-react';
 import { Fragment, useState } from 'react';
+import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -54,11 +55,18 @@ function decodePaginationLabel(label: string): string {
 export default function ContactIndex({ contacts }: Props) {
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const { delete: destroy } = useForm();
+    const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
+    const requestDelete = (action: () => void) => setDeleteTarget(() => action);
+    const confirmDelete = () => {
+        deleteTarget?.();
+        setDeleteTarget(null);
+    };
+    const cancelDelete = () => setDeleteTarget(null);
 
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this message?')) {
+        requestDelete(() => {
             destroy(adminRoutes.contacts.destroy.url(id));
-        }
+        });
     };
 
     const toggleExpand = (id: number) => {
@@ -70,6 +78,11 @@ export default function ContactIndex({ contacts }: Props) {
 
     return (
         <div className="space-y-6">
+            <CmsDeleteDialog
+                open={deleteTarget !== null}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
             {/* Count */}
             <p className="text-sm text-zinc-500">
                 {contacts.total} {contacts.total === 1 ? 'message' : 'messages'}{' '}
