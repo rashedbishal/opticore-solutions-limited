@@ -365,7 +365,6 @@ ln -snf "$RELEASE_DIR" "$DEPLOY_BASE/_next_ptr"
 mv -fT "$DEPLOY_BASE/_next_ptr" "$CURRENT_LINK"
 echo "$RELEASE_NAME" > "$DEPLOY_BASE/CURRENT_RELEASE"
 SYMLINK_SWAPPED=true  # All failures after this line restore the previous release.
-false
 
 # =========================================================================
 # PHASE 8 — Bring application back online.
