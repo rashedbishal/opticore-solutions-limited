@@ -69,18 +69,20 @@ jobs:
           echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
 
       # -----------------------------------------------------------------
-      # 4. Copy source into the new release directory and export paths.
+      # 4. Export paths consumed by deploy.sh.
+      #    Source population (rsync) is handled inside deploy.sh so that
+      #    all deployment logic lives in one place and the exclusion list
+      #    (storage/, .env, node_modules/, public/build/, public/hot) is
+      #    version-controlled alongside the rest of the deploy script.
       # -----------------------------------------------------------------
-      - name: Copy source to release directory
+      - name: Set deployment paths
         run: |
-          RELEASE_DIR="${DEPLOY_BASE}/releases/${{ steps.release.outputs.name }}"
-          mkdir -p "$RELEASE_DIR"
-          rsync -a --exclude='.git' _checkout/ "$RELEASE_DIR/"
-          echo "RELEASE_DIR=${RELEASE_DIR}" >> "$GITHUB_ENV"
+          echo "DEPLOY_SOURCE_DIR=$(pwd)/_checkout" >> "$GITHUB_ENV"
           echo "FRONTEND_BUILD_DIR=$(pwd)/_frontend_build" >> "$GITHUB_ENV"
 
       # -----------------------------------------------------------------
       # 5. Run the atomic deployment script. It:
+      #      - Rsyncs the verified source checkout into the release dir
       #      - Links shared .env and storage
       #      - Installs Composer deps (--no-dev)
       #      - Places the pre-built frontend
@@ -89,18 +91,22 @@ jobs:
       #      - Caches config, routes, views, events
       #      - Atomically swaps the symlink
       #      - Disables maintenance mode
-      #      - Reloads PHP-FPM, restarts Reverb, signals queue:restart
+      #      - Restarts PHP-FPM, Reverb, signals queue:restart
       #      - Runs a health check against /up
       #      - Auto-rolls back on any failure after the symlink swap
       #      - Cleans up old releases (keeps last 5)
+      #
+      # Called from _checkout/ — deploy.sh itself populates the release
+      # directory, so it cannot be called from that directory yet.
       # -----------------------------------------------------------------
       - name: Run atomic deployment
         run: |
-          chmod +x "$RELEASE_DIR/scripts/deploy/deploy.sh"
-          bash "$RELEASE_DIR/scripts/deploy/deploy.sh" \
+          chmod +x "_checkout/scripts/deploy/deploy.sh"
+          bash "_checkout/scripts/deploy/deploy.sh" \
             "${{ steps.release.outputs.name }}" \
             "${{ steps.release.outputs.sha }}"
         env:
+          DEPLOY_SOURCE_DIR: ${{ env.DEPLOY_SOURCE_DIR }}
           FRONTEND_BUILD_DIR: ${{ env.FRONTEND_BUILD_DIR }}
 
       # -----------------------------------------------------------------

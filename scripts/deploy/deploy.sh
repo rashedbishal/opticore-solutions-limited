@@ -7,8 +7,12 @@
 #   deploy.sh 20260524_143022 a1b2c3d
 #
 # Environment variables expected:
-#   APP_URL       - e.g. https://opticoresolutionsltd.com
-#   DEPLOY_BASE   - e.g. /var/www/opticore
+#   APP_URL            - e.g. https://opticoresolutionsltd.com
+#   DEPLOY_BASE        - e.g. /var/www/opticore
+#   DEPLOY_SOURCE_DIR  - absolute path to the verified source checkout
+#                        (e.g. $GITHUB_WORKSPACE/_checkout)
+#   FRONTEND_BUILD_DIR - absolute path to the pre-built frontend assets
+#                        (e.g. $GITHUB_WORKSPACE/_frontend_build)
 #
 # VPS prerequisites (run once after provisioning, before first deploy):
 #   sudo apt install unzip -y
@@ -25,6 +29,7 @@ RELEASE_NAME="${1:?Release name is required}"
 COMMIT_SHA="${2:?Commit SHA is required}"
 DEPLOY_BASE="${DEPLOY_BASE:?DEPLOY_BASE must be set}"
 APP_URL="${APP_URL:?APP_URL must be set}"
+DEPLOY_SOURCE_DIR="${DEPLOY_SOURCE_DIR:?DEPLOY_SOURCE_DIR must be set}"
 
 RELEASES_DIR="$DEPLOY_BASE/releases"
 SHARED_DIR="$DEPLOY_BASE/shared"
@@ -246,10 +251,35 @@ health_check() {
 }
 
 # =========================================================================
-# PHASE 1 — Prepare release directory
+# PHASE 1 — Populate release directory, then link shared resources.
+#
+# rsync copies the verified source checkout into the fresh release dir.
+# Excluded paths:
+#   .git/         — version-control history; never belongs on the server.
+#   storage/      — symlinked to shared storage below. Excluding it here
+#                   is what makes ln -sfn succeed: GNU ln cannot replace a
+#                   non-empty real directory with a symlink, so if rsync
+#                   copied storage/ first every deployment would crash here
+#                   with "cannot overwrite directory" before Phase 4 even
+#                   ran — the live release was never displaced and the old
+#                   release kept serving, which is exactly why all new
+#                   deployments were failing while the old release appeared
+#                   healthy.
+#   .env          — symlinked to shared .env below.
+#   node_modules/ — npm deps; no JS toolchain runs on the VPS.
+#   public/build/ — frontend assets come from the CI artifact in Phase 3.
+#   public/hot    — Vite dev-server marker; must never exist in production.
 # =========================================================================
-log "Creating release directory: $RELEASE_DIR"
+log "Populating release directory from source checkout: $DEPLOY_SOURCE_DIR"
 mkdir -p "$RELEASE_DIR"
+rsync -a \
+    --exclude='.git/' \
+    --exclude='storage/' \
+    --exclude='.env' \
+    --exclude='node_modules/' \
+    --exclude='public/build/' \
+    --exclude='public/hot' \
+    "$DEPLOY_SOURCE_DIR/" "$RELEASE_DIR/"
 
 log "Linking shared .env and storage..."
 ln -sfn "$SHARED_DIR/.env"    "$RELEASE_DIR/.env"
