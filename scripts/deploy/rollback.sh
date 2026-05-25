@@ -12,6 +12,7 @@ DEPLOY_BASE="${DEPLOY_BASE:?DEPLOY_BASE must be set}"
 APP_URL="${APP_URL:?APP_URL must be set}"
 PHP="php8.3"
 RELEASES_DIR="$DEPLOY_BASE/releases"
+SHARED_DIR="$DEPLOY_BASE/shared"
 CURRENT_LINK="$DEPLOY_BASE/current"
 
 log()  { echo "==> [$(date '+%H:%M:%S')] $*"; }
@@ -49,13 +50,21 @@ echo "$TARGET_RELEASE"  > "$DEPLOY_BASE/CURRENT_RELEASE"
 echo "$CURRENT_RELEASE" > "$DEPLOY_BASE/PREVIOUS_RELEASE"
 
 # ── Disable maintenance mode on the restored release ─────────────────────────
+# Same two-step pattern as the automatic rollback in deploy.sh on_exit:
+# Step 1: direct file removal — does not depend on PHP or artisan booting.
+# Step 2: artisan up — Laravel's own cleanup; non-fatal if artisan cannot run
+#         because the file is already gone from Step 1.
 log "Disabling maintenance mode..."
-"$PHP" "$CURRENT_LINK/artisan" up \
-    || fail "artisan up failed on rollback release. Check VPS — app is at: $TARGET_DIR"
+rm -f "$SHARED_DIR/storage/framework/down" 2>/dev/null || true
+"$PHP" "$CURRENT_LINK/artisan" up 2>&1 \
+    || log "artisan up returned non-zero — maintenance file was already removed directly."
 
-# ── Restart services (same order as deploy.sh) ───────────────────────────────
-log "Reloading PHP-FPM..."
-sudo systemctl reload php8.3-fpm
+# ── Restart services ─────────────────────────────────────────────────────────
+# Uses restart (not reload) — same reasoning as the automatic rollback path:
+# hard restart clears OPcache and realpath cache from the broken release, so
+# new workers resolve all paths against the restored release from a clean state.
+log "Restarting PHP-FPM..."
+sudo systemctl restart php8.3-fpm
 
 log "Restarting Reverb..."
 sudo supervisorctl restart laravel-reverb

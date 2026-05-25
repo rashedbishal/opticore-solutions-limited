@@ -160,22 +160,46 @@ on_exit() {
     fi
 
     # ── 2. Disable maintenance mode ────────────────────────────────────────
-    # artisan up is idempotent: safe to call even when the app is already live.
-    # Run from CURRENT_LINK so it works whether the symlink was rolled back or not.
+    # Two-step approach so this works even when artisan cannot boot.
+    #
+    # Step 1 — Direct file removal. The sole ground truth: no file = no
+    #   maintenance mode. Does not depend on PHP, artisan, or the app loading
+    #   correctly. Idempotent: a no-op if the file is already absent (e.g.
+    #   Phase 8 already ran `artisan up` before the health check failed, which
+    #   is exactly when logs show "Application is already up." — the file was
+    #   removed successfully in Phase 8; the 503 after that is from the broken
+    #   new release itself, not from a lingering maintenance flag).
+    #
+    # Step 2 — artisan up. Runs Laravel's own cleanup and produces a log line.
+    #   Non-fatal: if artisan cannot boot (broken release), the file is already
+    #   gone from Step 1 and the error is logged but does not abort rollback.
     if [ "$MAINTENANCE_ACTIVE" = "true" ]; then
-        $PHP "$CURRENT_LINK/artisan" up --quiet 2>/dev/null \
-            || err "artisan up failed — maintenance mode may still be active. Check VPS."
-        err "Maintenance mode disabled."
+        rm -f "$SHARED_DIR/storage/framework/down" 2>/dev/null || true
+        $PHP "$CURRENT_LINK/artisan" up 2>&1 \
+            || err "artisan up returned non-zero — maintenance file was already removed directly above."
+        err "Maintenance mode cleared."
     fi
 
-    # ── 3. Reload services so the restored release is served ──────────────
-    # Only needed when the symlink was actually swapped: PHP-FPM and queue
-    # workers must be pointed at the restored release, not the broken one.
+    # ── 3. Restart services so the restored release is served cleanly ─────
+    # Only triggered when the symlink was actually swapped (broken release went
+    # live). Uses restart — not reload — for PHP-FPM for a critical reason:
+    #
+    # A graceful reload (SIGUSR2) lets existing FPM workers finish their current
+    # requests before dying. Those workers hold OPcache bytecode and realpath
+    # cache entries resolved against the broken new release's directory. If the
+    # new release had a fatal error, those workers may spin-fail on every request
+    # they accept, continuing to serve 503 even after the symlink is restored.
+    #
+    # A hard restart (SIGTERM → new start) terminates all workers immediately,
+    # wipes every per-process cache, and forces all new workers to resolve paths
+    # and compile bytecode against the restored previous release from a clean
+    # slate. The ~1 s gap where no FPM workers are available is acceptable here:
+    # the application is already returning errors from the failed deployment.
     if [ "$SYMLINK_SWAPPED" = "true" ]; then
-        sudo systemctl reload php8.3-fpm                   2>/dev/null || err "php-fpm reload failed."
+        sudo systemctl restart php8.3-fpm                  2>/dev/null || err "php-fpm restart failed."
         sudo supervisorctl restart laravel-reverb           2>/dev/null || err "reverb restart failed."
         $PHP "$CURRENT_LINK/artisan" queue:restart          2>/dev/null || err "queue:restart failed."
-        err "Services reloaded for rolled-back release."
+        err "Services restarted for rolled-back release."
     fi
 
     # ── 4. Record failure in DEPLOY_LOG ───────────────────────────────────
