@@ -28,7 +28,7 @@ jobs:
 
     env:
       DEPLOY_BASE: /var/www/opticore
-      APP_URL: https://opticore.solutions
+      APP_URL: https://opticoresolutionsltd.com
 
     steps:
       - name: Show available releases
