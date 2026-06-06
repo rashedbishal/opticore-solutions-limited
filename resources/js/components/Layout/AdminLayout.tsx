@@ -54,7 +54,27 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    useEffect(() => {
+        const isMobile = window.innerWidth < 1024;
+        if (isMobile) {
+            setSidebarOpen(false);
+            return;
+        }
+        const stored = localStorage.getItem('cms-sidebar');
+        setSidebarOpen(stored === null ? true : stored === 'open');
+    }, []);
+
+    const toggleSidebar = () => {
+        setSidebarOpen((prev) => {
+            const next = !prev;
+            if (window.innerWidth >= 1024) {
+                localStorage.setItem('cms-sidebar', next ? 'open' : 'closed');
+            }
+            return next;
+        });
+    };
     const [showToast, setShowToast] = useState(false);
     const [msgToast, setMsgToast] = useState<{ show: boolean; name?: string }>({
         show: false,
@@ -67,7 +87,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     useEffect(() => {
         return router.on('navigate', (event) => {
-            setSidebarOpen(false);
+            if (window.innerWidth < 1024) {
+                setSidebarOpen(false);
+            }
 
             if (event.detail.page.url.startsWith(CHAT_PAGE_PATH)) {
                 setNotificationCount(0);
@@ -270,7 +292,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
             {/* ── Sidebar ── */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
@@ -330,12 +352,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     </p>
                     <nav className="space-y-0.5">
                         {NAV_ITEMS.map((item) => {
+                            const currentPath = page.url.split('?')[0];
                             const active =
-                                window.location.pathname.startsWith(
-                                    item.href,
-                                ) &&
+                                currentPath.startsWith(item.href) &&
                                 (item.href !== '/admin' ||
-                                    window.location.pathname === '/admin');
+                                    currentPath === '/admin');
 
                             return (
                                 <Link
@@ -343,7 +364,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                     href={item.href}
                                     className={`group relative flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                                         active
-                                            ? 'border border-violet-500/20 bg-violet-500/8 text-violet-200'
+                                            ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
                                             : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
                                     }`}
                                 >
@@ -422,17 +443,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
 
             {/* ── Main area ── */}
-            <div className="relative z-10 flex min-h-screen flex-col lg:pl-64">
+            <div className={`relative z-10 flex min-h-screen flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'}`}>
                 {/* Header */}
                 <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-violet-500/10 bg-[#03050d]/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
                     <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
 
                     <button
                         type="button"
-                        className="-m-2 rounded-lg p-2 text-slate-500 transition-colors hover:text-slate-200 lg:hidden"
-                        onClick={() => setSidebarOpen(true)}
+                        className="-m-2 rounded-lg p-2 text-slate-500 transition-colors hover:text-slate-200"
+                        onClick={toggleSidebar}
                     >
-                        <span className="sr-only">Open sidebar</span>
+                        <span className="sr-only">Toggle sidebar</span>
                         <Menu className="h-5 w-5" />
                     </button>
 
