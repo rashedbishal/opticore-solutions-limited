@@ -128,7 +128,10 @@ export default function TestimonialEdit({ testimonial }: Props) {
                                 min={0}
                                 value={data.sort_order}
                                 onChange={(e) =>
-                                    setData('sort_order', Number(e.target.value))
+                                    setData(
+                                        'sort_order',
+                                        Number(e.target.value),
+                                    )
                                 }
                                 className={INPUT}
                             />

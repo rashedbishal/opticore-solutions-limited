@@ -131,8 +131,7 @@ export default function BrandIndex({ brands }: Props) {
         });
     };
 
-    const hasPagination =
-        brands.links.filter((l) => l.url !== null).length > 2;
+    const hasPagination = brands.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="relative space-y-6">

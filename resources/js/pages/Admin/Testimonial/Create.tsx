@@ -1,7 +1,7 @@
 import type { FormEventHandler, ReactNode } from 'react';
-import { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2, Save, X } from 'lucide-react';
+import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
@@ -115,7 +115,10 @@ export default function TestimonialCreate() {
                                 min={0}
                                 value={data.sort_order}
                                 onChange={(e) =>
-                                    setData('sort_order', Number(e.target.value))
+                                    setData(
+                                        'sort_order',
+                                        Number(e.target.value),
+                                    )
                                 }
                                 className={INPUT}
                             />

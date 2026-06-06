@@ -54,27 +54,28 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-
-    useEffect(() => {
-        const isMobile = window.innerWidth < 1024;
-        if (isMobile) {
-            setSidebarOpen(false);
-            return;
+    const [sidebarOpen, setSidebarOpen] = useState(() => {
+        if (window.innerWidth < 1024) {
+            return false;
         }
+
         const stored = localStorage.getItem('cms-sidebar');
-        setSidebarOpen(stored === null ? true : stored === 'open');
-    }, []);
+
+        return stored === null ? true : stored === 'open';
+    });
 
     const toggleSidebar = () => {
         setSidebarOpen((prev) => {
             const next = !prev;
+
             if (window.innerWidth >= 1024) {
                 localStorage.setItem('cms-sidebar', next ? 'open' : 'closed');
             }
+
             return next;
         });
     };
+
     const [showToast, setShowToast] = useState(false);
     const [msgToast, setMsgToast] = useState<{ show: boolean; name?: string }>({
         show: false,
@@ -443,7 +444,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
 
             {/* ── Main area ── */}
-            <div className={`relative z-10 flex min-h-screen flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'}`}>
+            <div
+                className={`relative z-10 flex min-h-screen flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'}`}
+            >
                 {/* Header */}
                 <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-violet-500/10 bg-[#03050d]/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
                     <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />

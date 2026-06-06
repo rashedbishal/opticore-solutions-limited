@@ -46,8 +46,7 @@ export default function BlogIndex({ blogs }: Props) {
         });
     };
 
-    const hasPagination =
-        blogs.links.filter((l) => l.url !== null).length > 2;
+    const hasPagination = blogs.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="space-y-6">

@@ -53,8 +53,7 @@ export default function TaskIndex({ tasks }: Props) {
         });
     };
 
-    const hasPagination =
-        tasks.links.filter((l) => l.url !== null).length > 2;
+    const hasPagination = tasks.links.filter((l) => l.url !== null).length > 2;
 
     const handleStateChange = (id: number, newState: string) => {
         router.put(

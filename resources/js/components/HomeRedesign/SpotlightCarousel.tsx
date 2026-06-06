@@ -8,7 +8,7 @@ type Testimonial = {
     name: string;
     company: string;
     role: string;
-    image?: string;
+    image?: string | null;
     rating: number;
     comment: string;
 };
@@ -233,7 +233,9 @@ interface SpotlightCarouselProps {
     testimonials?: Testimonial[];
 }
 
-export default function SpotlightCarousel({ testimonials }: SpotlightCarouselProps) {
+export default function SpotlightCarousel({
+    testimonials,
+}: SpotlightCarouselProps) {
     const items =
         testimonials && testimonials.length > 0 ? testimonials : TESTIMONIALS;
     const [activeIndex, setActiveIndex] = useState(0);

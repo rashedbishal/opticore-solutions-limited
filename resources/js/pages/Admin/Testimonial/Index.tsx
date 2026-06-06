@@ -137,7 +137,7 @@ export default function TestimonialIndex({ testimonials }: Props) {
                                         ))}
                                     </div>
                                 </td>
-                                <td className="px-6 py-3 max-w-xs">
+                                <td className="max-w-xs px-6 py-3">
                                     <p className="truncate text-sm text-zinc-400">
                                         {t.comment}
                                     </p>
