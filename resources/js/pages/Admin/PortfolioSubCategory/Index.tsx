@@ -21,8 +21,21 @@ interface SubCategory {
     portfolios_count: number;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
-    subCategories: SubCategory[];
+    subCategories: {
+        data: SubCategory[];
+        links: PaginationLink[];
+    };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
@@ -40,6 +53,9 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
             destroy(adminRoutes.subCategories.destroy.url(slug));
         });
     };
+
+    const hasPagination =
+        subCategories.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="space-y-6">
@@ -86,7 +102,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {subCategories.map((sub) => (
+                        {subCategories.data.map((sub) => (
                             <tr
                                 key={sub.id}
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
@@ -134,7 +150,7 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                                 </td>
                             </tr>
                         ))}
-                        {subCategories.length === 0 && (
+                        {subCategories.data.length === 0 && (
                             <tr>
                                 <td
                                     colSpan={6}
@@ -149,6 +165,39 @@ export default function PortfolioSubCategoryIndex({ subCategories }: Props) {
                     </tbody>
                 </table>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {subCategories.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

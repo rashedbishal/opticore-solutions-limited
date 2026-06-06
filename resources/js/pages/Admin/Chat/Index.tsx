@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Trash2, User, Bot, Mail, Sparkles, ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
@@ -23,11 +23,22 @@ interface ChatSession {
     messages?: ChatMessage[];
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
     sessions: {
         data: ChatSession[];
-        links: any[];
+        links: PaginationLink[];
+        total: number;
     };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function ChatIndex({ sessions }: Props) {
@@ -54,6 +65,9 @@ export default function ChatIndex({ sessions }: Props) {
         setExpandedId(expandedId === id ? null : id);
     };
 
+    const hasPagination =
+        sessions.links.filter((l) => l.url !== null).length > 2;
+
     return (
         <div className="mx-auto max-w-6xl space-y-6">
             <CmsDeleteDialog
@@ -70,7 +84,7 @@ export default function ChatIndex({ sessions }: Props) {
                 </div>
                 <div className="flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1.5 text-xs font-medium text-violet-300 backdrop-blur-md">
                     <Sparkles className="h-4 w-4" />
-                    <span>{sessions.data.length} threads</span>
+                    <span>{sessions.total} threads</span>
                 </div>
             </div>
 
@@ -275,6 +289,39 @@ export default function ChatIndex({ sessions }: Props) {
                     )}
                 </div>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {sessions.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

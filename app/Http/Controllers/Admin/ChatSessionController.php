@@ -18,7 +18,7 @@ class ChatSessionController extends Controller
                     $query->orderBy('created_at', 'asc');
                 }])
                 ->latest()
-                ->paginate(20),
+                ->paginate(10),
         ]);
     }
 

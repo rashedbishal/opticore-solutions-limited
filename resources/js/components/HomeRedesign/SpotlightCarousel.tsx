@@ -229,7 +229,13 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-export default function SpotlightCarousel() {
+interface SpotlightCarouselProps {
+    testimonials?: Testimonial[];
+}
+
+export default function SpotlightCarousel({ testimonials }: SpotlightCarouselProps) {
+    const items =
+        testimonials && testimonials.length > 0 ? testimonials : TESTIMONIALS;
     const [activeIndex, setActiveIndex] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(960);
@@ -240,7 +246,7 @@ export default function SpotlightCarousel() {
         null,
     );
 
-    const total = TESTIMONIALS.length;
+    const total = items.length;
 
     // Track container width for responsive offsets
     useEffect(() => {
@@ -415,7 +421,7 @@ export default function SpotlightCarousel() {
                             'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
                     }}
                 >
-                    {TESTIMONIALS.map((item, i) => {
+                    {items.map((item, i) => {
                         const position = resolvePosition(i, activeIndex, total);
                         const animate = getAnimate(position);
                         const isCenter = position === 'center';
@@ -502,7 +508,7 @@ export default function SpotlightCarousel() {
                         role="tablist"
                         aria-label="Testimonials"
                     >
-                        {TESTIMONIALS.map((_, i) => (
+                        {items.map((_, i) => (
                             <button
                                 key={i}
                                 role="tab"

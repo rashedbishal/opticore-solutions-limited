@@ -260,11 +260,22 @@ function HeroHeadline() {
     );
 }
 
-interface HomeIndexProps {
-    brands?: string[];
+interface HomeTestimonial {
+    id: string;
+    name: string;
+    company: string;
+    role: string;
+    rating: number;
+    comment: string;
+    image?: string | null;
 }
 
-export default function HomeIndex({ brands }: HomeIndexProps) {
+interface HomeIndexProps {
+    brands?: string[];
+    testimonials?: HomeTestimonial[];
+}
+
+export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {
@@ -645,7 +656,7 @@ export default function HomeIndex({ brands }: HomeIndexProps) {
                         </div>
                     </section> */}
                     <LazySection minHeightClassName="min-h-[70vh]">
-                        <SpotlightCarousel />
+                        <SpotlightCarousel testimonials={testimonials} />
                     </LazySection>
                 </div>
 

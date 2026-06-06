@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import {
     Star,
@@ -38,8 +38,19 @@ interface SubCategoryGroup {
     reviews: Review[];
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
     grouped: Record<string, SubCategoryGroup[]>;
+    paginationLinks: PaginationLink[];
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -199,7 +210,7 @@ function ReviewCard({
     );
 }
 
-function ClientReviewIndex({ grouped: serverGrouped }: Props) {
+function ClientReviewIndex({ grouped: serverGrouped, paginationLinks }: Props) {
     const [grouped, setGrouped] = useState(serverGrouped);
     const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
     const requestDeleteReview = (action: () => void) =>
@@ -332,6 +343,38 @@ function ClientReviewIndex({ grouped: serverGrouped }: Props) {
                                 }
                             />
                         ))}
+                    </div>
+                )}
+                {paginationLinks.filter((l) => l.url !== null).length > 2 && (
+                    <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                        {paginationLinks.map((link, i) => {
+                            const label = decodePaginationLabel(link.label);
+
+                            if (!link.url) {
+                                return (
+                                    <span
+                                        key={i}
+                                        className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                    >
+                                        {label}
+                                    </span>
+                                );
+                            }
+
+                            return (
+                                <Link
+                                    key={i}
+                                    href={link.url}
+                                    className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                        link.active
+                                            ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                            : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                    }`}
+                                >
+                                    {label}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
             </div>

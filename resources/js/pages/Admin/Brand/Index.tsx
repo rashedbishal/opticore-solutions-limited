@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { Link, useForm, router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     Plus,
@@ -23,8 +23,21 @@ interface Brand {
     updated_at: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
-    brands: Brand[];
+    brands: {
+        data: Brand[];
+        links: PaginationLink[];
+    };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function BrandIndex({ brands }: Props) {
@@ -118,6 +131,9 @@ export default function BrandIndex({ brands }: Props) {
         });
     };
 
+    const hasPagination =
+        brands.links.filter((l) => l.url !== null).length > 2;
+
     return (
         <div className="relative space-y-6">
             <CmsErrorDialog
@@ -159,7 +175,7 @@ export default function BrandIndex({ brands }: Props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {brands.length === 0 ? (
+                        {brands.data.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={4}
@@ -171,7 +187,7 @@ export default function BrandIndex({ brands }: Props) {
                                 </td>
                             </tr>
                         ) : (
-                            brands.map((brand) => (
+                            brands.data.map((brand) => (
                                 <tr
                                     key={brand.id}
                                     className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
@@ -222,6 +238,39 @@ export default function BrandIndex({ brands }: Props) {
                     </tbody>
                 </table>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {brands.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
 
             {/* Modal */}
             <AnimatePresence>

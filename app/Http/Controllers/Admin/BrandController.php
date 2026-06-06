@@ -13,10 +13,8 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::orderBy('created_at', 'desc')->get();
-
         return Inertia::render('Admin/Brand/Index', [
-            'brands' => $brands,
+            'brands' => Brand::orderBy('created_at', 'desc')->paginate(10),
         ]);
     }
 

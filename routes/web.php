@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController as OriginalAppointmentController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -199,6 +200,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
     Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
     Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
+
+    Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
 
     // Client Review Control
     Route::get('/client-reviews', [AdminClientReviewController::class, 'index'])->name('client-reviews.index');

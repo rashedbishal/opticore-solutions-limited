@@ -48,8 +48,8 @@ class PortfolioSubCategoryController extends Controller
             ->orderBy('sort_order')
             ->orderBy('name')
             ->withCount('portfolios')
-            ->get()
-            ->map(fn (PortfolioSubCategory $s) => [
+            ->paginate(10)
+            ->through(fn (PortfolioSubCategory $s) => [
                 'id' => $s->id,
                 'category_slug' => $s->category_slug,
                 'category_label' => config("portfolio.categories.{$s->category_slug}.label", $s->category_slug),

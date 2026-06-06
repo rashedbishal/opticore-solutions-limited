@@ -18,11 +18,21 @@ interface Portfolio {
     media_type: 'image' | 'video';
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
     portfolios: {
         data: Portfolio[];
-        links: unknown[];
+        links: PaginationLink[];
     };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function PortfolioIndex({ portfolios }: Props) {
@@ -40,6 +50,9 @@ export default function PortfolioIndex({ portfolios }: Props) {
             destroy(adminRoutes.portfolios.destroy.url(id));
         });
     };
+
+    const hasPagination =
+        portfolios.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="space-y-6">
@@ -86,37 +99,37 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                 key={portfolio.id}
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-6 py-2 whitespace-nowrap">
                                     {portfolio.media_path ? (
                                         portfolio.media_type === 'video' ? (
                                             <video
                                                 src={portfolio.media_path}
                                                 muted
                                                 preload="metadata"
-                                                className="h-14 w-14 rounded border border-white/10 object-cover"
+                                                className="h-10 w-10 rounded border border-white/10 object-cover"
                                             />
                                         ) : (
                                             <img
                                                 src={portfolio.media_path}
                                                 alt={portfolio.title}
-                                                className="h-14 w-14 rounded border border-white/10 object-cover"
+                                                className="h-10 w-10 rounded border border-white/10 object-cover"
                                             />
                                         )
                                     ) : (
-                                        <div className="flex h-14 w-14 items-center justify-center rounded bg-zinc-800 text-zinc-600">
-                                            <Image className="h-5 w-5" />
+                                        <div className="flex h-10 w-10 items-center justify-center rounded bg-zinc-800 text-zinc-600">
+                                            <Image className="h-4 w-4" />
                                         </div>
                                     )}
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-white">
+                                <td className="px-6 py-2 text-sm whitespace-nowrap text-white">
                                     {portfolio.title}
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400 capitalize">
+                                <td className="px-6 py-2 text-sm whitespace-nowrap text-zinc-400 capitalize">
                                     {portfolio.sub_category
                                         ? portfolio.sub_category.name
                                         : portfolio.category.replace(/-/g, ' ')}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-6 py-2 whitespace-nowrap">
                                     <span
                                         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
                                             portfolio.media_type === 'video'
@@ -137,7 +150,7 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                         )}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
+                                <td className="px-6 py-2 text-right text-sm whitespace-nowrap">
                                     <Link
                                         href={adminRoutes.portfolios.edit.url(
                                             portfolio.id,
@@ -172,6 +185,39 @@ export default function PortfolioIndex({ portfolios }: Props) {
                     </tbody>
                 </table>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {portfolios.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

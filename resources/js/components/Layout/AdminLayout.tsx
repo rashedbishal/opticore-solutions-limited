@@ -48,6 +48,7 @@ const NAV_ITEMS = [
     { name: 'Clients', href: '/admin/clients', icon: UserCheck },
     { name: 'Client Workflow', href: '/admin/tasks', icon: Briefcase },
     { name: 'Review Control', href: '/admin/client-reviews', icon: Star },
+    { name: 'Testimonials', href: '/admin/testimonials', icon: Star },
 ];
 
 export default function AdminLayout({ children, title }: AdminLayoutProps) {

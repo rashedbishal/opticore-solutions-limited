@@ -20,11 +20,21 @@ interface Task {
     state: 'pending' | 'in progress' | 'delivered';
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
     tasks: {
         data: Task[];
-        links: unknown[];
+        links: PaginationLink[];
     };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function TaskIndex({ tasks }: Props) {
@@ -42,6 +52,9 @@ export default function TaskIndex({ tasks }: Props) {
             destroy(adminRoutes.tasks.destroy.url(id));
         });
     };
+
+    const hasPagination =
+        tasks.links.filter((l) => l.url !== null).length > 2;
 
     const handleStateChange = (id: number, newState: string) => {
         router.put(
@@ -214,6 +227,39 @@ export default function TaskIndex({ tasks }: Props) {
                     </tbody>
                 </table>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {tasks.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

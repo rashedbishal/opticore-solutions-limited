@@ -55,7 +55,7 @@ class TaskController extends Controller
         return Inertia::render('Admin/Task/Index', [
             'tasks' => Task::with(['user', 'subCategory'])
                 ->latest()
-                ->paginate(15)
+                ->paginate(10)
                 ->through(fn (Task $t) => [
                     'id' => $t->id,
                     'client_name' => $t->client_name,

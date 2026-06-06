@@ -13,11 +13,21 @@ interface Blog {
     author: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
     blogs: {
         data: Blog[];
-        links: any[];
+        links: PaginationLink[];
     };
+}
+
+function decodePaginationLabel(label: string): string {
+    return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
 export default function BlogIndex({ blogs }: Props) {
@@ -35,6 +45,9 @@ export default function BlogIndex({ blogs }: Props) {
             destroy(adminRoutes.blogs.destroy.url(id));
         });
     };
+
+    const hasPagination =
+        blogs.links.filter((l) => l.url !== null).length > 2;
 
     return (
         <div className="space-y-6">
@@ -126,6 +139,39 @@ export default function BlogIndex({ blogs }: Props) {
                     </tbody>
                 </table>
             </div>
+
+            {hasPagination && (
+                <div className="flex flex-wrap items-center justify-center gap-1 pt-2">
+                    {blogs.links.map((link, i) => {
+                        const label = decodePaginationLabel(link.label);
+
+                        if (!link.url) {
+                            return (
+                                <span
+                                    key={i}
+                                    className="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm text-zinc-600"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                href={link.url}
+                                className={`flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                                    link.active
+                                        ? 'border border-violet-500/30 bg-violet-500/10 text-violet-300'
+                                        : 'border border-white/8 bg-white/4 text-zinc-400 hover:bg-white/8'
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

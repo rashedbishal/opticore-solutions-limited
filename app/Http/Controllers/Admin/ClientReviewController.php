@@ -20,26 +20,27 @@ class ClientReviewController extends Controller
             ->orderBy('name')
             ->get(['id', 'category_slug', 'name', 'slug']);
 
-        $reviews = ClientReview::orderBy('category_slug')
+        $paginator = ClientReview::orderBy('category_slug')
             ->orderBy('sub_category_id')
             ->orderBy('sort_order')
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(fn (ClientReview $r) => [
-                'id' => $r->id,
-                'task_id' => $r->task_id,
-                'sub_category_id' => $r->sub_category_id,
-                'category_slug' => $r->category_slug,
-                'username' => $r->username,
-                'client_type' => $r->client_type,
-                'rating' => $r->rating,
-                'comment' => $r->comment,
-                'image_url' => $r->image_path ? asset('storage/'.$r->image_path) : null,
-                'price_range' => $r->price_range,
-                'work_duration' => $r->work_duration,
-                'sort_order' => $r->sort_order,
-                'created_at' => $r->created_at?->format('Y-m-d'),
-            ]);
+            ->paginate(10);
+
+        $reviews = $paginator->getCollection()->map(fn (ClientReview $r) => [
+            'id' => $r->id,
+            'task_id' => $r->task_id,
+            'sub_category_id' => $r->sub_category_id,
+            'category_slug' => $r->category_slug,
+            'username' => $r->username,
+            'client_type' => $r->client_type,
+            'rating' => $r->rating,
+            'comment' => $r->comment,
+            'image_url' => $r->image_path ? asset('storage/'.$r->image_path) : null,
+            'price_range' => $r->price_range,
+            'work_duration' => $r->work_duration,
+            'sort_order' => $r->sort_order,
+            'created_at' => $r->created_at?->format('Y-m-d'),
+        ]);
 
         // Group reviews by category → subcategory.
         $grouped = [];
@@ -71,6 +72,7 @@ class ClientReviewController extends Controller
 
         return Inertia::render('Admin/ClientReview/Index', [
             'grouped' => $grouped,
+            'paginationLinks' => $paginator->linkCollection()->toArray(),
         ]);
     }
 
