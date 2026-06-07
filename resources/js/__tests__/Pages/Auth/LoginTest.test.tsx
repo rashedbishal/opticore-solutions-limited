@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import Login from '@/pages/Auth/Login';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,
@@ -15,9 +14,7 @@ vi.mock('@inertiajs/react', async () => {
 });
 
 vi.mock('@/components/Layout/GuestLayout', () => ({
-    default: ({ children }: { children?: React.ReactNode }) => (
-        <>{children}</>
-    ),
+    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }));
 
 describe('Login', () => {
@@ -27,7 +24,9 @@ describe('Login', () => {
         expect(
             screen.getByRole('heading', { name: /welcome back/i }),
         ).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Email Address')).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText('Email Address'),
+        ).toBeInTheDocument();
         expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
         expect(
             screen.getByRole('button', { name: /sign in/i }),

@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import PortfolioCreate from '@/pages/Admin/Portfolio/Create';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../../../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../../../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,

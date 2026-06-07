@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import RequestAppointment from '@/pages/RequestAppointment';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,
@@ -25,9 +24,7 @@ describe('RequestAppointment', () => {
     it('renders without crashing', () => {
         render(<RequestAppointment />);
 
-        expect(
-            screen.getByRole('heading', { level: 1 }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
         expect(screen.getByLabelText('Full Name')).toBeInTheDocument();
         expect(screen.getByLabelText('Email')).toBeInTheDocument();
         expect(screen.getByLabelText('Phone')).toBeInTheDocument();

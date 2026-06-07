@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import Contact from '@/pages/Contact';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,
@@ -18,9 +17,7 @@ describe('Contact', () => {
     it('renders without crashing', () => {
         render(<Contact />);
 
-        expect(
-            screen.getByRole('heading', { level: 1 }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
         expect(screen.getByText('Send a Message')).toBeInTheDocument();
     });
 
@@ -43,9 +40,7 @@ describe('Contact', () => {
         expect(nameInput).toHaveValue('Jane Doe');
         expect(emailInput).toHaveValue('jane@example.com');
         expect(subjectInput).toHaveValue('Project inquiry');
-        expect(messageInput).toHaveValue(
-            'Hello, I would like to know more.',
-        );
+        expect(messageInput).toHaveValue('Hello, I would like to know more.');
     });
 
     it('shows validation error messages when submitting an empty form', () => {

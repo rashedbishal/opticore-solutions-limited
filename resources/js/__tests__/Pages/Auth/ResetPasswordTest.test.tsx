@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import ResetPassword from '@/pages/Auth/ResetPassword';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,
@@ -15,9 +14,7 @@ vi.mock('@inertiajs/react', async () => {
 });
 
 vi.mock('@/components/Layout/GuestLayout', () => ({
-    default: ({ children }: { children?: React.ReactNode }) => (
-        <>{children}</>
-    ),
+    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }));
 
 describe('ResetPassword', () => {
@@ -27,9 +24,7 @@ describe('ResetPassword', () => {
         expect(
             screen.getByRole('heading', { name: /new credentials/i }),
         ).toBeInTheDocument();
-        expect(
-            screen.getByPlaceholderText('New Password'),
-        ).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('New Password')).toBeInTheDocument();
         expect(
             screen.getByPlaceholderText('Confirm New Password'),
         ).toBeInTheDocument();

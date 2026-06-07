@@ -2,9 +2,8 @@ import { render, screen } from '@testing-library/react';
 import TaskIndex from '@/pages/Admin/Task/Index';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../../../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../../../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,

@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import Career from '@/pages/Career';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,
@@ -30,9 +29,7 @@ describe('Career', () => {
     it('renders without crashing', () => {
         render(<Career />);
 
-        expect(
-            screen.getByRole('heading', { level: 1 }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
         expect(screen.getByText('Join Our Team')).toBeInTheDocument();
         expect(
             screen.getAllByRole('button', { name: /apply for/i }).length,

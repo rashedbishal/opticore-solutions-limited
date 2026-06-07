@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event';
 import UserDashboard from '@/pages/Dashboard/Index';
 
 vi.mock('@inertiajs/react', async () => {
-    const { inertiaMock, useFormMock } = await import(
-        '../../helpers/inertiaMocks'
-    );
+    const { inertiaMock, useFormMock } =
+        await import('../../helpers/inertiaMocks');
 
     return {
         ...inertiaMock,

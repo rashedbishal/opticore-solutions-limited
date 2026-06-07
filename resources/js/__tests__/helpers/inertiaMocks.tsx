@@ -9,10 +9,7 @@ export function useFormMock<T extends FormDataShape>(initialData: T) {
     const [errors, setErrors] = useState<FormErrors>({});
     const [processing] = useState(false);
 
-    const setData = (
-        keyOrData: keyof T | Partial<T>,
-        maybeValue?: unknown,
-    ) => {
+    const setData = (keyOrData: keyof T | Partial<T>, maybeValue?: unknown) => {
         if (typeof keyOrData === 'object') {
             setDataState((current) => ({ ...current, ...keyOrData }));
 
