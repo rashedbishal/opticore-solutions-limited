@@ -20,5 +20,5 @@ class MockObserver {
   disconnect() {}
 }
 
-global.IntersectionObserver = MockObserver;
-global.ResizeObserver = MockObserver;
+globalThis.IntersectionObserver = MockObserver;
+globalThis.ResizeObserver = MockObserver;
