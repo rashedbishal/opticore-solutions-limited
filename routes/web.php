@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ClientReviewController as AdminClientReviewContro
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
@@ -98,9 +99,9 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     // User Auth Routes
     Route::middleware('guest')->group(function () {
         Route::get('/login', [LoginController::class, 'create'])->name('login');
-        Route::post('/login', [LoginController::class, 'store']);
+        Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login');
         Route::get('/register', [RegisterController::class, 'create'])->name('register');
-        Route::post('/register', [RegisterController::class, 'store']);
+        Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:register');
         Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
         Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
         Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
@@ -166,7 +167,7 @@ Route::put('/offer/{token}', [OfferController::class, 'update'])
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
         Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
-        Route::post('/login', [AdminLoginController::class, 'store']);
+        Route::post('/login', [AdminLoginController::class, 'store'])->middleware('throttle:admin-login');
     });
 
     Route::middleware('auth:admin')->group(function () {
@@ -183,6 +184,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
     Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');
     Route::resource('blogs', AdminBlogController::class);
+    Route::resource('faqs', AdminFaqController::class);
     Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);

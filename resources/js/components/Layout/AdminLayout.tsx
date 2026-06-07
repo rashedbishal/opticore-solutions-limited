@@ -18,6 +18,7 @@ import {
     Star,
     CheckCircle2,
     AlertCircle,
+    HelpCircle,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NotificationListener from '@/components/Admin/NotificationListener';
@@ -41,6 +42,7 @@ const NAV_ITEMS = [
     { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
     { name: 'Sub Categories', href: '/admin/sub-categories', icon: Layers },
     { name: 'Blogs', href: '/admin/blogs', icon: FileText },
+    { name: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
     { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
     { name: 'Contacts', href: '/admin/contacts', icon: Mail },
     { name: 'Brands', href: '/admin/brands', icon: Briefcase },

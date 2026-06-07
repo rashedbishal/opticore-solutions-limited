@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -93,6 +94,12 @@ class PageController extends Controller
                 'title' => 'FAQ — Opticore Solutions Ltd.',
                 'description' => 'Find answers to common questions about services, pricing, timelines, and project workflow.',
             ],
+            'faqs' => Cache::remember('faq.items', now()->addMinutes(60), fn () => Faq::query()
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get(['question', 'answer'])
+                ->toArray()),
         ]);
     }
 

@@ -5,7 +5,17 @@ import { useState } from 'react';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { faqItems } from '@/lib/site';
 
-export default function FAQ() {
+interface FaqItem {
+    question: string;
+    answer: string;
+}
+
+interface Props {
+    faqs?: FaqItem[];
+}
+
+export default function FAQ({ faqs = [] }: Props) {
+    const visibleFaqs = faqs.length > 0 ? faqs : faqItems;
     const [openIndex, setOpenIndex] = useState<number | null>(0);
 
     return (
@@ -36,7 +46,7 @@ export default function FAQ() {
                     />
 
                     <div className="mt-10 space-y-4">
-                        {faqItems.map((item, index) => {
+                        {visibleFaqs.map((item, index) => {
                             const open = openIndex === index;
 
                             return (
