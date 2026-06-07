@@ -2,7 +2,6 @@ import type {
     ClientLogo,
     FaqItem,
     HighlightItem,
-    JobListing,
     NavItem,
     PortfolioCategory,
     ProcessStep,
@@ -825,44 +824,6 @@ export const culturePerks: HighlightItem[] = [
         title: 'Growth-Focused',
         description:
             'You will work on ambitious projects, sharpen your process, and expand your range alongside a multidisciplinary team.',
-    },
-];
-
-export const jobListings: JobListing[] = [
-    {
-        title: 'Graphic Designer',
-        location: 'Remote',
-        type: 'Full Time',
-        description:
-            'Build premium brand systems, campaign visuals, and polished presentation assets for fast-moving client work.',
-    },
-    {
-        title: 'Video Editor',
-        location: 'Remote',
-        type: 'Full Time',
-        description:
-            'Edit social, branded, and long-form content with a strong sense of rhythm, storytelling, and motion detail.',
-    },
-    {
-        title: 'Web Developer',
-        location: 'Remote',
-        type: 'Full Time',
-        description:
-            'Ship high-quality digital experiences with strong frontend craft and dependable backend execution.',
-    },
-    {
-        title: 'Digital Marketer',
-        location: 'Remote',
-        type: 'Full Time',
-        description:
-            'Own campaign strategy, channel growth, and performance-minded systems across search, social, and lifecycle marketing.',
-    },
-    {
-        title: '3D Artist',
-        location: 'Remote',
-        type: 'Full Time',
-        description:
-            'Create high-end models, renders, and motion sequences for brand, product, and architectural work.',
     },
 ];
 

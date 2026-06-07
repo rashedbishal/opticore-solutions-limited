@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
+use App\Models\JobListing;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -74,6 +75,12 @@ class PageController extends Controller
                 'title' => 'Career — Opticore Solutions Ltd.',
                 'description' => 'Explore remote career opportunities with Opticore Solutions Ltd.',
             ],
+            'jobListings' => Cache::remember('career.jobListings', now()->addMinutes(60), fn () => JobListing::query()
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get(['title', 'location', 'type', 'description'])
+                ->toArray()),
         ]);
     }
 

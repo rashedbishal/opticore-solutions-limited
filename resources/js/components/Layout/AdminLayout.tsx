@@ -43,6 +43,7 @@ const NAV_ITEMS = [
     { name: 'Sub Categories', href: '/admin/sub-categories', icon: Layers },
     { name: 'Blogs', href: '/admin/blogs', icon: FileText },
     { name: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
+    { name: 'Job Listings', href: '/admin/job-listings', icon: Briefcase },
     { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
     { name: 'Contacts', href: '/admin/contacts', icon: Mail },
     { name: 'Brands', href: '/admin/brands', icon: Briefcase },

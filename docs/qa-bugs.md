@@ -10,3 +10,16 @@
 - Impact: If the frontend CMS form ever omits slug on edit, the update will crash
 - Priority: High — data loss risk on content edits
 - Status: Open — not fixed (fix is out of QA scope)
+
+## Known Test Limitations (Phase 4)
+
+- Journey 6 (contact form) leaves a row in the contacts table on each run — 
+  no cleanup was included per spec. Manual cleanup needed periodically.
+- Contact form rate limit: /api/contact throttles at 5 requests/minute. 
+  Do not run Journey 6 repeatedly in quick succession during debugging.
+- E2E tests require APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD env vars set locally.
+  Admin journeys gracefully skip if these are missing.
+- Homepage testimonial test (Journey 3) depends on SpotlightCarousel lazy-load 
+  threshold — if that component's scroll behavior changes, update the test.
+- Visual/design regression, file uploads, email delivery, WebSockets (Reverb), 
+  and accessibility are NOT covered — these remain manual.

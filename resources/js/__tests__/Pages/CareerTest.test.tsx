@@ -13,9 +13,21 @@ vi.mock('@inertiajs/react', async () => {
     };
 });
 
+const careerPageProps = {
+    jobListings: [
+        {
+            title: 'Web Developer',
+            location: 'Remote',
+            type: 'Full Time',
+            description:
+                'Ship high-quality digital experiences with strong frontend craft and dependable backend execution.',
+        },
+    ],
+};
+
 async function openApplicationModal() {
     const user = userEvent.setup();
-    render(<Career />);
+    render(<Career {...careerPageProps} />);
 
     const applyButtons = screen.getAllByRole('button', {
         name: /apply for/i,
@@ -27,7 +39,7 @@ async function openApplicationModal() {
 
 describe('Career', () => {
     it('renders without crashing', () => {
-        render(<Career />);
+        render(<Career {...careerPageProps} />);
 
         expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
         expect(screen.getByText('Join Our Team')).toBeInTheDocument();

@@ -1,4 +1,4 @@
-import type { CareerFormData } from '@/types';
+import type { CareerFormData, JobListing } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Loader2 } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useState } from 'react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Modal from '@/components/UI/Modal';
 import SectionHeader from '@/components/UI/SectionHeader';
-import { culturePerks, jobListings } from '@/lib/site';
+import { culturePerks } from '@/lib/site';
 
 const initialValues: CareerFormData = {
     name: '',
@@ -17,7 +17,11 @@ const initialValues: CareerFormData = {
     message: '',
 };
 
-export default function Career() {
+interface Props {
+    jobListings: JobListing[];
+}
+
+export default function Career({ jobListings }: Props) {
     const [open, setOpen] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const form = useForm<CareerFormData>(initialValues);

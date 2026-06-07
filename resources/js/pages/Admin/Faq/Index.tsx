@@ -92,25 +92,25 @@ export default function FaqIndex({ faqs }: Props) {
                                 key={faq.id}
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
-                                <td className="max-w-xl px-6 py-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
-                                            <HelpCircle className="h-4 w-4" />
+                                <td className="max-w-xl px-6 py-2">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+                                            <HelpCircle className="h-3.5 w-3.5" />
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-medium text-white">
+                                            <p className="truncate text-sm font-medium text-white">
                                                 {faq.question}
                                             </p>
-                                            <p className="mt-1 line-clamp-2 text-sm leading-6 text-zinc-500">
+                                            <p className="line-clamp-1 text-sm leading-5 text-zinc-500">
                                                 {faq.answer}
                                             </p>
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-zinc-400">
+                                <td className="px-6 py-2 text-sm whitespace-nowrap text-zinc-400">
                                     {faq.sort_order}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-6 py-2 whitespace-nowrap">
                                     <span
                                         className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
                                             faq.is_active
@@ -121,7 +121,7 @@ export default function FaqIndex({ faqs }: Props) {
                                         {faq.is_active ? 'Active' : 'Hidden'}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
+                                <td className="px-6 py-2 text-right text-sm whitespace-nowrap">
                                     <Link
                                         href={adminRoutes.faqs.edit.url(faq.id)}
                                         className="mr-4 inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/70 transition-colors hover:text-cyan-300"

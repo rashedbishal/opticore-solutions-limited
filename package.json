@@ -12,6 +12,7 @@
         "lint:check": "eslint .",
         "types:check": "tsc --noEmit",
         "test": "vitest",
+        "test:e2e": "playwright test",
         "perf:bundle-check": "node scripts/perf/check-bundle-size.mjs"
     },
     "devDependencies": {
@@ -19,6 +20,7 @@
         "@inertiajs/vite": "^3.0.0",
         "@laravel/echo-react": "^2.3.3",
         "@laravel/vite-plugin-wayfinder": "^0.1.3",
+        "@playwright/test": "^1.60.0",
         "@stylistic/eslint-plugin": "^5.10.0",
         "@tailwindcss/vite": "^4.1.11",
         "@testing-library/jest-dom": "^6.9.1",
