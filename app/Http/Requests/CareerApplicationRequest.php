@@ -19,7 +19,7 @@ class CareerApplicationRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'role' => ['required', 'string', 'max:255'],
             'portfolio_url' => ['nullable', 'url', 'max:255'],
-            'message' => ['required', 'string', 'max:5000'],
+            'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
         ];
     }
 }

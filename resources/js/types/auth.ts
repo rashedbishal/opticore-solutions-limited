@@ -6,6 +6,9 @@ export type User = {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    is_super_admin?: boolean;
+    full_access?: boolean;
+    permissions?: string[] | null;
     [key: string]: unknown; // This allows for additional properties...
 };
 

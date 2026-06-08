@@ -3,15 +3,22 @@ import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import { PermissionCheckboxGroup } from '@/components/Admin/PermissionCheckboxGroup';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
-export default function UserCreate() {
+interface Props {
+    permissionOptions: { key: string; label: string }[];
+}
+
+export default function UserCreate({ permissionOptions }: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, post, processing } = useForm({
         name: '',
         email: '',
         password: '',
+        full_access: false as boolean,
+        permissions: [] as string[],
     });
 
     const submit: FormEventHandler = (e) => {
@@ -52,7 +59,7 @@ export default function UserCreate() {
                 messages={errorMessages}
                 onClose={() => setErrorMessages([])}
             />
-            <h1 className="mb-6 text-2xl font-bold text-white">Create User</h1>
+            <h1 className="mb-6 text-2xl font-bold text-white">Create Admin</h1>
             <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
@@ -95,6 +102,18 @@ export default function UserCreate() {
                         />
                     </div>
 
+                    <PermissionCheckboxGroup
+                        options={permissionOptions}
+                        fullAccess={data.full_access}
+                        permissions={data.permissions}
+                        onFullAccessChange={(value) =>
+                            setData('full_access', value)
+                        }
+                        onPermissionsChange={(permissions) =>
+                            setData('permissions', permissions)
+                        }
+                    />
+
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
@@ -107,7 +126,7 @@ export default function UserCreate() {
                                     Saving...
                                 </>
                             ) : (
-                                'Save User'
+                                'Save Admin'
                             )}
                         </button>
                         <Link
@@ -124,5 +143,5 @@ export default function UserCreate() {
 }
 
 UserCreate.layout = (page: ReactNode) => (
-    <AdminLayout title="Add User">{page}</AdminLayout>
+    <AdminLayout title="Add Admin">{page}</AdminLayout>
 );

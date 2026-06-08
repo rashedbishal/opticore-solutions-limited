@@ -26,6 +26,8 @@ class Admin extends Authenticatable
         'name',
         'email',
         'password',
+        'full_access',
+        'permissions',
     ];
 
     /**
@@ -48,6 +50,48 @@ class Admin extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
+            'full_access' => 'boolean',
+            'permissions' => 'array',
         ];
+    }
+
+    /**
+     * Determine whether this admin is the single, immutable "mother admin"
+     * account that always has full access and can manage other admins.
+     */
+    public function isMotherAdmin(): bool
+    {
+        return $this->is_super_admin;
+    }
+
+    /**
+     * Determine whether this admin can access the CMS section identified
+     * by the given permission key. Dashboard is intentionally not gated
+     * here — callers treat it as always-allowed.
+     */
+    public function canAccess(string $key): bool
+    {
+        if ($this->is_super_admin || $this->full_access) {
+            return true;
+        }
+
+        return in_array($key, $this->permissions ?? [], true);
+    }
+
+    /**
+     * A fingerprint of this admin's authentication-relevant state (password,
+     * role, and permissions). Sessions store this value at login and compare
+     * it on every request — a mismatch means someone changed the account
+     * since the session started, so the session is invalidated.
+     */
+    public function securityStamp(): string
+    {
+        return hash('sha256', implode('|', [
+            $this->password,
+            $this->is_super_admin ? '1' : '0',
+            $this->full_access ? '1' : '0',
+            json_encode($this->permissions ?? []),
+        ]));
     }
 }

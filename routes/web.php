@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
@@ -177,7 +178,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // CMS Admin Routes
-Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
@@ -187,6 +188,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('blogs', AdminBlogController::class);
     Route::resource('faqs', AdminFaqController::class);
     Route::resource('job-listings', AdminJobListingController::class);
+    Route::resource('job-applications', AdminJobApplicationController::class)->only(['index', 'destroy']);
+    Route::get('job-applications/{job_application}/resume', [AdminJobApplicationController::class, 'downloadResume'])->name('job-applications.resume');
     Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);

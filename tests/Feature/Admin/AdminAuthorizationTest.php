@@ -8,7 +8,6 @@ use App\Models\Contact;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
-use App\Models\User;
 
 /**
  * Verifies that every admin route rejects unauthenticated visitors.
@@ -123,14 +122,14 @@ it('blocks unauthenticated POST to admin users store', function () {
         'email' => 'hacker@example.com',
         'password' => 'password123',
     ])->assertRedirect(route('admin.login'));
-    $this->assertDatabaseMissing('users', ['email' => 'hacker@example.com']);
+    $this->assertDatabaseMissing('admins', ['email' => 'hacker@example.com'], 'admin');
 });
 
 it('blocks unauthenticated DELETE to admin users destroy', function () {
-    $user = User::factory()->create();
+    $admin = Admin::factory()->create();
 
-    $this->delete(route('admin.users.destroy', $user))->assertRedirect(route('admin.login'));
-    $this->assertDatabaseHas('users', ['id' => $user->id]);
+    $this->delete(route('admin.users.destroy', $admin))->assertRedirect(route('admin.login'));
+    $this->assertDatabaseHas('admins', ['id' => $admin->id], 'admin');
 });
 
 // --- Contacts ---

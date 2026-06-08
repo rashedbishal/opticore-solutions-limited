@@ -3,6 +3,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import { PermissionCheckboxGroup } from '@/components/Admin/PermissionCheckboxGroup';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -11,27 +12,43 @@ interface Props {
         id: number;
         name: string;
         email: string;
+        full_access: boolean;
+        permissions: string[] | null;
     };
+    permissionOptions: { key: string; label: string }[];
+    canEditProfile: boolean;
+    canEditPermissions: boolean;
+    isEditingSelf: boolean;
 }
 
-export default function UserEdit({ user }: Props) {
+export default function UserEdit({
+    user,
+    permissionOptions,
+    canEditProfile,
+    canEditPermissions,
+    isEditingSelf,
+}: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, put, processing } = useForm({
         name: user.name,
         email: user.email,
         password: '',
+        full_access: user.full_access,
+        permissions: user.permissions ?? ([] as string[]),
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         const v: string[] = [];
 
-        if (!data.name.trim()) {
-            v.push('Name is required.');
-        }
+        if (canEditProfile) {
+            if (!data.name.trim()) {
+                v.push('Name is required.');
+            }
 
-        if (!data.email.trim()) {
-            v.push('Email address is required.');
+            if (!data.email.trim()) {
+                v.push('Email address is required.');
+            }
         }
 
         if (data.password && data.password.length < 8) {
@@ -58,33 +75,45 @@ export default function UserEdit({ user }: Props) {
                 messages={errorMessages}
                 onClose={() => setErrorMessages([])}
             />
-            <h1 className="mb-6 text-2xl font-bold text-white">Edit User</h1>
+            <h1 className="mb-6 text-2xl font-bold text-white">Edit Admin</h1>
             <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <form onSubmit={submit} className="space-y-6">
-                    <div>
-                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                        />
-                    </div>
+                    {canEditProfile ? (
+                        <>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
 
-                    <div>
-                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                        />
-                    </div>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <p className="text-sm text-zinc-500">
+                            You can only update this admin&apos;s password.
+                        </p>
+                    )}
 
                     <div>
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
@@ -101,6 +130,26 @@ export default function UserEdit({ user }: Props) {
                         />
                     </div>
 
+                    {canEditPermissions ? (
+                        <PermissionCheckboxGroup
+                            options={permissionOptions}
+                            fullAccess={data.full_access}
+                            permissions={data.permissions}
+                            onFullAccessChange={(value) =>
+                                setData('full_access', value)
+                            }
+                            onPermissionsChange={(permissions) =>
+                                setData('permissions', permissions)
+                            }
+                        />
+                    ) : (
+                        <p className="border-t border-violet-500/10 pt-5 text-sm text-zinc-500">
+                            {isEditingSelf
+                                ? 'You cannot change your own permissions.'
+                                : "Only the primary administrator can change this admin's permissions."}
+                        </p>
+                    )}
+
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button
                             disabled={processing}
@@ -113,7 +162,7 @@ export default function UserEdit({ user }: Props) {
                                     Updating...
                                 </>
                             ) : (
-                                'Update User'
+                                'Update Admin'
                             )}
                         </button>
                         <Link
@@ -130,5 +179,5 @@ export default function UserEdit({ user }: Props) {
 }
 
 UserEdit.layout = (page: ReactNode) => (
-    <AdminLayout title="Edit User">{page}</AdminLayout>
+    <AdminLayout title="Edit Admin">{page}</AdminLayout>
 );

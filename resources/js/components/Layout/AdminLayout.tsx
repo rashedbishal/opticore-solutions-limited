@@ -19,6 +19,7 @@ import {
     CheckCircle2,
     AlertCircle,
     HelpCircle,
+    FileUser,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NotificationListener from '@/components/Admin/NotificationListener';
@@ -33,30 +34,101 @@ interface AdminLayoutProps {
 const CHAT_PAGE_PATH = '/admin/customer-conversations';
 
 const NAV_ITEMS = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, key: null },
     {
         name: 'Customer Support',
         href: '/admin/customer-conversations',
         icon: MessageSquare,
+        key: 'customer-conversations',
     },
-    { name: 'Portfolios', href: '/admin/portfolios', icon: Image },
-    { name: 'Sub Categories', href: '/admin/sub-categories', icon: Layers },
-    { name: 'Blogs', href: '/admin/blogs', icon: FileText },
-    { name: 'FAQs', href: '/admin/faqs', icon: HelpCircle },
-    { name: 'Job Listings', href: '/admin/job-listings', icon: Briefcase },
-    { name: 'Chat Archive', href: '/admin/chats', icon: MessageSquare },
-    { name: 'Contacts', href: '/admin/contacts', icon: Mail },
-    { name: 'Brands', href: '/admin/brands', icon: Briefcase },
-    { name: 'Users', href: '/admin/users', icon: Users },
-    { name: 'Clients', href: '/admin/clients', icon: UserCheck },
-    { name: 'Client Workflow', href: '/admin/tasks', icon: Briefcase },
-    { name: 'Review Control', href: '/admin/client-reviews', icon: Star },
-    { name: 'Testimonials', href: '/admin/testimonials', icon: Star },
+    {
+        name: 'Portfolios',
+        href: '/admin/portfolios',
+        icon: Image,
+        key: 'portfolios',
+    },
+    {
+        name: 'Sub Categories',
+        href: '/admin/sub-categories',
+        icon: Layers,
+        key: 'sub-categories',
+    },
+    { name: 'Blogs', href: '/admin/blogs', icon: FileText, key: 'blogs' },
+    { name: 'FAQs', href: '/admin/faqs', icon: HelpCircle, key: 'faqs' },
+    {
+        name: 'Job Listings',
+        href: '/admin/job-listings',
+        icon: Briefcase,
+        key: 'job-listings',
+    },
+    {
+        name: 'Job Applications',
+        href: '/admin/job-applications',
+        icon: FileUser,
+        key: 'job-applications',
+    },
+    {
+        name: 'Chat Archive',
+        href: '/admin/chats',
+        icon: MessageSquare,
+        key: 'chats',
+    },
+    { name: 'Contacts', href: '/admin/contacts', icon: Mail, key: 'contacts' },
+    { name: 'Brands', href: '/admin/brands', icon: Briefcase, key: 'brands' },
+    { name: 'Admins', href: '/admin/users', icon: Users, key: 'users' },
+    {
+        name: 'Clients',
+        href: '/admin/clients',
+        icon: UserCheck,
+        key: 'clients',
+    },
+    {
+        name: 'Client Workflow',
+        href: '/admin/tasks',
+        icon: Briefcase,
+        key: 'tasks',
+    },
+    {
+        name: 'Review Control',
+        href: '/admin/client-reviews',
+        icon: Star,
+        key: 'client-reviews',
+    },
+    {
+        name: 'Testimonials',
+        href: '/admin/testimonials',
+        icon: Star,
+        key: 'testimonials',
+    },
 ];
+
+function canAccessNavItem(
+    admin:
+        | {
+              is_super_admin?: boolean;
+              full_access?: boolean;
+              permissions?: string[] | null;
+          }
+        | undefined,
+    key: string | null,
+): boolean {
+    if (key === null) {
+        return true;
+    }
+
+    if (admin?.is_super_admin || admin?.full_access) {
+        return true;
+    }
+
+    return Array.isArray(admin?.permissions) && admin.permissions.includes(key);
+}
 
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
+    const visibleNavItems = NAV_ITEMS.filter((item) =>
+        canAccessNavItem(auth.user, item.key),
+    );
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
             return false;
@@ -355,7 +427,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         Navigation
                     </p>
                     <nav className="space-y-0.5">
-                        {NAV_ITEMS.map((item) => {
+                        {visibleNavItems.map((item) => {
                             const currentPath = page.url.split('?')[0];
                             const active =
                                 currentPath.startsWith(item.href) &&
@@ -366,7 +438,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`group relative flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                                    className={`group relative flex items-center rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
                                         active
                                             ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
                                             : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
@@ -382,7 +454,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                                 : 'text-slate-600 group-hover:text-slate-400'
                                         }`}
                                     />
-                                    <span className="truncate font-mono text-sm tracking-[0.04em]">
+                                    <span className="truncate font-mono text-xs tracking-[0.04em]">
                                         {item.name}
                                     </span>
                                     {item.href === CHAT_PAGE_PATH &&

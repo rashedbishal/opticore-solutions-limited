@@ -140,5 +140,5 @@ export interface CareerFormData {
     phone: string;
     role: string;
     portfolio_url: string;
-    message: string;
+    resume: File | null;
 }

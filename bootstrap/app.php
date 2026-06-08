@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAdminHasPermission;
+use App\Http\Middleware\EnsureAdminSessionIsCurrent;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -34,6 +36,11 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->alias([
+            'admin.permission' => EnsureAdminHasPermission::class,
+            'admin.session' => EnsureAdminSessionIsCurrent::class,
+        ]);
+
         $middleware->redirectTo(
             guests: fn (Request $request) => $request->is('admin*') ? route('admin.login') : '/login',
             users: fn (Request $request) => $request->is('admin*') ? route('admin.dashboard') : route('home'),
@@ -41,7 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
-            if ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), [403, 404, 500, 503])) {
+            if ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), [403, 404, 429, 500, 503])) {
                 return Inertia::render('Error', [
                     'status' => $exception->getStatusCode(),
                     'message' => $exception->getMessage() ?: null,
