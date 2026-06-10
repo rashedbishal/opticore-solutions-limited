@@ -8,9 +8,14 @@ interface Props {
 }
 
 export default function RealtimeTableListener({ channel, event, only }: Props) {
-    useEcho(channel, event, () => {
-        router.reload({ only });
-    }, [only]);
+    useEcho(
+        channel,
+        event,
+        () => {
+            router.reload({ only });
+        },
+        [only],
+    );
 
     return null;
 }

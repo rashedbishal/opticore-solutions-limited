@@ -15,7 +15,6 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useState, Suspense } from 'react';
-import Modal from '@/components/UI/Modal';
 
 // import KineticBento from '@/components/HomeRedesign/KineticBento';
 // import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
@@ -29,6 +28,7 @@ import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
+import Modal from '@/components/UI/Modal';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { clientLogos } from '@/lib/site';
 import { portfolio } from '@/routes';
@@ -280,7 +280,9 @@ interface HomeIndexProps {
 
 export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
     const { flash } = usePage<SharedPageProps>().props;
-    const [errorModalOpen, setErrorModalOpen] = useState(!!flash?.payment_error);
+    const [errorModalOpen, setErrorModalOpen] = useState(
+        !!flash?.payment_error,
+    );
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {

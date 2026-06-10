@@ -438,8 +438,8 @@ export default function TaskIndex({ tasks }: Props) {
 
                         <p className="mb-4 text-sm text-zinc-300">
                             Marking this task as delivered will notify the
-                            client and start their 24-hour review window.
-                            Enter your admin password to confirm.
+                            client and start their 24-hour review window. Enter
+                            your admin password to confirm.
                         </p>
 
                         <form onSubmit={submitDelivery}>

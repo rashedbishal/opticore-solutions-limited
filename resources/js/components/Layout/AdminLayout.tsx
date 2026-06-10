@@ -138,7 +138,11 @@ function canAccessNavItem(
     return Array.isArray(admin?.permissions) && admin.permissions.includes(key);
 }
 
-export default function AdminLayout({ children, title, fullWidth }: AdminLayoutProps) {
+export default function AdminLayout({
+    children,
+    title,
+    fullWidth,
+}: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
     const visibleNavItems = NAV_ITEMS.filter((item) =>
@@ -603,7 +607,9 @@ export default function AdminLayout({ children, title, fullWidth }: AdminLayoutP
 
                 {/* Page content */}
                 <main className="flex-1 py-6 md:py-8">
-                    <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${fullWidth ? 'max-w-full' : 'max-w-7xl'}`}>
+                    <div
+                        className={`mx-auto px-4 sm:px-6 lg:px-8 ${fullWidth ? 'max-w-full' : 'max-w-7xl'}`}
+                    >
                         {children}
                     </div>
                 </main>

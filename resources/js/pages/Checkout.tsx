@@ -35,7 +35,7 @@ export default function Checkout({ item }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
     const [currency, setCurrency] = useState<Currency>('USD');
     const [bdtRate, setBdtRate] = useState<number | null>(null);
-    const [rateLoading, setRateLoading] = useState(false);
+    const [rateLoading, setRateLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
     const [missingFields, setMissingFields] = useState<string[]>([]);
     const sslBtnRef = useRef<HTMLButtonElement>(null);
@@ -52,7 +52,6 @@ export default function Checkout({ item }: Props) {
     const usdAmount = parseFloat(item.price.replace(/[^0-9.]/g, ''));
 
     useEffect(() => {
-        setRateLoading(true);
         fetch('/checkout/exchange-rate')
             .then((r) => r.json())
             .then((data) => {
@@ -71,6 +70,7 @@ export default function Checkout({ item }: Props) {
 
         if (missing.length > 0) {
             setMissingFields(missing);
+
             return;
         }
 
@@ -161,7 +161,7 @@ export default function Checkout({ item }: Props) {
                                 </h2>
 
                                 {/* SSLCommerz — always selected */}
-                                <div className="flex w-full items-center gap-4 rounded-2xl p-5 bg-gradient-to-b from-cyan-50/50 to-white shadow-[0_0_32px_rgba(34,211,238,0.2),0_8px_24px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:from-cyan-950/30 dark:to-zinc-900 dark:shadow-[0_0_32px_rgba(34,211,238,0.15),0_8px_24px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.15)]">
+                                <div className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-b from-cyan-50/50 to-white p-5 shadow-[0_0_32px_rgba(34,211,238,0.2),0_8px_24px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:from-cyan-950/30 dark:to-zinc-900 dark:shadow-[0_0_32px_rgba(34,211,238,0.15),0_8px_24px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.15)]">
                                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] dark:bg-cyan-500/20 dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
                                         <CreditCard className="drop-icon-sm h-5 w-5 text-cyan-500" />
                                     </div>
@@ -199,8 +199,7 @@ export default function Checkout({ item }: Props) {
                                         It supports{' '}
                                         <span className="font-semibold text-zinc-700 dark:text-zinc-300">
                                             bKash, Nagad, Rocket, Visa,
-                                            Mastercard, DBBL Nexus, and 20+
-                                            more
+                                            Mastercard, DBBL Nexus, and 20+ more
                                         </span>{' '}
                                         payment options — all under a single,
                                         PCI-DSS compliant, SSL-encrypted
@@ -228,7 +227,7 @@ export default function Checkout({ item }: Props) {
                                                 className="flex flex-col items-center gap-1.5 rounded-xl bg-white p-3 text-center shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.04)] dark:bg-zinc-800 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]"
                                             >
                                                 <Icon className="h-4 w-4 text-cyan-500" />
-                                                <span className="text-[10px] font-semibold leading-tight text-zinc-600 dark:text-zinc-300">
+                                                <span className="text-[10px] leading-tight font-semibold text-zinc-600 dark:text-zinc-300">
                                                     {label}
                                                 </span>
                                             </div>
@@ -356,10 +355,12 @@ export default function Checkout({ item }: Props) {
                                     ref={sslBtnRef}
                                     id="sslczPayBtn"
                                     type="button"
-                                    endpoint="/pay-via-ajax"
-                                    order="init"
                                     className="hidden"
                                     aria-hidden="true"
+                                    {...({
+                                        endpoint: '/pay-via-ajax',
+                                        order: 'init',
+                                    } as Record<string, string>)}
                                 />
                             </div>
 
