@@ -52,4 +52,8 @@ return [
         'key' => env('GROQ_API_KEY'),
     ],
 
+    'exchangerate' => [
+        'key' => env('EXCHANGE_RATE_API_KEY'),
+    ],
+
 ];

@@ -13,10 +13,12 @@ use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationCo
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
+use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController as OriginalAppointmentController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -38,7 +40,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Middleware\RedirectAdminToPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -127,10 +131,12 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::get('/profile', function () {
             return Inertia::render('Profile');
         })->name('profile');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+        Route::get('/checkout/exchange-rate', [CheckoutController::class, 'exchangeRate'])->name('checkout.exchange-rate');
 
         // Client Reviews
         Route::post('/reviews', [ClientReviewController::class, 'store'])->name('reviews.store')->middleware('throttle:5,1');
@@ -210,8 +216,22 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
 
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::delete('orders/erase', [AdminOrderController::class, 'erase'])->name('orders.erase');
+    Route::get('transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
+    Route::delete('transactions/erase', [AdminTransactionController::class, 'erase'])->name('transactions.erase');
+    Route::get('transactions/{transaction}/invoice', [AdminTransactionController::class, 'downloadInvoice'])->name('transactions.invoice');
+
     // Client Review Control
     Route::get('/client-reviews', [AdminClientReviewController::class, 'index'])->name('client-reviews.index');
     Route::delete('/client-reviews/{clientReview}', [AdminClientReviewController::class, 'destroy'])->name('client-reviews.destroy');
     Route::post('/client-reviews/reorder', [AdminClientReviewController::class, 'reorder'])->name('client-reviews.reorder');
 });
+
+// SSLCommerz
+Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);

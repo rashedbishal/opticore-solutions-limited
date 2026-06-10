@@ -1,9 +1,11 @@
+import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
+    AlertCircle,
     ArrowRight,
     Box,
     Film,
@@ -13,6 +15,7 @@ import {
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useState, Suspense } from 'react';
+import Modal from '@/components/UI/Modal';
 
 // import KineticBento from '@/components/HomeRedesign/KineticBento';
 // import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
@@ -276,6 +279,8 @@ interface HomeIndexProps {
 }
 
 export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
+    const { flash } = usePage<SharedPageProps>().props;
+    const [errorModalOpen, setErrorModalOpen] = useState(!!flash?.payment_error);
     const desktop = useMediaQuery('(min-width: 1024px)');
 
     useEffect(() => {
@@ -757,6 +762,50 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                     </div>
                 </div>
             </section>
+
+            {/* Payment Failure / Cancel Modal */}
+            {flash?.payment_error && (
+                <Modal
+                    open={errorModalOpen}
+                    title="Payment Unsuccessful"
+                    onClose={() => setErrorModalOpen(false)}
+                >
+                    <div className="space-y-6">
+                        <div className="flex flex-col items-center gap-3 text-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 ring-1 ring-red-500/30">
+                                <AlertCircle className="h-8 w-8 text-red-500" />
+                            </div>
+                            <div>
+                                <p className="text-base font-bold text-theme">
+                                    Something went wrong
+                                </p>
+                                <p className="mt-1 text-sm text-theme-muted">
+                                    {flash.payment_error}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                            <button
+                                type="button"
+                                onClick={() => setErrorModalOpen(false)}
+                                className="neo-btn-ghost rounded-xl px-6 py-2.5 text-sm font-semibold text-theme transition-all hover:scale-[1.02]"
+                            >
+                                Dismiss
+                            </button>
+                            {flash.checkout_url && (
+                                <Link
+                                    href={flash.checkout_url}
+                                    className="neo-btn-primary rounded-xl px-6 py-2.5 text-center text-sm font-semibold transition-all hover:scale-[1.02]"
+                                    onClick={() => setErrorModalOpen(false)}
+                                >
+                                    Try Again
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </>
     );
 }

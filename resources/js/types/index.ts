@@ -10,6 +10,14 @@ export interface SiteMeta {
 export interface FlashProps {
     success?: string | null;
     error?: string | null;
+    payment_success?: {
+        invoice_number: string;
+        amount: string;
+        currency: string;
+        tran_id: string;
+    } | null;
+    payment_error?: string | null;
+    checkout_url?: string | null;
 }
 
 export interface SharedPageProps {

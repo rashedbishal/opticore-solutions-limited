@@ -18,3 +18,11 @@ Broadcast::channel('conversations.{id}', function ($user, $id) {
 Broadcast::channel('admin.conversations', function ($user) {
     return $user instanceof Admin;
 }, ['guards' => ['admin', 'web']]);
+
+Broadcast::channel('admin.orders', function ($user) {
+    return $user instanceof Admin;
+}, ['guards' => ['admin', 'web']]);
+
+Broadcast::channel('admin.transactions', function ($user) {
+    return $user instanceof Admin;
+}, ['guards' => ['admin', 'web']]);

@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // authorizer (which sends JSON, not a form) is never blocked by CSRF.
         $middleware->validateCsrfTokens(except: [
             'broadcasting/auth',
+            'success',
+            'fail',
+            'cancel',
+            'ipn',
+            'pay-via-ajax',
         ]);
 
         $middleware->web(append: [

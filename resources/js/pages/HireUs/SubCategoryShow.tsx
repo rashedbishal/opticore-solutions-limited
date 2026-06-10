@@ -1190,6 +1190,7 @@ export default function SubCategoryShow({
                 delivery: plan.delivery,
                 category: category.slug,
                 subcategory: subCategory.slug,
+                subcategory_id: subCategory.id,
             },
         });
     };

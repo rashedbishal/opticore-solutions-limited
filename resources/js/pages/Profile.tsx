@@ -1,29 +1,33 @@
 import type { SharedPageProps } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { update as profileUpdate } from '@/actions/App/Http/Controllers/ProfileController';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Modal from '@/components/UI/Modal';
 import {
     ArrowRight,
     BadgeCheck,
+    Bell,
     Calendar,
+    Camera,
     CheckCircle,
     Clock,
     CreditCard,
     FileText,
+    Loader2,
     Mail,
+    MapPin,
     Package,
-    ShoppingBag,
-    Smartphone,
-    User,
+    Phone,
     Settings,
     Shield,
-    Bell,
-    Camera,
-    Loader2,
-    Trash2,
+    ShoppingBag,
+    Smartphone,
     ToggleLeft,
     ToggleRight,
+    Trash2,
+    User,
 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
 import { Label } from '@/components/UI/label';
@@ -39,11 +43,20 @@ interface Invoice {
     ordered_at: string;
 }
 
+interface PaymentSuccess {
+    invoice_number: string;
+    amount: string;
+    currency: string;
+    tran_id: string;
+}
+
 interface Props {
     flash: {
         invoice?: Invoice;
         success?: string | null;
         error?: string | null;
+        payment_success?: PaymentSuccess | null;
+        payment_error?: string | null;
     };
 }
 
@@ -226,39 +239,33 @@ export default function Profile() {
         ? [newInvoice, ...DEMO_INVOICES]
         : DEMO_INVOICES;
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [successMsg, setSuccessMsg] = useState('');
+    const searchParams = new URLSearchParams(window.location.search);
+    const initialTab = searchParams.get('tab') ?? 'overview';
+
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
     const [promoEmails, setPromoEmails] = useState(true);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [paymentModalOpen, setPaymentModalOpen] = useState(!!flash?.payment_success);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const { data, setData, put, processing, wasSuccessful } = useForm({
+        name: auth.user?.name ?? '',
+        phone_number: (auth.user?.phone_number as string) ?? '',
+        address: (auth.user?.address as string) ?? '',
+        country: (auth.user?.country as string) ?? '',
+    });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
+            reader.onloadend = () =>
                 setPreviewImage(reader.result as string);
-            };
             reader.readAsDataURL(file);
         }
     };
 
-    const triggerFileInput = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleMockSubmit = (e: React.FormEvent, msg: string) => {
-        e.preventDefault();
-        setIsSaving(true);
-        setSuccessMsg('');
-        setTimeout(() => {
-            setIsSaving(false);
-            setSuccessMsg(msg);
-            setTimeout(() => setSuccessMsg(''), 3000);
-        }, 1500);
-    };
+    const triggerFileInput = () => fileInputRef.current?.click();
 
     return (
         <>
@@ -275,9 +282,57 @@ export default function Profile() {
                         animate="visible"
                         className="space-y-10"
                     >
-                        {/* Success Banner */}
+                        {/* Payment Success Modal */}
+                        {flash?.payment_success && (
+                            <Modal
+                                open={paymentModalOpen}
+                                title="Payment Successful"
+                                onClose={() => setPaymentModalOpen(false)}
+                            >
+                                <div className="space-y-6">
+                                    <div className="flex flex-col items-center gap-3 text-center">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30">
+                                            <CheckCircle className="h-8 w-8 text-emerald-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-black text-theme">
+                                                {flash.payment_success.currency}{' '}
+                                                {parseFloat(flash.payment_success.amount).toLocaleString()}
+                                            </p>
+                                            <p className="mt-1 text-sm text-theme-muted">
+                                                Payment confirmed — invoice sent to your email.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <div className="flex items-center justify-between text-xs">
+                                            <span className="text-theme-muted">Invoice</span>
+                                            <span className="font-mono font-semibold text-theme">
+                                                #{flash.payment_success.invoice_number}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between text-xs">
+                                            <span className="text-theme-muted">Transaction ID</span>
+                                            <span className="font-mono text-theme-subtle">
+                                                {flash.payment_success.tran_id}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        className="neo-btn-primary w-full"
+                                        onClick={() => setPaymentModalOpen(false)}
+                                    >
+                                        Done
+                                    </Button>
+                                </div>
+                            </Modal>
+                        )}
+
+                        {/* Legacy invoice banner */}
                         <AnimatePresence>
-                            {(newInvoice || successMsg) && (
+                            {newInvoice && (
                                 <motion.div
                                     variants={fadeUp}
                                     initial={{ opacity: 0, y: -20 }}
@@ -288,30 +343,22 @@ export default function Profile() {
                                     <CheckCircle className="h-6 w-6 shrink-0 text-emerald-500" />
                                     <div>
                                         <div className="text-sm font-bold text-emerald-500">
-                                            {successMsg
-                                                ? 'Success'
-                                                : 'Payment Successful!'}
+                                            Payment Successful!
                                         </div>
                                         <div className="text-xs text-theme-muted">
-                                            {successMsg ? (
-                                                successMsg
-                                            ) : (
-                                                <>
-                                                    Your order for{' '}
-                                                    <span className="font-semibold">
-                                                        {newInvoice?.service}
-                                                    </span>{' '}
-                                                    has been confirmed. Invoice
-                                                    #{newInvoice?.invoice_id}
-                                                </>
-                                            )}
+                                            Your order for{' '}
+                                            <span className="font-semibold">
+                                                {newInvoice.service}
+                                            </span>{' '}
+                                            has been confirmed. Invoice #
+                                            {newInvoice.invoice_id}
                                         </div>
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        <Tabs defaultValue="overview" className="w-full">
+                        <Tabs defaultValue={initialTab} className="w-full">
                             <div className="relative">
                                 {/* Scroll Indicators: Stronger "Peek" effect */}
                                 <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background via-background/60 to-transparent sm:hidden" />
@@ -472,15 +519,12 @@ export default function Profile() {
                                 value="settings"
                                 className="outline-none"
                             >
-                                {/* L1 — Settings card */}
                                 <motion.form
                                     variants={fadeUp}
-                                    onSubmit={(e) =>
-                                        handleMockSubmit(
-                                            e,
-                                            'Profile information updated successfully.',
-                                        )
-                                    }
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        put(profileUpdate.url());
+                                    }}
                                     className="neo-panel space-y-8 p-6 sm:p-8"
                                 >
                                     <div>
@@ -493,8 +537,14 @@ export default function Profile() {
                                         </p>
                                     </div>
 
+                                    {wasSuccessful && (
+                                        <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-500">
+                                            <CheckCircle className="h-4 w-4 shrink-0" />
+                                            Profile updated successfully.
+                                        </div>
+                                    )}
+
                                     <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-                                        {/* Hidden File Input */}
                                         <input
                                             type="file"
                                             ref={fileInputRef}
@@ -502,8 +552,6 @@ export default function Profile() {
                                             accept="image/*"
                                             className="hidden"
                                         />
-
-                                        {/* L2 — Avatar upload: 3D elevated container */}
                                         <div
                                             onClick={triggerFileInput}
                                             className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]"
@@ -522,7 +570,6 @@ export default function Profile() {
                                             )}
                                         </div>
                                         <div className="text-center sm:text-left">
-                                            {/* L2 — Upload button: 3D */}
                                             <Button
                                                 type="button"
                                                 variant="outline"
@@ -540,58 +587,84 @@ export default function Profile() {
 
                                     <div className="grid gap-6 sm:grid-cols-2">
                                         <div className="space-y-2">
-                                            <Label
-                                                htmlFor="name"
-                                                className="text-theme"
-                                            >
+                                            <Label htmlFor="name" className="text-theme">
                                                 Full Name
                                             </Label>
-                                            {/* L-1 — Input: depressed */}
                                             <Input
                                                 id="name"
-                                                defaultValue={auth.user?.name}
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label
-                                                htmlFor="username"
-                                                className="text-theme"
-                                            >
-                                                Username
-                                            </Label>
-                                            <Input
-                                                id="username"
-                                                defaultValue={auth.user?.name
-                                                    ?.toLowerCase()
-                                                    .replace(/\s+/g, '')}
-                                                className="neo-field rounded-xl"
-                                            />
-                                        </div>
-                                        <div className="space-y-2 sm:col-span-2">
-                                            <Label
-                                                htmlFor="email"
-                                                className="text-theme"
-                                            >
+                                            <Label htmlFor="email" className="text-theme">
                                                 Email Address
                                             </Label>
                                             <Input
                                                 id="email"
                                                 type="email"
-                                                defaultValue={auth.user?.email}
+                                                value={auth.user?.email}
+                                                disabled
+                                                className="neo-field rounded-xl opacity-60"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="phone_number" className="flex items-center gap-1.5 text-theme">
+                                                <Phone className="h-3.5 w-3.5 text-cyan-500" />
+                                                Phone Number
+                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                            </Label>
+                                            <Input
+                                                id="phone_number"
+                                                type="tel"
+                                                placeholder="+880 1XXXXXXXXX"
+                                                value={data.phone_number}
+                                                onChange={(e) => setData('phone_number', e.target.value)}
+                                                className="neo-field rounded-xl"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="country" className="flex items-center gap-1.5 text-theme">
+                                                <MapPin className="h-3.5 w-3.5 text-cyan-500" />
+                                                Country
+                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                            </Label>
+                                            <Input
+                                                id="country"
+                                                placeholder="Bangladesh"
+                                                value={data.country}
+                                                onChange={(e) => setData('country', e.target.value)}
+                                                className="neo-field rounded-xl"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 sm:col-span-2">
+                                            <Label htmlFor="address" className="flex items-center gap-1.5 text-theme">
+                                                <MapPin className="h-3.5 w-3.5 text-cyan-500" />
+                                                Address
+                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                            </Label>
+                                            <Input
+                                                id="address"
+                                                placeholder="93 B, New Eskaton Road, Dhaka"
+                                                value={data.address}
+                                                onChange={(e) => setData('address', e.target.value)}
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                     </div>
 
+                                    <p className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 text-xs text-theme-muted">
+                                        Phone, address and country are required for payment processing via SSLCommerz.
+                                    </p>
+
                                     <div className="flex justify-end border-t border-slate-200 pt-4 dark:border-zinc-700">
-                                        {/* L2 — Primary button: 3D violet */}
                                         <Button
                                             type="submit"
-                                            disabled={isSaving}
+                                            disabled={processing}
                                             className="neo-btn-primary min-w-[140px] rounded-xl transition-all hover:scale-[1.02]"
                                         >
-                                            {isSaving ? (
+                                            {processing ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />
                                             ) : (
                                                 'Save Changes'
@@ -613,12 +686,7 @@ export default function Profile() {
                                     {/* L1 — Change Password card */}
                                     <motion.form
                                         variants={fadeUp}
-                                        onSubmit={(e) =>
-                                            handleMockSubmit(
-                                                e,
-                                                'Password changed successfully.',
-                                            )
-                                        }
+                                        onSubmit={(e) => e.preventDefault()}
                                         className="neo-panel space-y-8 p-6 sm:p-8"
                                     >
                                         <div>
@@ -677,14 +745,10 @@ export default function Profile() {
                                         <div className="flex justify-start border-t border-slate-200 pt-4 dark:border-zinc-700">
                                             <Button
                                                 type="submit"
-                                                disabled={isSaving}
+                                                disabled={false}
                                                 className="neo-btn-primary min-w-[160px] rounded-xl transition-all hover:scale-[1.02]"
                                             >
-                                                {isSaving ? (
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                ) : (
-                                                    'Update Password'
-                                                )}
+                                                Update Password
                                             </Button>
                                         </div>
                                     </motion.form>

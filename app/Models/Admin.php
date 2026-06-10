@@ -66,6 +66,16 @@ class Admin extends Authenticatable
     }
 
     /**
+     * Get the single, immutable "mother admin" account, used as the master
+     * key for password-gated destructive actions regardless of who is
+     * currently logged in.
+     */
+    public static function motherAdmin(): ?self
+    {
+        return static::where('is_super_admin', true)->first();
+    }
+
+    /**
      * Determine whether this admin can access the CMS section identified
      * by the given permission key. Dashboard is intentionally not gated
      * here — callers treat it as always-allowed.

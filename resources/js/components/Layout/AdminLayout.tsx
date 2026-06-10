@@ -20,6 +20,8 @@ import {
     AlertCircle,
     HelpCircle,
     FileUser,
+    ShoppingCart,
+    ArrowLeftRight,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NotificationListener from '@/components/Admin/NotificationListener';
@@ -29,6 +31,7 @@ import adminRoutes from '@/routes/admin';
 interface AdminLayoutProps {
     children: React.ReactNode;
     title?: string;
+    fullWidth?: boolean;
 }
 
 const CHAT_PAGE_PATH = '/admin/customer-conversations';
@@ -100,6 +103,18 @@ const NAV_ITEMS = [
         icon: Star,
         key: 'testimonials',
     },
+    {
+        name: 'Orders',
+        href: '/admin/orders',
+        icon: ShoppingCart,
+        key: 'orders',
+    },
+    {
+        name: 'Transactions',
+        href: '/admin/transactions',
+        icon: ArrowLeftRight,
+        key: 'transactions',
+    },
 ];
 
 function canAccessNavItem(
@@ -123,7 +138,7 @@ function canAccessNavItem(
     return Array.isArray(admin?.permissions) && admin.permissions.includes(key);
 }
 
-export default function AdminLayout({ children, title }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, fullWidth }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
     const visibleNavItems = NAV_ITEMS.filter((item) =>
@@ -588,7 +603,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
                 {/* Page content */}
                 <main className="flex-1 py-6 md:py-8">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${fullWidth ? 'max-w-full' : 'max-w-7xl'}`}>
                         {children}
                     </div>
                 </main>

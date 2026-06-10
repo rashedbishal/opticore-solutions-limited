@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,14 +22,26 @@ class CheckoutController extends Controller
                 'delivery' => $request->query('delivery', '4 Days'),
                 'category' => $request->query('category', ''),
                 'subcategory' => $request->query('subcategory', ''),
+                'subcategory_id' => (int) $request->query('subcategory_id', 0),
             ],
         ]);
+    }
+
+    public function exchangeRate(): JsonResponse
+    {
+        $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
+            $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+
+            return $response->json('conversion_rate');
+        });
+
+        return response()->json(['rate' => $rate]);
     }
 
     public function process(Request $request): RedirectResponse
     {
         $request->validate([
-            'payment_method' => ['required', 'string', 'in:bkash,nagad,card'],
+            'payment_method' => ['required', 'string', 'in:sslcommerz'],
         ]);
 
         $service = $request->input('service', 'Service');
