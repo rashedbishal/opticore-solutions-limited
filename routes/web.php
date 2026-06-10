@@ -47,7 +47,6 @@ use App\Http\Middleware\RedirectAdminToPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Broadcasting Auth — accessible by web users and admins.
 // CSRF is excluded for this route in bootstrap/app.php because the Pusher.js
@@ -128,10 +127,9 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Profile
-        Route::get('/profile', function () {
-            return Inertia::render('Profile');
-        })->name('profile');
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/orders/{transaction}/invoice', [ProfileController::class, 'downloadInvoice'])->name('orders.invoice');
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');

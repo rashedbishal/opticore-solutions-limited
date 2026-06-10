@@ -21,6 +21,7 @@ class Task extends Model
         'state',
         'image_path',
         'review_eligible_until',
+        'transaction_id',
     ];
 
     /**

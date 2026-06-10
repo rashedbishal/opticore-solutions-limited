@@ -26,3 +26,7 @@ Broadcast::channel('admin.orders', function ($user) {
 Broadcast::channel('admin.transactions', function ($user) {
     return $user instanceof Admin;
 }, ['guards' => ['admin', 'web']]);
+
+Broadcast::channel('admin.tasks', function ($user) {
+    return $user instanceof Admin;
+}, ['guards' => ['admin', 'web']]);

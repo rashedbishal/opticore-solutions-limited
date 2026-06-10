@@ -130,6 +130,30 @@ it('exposes filter options for orders', function () {
         );
 });
 
+it('includes the linked transaction\'s order number for each order', function () {
+    $transaction = Transaction::create([
+        'name' => 'Order Customer',
+        'email' => 'order@example.com',
+        'amount' => 100,
+        'status' => 'Processing',
+        'transaction_id' => 'order-number-txn',
+    ]);
+
+    createTestOrder(['name' => 'Order With Number', 'transaction_id' => 'order-number-txn']);
+    createTestOrder(['name' => 'Order Without Transaction', 'transaction_id' => 'no-matching-txn']);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->get(route('admin.orders.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('orders.data', function ($data) use ($transaction) {
+                $byName = collect($data)->keyBy('name');
+
+                return $byName->get('Order With Number')['order_number'] === $transaction->order_number
+                    && $byName->get('Order Without Transaction')['order_number'] === null;
+            })
+        );
+});
+
 it('rejects erasing orders without the mother admin password', function () {
     $orderId = createTestOrder(['status' => 'Pending']);
 

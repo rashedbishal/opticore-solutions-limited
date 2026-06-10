@@ -18,6 +18,7 @@ import adminRoutes from '@/routes/admin';
 
 interface Order {
     id: number;
+    order_number: string | null;
     name: string | null;
     email: string | null;
     phone: string | null;
@@ -121,11 +122,12 @@ function StatusBadge({ status }: { status: string | null }) {
 }
 
 const HEADERS = [
+    'Order Number',
     'Customer',
     'Amount',
     'Category',
     'Subcategory',
-    'Status',
+    'Payment Status',
     'Transaction ID',
     'Date',
 ];
@@ -580,7 +582,7 @@ export default function OrderIndex({ orders, filters, filterOptions }: Props) {
 
             <div className="relative w-full overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-                <table className="w-full" style={{ minWidth: '900px' }}>
+                <table className="w-full" style={{ minWidth: '1050px' }}>
                     <thead>
                         <tr className="border-b border-violet-500/10 bg-violet-500/5">
                             {HEADERS.map((h) => (
@@ -611,6 +613,13 @@ export default function OrderIndex({ orders, filters, filterOptions }: Props) {
                                     key={order.id}
                                     className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                                 >
+                                    {/* Order Number */}
+                                    <td className="px-5 py-2.5 whitespace-nowrap">
+                                        <span className="font-mono text-sm font-semibold text-violet-400">
+                                            {order.order_number ?? '—'}
+                                        </span>
+                                    </td>
+
                                     {/* Customer */}
                                     <td className="px-5 py-2.5">
                                         <p className="font-medium text-white">
@@ -664,7 +673,7 @@ export default function OrderIndex({ orders, filters, filterOptions }: Props) {
                                         )}
                                     </td>
 
-                                    {/* Status */}
+                                    {/* Payment Status */}
                                     <td className="px-5 py-2.5 whitespace-nowrap">
                                         <StatusBadge status={order.status} />
                                     </td>

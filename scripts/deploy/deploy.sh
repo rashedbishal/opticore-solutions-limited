@@ -22,6 +22,24 @@
 #   install. Install unzip once and the warning disappears permanently.
 #   All other requirements are assumed present: php8.3, composer, curl,
 #   rsync, and sudo access for php8.3-fpm and supervisorctl.
+#
+#   PDF generation (spatie/laravel-pdf, Browsershot driver) needs Node.js,
+#   npm, and Chrome on the VPS — none of these come from `composer install`:
+#     curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+#     sudo apt install -y nodejs
+#     curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+#     sudo apt install -y /tmp/chrome.deb   # pulls in Chrome's shared-lib deps
+#     sudo PUPPETEER_SKIP_DOWNLOAD=true npm install -g puppeteer
+#
+#   Then set in $SHARED_DIR/.env (see .env.example):
+#     LARAVEL_PDF_CHROME_PATH=/usr/bin/google-chrome-stable
+#   "node"/"npm" are resolved via PATH by default (NodeSource installs to
+#   /usr/bin, which is on php-fpm's PATH). Only add these if PDF generation
+#   fails with "node: not found" / "npm: not found":
+#     LARAVEL_PDF_NODE_BINARY=/usr/bin/node
+#     LARAVEL_PDF_NPM_BINARY=/usr/bin/npm
+#   If Chrome fails to launch (sandbox error in containers/restricted
+#   environments), also set LARAVEL_PDF_NO_SANDBOX=true.
 # =============================================================================
 set -euo pipefail
 

@@ -143,6 +143,16 @@ it('exposes filter options for transactions', function () {
         );
 });
 
+it('includes the currency rate for each transaction', function () {
+    createTestTransaction(['name' => 'Rated Transaction', 'currency_type' => 'USD', 'currency_rate' => 110.5]);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->get(route('admin.transactions.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('transactions.data', fn ($data) => collect($data)->firstWhere('name', 'Rated Transaction')['currency_rate'] === '110.5000')
+        );
+});
+
 it('rejects erasing transactions without the mother admin password', function () {
     $transaction = createTestTransaction(['status' => 'Failed']);
 

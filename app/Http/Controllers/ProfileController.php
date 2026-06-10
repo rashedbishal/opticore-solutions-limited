@@ -2,11 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PortfolioSubCategory;
+use App\Models\Task;
+use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Spatie\LaravelPdf\PdfBuilder;
 
 class ProfileController extends Controller
 {
+    public function index(Request $request): Response
+    {
+        $user = $request->user();
+
+        return Inertia::render('Profile', [
+            'tasks' => Task::with('subCategory')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get()
+                ->map(fn (Task $task) => [
+                    'id' => $task->id,
+                    'task_name' => $task->task_name,
+                    'category' => $task->category,
+                    'sub_category' => $task->subCategory?->name,
+                    'date' => $task->date?->format('Y-m-d'),
+                    'state' => $task->state,
+                    'image_url' => $task->image_path ? asset('storage/'.$task->image_path) : null,
+                ]),
+            'orders' => Transaction::with('subCategory')
+                ->where('email', $user->email)
+                ->where('status', 'Processing')
+                ->latest()
+                ->get()
+                ->map(fn (Transaction $transaction) => [
+                    'id' => $transaction->id,
+                    'order_number' => $transaction->order_number,
+                    'invoice_number' => $transaction->invoice_number,
+                    'category' => $transaction->category,
+                    'sub_category' => $transaction->subCategory?->name,
+                    'amount' => $transaction->amount,
+                    'currency' => $transaction->currency,
+                    'transaction_id' => $transaction->transaction_id,
+                    'date' => $transaction->created_at?->format('Y-m-d'),
+                ]),
+        ]);
+    }
+
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -19,5 +63,23 @@ class ProfileController extends Controller
         $request->user()->update($validated);
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+    }
+
+    public function downloadInvoice(Request $request, Transaction $transaction): PdfBuilder
+    {
+        abort_unless($transaction->email === $request->user()->email, 403);
+        abort_unless($transaction->status === 'Processing' && $transaction->invoice_number, 404);
+
+        $subcategory = $transaction->subcategory_id
+            ? PortfolioSubCategory::find($transaction->subcategory_id)
+            : null;
+
+        $serviceName = $subcategory?->name;
+        $categoryName = $transaction->category
+            ? ucwords(str_replace('-', ' ', $transaction->category))
+            : null;
+
+        return Pdf::view('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'))
+            ->download("Invoice-{$transaction->invoice_number}.pdf");
     }
 }

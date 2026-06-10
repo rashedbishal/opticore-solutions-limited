@@ -4,18 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Events\OrderCreated;
 use App\Events\OrderUpdated;
+use App\Events\TaskCreated;
 use App\Events\TransactionUpdated;
 use App\Library\SslCommerz\SslCommerzNotification;
 use App\Mail\PaymentSuccessMail;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Support\TaskGenerator;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -234,6 +236,7 @@ class SslCommerzPaymentController extends Controller
                     ]);
 
                     $this->sendInvoiceEmail($transaction);
+                    $this->provisionWorkflowTask($transaction);
                 }
 
                 TransactionUpdated::dispatch();
@@ -370,6 +373,7 @@ class SslCommerzPaymentController extends Controller
                     ]);
 
                     $this->sendInvoiceEmail($transaction);
+                    $this->provisionWorkflowTask($transaction);
                 }
 
                 OrderUpdated::dispatch();
@@ -414,11 +418,20 @@ class SslCommerzPaymentController extends Controller
             ? ucwords(str_replace('-', ' ', $transaction->category))
             : null;
 
-        $pdf = Pdf::loadView('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'));
-        $pdfContent = $pdf->output();
+        $pdfContent = Pdf::view('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'))
+            ->generatePdfContent();
 
         Mail::to($transaction->email)->send(
             new PaymentSuccessMail($transaction, $pdfContent, $serviceName, $categoryName)
         );
+    }
+
+    private function provisionWorkflowTask(Transaction $transaction): void
+    {
+        $task = TaskGenerator::createFromTransaction($transaction);
+
+        if ($task) {
+            TaskCreated::dispatch();
+        }
     }
 }

@@ -38,6 +38,7 @@ interface Transaction {
     card_brand: string | null;
     card_issuer_country: string | null;
     currency_type: string | null;
+    currency_rate: string | null;
     risk_level: string | null;
     risk_title: string | null;
     created_at: string;
@@ -174,6 +175,7 @@ const HEADERS = [
     'Issuer',
     'Country',
     'Currency Type',
+    'Currency Rate',
     'Risk',
     'Date',
 ];
@@ -770,7 +772,7 @@ export default function TransactionIndex({
 
             <div className="relative w-full overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-                <table className="w-full" style={{ minWidth: '2400px' }}>
+                <table className="w-full" style={{ minWidth: '2550px' }}>
                     <thead>
                         <tr className="border-b border-violet-500/10 bg-violet-500/5">
                             {HEADERS.map((h) => (
@@ -914,6 +916,11 @@ export default function TransactionIndex({
                                     {/* Currency Type */}
                                     <td className="px-6 py-2.5 whitespace-nowrap">
                                         <Cell value={tx.currency_type} mono />
+                                    </td>
+
+                                    {/* Currency Rate */}
+                                    <td className="px-6 py-2.5 whitespace-nowrap">
+                                        <Cell value={tx.currency_rate} mono />
                                     </td>
 
                                     {/* Risk */}

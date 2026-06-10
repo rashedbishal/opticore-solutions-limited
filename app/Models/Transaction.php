@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
@@ -15,6 +16,7 @@ class Transaction extends Model
         'subcategory_id',
         'checkout_url',
         'invoice_number',
+        'order_number',
         'transaction_id',
         'gateway_transaction_id',
         'val_id',
@@ -54,5 +56,26 @@ class Transaction extends Model
             'base_fair' => 'decimal:2',
             'subcategory_id' => 'integer',
         ];
+    }
+
+    /**
+     * Get the sub-category this transaction is related to.
+     */
+    public function subCategory(): BelongsTo
+    {
+        return $this->belongsTo(PortfolioSubCategory::class, 'subcategory_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (Transaction $transaction): void {
+            if ($transaction->order_number) {
+                return;
+            }
+
+            $transaction->forceFill([
+                'order_number' => 'ORD-'.str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT),
+            ])->saveQuietly();
+        });
     }
 }

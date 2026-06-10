@@ -43,7 +43,7 @@ export default function EditTask({
     subCategoriesByCategory,
     users,
 }: Props) {
-    const { data, setData, post, processing } = useForm<{
+    const { data, setData, post, processing, errors } = useForm<{
         client_name: string;
         user_id: number;
         category: string;
@@ -51,6 +51,7 @@ export default function EditTask({
         task_name: string;
         date: string;
         state: string;
+        password: string;
         image: File | null;
         remove_image: boolean;
         _method: string;
@@ -62,6 +63,7 @@ export default function EditTask({
         task_name: task.task_name,
         date: task.date ?? '',
         state: task.state,
+        password: '',
         image: null,
         remove_image: false,
         _method: 'PUT',
@@ -311,6 +313,30 @@ export default function EditTask({
                             </select>
                         </div>
                     </div>
+
+                    {data.state === 'delivered' &&
+                        task.state !== 'delivered' && (
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Your Admin Password
+                                </label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={data.password}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
+                                    placeholder="Required to mark this task as delivered"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-emerald-500/50 focus:bg-emerald-500/5"
+                                />
+                                {errors.password && (
+                                    <p className="mt-1.5 font-mono text-[10px] text-red-400">
+                                        {errors.password}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                     <div className="space-y-3">
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">

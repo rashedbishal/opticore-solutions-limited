@@ -21,7 +21,8 @@ class OrderController extends Controller
     {
         $orders = DB::table('orders')
             ->leftJoin('portfolio_sub_categories', 'orders.subcategory_id', '=', 'portfolio_sub_categories.id')
-            ->select('orders.*', 'portfolio_sub_categories.name as subcategory_name')
+            ->leftJoin('transactions', 'orders.transaction_id', '=', 'transactions.transaction_id')
+            ->select('orders.*', 'portfolio_sub_categories.name as subcategory_name', 'transactions.order_number')
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('orders.status', $request->input('status'));
             })

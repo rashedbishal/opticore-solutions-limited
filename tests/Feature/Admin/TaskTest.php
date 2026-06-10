@@ -7,7 +7,7 @@ use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
-    $this->admin = Admin::factory()->create();
+    $this->admin = Admin::factory()->create(['password' => bcrypt('mother-secret')]);
     $this->user = User::factory()->create();
 });
 
@@ -86,4 +86,34 @@ it('validates task creation', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.tasks.store'), [])
         ->assertSessionHasErrors(['client_name', 'user_id', 'category', 'task_name', 'date']);
+});
+
+it('rejects deleting a task without the mother admin password', function () {
+    $task = Task::factory()->create(['user_id' => $this->user->id]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->delete(route('admin.tasks.destroy', $task))
+        ->assertSessionHasErrors(['password']);
+
+    $this->assertDatabaseHas('tasks', ['id' => $task->id]);
+});
+
+it('rejects deleting a task with an incorrect mother admin password', function () {
+    $task = Task::factory()->create(['user_id' => $this->user->id]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->delete(route('admin.tasks.destroy', $task), ['password' => 'wrong-password'])
+        ->assertSessionHasErrors(['password']);
+
+    $this->assertDatabaseHas('tasks', ['id' => $task->id]);
+});
+
+it('deletes a task using the mother admin password', function () {
+    $task = Task::factory()->create(['user_id' => $this->user->id]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->delete(route('admin.tasks.destroy', $task), ['password' => 'mother-secret'])
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
 });

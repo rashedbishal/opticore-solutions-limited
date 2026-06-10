@@ -1,0 +1,134 @@
+<?php
+
+use App\Models\PortfolioSubCategory;
+use App\Models\Task;
+use App\Models\Transaction;
+use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
+
+function createProfileTransaction(array $attributes = []): Transaction
+{
+    return Transaction::create(array_merge([
+        'name' => 'Profile Customer',
+        'email' => 'profile@example.com',
+        'amount' => 100,
+        'currency' => 'USD',
+        'status' => 'Processing',
+        'transaction_id' => 'txn-'.uniqid(),
+    ], $attributes));
+}
+
+it('automatically generates an order number formatted from the transaction id', function () {
+    $transaction = createProfileTransaction();
+
+    expect($transaction->order_number)->toBe('ORD-'.str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT));
+});
+
+it('does not override an explicitly provided order number', function () {
+    $transaction = createProfileTransaction(['order_number' => 'ORD-CUSTOM']);
+
+    expect($transaction->order_number)->toBe('ORD-CUSTOM');
+});
+
+it('generates unique order numbers for multiple transactions', function () {
+    $first = createProfileTransaction();
+    $second = createProfileTransaction();
+
+    expect($first->order_number)->not->toBe($second->order_number);
+});
+
+it('renders the profile page with the user\'s workflow tasks and processing orders', function () {
+    $user = User::factory()->create(['email' => 'profile@example.com']);
+    $otherUser = User::factory()->create(['email' => 'other@example.com']);
+
+    $subCategory = PortfolioSubCategory::factory()->create(['name' => 'Logo Design']);
+
+    $task = Task::factory()->create([
+        'user_id' => $user->id,
+        'sub_category_id' => $subCategory->id,
+        'task_name' => 'My Task',
+        'state' => 'in progress',
+    ]);
+
+    Task::factory()->create(['user_id' => $otherUser->id]);
+
+    $processingOrder = createProfileTransaction([
+        'email' => $user->email,
+        'subcategory_id' => $subCategory->id,
+        'invoice_number' => 'INV-1',
+    ]);
+
+    createProfileTransaction([
+        'email' => $user->email,
+        'status' => 'Pending',
+    ]);
+
+    createProfileTransaction([
+        'email' => $otherUser->email,
+        'status' => 'Processing',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('profile'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Profile')
+            ->has('tasks', 1)
+            ->where('tasks.0.id', $task->id)
+            ->where('tasks.0.task_name', 'My Task')
+            ->where('tasks.0.sub_category', 'Logo Design')
+            ->has('orders', 1)
+            ->where('orders.0.id', $processingOrder->id)
+            ->where('orders.0.order_number', $processingOrder->order_number)
+        );
+});
+
+it('forbids downloading another user\'s invoice', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+    $otherUser = User::factory()->create(['email' => 'other@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $otherUser->email,
+        'invoice_number' => 'INV-100',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice', $transaction))
+        ->assertForbidden();
+});
+
+it('returns not found when the order is not processing or has no invoice number', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $pending = createProfileTransaction([
+        'email' => $user->email,
+        'status' => 'Pending',
+        'invoice_number' => 'INV-101',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice', $pending))
+        ->assertNotFound();
+
+    $noInvoice = createProfileTransaction([
+        'email' => $user->email,
+        'invoice_number' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice', $noInvoice))
+        ->assertNotFound();
+});
+
+it('downloads the invoice pdf for an owned processing order', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $user->email,
+        'invoice_number' => 'INV-102',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice', $transaction))
+        ->assertOk()
+        ->assertHeader('content-type', 'application/pdf');
+});

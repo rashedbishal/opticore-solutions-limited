@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
+use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
@@ -11,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -144,18 +147,22 @@ class TaskController extends Controller
             'task_name' => ['sometimes', 'required', 'string', 'max:255'],
             'date' => ['sometimes', 'required', 'date'],
             'state' => ['sometimes', 'required', 'string', 'in:pending,in progress,delivered'],
+            'password' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
         ]);
 
         $wasDelivered = $task->state === 'delivered';
+        $becomingDelivered = isset($validated['state']) && $validated['state'] === 'delivered' && ! $wasDelivered;
 
-        // Open the 24-hour review window when first marking a task as delivered.
-        if (
-            isset($validated['state']) &&
-            $validated['state'] === 'delivered' &&
-            ! $wasDelivered
-        ) {
+        if ($becomingDelivered) {
+            $admin = Auth::guard('admin')->user();
+
+            if (! $admin || ! Hash::check($validated['password'] ?? '', $admin->password)) {
+                return back()->withErrors(['password' => 'The password you entered is incorrect.']);
+            }
+
+            // Open the 24-hour review window when first marking a task as delivered.
             $validated['review_eligible_until'] = now()->addHours(24);
         }
 
@@ -171,23 +178,31 @@ class TaskController extends Controller
             $validated['image_path'] = null;
         }
 
-        unset($validated['image'], $validated['remove_image']);
+        unset($validated['image'], $validated['remove_image'], $validated['password']);
 
         $task->update($validated);
 
-        if (
-            isset($validated['state']) &&
-            $validated['state'] === 'delivered' &&
-            ! $wasDelivered
-        ) {
+        TaskUpdated::dispatch($task->fresh());
+
+        if ($becomingDelivered) {
             $this->sendDeliveryMessage($task->fresh()->load(['user', 'subCategory']));
         }
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
     }
 
-    public function destroy(Task $task): RedirectResponse
+    public function destroy(Request $request, Task $task): RedirectResponse
     {
+        $validated = $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        $motherAdmin = Admin::motherAdmin();
+
+        if (! $motherAdmin || ! Hash::check($validated['password'], $motherAdmin->password)) {
+            return back()->withErrors(['password' => 'The password you entered is incorrect.']);
+        }
+
         if ($task->image_path) {
             Storage::disk('public')->delete($task->image_path);
         }

@@ -59,6 +59,7 @@ it('opens the review window only on the transition into delivered', function () 
     $this->actingAs($this->admin, 'admin')
         ->put(route('admin.tasks.update', $task), [
             'state' => 'delivered',
+            'password' => 'password',
         ])
         ->assertRedirect(route('admin.tasks.index'));
 
@@ -104,6 +105,7 @@ it('dispatches a delivery message and broadcasts it when a task transitions to d
     $this->actingAs($this->admin, 'admin')
         ->put(route('admin.tasks.update', $task), [
             'state' => 'delivered',
+            'password' => 'password',
         ])
         ->assertRedirect(route('admin.tasks.index'));
 
@@ -117,6 +119,37 @@ it('dispatches a delivery message and broadcasts it when a task transitions to d
     Event::assertDispatched(MessageSent::class, function (MessageSent $event) use ($message) {
         return $event->message->id === $message->id;
     });
+});
+
+it('rejects marking a task delivered without the current admin password', function () {
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id,
+        'state' => 'pending',
+    ]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.tasks.update', $task), [
+            'state' => 'delivered',
+        ])
+        ->assertSessionHasErrors(['password']);
+
+    expect($task->fresh()->state)->toBe('pending');
+});
+
+it('rejects marking a task delivered with an incorrect admin password', function () {
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id,
+        'state' => 'pending',
+    ]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.tasks.update', $task), [
+            'state' => 'delivered',
+            'password' => 'wrong-password',
+        ])
+        ->assertSessionHasErrors(['password']);
+
+    expect($task->fresh()->state)->toBe('pending');
 });
 
 it('does not dispatch another delivery message when a task is updated while already delivered', function () {

@@ -40,6 +40,12 @@
         <div class="amount">{{ $transaction->currency }} {{ number_format($transaction->amount, 2) }}</div>
 
         <div class="detail-box">
+            @if($transaction->order_number)
+            <div class="detail-row">
+                <span>Order Number</span>
+                <span>{{ $transaction->order_number }}</span>
+            </div>
+            @endif
             <div class="detail-row">
                 <span>Invoice Number</span>
                 <span>#{{ $transaction->invoice_number }}</span>

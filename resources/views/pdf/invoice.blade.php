@@ -46,6 +46,10 @@
         <div class="invoice-meta">
             <div class="label">Invoice</div>
             <div class="invoice-num">#{{ $transaction->invoice_number }}</div>
+            @if($transaction->order_number)
+            <div class="label" style="margin-top:6px;">Order Number</div>
+            <div class="value">{{ $transaction->order_number }}</div>
+            @endif
             <div class="label" style="margin-top:6px;">Date</div>
             <div class="value">{{ now()->format('d M Y') }}</div>
             <div><span class="status-badge">Paid</span></div>

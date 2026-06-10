@@ -1,87 +1,94 @@
 import type { SharedPageProps } from '@/types';
-import { update as profileUpdate } from '@/actions/App/Http/Controllers/ProfileController';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Modal from '@/components/UI/Modal';
+import { motion } from 'framer-motion';
 import {
     ArrowRight,
     BadgeCheck,
     Bell,
+    Briefcase,
     Calendar,
     Camera,
     CheckCircle,
     Clock,
     CreditCard,
+    Download,
     FileText,
     Loader2,
     Mail,
     MapPin,
     Package,
     Phone,
+    Receipt,
     Settings,
     Shield,
     ShoppingBag,
-    Smartphone,
     ToggleLeft,
     ToggleRight,
     Trash2,
     User,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { update as profileUpdate } from '@/actions/App/Http/Controllers/ProfileController';
+import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
 import { Label } from '@/components/UI/label';
+import Modal from '@/components/UI/Modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
+import useEchoReady from '@/hooks/useEchoReady';
+import ordersRoutes from '@/routes/orders';
 
-interface Invoice {
-    invoice_id: string;
-    service: string;
-    plan: string;
-    price: string;
-    delivery: string;
-    payment_method: string;
-    ordered_at: string;
+interface WorkflowTask {
+    id: number;
+    task_name: string;
+    category: string;
+    sub_category: string | null;
+    date: string | null;
+    state: 'pending' | 'in progress' | 'delivered';
+    image_url: string | null;
 }
 
-interface PaymentSuccess {
-    invoice_number: string;
+interface Order {
+    id: number;
+    order_number: string | null;
+    invoice_number: string | null;
+    category: string | null;
+    sub_category: string | null;
     amount: string;
-    currency: string;
-    tran_id: string;
+    currency: string | null;
+    transaction_id: string;
+    date: string | null;
 }
 
 interface Props {
-    flash: {
-        invoice?: Invoice;
-        success?: string | null;
-        error?: string | null;
-        payment_success?: PaymentSuccess | null;
-        payment_error?: string | null;
-    };
+    tasks: WorkflowTask[];
+    orders: Order[];
 }
 
-const PAYMENT_LABELS: Record<
-    string,
-    { label: string; icon: React.ComponentType<{ className?: string }> }
-> = {
-    bkash: { label: 'bKash', icon: Smartphone },
-    nagad: { label: 'Nagad', icon: Smartphone },
-    card: { label: 'Visa / Mastercard', icon: CreditCard },
-};
-
-const DEMO_INVOICES: Invoice[] = [
+const TASK_STATE_STYLES: Record<
+    WorkflowTask['state'],
     {
-        invoice_id: 'A3F7B2C1',
-        service: 'Brand Identity Design',
-        plan: 'Premium',
-        price: '$25',
-        delivery: '7 Days',
-        payment_method: 'card',
-        ordered_at: new Date(
-            Date.now() - 7 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        label: string;
+        className: string;
+        icon: React.ComponentType<{ className?: string }>;
+    }
+> = {
+    pending: {
+        label: 'Pending',
+        className: 'bg-yellow-500/10 text-yellow-500',
+        icon: Clock,
     },
-];
+    'in progress': {
+        label: 'In Progress',
+        className: 'bg-blue-500/10 text-blue-500',
+        icon: Loader2,
+    },
+    delivered: {
+        label: 'Delivered',
+        className: 'bg-emerald-500/10 text-emerald-500',
+        icon: CheckCircle,
+    },
+};
 
 const fadeUp = {
     hidden: { opacity: 0, y: 20 },
@@ -100,132 +107,135 @@ const stagger = {
     visible: { transition: { staggerChildren: 0.1 } },
 };
 
-function InvoiceCard({
-    invoice,
-    isNew,
-}: {
-    invoice: Invoice;
-    isNew?: boolean;
-}) {
-    const payment = PAYMENT_LABELS[invoice.payment_method] ?? {
-        label: invoice.payment_method,
-        icon: CreditCard,
-    };
-    const PayIcon = payment.icon;
+function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
+    const stateInfo = TASK_STATE_STYLES[task.state];
+    const StateIcon = stateInfo.icon;
 
-    const downloadInvoice = () => {
-        // Minimal valid PDF structure for demo purposes
-        const pdfContent = `%PDF-1.4
-1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
-2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
-3 0 obj << /Type /Page /Parent 2 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /MediaBox [0 0 595 842] /Contents 4 0 R >> endobj
-4 0 obj << /Length 400 >> stream
-BT
-/F1 18 Tf 50 800 Td (OPTICORE SOLUTIONS LTD - INVOICE) Tj
-/F1 12 Tf 0 -40 Td (Invoice ID: #${invoice.invoice_id}) Tj
-0 -20 Td (Service: ${invoice.service}) Tj
-0 -20 Td (Plan: ${invoice.plan}) Tj
-0 -20 Td (Price: ${invoice.price}) Tj
-0 -20 Td (Ordered at: ${invoice.ordered_at}) Tj
-0 -20 Td (Status: PAID) Tj
-0 -60 Td (Thank you for choosing Opticore Solutions Ltd!) Tj
-0 -20 Td (This is a frontend demo generated invoice.) Tj
-ET
-endstream endobj
-xref
-0 5
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000282 00000 n 
-trailer << /Size 5 /Root 1 0 R >>
-startxref
-550
-%%EOF`;
-
-        const blob = new Blob([pdfContent], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Invoice-${invoice.invoice_id}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
-
-    const orderedDate = new Date(invoice.ordered_at).toLocaleDateString(
-        'en-US',
-        { year: 'numeric', month: 'long', day: 'numeric' },
-    );
+    const formattedDate = task.date
+        ? new Date(task.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+          })
+        : null;
 
     return (
         <motion.div
             variants={fadeUp}
-            className={`neo-panel relative overflow-hidden rounded-3xl p-6 transition-all ${
-                isNew ? 'border-cyan-500/40 ring-1 ring-cyan-500/20' : ''
-            }`}
+            className="neo-panel relative overflow-hidden rounded-3xl p-6"
         >
-            {isNew && (
-                <span className="absolute top-4 right-4 rounded-full border border-cyan-500/30 bg-cyan-500/15 px-3 py-1 text-[10px] font-black tracking-widest text-cyan-500 uppercase">
-                    New
-                </span>
-            )}
-
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                    <Package className="h-6 w-6" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                    {task.image_url ? (
+                        <img
+                            src={task.image_url}
+                            alt={task.task_name}
+                            className="h-full w-full object-cover"
+                        />
+                    ) : (
+                        <Package className="h-6 w-6" />
+                    )}
                 </div>
 
                 <div className="flex-1 space-y-3">
                     <div>
                         <div className="text-base font-bold text-theme">
-                            {invoice.service}
+                            {task.task_name}
                         </div>
-                        <div className="text-sm text-theme-muted">
-                            {invoice.plan} Plan
+                        <div className="text-sm text-theme-muted capitalize">
+                            {task.category.replace(/-/g, ' ')}
+                            {task.sub_category ? ` · ${task.sub_category}` : ''}
+                        </div>
+                    </div>
+
+                    {formattedDate && (
+                        <div className="flex items-center gap-1.5 text-[10px] text-theme-muted sm:text-xs">
+                            <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
+                            {formattedDate}
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex flex-row items-center sm:flex-col sm:items-end">
+                    <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase sm:px-3 sm:py-1 sm:text-[10px] ${stateInfo.className}`}
+                    >
+                        <StateIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                        {stateInfo.label}
+                    </span>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
+function OrderCard({ order }: { order: Order }) {
+    const formattedDate = order.date
+        ? new Date(order.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+          })
+        : null;
+
+    const serviceName =
+        order.sub_category ??
+        (order.category
+            ? order.category.replace(/-/g, ' ')
+            : 'Digital Service');
+
+    return (
+        <motion.div
+            variants={fadeUp}
+            className="neo-panel relative overflow-hidden rounded-3xl p-6"
+        >
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                    <FileText className="h-6 w-6" />
+                </div>
+
+                <div className="flex-1 space-y-3">
+                    <div>
+                        <div className="text-base font-bold text-theme capitalize">
+                            {serviceName}
+                        </div>
+                        <div className="font-mono text-sm text-theme-muted">
+                            {order.order_number}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-x-4 gap-y-2 text-[10px] sm:flex sm:flex-wrap sm:text-xs">
                         <div className="flex items-center gap-1.5 text-theme-muted">
-                            <Clock className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
-                            Delivery: {invoice.delivery}
+                            <CreditCard className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
+                            {order.currency}{' '}
+                            {Number(order.amount).toLocaleString()}
                         </div>
-                        <div className="flex items-center gap-1.5 text-theme-muted">
-                            <PayIcon className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
-                            {payment.label}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-theme-muted">
-                            <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
-                            {orderedDate}
-                        </div>
+                        {formattedDate && (
+                            <div className="flex items-center gap-1.5 text-theme-muted">
+                                <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
+                                {formattedDate}
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end">
-                    <span className="text-lg font-black text-theme sm:text-xl">
-                        {invoice.price}
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold text-emerald-500 sm:px-3 sm:py-1 sm:text-[10px]">
+                        <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                        Paid
                     </span>
-                    <div className="flex flex-col items-end gap-1">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold text-emerald-500 sm:px-3 sm:py-1 sm:text-[10px]">
-                            <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                            Paid
-                        </span>
-                        <div className="font-mono text-[9px] text-theme-subtle sm:text-[10px]">
-                            #{invoice.invoice_id}
-                        </div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={downloadInvoice}
-                            className="neo-btn-ghost mt-2 h-7 w-fit rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
+                    {order.invoice_number && (
+                        <a
+                            href={ordersRoutes.invoice.url({
+                                transaction: order.id,
+                            })}
+                            download={`Invoice-${order.invoice_number}.pdf`}
+                            className="neo-btn-ghost mt-2 flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
                         >
-                            <FileText className="mr-1.5 h-3 w-3 text-cyan-500" />
-                            Download PDF
-                        </Button>
-                    </div>
+                            <Download className="mr-1.5 h-3 w-3 text-cyan-500" />
+                            Download Invoice
+                        </a>
+                    )}
                 </div>
             </div>
         </motion.div>
@@ -233,11 +243,8 @@ startxref
 }
 
 export default function Profile() {
-    const { auth, flash } = usePage<SharedPageProps & Props>().props;
-    const newInvoice = flash?.invoice as Invoice | undefined;
-    const allInvoices = newInvoice
-        ? [newInvoice, ...DEMO_INVOICES]
-        : DEMO_INVOICES;
+    const { auth, flash, tasks, orders } = usePage<SharedPageProps & Props>()
+        .props;
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialTab = searchParams.get('tab') ?? 'overview';
@@ -245,8 +252,11 @@ export default function Profile() {
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
     const [promoEmails, setPromoEmails] = useState(true);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [paymentModalOpen, setPaymentModalOpen] = useState(!!flash?.payment_success);
+    const [paymentModalOpen, setPaymentModalOpen] = useState(
+        !!flash?.payment_success,
+    );
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const echoReady = useEchoReady();
 
     const { data, setData, put, processing, wasSuccessful } = useForm({
         name: auth.user?.name ?? '',
@@ -257,10 +267,10 @@ export default function Profile() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () =>
-                setPreviewImage(reader.result as string);
+            reader.onloadend = () => setPreviewImage(reader.result as string);
             reader.readAsDataURL(file);
         }
     };
@@ -270,6 +280,14 @@ export default function Profile() {
     return (
         <>
             <Head title="My Profile — Opticore" />
+
+            {echoReady && auth.user && (
+                <RealtimeTableListener
+                    channel={`App.Models.User.${auth.user.id}`}
+                    event="TaskUpdated"
+                    only={['tasks']}
+                />
+            )}
 
             <div className="relative min-h-screen pb-24">
                 <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] bg-radial from-cyan-500/5 to-transparent" />
@@ -297,23 +315,35 @@ export default function Profile() {
                                         <div>
                                             <p className="text-2xl font-black text-theme">
                                                 {flash.payment_success.currency}{' '}
-                                                {parseFloat(flash.payment_success.amount).toLocaleString()}
+                                                {parseFloat(
+                                                    flash.payment_success
+                                                        .amount,
+                                                ).toLocaleString()}
                                             </p>
                                             <p className="mt-1 text-sm text-theme-muted">
-                                                Payment confirmed — invoice sent to your email.
+                                                Payment confirmed — invoice sent
+                                                to your email.
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4">
                                         <div className="flex items-center justify-between text-xs">
-                                            <span className="text-theme-muted">Invoice</span>
+                                            <span className="text-theme-muted">
+                                                Invoice
+                                            </span>
                                             <span className="font-mono font-semibold text-theme">
-                                                #{flash.payment_success.invoice_number}
+                                                #
+                                                {
+                                                    flash.payment_success
+                                                        .invoice_number
+                                                }
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between text-xs">
-                                            <span className="text-theme-muted">Transaction ID</span>
+                                            <span className="text-theme-muted">
+                                                Transaction ID
+                                            </span>
                                             <span className="font-mono text-theme-subtle">
                                                 {flash.payment_success.tran_id}
                                             </span>
@@ -322,41 +352,15 @@ export default function Profile() {
 
                                     <Button
                                         className="neo-btn-primary w-full"
-                                        onClick={() => setPaymentModalOpen(false)}
+                                        onClick={() =>
+                                            setPaymentModalOpen(false)
+                                        }
                                     >
                                         Done
                                     </Button>
                                 </div>
                             </Modal>
                         )}
-
-                        {/* Legacy invoice banner */}
-                        <AnimatePresence>
-                            {newInvoice && (
-                                <motion.div
-                                    variants={fadeUp}
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="flex items-center gap-4 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 sm:px-6 sm:py-4"
-                                >
-                                    <CheckCircle className="h-6 w-6 shrink-0 text-emerald-500" />
-                                    <div>
-                                        <div className="text-sm font-bold text-emerald-500">
-                                            Payment Successful!
-                                        </div>
-                                        <div className="text-xs text-theme-muted">
-                                            Your order for{' '}
-                                            <span className="font-semibold">
-                                                {newInvoice.service}
-                                            </span>{' '}
-                                            has been confirmed. Invoice #
-                                            {newInvoice.invoice_id}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
 
                         <Tabs defaultValue={initialTab} className="w-full">
                             <div className="relative">
@@ -372,6 +376,11 @@ export default function Profile() {
                                                 value: 'overview',
                                                 icon: User,
                                                 label: 'Overview',
+                                            },
+                                            {
+                                                value: 'orders',
+                                                icon: Receipt,
+                                                label: 'Orders',
                                             },
                                             {
                                                 value: 'settings',
@@ -453,7 +462,7 @@ export default function Profile() {
                                     <div className="flex flex-row gap-4 sm:flex-col sm:items-end">
                                         <div className="text-center">
                                             <div className="text-2xl font-black text-theme">
-                                                {allInvoices.length}
+                                                {tasks.length}
                                             </div>
                                             <div className="text-xs font-bold text-theme-muted">
                                                 Orders
@@ -462,7 +471,7 @@ export default function Profile() {
                                     </div>
                                 </motion.div>
 
-                                {/* Invoices Section */}
+                                {/* Workflow Tasks Section */}
                                 <div className="space-y-6">
                                     <motion.div
                                         variants={fadeUp}
@@ -470,16 +479,16 @@ export default function Profile() {
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* L2 — Section icon: elevated */}
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                                                <FileText className="drop-icon-sm h-5 w-5" />
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                                                <Briefcase className="drop-icon-sm h-5 w-5" />
                                             </div>
                                             <div>
                                                 <h2 className="text-xl font-bold text-theme">
-                                                    My Invoices
+                                                    My Workflow
                                                 </h2>
                                                 <p className="text-xs text-theme-muted">
-                                                    {allInvoices.length} order
-                                                    {allInvoices.length !== 1
+                                                    {tasks.length} task
+                                                    {tasks.length !== 1
                                                         ? 's'
                                                         : ''}
                                                 </p>
@@ -497,20 +506,89 @@ export default function Profile() {
                                         </Link>
                                     </motion.div>
 
+                                    {tasks.length === 0 ? (
+                                        <motion.div
+                                            variants={fadeUp}
+                                            className="neo-panel flex flex-col items-center gap-3 rounded-3xl p-10 text-center"
+                                        >
+                                            <Briefcase className="h-10 w-10 text-theme-subtle" />
+                                            <p className="text-sm text-theme-muted">
+                                                No workflow tasks yet. Once you
+                                                place an order, it will appear
+                                                here.
+                                            </p>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            variants={stagger}
+                                            initial="hidden"
+                                            animate="visible"
+                                            className="space-y-4"
+                                        >
+                                            {tasks.map((task) => (
+                                                <WorkflowTaskCard
+                                                    key={task.id}
+                                                    task={task}
+                                                />
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </div>
+                            </TabsContent>
+
+                            {/* Orders Tab */}
+                            <TabsContent
+                                value="orders"
+                                className="space-y-8 outline-none sm:space-y-10"
+                            >
+                                <div className="space-y-6">
                                     <motion.div
-                                        variants={stagger}
-                                        initial="hidden"
-                                        animate="visible"
-                                        className="space-y-4"
+                                        variants={fadeUp}
+                                        className="flex items-center gap-3"
                                     >
-                                        {allInvoices.map((invoice, i) => (
-                                            <InvoiceCard
-                                                key={invoice.invoice_id}
-                                                invoice={invoice}
-                                                isNew={i === 0 && !!newInvoice}
-                                            />
-                                        ))}
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                                            <Receipt className="drop-icon-sm h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold text-theme">
+                                                My Orders
+                                            </h2>
+                                            <p className="text-xs text-theme-muted">
+                                                {orders.length} order
+                                                {orders.length !== 1
+                                                    ? 's'
+                                                    : ''}{' '}
+                                                in progress
+                                            </p>
+                                        </div>
                                     </motion.div>
+
+                                    {orders.length === 0 ? (
+                                        <motion.div
+                                            variants={fadeUp}
+                                            className="neo-panel flex flex-col items-center gap-3 rounded-3xl p-10 text-center"
+                                        >
+                                            <Receipt className="h-10 w-10 text-theme-subtle" />
+                                            <p className="text-sm text-theme-muted">
+                                                No orders are currently being
+                                                processed.
+                                            </p>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            variants={stagger}
+                                            initial="hidden"
+                                            animate="visible"
+                                            className="space-y-4"
+                                        >
+                                            {orders.map((order) => (
+                                                <OrderCard
+                                                    key={order.id}
+                                                    order={order}
+                                                />
+                                            ))}
+                                        </motion.div>
+                                    )}
                                 </div>
                             </TabsContent>
 
@@ -587,18 +665,29 @@ export default function Profile() {
 
                                     <div className="grid gap-6 sm:grid-cols-2">
                                         <div className="space-y-2">
-                                            <Label htmlFor="name" className="text-theme">
+                                            <Label
+                                                htmlFor="name"
+                                                className="text-theme"
+                                            >
                                                 Full Name
                                             </Label>
                                             <Input
                                                 id="name"
                                                 value={data.name}
-                                                onChange={(e) => setData('name', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'name',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="email" className="text-theme">
+                                            <Label
+                                                htmlFor="email"
+                                                className="text-theme"
+                                            >
                                                 Email Address
                                             </Label>
                                             <Input
@@ -610,52 +699,83 @@ export default function Profile() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="phone_number" className="flex items-center gap-1.5 text-theme">
+                                            <Label
+                                                htmlFor="phone_number"
+                                                className="flex items-center gap-1.5 text-theme"
+                                            >
                                                 <Phone className="h-3.5 w-3.5 text-cyan-500" />
                                                 Phone Number
-                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                                <span className="text-[10px] text-theme-subtle">
+                                                    (optional)
+                                                </span>
                                             </Label>
                                             <Input
                                                 id="phone_number"
                                                 type="tel"
                                                 placeholder="+880 1XXXXXXXXX"
                                                 value={data.phone_number}
-                                                onChange={(e) => setData('phone_number', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'phone_number',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="country" className="flex items-center gap-1.5 text-theme">
+                                            <Label
+                                                htmlFor="country"
+                                                className="flex items-center gap-1.5 text-theme"
+                                            >
                                                 <MapPin className="h-3.5 w-3.5 text-cyan-500" />
                                                 Country
-                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                                <span className="text-[10px] text-theme-subtle">
+                                                    (optional)
+                                                </span>
                                             </Label>
                                             <Input
                                                 id="country"
                                                 placeholder="Bangladesh"
                                                 value={data.country}
-                                                onChange={(e) => setData('country', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'country',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="address" className="flex items-center gap-1.5 text-theme">
+                                            <Label
+                                                htmlFor="address"
+                                                className="flex items-center gap-1.5 text-theme"
+                                            >
                                                 <MapPin className="h-3.5 w-3.5 text-cyan-500" />
                                                 Address
-                                                <span className="text-[10px] text-theme-subtle">(optional)</span>
+                                                <span className="text-[10px] text-theme-subtle">
+                                                    (optional)
+                                                </span>
                                             </Label>
                                             <Input
                                                 id="address"
                                                 placeholder="93 B, New Eskaton Road, Dhaka"
                                                 value={data.address}
-                                                onChange={(e) => setData('address', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'address',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="neo-field rounded-xl"
                                             />
                                         </div>
                                     </div>
 
                                     <p className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 text-xs text-theme-muted">
-                                        Phone, address and country are required for payment processing via SSLCommerz.
+                                        Phone, address and country are required
+                                        for payment processing via SSLCommerz.
                                     </p>
 
                                     <div className="flex justify-end border-t border-slate-200 pt-4 dark:border-zinc-700">
