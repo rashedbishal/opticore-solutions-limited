@@ -4,6 +4,7 @@ use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 use Inertia\Testing\AssertableInertia as Assert;
 
 function createProfileTransaction(array $attributes = []): Transaction
@@ -16,6 +17,11 @@ function createProfileTransaction(array $attributes = []): Transaction
         'status' => 'Processing',
         'transaction_id' => 'txn-'.uniqid(),
     ], $attributes));
+}
+
+function invoiceVerifyToken(Transaction $transaction): string
+{
+    return strtr(Crypt::encryptString((string) $transaction->id), '+/', '-_');
 }
 
 it('automatically generates an order number formatted from the transaction id', function () {
@@ -131,4 +137,60 @@ it('downloads the invoice pdf for an owned processing order', function () {
         ->get(route('orders.invoice', $transaction))
         ->assertOk()
         ->assertHeader('content-type', 'application/pdf');
+});
+
+it('redirects guests to login and back to the invoice verification page after authenticating', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $user->email,
+        'invoice_number' => 'INV-200',
+    ]);
+
+    $verifyUrl = route('orders.invoice.verify', ['token' => invoiceVerifyToken($transaction)]);
+
+    $this->get($verifyUrl)->assertRedirect('/login');
+
+    expect(session('url.intended'))->toBe($verifyUrl);
+
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertRedirect($verifyUrl);
+});
+
+it('shows the invoice pdf inline for an owned processing order via the verification token', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $user->email,
+        'invoice_number' => 'INV-201',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice.verify', ['token' => invoiceVerifyToken($transaction)]))
+        ->assertOk()
+        ->assertHeader('content-type', 'application/pdf');
+});
+
+it('forbids verifying another user\'s invoice', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+    $otherUser = User::factory()->create(['email' => 'other@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $otherUser->email,
+        'invoice_number' => 'INV-202',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice.verify', ['token' => invoiceVerifyToken($transaction)]))
+        ->assertForbidden();
+});
+
+it('returns not found for a tampered invoice verification token', function () {
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $this->actingAs($user)
+        ->get(route('orders.invoice.verify', ['token' => 'tampered-token']))
+        ->assertNotFound();
 });

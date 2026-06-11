@@ -130,6 +130,7 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::get('/orders/{transaction}/invoice', [ProfileController::class, 'downloadInvoice'])->name('orders.invoice');
+        Route::get('/orders/invoice/verify/{token}', [ProfileController::class, 'verifyInvoice'])->name('orders.invoice.verify');
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');

@@ -11,13 +11,13 @@ use App\Mail\PaymentSuccessMail;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Support\InvoicePdfBuilder;
 use App\Support\TaskGenerator;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Spatie\LaravelPdf\Facades\Pdf;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -202,10 +202,6 @@ class SslCommerzPaymentController extends Controller
 
                 $transaction = Transaction::where('transaction_id', $tran_id)->first();
 
-                // Capture original amount/currency before overwriting with SSLCommerz callback values
-                $originalAmount = $transaction?->amount;
-                $originalCurrency = $transaction?->currency;
-
                 if ($transaction) {
                     $transaction->update([
                         'status' => 'Processing',
@@ -217,7 +213,6 @@ class SslCommerzPaymentController extends Controller
                         'bank_tran_id' => $request->input('bank_tran_id'),
                         'tran_date' => $request->input('tran_date'),
                         'error' => $request->input('error'),
-                        'currency' => $request->input('currency'),
                         'card_issuer' => $request->input('card_issuer'),
                         'card_brand' => $request->input('card_brand'),
                         'card_sub_brand' => $request->input('card_sub_brand'),
@@ -246,8 +241,8 @@ class SslCommerzPaymentController extends Controller
 
                 return redirect()->route('profile')->with('payment_success', [
                     'invoice_number' => $invoiceNumber,
-                    'amount' => (string) $originalAmount,
-                    'currency' => $originalCurrency,
+                    'amount' => (string) $transaction?->amount,
+                    'currency' => $transaction?->currency,
                     'tran_id' => $tran_id,
                 ]);
             }
@@ -354,7 +349,6 @@ class SslCommerzPaymentController extends Controller
                         'bank_tran_id' => $request->input('bank_tran_id'),
                         'tran_date' => $request->input('tran_date'),
                         'error' => $request->input('error'),
-                        'currency' => $request->input('currency'),
                         'card_issuer' => $request->input('card_issuer'),
                         'card_brand' => $request->input('card_brand'),
                         'card_sub_brand' => $request->input('card_sub_brand'),
@@ -418,8 +412,7 @@ class SslCommerzPaymentController extends Controller
             ? ucwords(str_replace('-', ' ', $transaction->category))
             : null;
 
-        $pdfContent = Pdf::view('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'))
-            ->generatePdfContent();
+        $pdfContent = InvoicePdfBuilder::build($transaction)->generatePdfContent();
 
         Mail::to($transaction->email)->send(
             new PaymentSuccessMail($transaction, $pdfContent, $serviceName, $categoryName)

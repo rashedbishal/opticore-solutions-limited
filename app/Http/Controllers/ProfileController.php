@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\Transaction;
+use App\Support\InvoicePdfBuilder;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Spatie\LaravelPdf\PdfBuilder;
 
 class ProfileController extends Controller
@@ -70,16 +71,24 @@ class ProfileController extends Controller
         abort_unless($transaction->email === $request->user()->email, 403);
         abort_unless($transaction->status === 'Processing' && $transaction->invoice_number, 404);
 
-        $subcategory = $transaction->subcategory_id
-            ? PortfolioSubCategory::find($transaction->subcategory_id)
-            : null;
-
-        $serviceName = $subcategory?->name;
-        $categoryName = $transaction->category
-            ? ucwords(str_replace('-', ' ', $transaction->category))
-            : null;
-
-        return Pdf::view('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'))
+        return InvoicePdfBuilder::build($transaction)
             ->download("Invoice-{$transaction->invoice_number}.pdf");
+    }
+
+    public function verifyInvoice(Request $request, string $token): PdfBuilder
+    {
+        try {
+            $transactionId = Crypt::decryptString(strtr($token, '-_', '+/'));
+        } catch (DecryptException) {
+            abort(404);
+        }
+
+        $transaction = Transaction::findOrFail($transactionId);
+
+        abort_unless($transaction->email === $request->user()->email, 403);
+        abort_unless($transaction->status === 'Processing' && $transaction->invoice_number, 404);
+
+        return InvoicePdfBuilder::build($transaction)
+            ->inline("Invoice-{$transaction->invoice_number}.pdf");
     }
 }

@@ -9,6 +9,8 @@ import {
     Calendar,
     Camera,
     CheckCircle,
+    ChevronLeft,
+    ChevronRight,
     Clock,
     CreditCard,
     Download,
@@ -107,6 +109,47 @@ const stagger = {
     visible: { transition: { staggerChildren: 0.1 } },
 };
 
+const TASKS_PER_PAGE = 4;
+const ORDERS_PER_PAGE = 3;
+
+function Pagination({
+    page,
+    totalPages,
+    onPageChange,
+}: {
+    page: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+}) {
+    if (totalPages <= 1) {
+        return null;
+    }
+
+    return (
+        <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+                type="button"
+                onClick={() => onPageChange(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="neo-btn-ghost flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 dark:text-zinc-300"
+            >
+                <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="text-xs font-bold text-theme-muted">
+                Page {page} of {totalPages}
+            </span>
+            <button
+                type="button"
+                onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="neo-btn-ghost flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 dark:text-zinc-300"
+            >
+                <ChevronRight className="h-4 w-4" />
+            </button>
+        </div>
+    );
+}
+
 function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
     const stateInfo = TASK_STATE_STYLES[task.state];
     const StateIcon = stateInfo.icon;
@@ -122,10 +165,10 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
     return (
         <motion.div
             variants={fadeUp}
-            className="neo-panel relative overflow-hidden rounded-3xl p-6"
+            className="neo-panel relative overflow-hidden rounded-2xl p-4"
         >
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
                     {task.image_url ? (
                         <img
                             src={task.image_url}
@@ -133,27 +176,26 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
                             className="h-full w-full object-cover"
                         />
                     ) : (
-                        <Package className="h-6 w-6" />
+                        <Package className="h-5 w-5" />
                     )}
                 </div>
 
-                <div className="flex-1 space-y-3">
-                    <div>
-                        <div className="text-base font-bold text-theme">
-                            {task.task_name}
-                        </div>
-                        <div className="text-sm text-theme-muted capitalize">
+                <div className="flex-1 space-y-1">
+                    <div className="text-sm font-bold text-theme">
+                        {task.task_name}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted capitalize">
+                        <span>
                             {task.category.replace(/-/g, ' ')}
                             {task.sub_category ? ` · ${task.sub_category}` : ''}
-                        </div>
+                        </span>
+                        {formattedDate && (
+                            <span className="flex items-center gap-1 normal-case">
+                                <Calendar className="h-3 w-3 text-cyan-500" />
+                                {formattedDate}
+                            </span>
+                        )}
                     </div>
-
-                    {formattedDate && (
-                        <div className="flex items-center gap-1.5 text-[10px] text-theme-muted sm:text-xs">
-                            <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
-                            {formattedDate}
-                        </div>
-                    )}
                 </div>
 
                 <div className="flex flex-row items-center sm:flex-col sm:items-end">
@@ -187,32 +229,32 @@ function OrderCard({ order }: { order: Order }) {
     return (
         <motion.div
             variants={fadeUp}
-            className="neo-panel relative overflow-hidden rounded-3xl p-6"
+            className="neo-panel relative overflow-hidden rounded-2xl p-4"
         >
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                    <FileText className="h-6 w-6" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                    <FileText className="h-5 w-5" />
                 </div>
 
-                <div className="flex-1 space-y-3">
-                    <div>
-                        <div className="text-base font-bold text-theme capitalize">
+                <div className="flex-1 space-y-1">
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                        <div className="text-sm font-bold text-theme capitalize">
                             {serviceName}
                         </div>
-                        <div className="font-mono text-sm text-theme-muted">
+                        <div className="font-mono text-xs text-theme-muted">
                             {order.order_number}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-x-4 gap-y-2 text-[10px] sm:flex sm:flex-wrap sm:text-xs">
-                        <div className="flex items-center gap-1.5 text-theme-muted">
-                            <CreditCard className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted">
+                        <div className="flex items-center gap-1.5">
+                            <CreditCard className="h-3 w-3 text-cyan-500" />
                             {order.currency}{' '}
                             {Number(order.amount).toLocaleString()}
                         </div>
                         {formattedDate && (
-                            <div className="flex items-center gap-1.5 text-theme-muted">
-                                <Calendar className="h-3 w-3 text-cyan-500 sm:h-3.5 sm:w-3.5" />
+                            <div className="flex items-center gap-1.5">
+                                <Calendar className="h-3 w-3 text-cyan-500" />
                                 {formattedDate}
                             </div>
                         )}
@@ -230,7 +272,7 @@ function OrderCard({ order }: { order: Order }) {
                                 transaction: order.id,
                             })}
                             download={`Invoice-${order.invoice_number}.pdf`}
-                            className="neo-btn-ghost mt-2 flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
+                            className="neo-btn-ghost flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
                         >
                             <Download className="mr-1.5 h-3 w-3 text-cyan-500" />
                             Download Invoice
@@ -243,8 +285,12 @@ function OrderCard({ order }: { order: Order }) {
 }
 
 export default function Profile() {
-    const { auth, flash, tasks, orders } = usePage<SharedPageProps & Props>()
-        .props;
+    const {
+        auth,
+        flash,
+        tasks = [],
+        orders = [],
+    } = usePage<SharedPageProps & Props>().props;
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialTab = searchParams.get('tab') ?? 'overview';
@@ -255,8 +301,30 @@ export default function Profile() {
     const [paymentModalOpen, setPaymentModalOpen] = useState(
         !!flash?.payment_success,
     );
+    const [taskPage, setTaskPage] = useState(1);
+    const [orderPage, setOrderPage] = useState(1);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const echoReady = useEchoReady();
+
+    const taskTotalPages = Math.max(
+        1,
+        Math.ceil(tasks.length / TASKS_PER_PAGE),
+    );
+    const currentTaskPage = Math.min(taskPage, taskTotalPages);
+    const paginatedTasks = tasks.slice(
+        (currentTaskPage - 1) * TASKS_PER_PAGE,
+        currentTaskPage * TASKS_PER_PAGE,
+    );
+
+    const orderTotalPages = Math.max(
+        1,
+        Math.ceil(orders.length / ORDERS_PER_PAGE),
+    );
+    const currentOrderPage = Math.min(orderPage, orderTotalPages);
+    const paginatedOrders = orders.slice(
+        (currentOrderPage - 1) * ORDERS_PER_PAGE,
+        currentOrderPage * ORDERS_PER_PAGE,
+    );
 
     const { data, setData, put, processing, wasSuccessful } = useForm({
         name: auth.user?.name ?? '',
@@ -519,19 +587,26 @@ export default function Profile() {
                                             </p>
                                         </motion.div>
                                     ) : (
-                                        <motion.div
-                                            variants={stagger}
-                                            initial="hidden"
-                                            animate="visible"
-                                            className="space-y-4"
-                                        >
-                                            {tasks.map((task) => (
-                                                <WorkflowTaskCard
-                                                    key={task.id}
-                                                    task={task}
-                                                />
-                                            ))}
-                                        </motion.div>
+                                        <>
+                                            <motion.div
+                                                variants={stagger}
+                                                initial="hidden"
+                                                animate="visible"
+                                                className="space-y-3"
+                                            >
+                                                {paginatedTasks.map((task) => (
+                                                    <WorkflowTaskCard
+                                                        key={task.id}
+                                                        task={task}
+                                                    />
+                                                ))}
+                                            </motion.div>
+                                            <Pagination
+                                                page={currentTaskPage}
+                                                totalPages={taskTotalPages}
+                                                onPageChange={setTaskPage}
+                                            />
+                                        </>
                                     )}
                                 </div>
                             </TabsContent>
@@ -575,19 +650,28 @@ export default function Profile() {
                                             </p>
                                         </motion.div>
                                     ) : (
-                                        <motion.div
-                                            variants={stagger}
-                                            initial="hidden"
-                                            animate="visible"
-                                            className="space-y-4"
-                                        >
-                                            {orders.map((order) => (
-                                                <OrderCard
-                                                    key={order.id}
-                                                    order={order}
-                                                />
-                                            ))}
-                                        </motion.div>
+                                        <>
+                                            <motion.div
+                                                variants={stagger}
+                                                initial="hidden"
+                                                animate="visible"
+                                                className="space-y-3"
+                                            >
+                                                {paginatedOrders.map(
+                                                    (order) => (
+                                                        <OrderCard
+                                                            key={order.id}
+                                                            order={order}
+                                                        />
+                                                    ),
+                                                )}
+                                            </motion.div>
+                                            <Pagination
+                                                page={currentOrderPage}
+                                                totalPages={orderTotalPages}
+                                                onPageChange={setOrderPage}
+                                            />
+                                        </>
                                     )}
                                 </div>
                             </TabsContent>
