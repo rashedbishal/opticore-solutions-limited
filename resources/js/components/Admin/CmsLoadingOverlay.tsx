@@ -2,9 +2,14 @@ import type { GlobalEvent } from '@inertiajs/core';
 import { router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import adminRoutes from '@/routes/admin';
 
 const SHOW_DELAY_MS = 150;
-const LABEL = 'ACCESSING MODULE';
+const ACCESSING_PREFIX = 'Accessing ';
+const FALLBACK_SECTION = 'Module';
+const SIGN_OUT_LABEL = 'Signing Out';
+const LOGOUT_PATH = adminRoutes.logout.url();
+const LOGO_SRC = '/images/logo/OSL-Logo.png';
 
 const CORNER_BRACKETS = [
     'top-6 left-6 border-t border-l',
@@ -12,6 +17,51 @@ const CORNER_BRACKETS = [
     'bottom-6 left-6 border-b border-l',
     'bottom-6 right-6 border-b border-r',
 ];
+
+// Mirrors AdminLayout's sidebar NAV_ITEMS so the loader names the section being entered.
+const CMS_NAV_SECTIONS: { name: string; href: string }[] = [
+    { name: 'Dashboard', href: '/admin' },
+    { name: 'Customer Support', href: '/admin/customer-conversations' },
+    { name: 'Portfolios', href: '/admin/portfolios' },
+    { name: 'Sub Categories', href: '/admin/sub-categories' },
+    { name: 'Blogs', href: '/admin/blogs' },
+    { name: 'FAQs', href: '/admin/faqs' },
+    { name: 'Job Listings', href: '/admin/job-listings' },
+    { name: 'Job Applications', href: '/admin/job-applications' },
+    { name: 'Chat Archive', href: '/admin/chats' },
+    { name: 'Contacts', href: '/admin/contacts' },
+    { name: 'Brands', href: '/admin/brands' },
+    { name: 'Admins', href: '/admin/users' },
+    { name: 'Clients', href: '/admin/clients' },
+    { name: 'Client Workflow', href: '/admin/tasks' },
+    { name: 'Review Control', href: '/admin/client-reviews' },
+    { name: 'Testimonials', href: '/admin/testimonials' },
+    { name: 'Orders', href: '/admin/orders' },
+    { name: 'Transactions', href: '/admin/transactions' },
+];
+
+function resolveSectionLabel(pathname: string): string {
+    let bestMatch: { name: string; href: string } | null = null;
+
+    for (const section of CMS_NAV_SECTIONS) {
+        if (section.href === '/admin') {
+            if (pathname === '/admin' || pathname === '/admin/') {
+                bestMatch = section;
+            }
+
+            continue;
+        }
+
+        if (
+            pathname.startsWith(section.href) &&
+            (!bestMatch || section.href.length > bestMatch.href.length)
+        ) {
+            bestMatch = section;
+        }
+    }
+
+    return bestMatch?.name ?? FALLBACK_SECTION;
+}
 
 function HudRing() {
     return (
@@ -68,14 +118,33 @@ function HudRing() {
             </motion.svg>
 
             <motion.div
-                className="h-3 w-3 rounded-full bg-gradient-to-br from-violet-400 to-cyan-300"
-                style={{
-                    boxShadow:
-                        '0 0 16px rgba(139,92,246,0.8), 0 0 32px rgba(34,211,238,0.4)',
-                }}
-                animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
+                className="absolute h-16 w-16 rounded-full bg-gradient-to-br from-violet-500/40 via-fuchsia-400/20 to-cyan-400/40 blur-xl"
+                animate={{ scale: [0.85, 1.2, 0.85], opacity: [0.5, 1, 0.5] }}
                 transition={{
-                    duration: 1.6,
+                    duration: 2.2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                }}
+            />
+
+            <motion.img
+                src={LOGO_SRC}
+                alt="Opticore"
+                className="relative h-11 w-11 object-contain"
+                initial={{
+                    filter: 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(139,92,246,0.6)) drop-shadow(0 0 14px rgba(34,211,238,0.35))',
+                    scale: 1,
+                }}
+                animate={{
+                    filter: [
+                        'brightness(0) invert(1) drop-shadow(0 0 6px rgba(139,92,246,0.6)) drop-shadow(0 0 14px rgba(34,211,238,0.35))',
+                        'brightness(0) invert(1) drop-shadow(0 0 16px rgba(139,92,246,0.95)) drop-shadow(0 0 32px rgba(34,211,238,0.65))',
+                        'brightness(0) invert(1) drop-shadow(0 0 6px rgba(139,92,246,0.6)) drop-shadow(0 0 14px rgba(34,211,238,0.35))',
+                    ],
+                    scale: [1, 1.08, 1],
+                }}
+                transition={{
+                    duration: 2.2,
                     repeat: Infinity,
                     ease: 'easeInOut',
                 }}
@@ -84,8 +153,24 @@ function HudRing() {
     );
 }
 
-export default function CmsLoadingOverlay() {
+interface CmsLoadingOverlayProps {
+    /** When set, overrides the router-driven visibility (e.g. a manual "Signing In" transition). */
+    forceVisible?: boolean;
+    /** When set, overrides the router-resolved label. */
+    forceLabel?: string;
+}
+
+export default function CmsLoadingOverlay({
+    forceVisible,
+    forceLabel,
+}: CmsLoadingOverlayProps) {
     const [visible, setVisible] = useState(false);
+    const [label, setLabel] = useState(ACCESSING_PREFIX + FALLBACK_SECTION);
+
+    useEffect(() => {
+        const preload = new Image();
+        preload.src = LOGO_SRC;
+    }, []);
 
     useEffect(() => {
         let showTimer: ReturnType<typeof setTimeout>;
@@ -94,6 +179,14 @@ export default function CmsLoadingOverlay() {
             if (!event.detail.visit.showProgress) {
                 return;
             }
+
+            const { url, method } = event.detail.visit;
+
+            setLabel(
+                method === 'post' && url.pathname === LOGOUT_PATH
+                    ? SIGN_OUT_LABEL
+                    : ACCESSING_PREFIX + resolveSectionLabel(url.pathname),
+            );
 
             showTimer = setTimeout(() => setVisible(true), SHOW_DELAY_MS);
         };
@@ -115,9 +208,12 @@ export default function CmsLoadingOverlay() {
         };
     }, []);
 
+    const isVisible = forceVisible ?? visible;
+    const displayLabel = forceLabel ?? label;
+
     return (
         <AnimatePresence>
-            {visible && (
+            {isVisible && (
                 <motion.div
                     key="cms-loading-overlay"
                     initial={{ opacity: 0 }}
@@ -169,8 +265,8 @@ export default function CmsLoadingOverlay() {
                         <HudRing />
 
                         <div className="flex flex-col items-center gap-2">
-                            <p className="font-mono text-[11px] font-semibold tracking-[0.3em] text-violet-300/80 uppercase">
-                                {LABEL}
+                            <p className="font-mono text-sm font-semibold tracking-[0.2em] text-violet-300/80 uppercase">
+                                {displayLabel}
                             </p>
                             <div className="h-[3px] w-40 overflow-hidden rounded-full bg-white/5">
                                 <motion.div

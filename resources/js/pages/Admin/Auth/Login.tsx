@@ -11,6 +11,7 @@ import {
     Zap,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
 
 function CornerTL({ error }: { error: boolean }) {
     return (
@@ -248,7 +249,13 @@ function ErrorDialog({ messages, onClose }: ErrorDialogProps) {
     );
 }
 
-function SuccessDialog({ name }: { name: string }) {
+function SuccessDialog({
+    name,
+    onProceed,
+}: {
+    name: string;
+    onProceed: () => void;
+}) {
     const proceedRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -358,7 +365,7 @@ function SuccessDialog({ name }: { name: string }) {
                     <motion.button
                         ref={proceedRef}
                         type="button"
-                        onClick={() => router.visit('/admin')}
+                        onClick={onProceed}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                         className="relative overflow-hidden rounded-lg px-6 py-2 text-sm font-semibold text-white ring-2 ring-green-500/40 outline-none focus:ring-green-400/70"
@@ -402,6 +409,7 @@ export default function Login({ successName }: { successName?: string }) {
     const [hasError, setHasError] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [signingIn, setSigningIn] = useState(false);
 
     const shakeControls = useAnimation();
 
@@ -417,6 +425,17 @@ export default function Login({ successName }: { successName?: string }) {
     const closeDialog = () => {
         setShowDialog(false);
         setHasError(false);
+    };
+
+    const handleProceed = () => {
+        document.body.classList.add('cms-active');
+        setSigningIn(true);
+        router.visit('/admin', {
+            onError: () => {
+                setSigningIn(false);
+                document.body.classList.remove('cms-active');
+            },
+        });
     };
 
     const submit: FormEventHandler = (e) => {
@@ -444,8 +463,20 @@ export default function Login({ successName }: { successName?: string }) {
             <Head title="Secure Access" />
 
             <AnimatePresence>
-                {successName && <SuccessDialog name={successName} />}
+                {successName && (
+                    <SuccessDialog
+                        name={successName}
+                        onProceed={handleProceed}
+                    />
+                )}
             </AnimatePresence>
+
+            {successName && (
+                <CmsLoadingOverlay
+                    forceVisible={signingIn}
+                    forceLabel={`Signing In ${successName}`}
+                />
+            )}
 
             <div className="relative flex h-[100dvh] items-center justify-center overflow-hidden bg-[#03050d] p-4 text-white">
                 {/* Grid */}
