@@ -1374,3 +1374,8 @@
         filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4));
     }
 }
+
+/* CMS uses its own sci-fi loading overlay instead of the default Inertia progress bar */
+body.cms-active #nprogress {
+    display: none !important;
+}

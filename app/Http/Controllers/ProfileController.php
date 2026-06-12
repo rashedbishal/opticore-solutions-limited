@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Support\InvoicePdfBuilder;
+use App\Support\PendingOrderResolver;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ class ProfileController extends Controller
                     'transaction_id' => $transaction->transaction_id,
                     'date' => $transaction->created_at?->format('Y-m-d'),
                 ]),
+            'pendingOrders' => PendingOrderResolver::forUser($user),
         ]);
     }
 

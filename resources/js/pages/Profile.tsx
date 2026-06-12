@@ -62,9 +62,20 @@ interface Order {
     date: string | null;
 }
 
+interface PendingOrder {
+    id: string;
+    service: string;
+    plan: string;
+    amount: string;
+    currency: string;
+    date: string | null;
+    checkout_url: string;
+}
+
 interface Props {
     tasks: WorkflowTask[];
     orders: Order[];
+    pendingOrders: PendingOrder[];
 }
 
 const TASK_STATE_STYLES: Record<
@@ -284,12 +295,74 @@ function OrderCard({ order }: { order: Order }) {
     );
 }
 
+function PendingOrderCard({ order }: { order: PendingOrder }) {
+    const formattedDate = order.date
+        ? new Date(order.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+          })
+        : null;
+
+    return (
+        <Link href={order.checkout_url}>
+            <motion.div
+                variants={fadeUp}
+                className="neo-panel group relative cursor-pointer overflow-hidden rounded-2xl p-4 transition-all hover:scale-[1.01]"
+            >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-amber-400/15 to-amber-600/15 text-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.15),inset_0_0_0_1px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(245,158,11,0.1),inset_0_0_0_1px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                        <Clock className="h-5 w-5" />
+                    </div>
+
+                    <div className="flex-1 space-y-1">
+                        <div className="flex flex-wrap items-baseline gap-x-2">
+                            <div className="text-sm font-bold text-theme capitalize">
+                                {order.service}
+                            </div>
+                            <div className="text-xs text-theme-muted">
+                                {order.plan}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted">
+                            <div className="flex items-center gap-1.5">
+                                <CreditCard className="h-3 w-3 text-amber-500" />
+                                {order.currency}{' '}
+                                {Number(order.amount).toLocaleString()}
+                            </div>
+                            {formattedDate && (
+                                <div className="flex items-center gap-1.5">
+                                    <Calendar className="h-3 w-3 text-amber-500" />
+                                    {formattedDate}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[9px] font-bold text-amber-500 sm:px-3 sm:py-1 sm:text-[10px]">
+                            <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            Awaiting Payment
+                        </span>
+                        <span className="neo-btn-ghost flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all group-hover:scale-105 dark:text-zinc-300">
+                            Proceed to Checkout
+                            <ArrowRight className="ml-1.5 h-3 w-3 text-amber-500" />
+                        </span>
+                    </div>
+                </div>
+            </motion.div>
+        </Link>
+    );
+}
+
 export default function Profile() {
     const {
         auth,
         flash,
         tasks = [],
         orders = [],
+        pendingOrders = [],
     } = usePage<SharedPageProps & Props>().props;
 
     const searchParams = new URLSearchParams(window.location.search);
@@ -616,6 +689,46 @@ export default function Profile() {
                                 value="orders"
                                 className="space-y-8 outline-none sm:space-y-10"
                             >
+                                {pendingOrders.length > 0 && (
+                                    <div className="space-y-6">
+                                        <motion.div
+                                            variants={fadeUp}
+                                            className="flex items-center gap-3"
+                                        >
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-b from-amber-400/15 to-amber-600/15 text-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.15),inset_0_0_0_1px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(245,158,11,0.1),inset_0_0_0_1px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                                                <Clock className="drop-icon-sm h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-xl font-bold text-theme">
+                                                    Pending Orders
+                                                </h2>
+                                                <p className="text-xs text-theme-muted">
+                                                    {pendingOrders.length}{' '}
+                                                    order
+                                                    {pendingOrders.length !== 1
+                                                        ? 's'
+                                                        : ''}{' '}
+                                                    awaiting payment
+                                                </p>
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            variants={stagger}
+                                            initial="hidden"
+                                            animate="visible"
+                                            className="space-y-3"
+                                        >
+                                            {pendingOrders.map((order) => (
+                                                <PendingOrderCard
+                                                    key={order.id}
+                                                    order={order}
+                                                />
+                                            ))}
+                                        </motion.div>
+                                    </div>
+                                )}
+
                                 <div className="space-y-6">
                                     <motion.div
                                         variants={fadeUp}

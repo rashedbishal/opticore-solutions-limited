@@ -24,6 +24,7 @@ import {
     ArrowLeftRight,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
 import NotificationListener from '@/components/Admin/NotificationListener';
 import useEchoReady from '@/hooks/useEchoReady';
 import adminRoutes from '@/routes/admin';
@@ -207,6 +208,14 @@ export default function AdminLayout({
     }, []);
 
     useEffect(() => {
+        document.body.classList.add('cms-active');
+
+        return () => {
+            document.body.classList.remove('cms-active');
+        };
+    }, []);
+
+    useEffect(() => {
         if (!flash?.success) {
             return;
         }
@@ -223,6 +232,8 @@ export default function AdminLayout({
     return (
         <div className="relative min-h-screen overflow-x-hidden bg-[#03050d] font-sans text-slate-200 selection:bg-violet-500/30">
             {title && <Head title={`${title} — CMS`} />}
+
+            <CmsLoadingOverlay />
 
             {/* ── Global ambient background ── */}
             <div className="pointer-events-none fixed inset-0 z-0">
