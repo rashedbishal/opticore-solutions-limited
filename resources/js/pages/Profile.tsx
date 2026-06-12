@@ -703,8 +703,7 @@ export default function Profile() {
                                                     Pending Orders
                                                 </h2>
                                                 <p className="text-xs text-theme-muted">
-                                                    {pendingOrders.length}{' '}
-                                                    order
+                                                    {pendingOrders.length} order
                                                     {pendingOrders.length !== 1
                                                         ? 's'
                                                         : ''}{' '}
