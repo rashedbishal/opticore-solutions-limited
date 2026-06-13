@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Category;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
@@ -47,10 +48,7 @@ class TaskController extends Controller
     /** @return array<string, string> */
     private function categoryOptions(): array
     {
-        /** @var array<string, array{label: string, description: string}> $cats */
-        $cats = config('portfolio.categories', []);
-
-        return array_map(fn (array $cat) => $cat['label'], $cats);
+        return array_map(fn (array $cat) => $cat['label'], Category::configShape());
     }
 
     public function index(): Response

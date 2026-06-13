@@ -1,29 +1,27 @@
 @component('mail::message')
-# New Support Message Received
+# New Client Message
 
-Hi **Admin**,
+Dear Administrator,
 
-A user has sent a new support message that requires your attention.
-
-**From:** {{ $message->conversation->user->name }} ({{ $message->conversation->user->email }})
+We would like to inform you that **{{ $message->conversation->user->name }}** ({{ $message->conversation->user->email }}) has sent you a message and is currently awaiting your response.
 
 @component('mail::panel')
 {{ $message->message ?? 'An attachment was shared.' }}
 @endcomponent
 
 @if($message->attachment_path)
-> The user also attached a file. Log in to view it.
+> An attachment was also included with this message. Please log in to view it.
 @endif
 
-Please log in to the CMS to respond promptly.
+As no administrator is currently available, kindly log in to your panel at your earliest convenience to review and reply to this message.
 
 @component('mail::button', ['url' => config('app.url') . '/admin/customer-conversations', 'color' => 'primary'])
-Open Support Dashboard
+Log In to Reply
 @endcomponent
 
-Thanks,<br>
-{{ config('app.name') }} System
+Regards,<br>
+{{ config('app.name') }}
 
 ---
-*This is an automated notification. Do not reply to this email.*
+*This is an automated notification. Please do not reply to this email.*
 @endcomponent

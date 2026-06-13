@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\ClientReview;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
@@ -36,14 +37,13 @@ class PortfolioSubCategoryController extends Controller
     /** @return array<string, string> */
     private function categoryOptions(): array
     {
-        /** @var array<string, array{label: string, description: string}> $cats */
-        $cats = config('portfolio.categories', []);
-
-        return array_map(fn (array $cat) => $cat['label'], $cats);
+        return array_map(fn (array $cat) => $cat['label'], Category::configShape());
     }
 
     public function index(): Response
     {
+        $categories = Category::configShape();
+
         $subCategories = PortfolioSubCategory::orderBy('category_slug')
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -52,7 +52,7 @@ class PortfolioSubCategoryController extends Controller
             ->through(fn (PortfolioSubCategory $s) => [
                 'id' => $s->id,
                 'category_slug' => $s->category_slug,
-                'category_label' => config("portfolio.categories.{$s->category_slug}.label", $s->category_slug),
+                'category_label' => $categories[$s->category_slug]['label'] ?? $s->category_slug,
                 'name' => $s->name,
                 'slug' => $s->slug,
                 'description' => $s->description,
@@ -78,7 +78,7 @@ class PortfolioSubCategoryController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $categoryKeys = array_keys(config('portfolio.categories', []));
+        $categoryKeys = array_keys(Category::configShape());
 
         $validated = $request->validate([
             'category_slug' => ['required', 'string', 'in:'.implode(',', $categoryKeys)],
@@ -157,7 +157,7 @@ class PortfolioSubCategoryController extends Controller
 
     public function update(Request $request, PortfolioSubCategory $subCategory): RedirectResponse
     {
-        $categoryKeys = array_keys(config('portfolio.categories', []));
+        $categoryKeys = array_keys(Category::configShape());
 
         $validated = $request->validate([
             'category_slug' => ['required', 'string', 'in:'.implode(',', $categoryKeys)],

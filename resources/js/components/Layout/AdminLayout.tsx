@@ -1,3 +1,4 @@
+import type { PaymentReceivedPayload } from '@/components/Admin/PaymentNotificationListener';
 import type { SharedPageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,6 +15,7 @@ import {
     Mail,
     Bell,
     Briefcase,
+    FolderTree,
     Layers,
     Star,
     CheckCircle2,
@@ -22,10 +24,12 @@ import {
     FileUser,
     ShoppingCart,
     ArrowLeftRight,
+    DollarSign,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
 import NotificationListener from '@/components/Admin/NotificationListener';
+import PaymentNotificationListener from '@/components/Admin/PaymentNotificationListener';
 import useEchoReady from '@/hooks/useEchoReady';
 import adminRoutes from '@/routes/admin';
 
@@ -50,6 +54,12 @@ const NAV_ITEMS = [
         href: '/admin/portfolios',
         icon: Image,
         key: 'portfolios',
+    },
+    {
+        name: 'Categories',
+        href: '/admin/categories',
+        icon: FolderTree,
+        key: 'categories',
     },
     {
         name: 'Sub Categories',
@@ -176,6 +186,16 @@ export default function AdminLayout({
         show: false,
     });
     const msgToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [paymentToast, setPaymentToast] = useState<{
+        show: boolean;
+        name?: string | null;
+        amount?: string | null;
+        currency?: string | null;
+        service?: string | null;
+    }>({ show: false });
+    const paymentToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null,
+    );
     const echoReady = useEchoReady();
     const [notificationCount, setNotificationCount] = useState(0);
 
@@ -203,6 +223,19 @@ export default function AdminLayout({
 
         msgToastTimerRef.current = setTimeout(
             () => setMsgToast({ show: false }),
+            6000,
+        );
+    }, []);
+
+    const handleNewPayment = useCallback((payload: PaymentReceivedPayload) => {
+        setPaymentToast({ show: true, ...payload });
+
+        if (paymentToastTimerRef.current) {
+            clearTimeout(paymentToastTimerRef.current);
+        }
+
+        paymentToastTimerRef.current = setTimeout(
+            () => setPaymentToast({ show: false }),
             6000,
         );
     }, []);
@@ -255,6 +288,9 @@ export default function AdminLayout({
                     isOnChatPage={isOnChatPage}
                     onNewMessage={handleNewNotification}
                 />
+            )}
+            {echoReady && (
+                <PaymentNotificationListener onNewPayment={handleNewPayment} />
             )}
 
             {/* ── Toast notifications ── */}
@@ -374,6 +410,79 @@ export default function AdminLayout({
                         </Link>
                         <button
                             onClick={() => setMsgToast({ show: false })}
+                            className="absolute top-3 right-3 rounded p-0.5 text-slate-600 transition-colors hover:text-slate-300"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+                    </motion.div>
+                )}
+
+                {/* ── New payment notification toast ── */}
+                {paymentToast.show && (
+                    <motion.div
+                        key="toast-new-payment"
+                        initial={{ opacity: 0, x: 60, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{
+                            opacity: 0,
+                            x: 60,
+                            scale: 0.95,
+                            transition: { duration: 0.25 },
+                        }}
+                        className="fixed top-48 right-5 z-[200] w-80 overflow-hidden rounded-xl border border-emerald-500/30 bg-[#060c1a]/98 shadow-2xl backdrop-blur-xl"
+                        style={{
+                            boxShadow:
+                                '0 0 50px rgba(16,185,129,0.18), 0 0 100px rgba(16,185,129,0.06)',
+                        }}
+                    >
+                        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/80 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+                        <Link
+                            href="/admin/transactions"
+                            onClick={() => setPaymentToast({ show: false })}
+                            className="flex items-start gap-3 p-4"
+                        >
+                            <div className="relative shrink-0">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15">
+                                    <DollarSign className="h-4 w-4 text-emerald-400" />
+                                </div>
+                                <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center">
+                                    <span className="absolute inline-flex h-2.5 w-2.5 animate-ping rounded-full bg-emerald-400 opacity-60" />
+                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                </span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="font-mono text-[9px] tracking-[0.25em] text-emerald-400/80 uppercase">
+                                    Payment Received
+                                </p>
+                                <p className="mt-0.5 text-sm font-medium text-white">
+                                    {paymentToast.name
+                                        ? paymentToast.name
+                                        : 'A customer'}{' '}
+                                    <span className="font-normal text-slate-300">
+                                        paid
+                                    </span>{' '}
+                                    {paymentToast.amount && (
+                                        <span className="font-semibold text-emerald-400">
+                                            {paymentToast.currency}{' '}
+                                            {Number(
+                                                paymentToast.amount,
+                                            ).toLocaleString()}
+                                        </span>
+                                    )}
+                                </p>
+                                {paymentToast.service && (
+                                    <p className="mt-0.5 truncate text-xs text-slate-400">
+                                        {paymentToast.service}
+                                    </p>
+                                )}
+                                <p className="mt-1.5 font-mono text-[9px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                    Tap to view transaction →
+                                </p>
+                            </div>
+                        </Link>
+                        <button
+                            onClick={() => setPaymentToast({ show: false })}
                             className="absolute top-3 right-3 rounded p-0.5 text-slate-600 transition-colors hover:text-slate-300"
                         >
                             <X className="h-3.5 w-3.5" />

@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Category;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\Transaction;
@@ -52,7 +53,7 @@ class TaskGenerator
      */
     public static function taskName(string $category, ?int $subCategoryId): string
     {
-        $categoryLabel = config("portfolio.categories.{$category}.label") ?? Str::headline($category);
+        $categoryLabel = Category::configShape()[$category]['label'] ?? Str::headline($category);
 
         $subCategoryName = $subCategoryId
             ? PortfolioSubCategory::find($subCategoryId)?->name

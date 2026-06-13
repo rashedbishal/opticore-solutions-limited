@@ -1,5 +1,7 @@
 import type { Offer, OfferMessage } from '@/components/Offer/CreateOfferModal';
+import type { SharedPageProps } from '@/types';
 import type { ReactNode } from 'react';
+import { usePage } from '@inertiajs/react';
 import { echo, useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -23,7 +25,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
+import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
 
@@ -173,6 +175,7 @@ function OfferCard({
     conversationId: number;
     onDeleted: (messageId: number) => void;
 }) {
+    const { categories } = usePage<SharedPageProps>().props;
     const [isDeleting, setIsDeleting] = useState(false);
 
     const totalPrice =
@@ -248,8 +251,10 @@ function OfferCard({
                 {(offer.sub_category || offer.category_slug) && (
                     <p className="mb-1 text-sm font-semibold text-white">
                         {offer.sub_category?.name ??
-                            CATEGORY_LABELS[offer.category_slug ?? ''] ??
-                            offer.category_slug}
+                            resolveCategoryLabel(
+                                offer.category_slug,
+                                categories,
+                            )}
                     </p>
                 )}
 

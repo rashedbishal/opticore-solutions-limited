@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
@@ -42,10 +43,7 @@ class PortfolioController extends Controller
     /** @return array<string, string> */
     private function categoryOptions(): array
     {
-        /** @var array<string, array{label: string, description: string}> $cats */
-        $cats = config('portfolio.categories', []);
-
-        return array_map(fn (array $cat) => $cat['label'], $cats);
+        return array_map(fn (array $cat) => $cat['label'], Category::configShape());
     }
 
     public function index(): Response

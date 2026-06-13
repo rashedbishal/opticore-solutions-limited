@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,6 +26,8 @@ abstract class TestCase extends BaseTestCase
         // trips the limit mid-suite. The array driver is in-memory and only
         // lives for this test run, so flushing it between tests is safe.
         Cache::flush();
+
+        $this->seed(CategorySeeder::class);
     }
 
     /**

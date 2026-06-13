@@ -1,4 +1,6 @@
-import { Head } from '@inertiajs/react';
+import type { SharedPageProps } from '@/types';
+import type { LucideIcon } from 'lucide-react';
+import { Head, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
 import {
@@ -16,6 +18,7 @@ import {
     Plus,
     RotateCcw,
     ShieldAlert,
+    Sparkles,
     Trash2,
     TrendingUp,
     Video,
@@ -62,7 +65,31 @@ const CATEGORIES = [
     },
 ] as const;
 
-type CategorySlug = (typeof CATEGORIES)[number]['slug'];
+type CategorySlug = string;
+
+// Neutral fallback styling for categories added via the CMS beyond the
+// original 5 hardcoded ones above.
+const EXTRA_CATEGORY_COLOR = 'from-slate-600 to-slate-700';
+
+interface CategoryOption {
+    slug: string;
+    label: string;
+    Icon: LucideIcon;
+    color: string;
+}
+
+function getExtraCategories(
+    categories: Record<string, { label: string }>,
+): CategoryOption[] {
+    return Object.entries(categories)
+        .filter(([slug]) => !CATEGORIES.some((cat) => cat.slug === slug))
+        .map(([slug, category]) => ({
+            slug,
+            label: category.label,
+            Icon: Sparkles,
+            color: EXTRA_CATEGORY_COLOR,
+        }));
+}
 
 const STATUS_CONFIG = {
     pending: {
@@ -149,8 +176,15 @@ function emptyMilestone(): MilestoneForm {
     };
 }
 
-function getCategoryMeta(slug: string | null) {
-    return CATEGORIES.find((c) => c.slug === slug) ?? null;
+function getCategoryMeta(
+    slug: string | null,
+    categories: Record<string, { label: string }>,
+): CategoryOption | null {
+    return (
+        [...CATEGORIES, ...getExtraCategories(categories)].find(
+            (c) => c.slug === slug,
+        ) ?? null
+    );
 }
 
 function totalPrice(offer: Offer): number {
@@ -276,8 +310,10 @@ function ClientView({
     isAccepting,
     isDeclining,
 }: ClientViewProps) {
+    const { categories } = usePage<SharedPageProps>().props;
     const catMeta = getCategoryMeta(
         offer.sub_category?.category_slug ?? offer.category_slug,
+        categories,
     );
     const price = totalPrice(offer);
     const days = totalDays(offer);
@@ -603,6 +639,12 @@ function ClientView({
 // ─── Admin edit view ──────────────────────────────────────────────────────────
 
 function AdminView({ offer }: { offer: Offer }) {
+    const { categories } = usePage<SharedPageProps>().props;
+    const displayCategories: CategoryOption[] = [
+        ...CATEGORIES,
+        ...getExtraCategories(categories),
+    ];
+
     // Form state — initialised from the current offer
     const [category, setCategory] = useState<CategorySlug | null>(
         (offer.sub_category?.category_slug ??
@@ -788,7 +830,7 @@ function AdminView({ offer }: { offer: Offer }) {
                         Service Category (optional)
                     </h2>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {CATEGORIES.map((cat) => {
+                        {displayCategories.map((cat) => {
                             const selected = category === cat.slug;
 
                             return (
@@ -1230,6 +1272,7 @@ function AdminView({ offer }: { offer: Offer }) {
 // ─── Root page ────────────────────────────────────────────────────────────────
 
 export default function OfferShow({ offer: initial, isAdmin }: Props) {
+    const { categories } = usePage<SharedPageProps>().props;
     const [offer, setOffer] = useState<Offer>(initial);
     const [isDeleted, setIsDeleted] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
@@ -1263,6 +1306,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
     const catMeta = getCategoryMeta(
         offer.sub_category?.category_slug ?? offer.category_slug,
+        categories,
     );
     const title = `Offer – ${offer.sub_category?.name ?? catMeta?.label ?? 'General Service'}`;
 

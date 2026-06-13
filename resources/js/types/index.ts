@@ -20,11 +20,17 @@ export interface FlashProps {
     checkout_url?: string | null;
 }
 
+export interface CategoryConfig {
+    label: string;
+    description: string | null;
+}
+
 export interface SharedPageProps {
     name: string;
     auth: Auth;
     flash: FlashProps;
     meta?: SiteMeta;
+    categories: Record<string, CategoryConfig>;
     [key: string]: unknown;
 }
 

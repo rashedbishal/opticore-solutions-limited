@@ -6,6 +6,7 @@ use App\Events\OrderUpdated;
 use App\Events\TransactionUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Category;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
@@ -74,7 +75,7 @@ class OrderController extends Controller
                 'customer', 'transaction_id', 'category', 'subcategory_id', 'amount_min', 'amount_max',
             ]),
             'filterOptions' => [
-                'categories' => collect(config('portfolio.categories'))
+                'categories' => collect(Category::configShape())
                     ->map(fn ($category, $slug) => ['slug' => $slug, 'label' => $category['label']])
                     ->values(),
                 'subcategories' => PortfolioSubCategory::query()

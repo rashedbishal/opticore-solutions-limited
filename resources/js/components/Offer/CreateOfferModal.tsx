@@ -1,3 +1,6 @@
+import type { SharedPageProps } from '@/types';
+import type { LucideIcon } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -14,6 +17,7 @@ import {
     Palette,
     Plus,
     RotateCcw,
+    Sparkles,
     Trash2,
     TrendingUp,
     Video,
@@ -55,7 +59,7 @@ const MAIN_CATEGORIES = [
     },
 ] as const;
 
-type CategorySlug = (typeof MAIN_CATEGORIES)[number]['slug'];
+type CategorySlug = string;
 
 const CATEGORY_LABELS: Record<string, string> = {
     'graphic-design': 'Graphic Design',
@@ -72,6 +76,33 @@ const CATEGORY_COLORS: Record<string, string> = {
     '3d-production': 'from-cyan-600 to-teal-700',
     'web-development': 'from-green-600 to-emerald-700',
 };
+
+// Neutral fallback styling for categories added via the CMS beyond the
+// original 5 hardcoded ones above.
+const EXTRA_CATEGORY_COLOR = 'from-slate-600 to-slate-700';
+
+interface CategoryOption {
+    slug: string;
+    label: string;
+    Icon: LucideIcon;
+    color: string;
+}
+
+/**
+ * Resolve a human-readable label for a category slug, falling back to the
+ * CMS-managed category label for categories beyond the original 5, then to
+ * the raw slug.
+ */
+function resolveCategoryLabel(
+    slug: string | null | undefined,
+    categories: Record<string, { label: string }>,
+): string {
+    if (!slug) {
+        return '';
+    }
+
+    return CATEGORY_LABELS[slug] ?? categories[slug]?.label ?? slug;
+}
 
 interface MilestoneForm {
     name: string;
@@ -167,6 +198,23 @@ export default function CreateOfferModal({
     onOfferSent,
     onClose,
 }: CreateOfferModalProps) {
+    const { categories } = usePage<SharedPageProps>().props;
+
+    // Categories added via the CMS beyond the original 5 get a generic card.
+    const extraCategories: CategoryOption[] = Object.entries(categories)
+        .filter(([slug]) => !MAIN_CATEGORIES.some((cat) => cat.slug === slug))
+        .map(([slug, category]) => ({
+            slug,
+            label: category.label,
+            Icon: Sparkles,
+            color: EXTRA_CATEGORY_COLOR,
+        }));
+
+    const displayCategories: CategoryOption[] = [
+        ...MAIN_CATEGORIES,
+        ...extraCategories,
+    ];
+
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [direction, setDirection] = useState(1);
     const [categorySlug, setCategorySlug] = useState<CategorySlug | null>(null);
@@ -314,7 +362,7 @@ export default function CreateOfferModal({
     };
 
     const selectedCat =
-        MAIN_CATEGORIES.find((c) => c.slug === categorySlug) ?? null;
+        displayCategories.find((c) => c.slug === categorySlug) ?? null;
 
     const content = (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -412,7 +460,7 @@ export default function CreateOfferModal({
                                 </p>
 
                                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                    {MAIN_CATEGORIES.map((cat) => {
+                                    {displayCategories.map((cat) => {
                                         const isSelected =
                                             categorySlug === cat.slug;
 
@@ -1157,4 +1205,4 @@ export default function CreateOfferModal({
     return createPortal(content, document.body);
 }
 
-export { CATEGORY_LABELS, CATEGORY_COLORS };
+export { CATEGORY_LABELS, CATEGORY_COLORS, resolveCategoryLabel };

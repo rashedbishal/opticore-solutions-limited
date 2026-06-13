@@ -6,15 +6,14 @@ use App\Events\OrderUpdated;
 use App\Events\TransactionUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
+use App\Support\InvoicePdfBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Spatie\LaravelPdf\PdfBuilder;
 
 class TransactionController extends Controller
@@ -110,19 +109,9 @@ class TransactionController extends Controller
 
     public function downloadInvoice(Transaction $transaction): PdfBuilder
     {
-        $subcategory = $transaction->subcategory_id
-            ? PortfolioSubCategory::find($transaction->subcategory_id)
-            : null;
-
-        $serviceName = $subcategory?->name;
-        $categoryName = $transaction->category
-            ? ucwords(str_replace('-', ' ', $transaction->category))
-            : null;
-
         $filename = 'Invoice-'.($transaction->invoice_number ?? $transaction->transaction_id).'.pdf';
 
-        return Pdf::view('pdf.invoice', compact('transaction', 'serviceName', 'categoryName'))
-            ->download($filename);
+        return InvoicePdfBuilder::build($transaction)->download($filename);
     }
 
     public function erase(Request $request): RedirectResponse

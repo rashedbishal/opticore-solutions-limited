@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Faq;
 use App\Models\JobListing;
 use App\Models\PortfolioSubCategory;
@@ -27,8 +28,7 @@ class PageController extends Controller
      */
     private function hireUsSubCategories(): array
     {
-        /** @var array<string, array{label: string, description: string}> $categories */
-        $categories = config('portfolio.categories', []);
+        $categories = Category::configShape();
 
         return Cache::remember('hire-us.subcategories', now()->addMinutes(60), function () use ($categories) {
             $groupedSubCategories = PortfolioSubCategory::query()

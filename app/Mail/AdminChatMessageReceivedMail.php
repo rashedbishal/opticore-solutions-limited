@@ -25,10 +25,10 @@ class AdminChatMessageReceivedMail extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
-        $userName = $this->message->conversation->user->name ?? 'A user';
+        $userName = $this->message->conversation->user->name ?? 'A client';
 
         return new Envelope(
-            subject: "New Support Message from {$userName}",
+            subject: "{$userName} Has Sent You a Message",
         );
     }
 

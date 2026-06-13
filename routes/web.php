@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\ClientReviewController as AdminClientReviewController;
@@ -83,16 +84,16 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     // Hire Us Page Routes
     Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
     Route::get('/hire-us/{category}/{subcategory}', [HireUsController::class, 'showSubCategory'])
-        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->where('category', '[a-z0-9-]+')
         ->name('hireUsSubCategory');
 
     // Portfolio public routes
     Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
     Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
-        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->where('category', '[a-z0-9-]+')
         ->name('portfolioCategory');
     Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
-        ->where('category', 'graphic-design|digital-marketing|video-editing|3d-production|web-development')
+        ->where('category', '[a-z0-9-]+')
         ->name('portfolioSubCategory');
     Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
@@ -187,6 +188,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class);
+    Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::resource('sub-categories', PortfolioSubCategoryController::class);
     Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
     Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');

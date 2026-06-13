@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\OrderCreated;
 use App\Events\OrderUpdated;
+use App\Events\PaymentReceived;
 use App\Events\TaskCreated;
 use App\Events\TransactionUpdated;
 use App\Library\SslCommerz\SslCommerzNotification;
@@ -232,6 +233,8 @@ class SslCommerzPaymentController extends Controller
 
                     $this->sendInvoiceEmail($transaction);
                     $this->provisionWorkflowTask($transaction);
+
+                    PaymentReceived::dispatch($transaction);
                 }
 
                 TransactionUpdated::dispatch();

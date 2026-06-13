@@ -1,5 +1,5 @@
-import type { AppointmentFormData } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import type { AppointmentFormData, SharedPageProps } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useState } from 'react';
@@ -17,9 +17,15 @@ const initialValues: AppointmentFormData = {
 };
 
 export default function RequestAppointment() {
+    const { categories } = usePage<SharedPageProps>().props;
     const [step, setStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
     const form = useForm<AppointmentFormData>(initialValues);
+
+    // Categories added via the CMS beyond the original 5 get an extra option.
+    const extraServiceOptions = Object.entries(categories)
+        .filter(([slug]) => !services.some((service) => service.key === slug))
+        .map(([slug, category]) => ({ slug, label: category.label }));
 
     const nextStep = () => setStep(2);
     const previousStep = () => setStep(1);
@@ -235,6 +241,23 @@ export default function RequestAppointment() {
                                                                 >
                                                                     {
                                                                         service.name
+                                                                    }
+                                                                </option>
+                                                            ),
+                                                        )}
+                                                        {extraServiceOptions.map(
+                                                            (extra) => (
+                                                                <option
+                                                                    key={
+                                                                        extra.slug
+                                                                    }
+                                                                    value={
+                                                                        extra.label
+                                                                    }
+                                                                    className="bg-surface"
+                                                                >
+                                                                    {
+                                                                        extra.label
                                                                     }
                                                                 </option>
                                                             ),

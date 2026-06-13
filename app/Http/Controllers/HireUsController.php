@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\ClientReview;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
@@ -14,8 +15,7 @@ class HireUsController extends Controller
 {
     public function showSubCategory(string $category, PortfolioSubCategory $subcategory): Response
     {
-        /** @var array<string, array{label: string, description: string}> $configCategories */
-        $configCategories = config('portfolio.categories', []);
+        $configCategories = Category::configShape();
         $categoryData = $configCategories[$category] ?? null;
 
         abort_unless($categoryData !== null && $subcategory->category_slug === $category, 404);

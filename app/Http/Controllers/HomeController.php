@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\Testimonial;
 use Illuminate\Support\Facades\Cache;
@@ -13,13 +14,7 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        $categories = [
-            'graphic-design',
-            'digital-marketing',
-            'video-editing',
-            '3d-production',
-            'web-development',
-        ];
+        $categories = array_keys(Category::configShape());
 
         $featuredPortfolios = Cache::remember('home.featuredPortfolios', now()->addMinutes(60), function () use ($categories) {
             $portfolios = [];

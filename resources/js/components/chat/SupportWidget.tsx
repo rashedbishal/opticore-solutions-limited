@@ -20,7 +20,7 @@ import {
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { CATEGORY_LABELS } from '@/components/Offer/CreateOfferModal';
+import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
 import { cn } from '@/lib/utils';
 
@@ -128,6 +128,7 @@ function renderMessage(text: string): React.ReactNode {
 }
 
 function OfferCard({ offer }: { offer: Offer }) {
+    const { categories } = usePage<SharedPageProps>().props;
     const totalPrice =
         offer.payment_type === 'single'
             ? parseFloat(offer.price ?? '0')
@@ -163,8 +164,10 @@ function OfferCard({ offer }: { offer: Offer }) {
                 {(offer.sub_category || offer.category_slug) && (
                     <p className="mb-1 text-sm font-semibold text-theme">
                         {offer.sub_category?.name ??
-                            CATEGORY_LABELS[offer.category_slug ?? ''] ??
-                            offer.category_slug}
+                            resolveCategoryLabel(
+                                offer.category_slug,
+                                categories,
+                            )}
                     </p>
                 )}
 

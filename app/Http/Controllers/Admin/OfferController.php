@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Events\MessageSent;
 use App\Events\OfferDeleted;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +18,10 @@ class OfferController extends Controller
 {
     public function store(Conversation $conversation, Request $request): JsonResponse
     {
+        $categoryKeys = array_keys(Category::configShape());
+
         $validated = $request->validate([
-            'category_slug' => 'nullable|string|in:graphic-design,digital-marketing,video-editing,3d-production,web-development',
+            'category_slug' => ['nullable', 'string', 'in:'.implode(',', $categoryKeys)],
             'payment_type' => 'required|in:single,milestone',
             'description' => 'required|string|max:5000',
             'request_requirements' => 'boolean',

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { router } from '@inertiajs/react';
 import Lenis from '@studio-freight/lenis';
 import { createContext, useEffect, useState } from 'react';
 
@@ -31,6 +32,19 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
             setLenis(null);
         };
     }, []);
+
+    useEffect(() => {
+        if (!lenis) {
+            return;
+        }
+
+        // Inertia swaps page content in place, so the browser keeps the old
+        // scroll position. If the new page is shorter, that leaves Lenis
+        // stuck near the bottom (e.g. the footer) instead of the top.
+        return router.on('navigate', () => {
+            lenis.scrollTo(0, { immediate: true });
+        });
+    }, [lenis]);
 
     return (
         <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Support\Facades\Cache;
@@ -115,10 +116,7 @@ class PortfolioController extends Controller
      */
     private function portfolioCategories(): array
     {
-        /** @var array<string, array{label: string, description: string}> $categories */
-        $categories = config('portfolio.categories', []);
-
-        return $categories;
+        return Category::configShape();
     }
 
     /**

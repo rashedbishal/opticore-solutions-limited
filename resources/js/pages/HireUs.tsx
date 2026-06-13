@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import type { SharedPageProps } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowRight,
@@ -7,6 +8,7 @@ import {
     Film,
     Box,
     Code2,
+    Sparkles,
     Star,
     Zap,
     Users,
@@ -66,6 +68,21 @@ const services = [
 ];
 
 const HireUsPage = ({ subCategories = {} }: Props) => {
+    const { categories } = usePage<SharedPageProps>().props;
+
+    // Categories added via the CMS beyond the original 5 get a generic tab.
+    const extraTabs = Object.entries(categories)
+        .filter(([slug]) => !services.some((service) => service.id === slug))
+        .map(([slug, category]) => ({
+            id: slug,
+            name: category.label,
+            icon: Sparkles,
+            color: 'text-slate-400',
+            bg: 'bg-slate-500/10',
+        }));
+
+    const tabs = [...services, ...extraTabs];
+
     // Initialize activeTab with the first service's id from the 'services' array.
     const [activeTab, setActiveTab] = useState(services[0].id);
 
@@ -114,7 +131,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     <section className="mb-20 px-4">
                         <div className="neo-panel-elevated mx-auto max-w-full rounded-[2.5rem] p-2 sm:w-max">
                             <div className="flex w-full flex-wrap items-center justify-center gap-3 px-2 py-2">
-                                {services.map((service) => {
+                                {tabs.map((service) => {
                                     const Icon = service.icon;
                                     const isActive = activeTab === service.id;
 
