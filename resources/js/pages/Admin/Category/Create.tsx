@@ -134,7 +134,9 @@ export function CategoryForm({ category }: Partial<Props>) {
                         ) : (
                             <>
                                 <Save className="h-4 w-4" />{' '}
-                                {isEditing ? 'Update Category' : 'Save Category'}
+                                {isEditing
+                                    ? 'Update Category'
+                                    : 'Save Category'}
                             </>
                         )}
                     </button>

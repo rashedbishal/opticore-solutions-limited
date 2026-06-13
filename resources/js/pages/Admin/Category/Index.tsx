@@ -117,14 +117,18 @@ export default function CategoryIndex({ categories }: Props) {
                                 </td>
                                 <td className="px-6 py-2 text-right text-sm whitespace-nowrap">
                                     <Link
-                                        href={adminRoutes.categories.edit.url(category.id)}
+                                        href={adminRoutes.categories.edit.url(
+                                            category.id,
+                                        )}
                                         className="mr-4 inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/70 transition-colors hover:text-cyan-300"
                                     >
                                         <Edit className="h-4 w-4" /> Edit
                                     </Link>
                                     <button
                                         type="button"
-                                        onClick={() => handleDelete(category.id)}
+                                        onClick={() =>
+                                            handleDelete(category.id)
+                                        }
                                         className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
                                     >
                                         <Trash2 className="h-4 w-4" /> Delete
