@@ -175,7 +175,7 @@ it('rejects erasing transactions with an incorrect mother admin password', funct
 });
 
 it('erases failed transactions and their linked orders using the mother admin password as a master key', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
 
     $failedTransaction = createTestTransaction(['status' => 'Failed', 'transaction_id' => 'linked-txn']);
     $keptTransaction = createTestTransaction(['status' => 'Processing', 'transaction_id' => 'kept-txn']);
@@ -213,7 +213,7 @@ it('erases failed transactions and their linked orders using the mother admin pa
 });
 
 it('rejects clearing all transactions with an incorrect admin password', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 
@@ -228,7 +228,7 @@ it('rejects clearing all transactions with an incorrect admin password', functio
 });
 
 it('rejects clearing all transactions with an incorrect mother admin password', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 
@@ -243,7 +243,7 @@ it('rejects clearing all transactions with an incorrect mother admin password', 
 });
 
 it('clears all transactions and their linked orders and tasks using double authentication', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 

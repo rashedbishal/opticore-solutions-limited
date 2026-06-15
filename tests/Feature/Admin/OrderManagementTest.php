@@ -176,7 +176,7 @@ it('rejects erasing orders with an incorrect mother admin password', function ()
 });
 
 it('erases pending orders and their linked transactions using the mother admin password as a master key', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['orders'])->create(['password' => bcrypt('regular-secret')]);
 
     $pendingOrderId = createTestOrder(['status' => 'Pending', 'transaction_id' => 'linked-txn']);
     $processingOrderId = createTestOrder(['status' => 'Processing', 'transaction_id' => 'kept-txn']);
@@ -208,7 +208,7 @@ it('erases pending orders and their linked transactions using the mother admin p
 });
 
 it('rejects clearing all orders with an incorrect admin password', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['orders'])->create(['password' => bcrypt('regular-secret')]);
 
     $orderId = createTestOrder(['transaction_id' => 'linked-txn']);
 
@@ -223,7 +223,7 @@ it('rejects clearing all orders with an incorrect admin password', function () {
 });
 
 it('rejects clearing all orders with an incorrect mother admin password', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['orders'])->create(['password' => bcrypt('regular-secret')]);
 
     $orderId = createTestOrder(['transaction_id' => 'linked-txn']);
 
@@ -238,7 +238,7 @@ it('rejects clearing all orders with an incorrect mother admin password', functi
 });
 
 it('clears all orders and their linked transactions and tasks using double authentication', function () {
-    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['orders'])->create(['password' => bcrypt('regular-secret')]);
 
     $orderId = createTestOrder(['transaction_id' => 'linked-txn']);
 

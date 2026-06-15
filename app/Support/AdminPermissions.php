@@ -26,6 +26,7 @@ class AdminPermissions
         return [
             ['key' => 'customer-conversations', 'label' => 'Customer Support'],
             ['key' => 'portfolios', 'label' => 'Portfolios'],
+            ['key' => 'categories', 'label' => 'Categories'],
             ['key' => 'sub-categories', 'label' => 'Sub Categories'],
             ['key' => 'blogs', 'label' => 'Blogs'],
             ['key' => 'faqs', 'label' => 'FAQs'],
@@ -39,6 +40,8 @@ class AdminPermissions
             ['key' => 'tasks', 'label' => 'Client Workflow'],
             ['key' => 'client-reviews', 'label' => 'Review Control'],
             ['key' => 'testimonials', 'label' => 'Testimonials'],
+            ['key' => 'orders', 'label' => 'Orders'],
+            ['key' => 'transactions', 'label' => 'Transactions'],
             ['key' => 'configuration', 'label' => 'Configuration'],
         ];
     }
