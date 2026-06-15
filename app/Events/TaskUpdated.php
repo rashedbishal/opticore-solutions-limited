@@ -19,6 +19,7 @@ class TaskUpdated implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('App.Models.User.'.$this->task->user_id),
+            new PrivateChannel('admin.tasks'),
         ];
     }
 }
