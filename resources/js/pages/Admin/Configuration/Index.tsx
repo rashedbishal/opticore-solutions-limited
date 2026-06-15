@@ -175,10 +175,7 @@ export default function ConfigurationIndex({ settings }: Props) {
                                 type="text"
                                 value={data.phone_bangladesh}
                                 onChange={(e) =>
-                                    setData(
-                                        'phone_bangladesh',
-                                        e.target.value,
-                                    )
+                                    setData('phone_bangladesh', e.target.value)
                                 }
                                 placeholder="+88-01XXXXXXXXX"
                                 className={INPUT}
@@ -190,8 +187,7 @@ export default function ConfigurationIndex({ settings }: Props) {
                 <div className={CARD}>
                     <div className={CARD_ACCENT} />
                     <h2 className={SECTION_TITLE}>
-                        <MapPin className="h-4 w-4 text-violet-400" />{' '}
-                        Addresses
+                        <MapPin className="h-4 w-4 text-violet-400" /> Addresses
                     </h2>
                     <div className="grid gap-6 sm:grid-cols-2">
                         <div>
@@ -226,9 +222,7 @@ export default function ConfigurationIndex({ settings }: Props) {
                             />
                         </div>
                         <div>
-                            <label className={LABEL}>
-                                Bangladesh Address
-                            </label>
+                            <label className={LABEL}>Bangladesh Address</label>
                             <textarea
                                 value={data.address_bangladesh}
                                 onChange={(e) =>
