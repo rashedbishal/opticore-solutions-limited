@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ChatSessionController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\ClientReviewController as AdminClientReviewController;
+use App\Http\Controllers\Admin\ConfigurationController as AdminConfigurationController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CustomerConversationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -230,6 +231,10 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::get('/client-reviews', [AdminClientReviewController::class, 'index'])->name('client-reviews.index');
     Route::delete('/client-reviews/{clientReview}', [AdminClientReviewController::class, 'destroy'])->name('client-reviews.destroy');
     Route::post('/client-reviews/reorder', [AdminClientReviewController::class, 'reorder'])->name('client-reviews.reorder');
+
+    // Site Configuration
+    Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('configuration.index');
+    Route::put('/configuration', [AdminConfigurationController::class, 'update'])->name('configuration.update');
 });
 
 // SSLCommerz

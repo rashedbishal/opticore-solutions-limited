@@ -1,5 +1,8 @@
-import { Link } from '@inertiajs/react';
+import type { SharedPageProps, SiteSettings } from '@/types';
+import type { ComponentType, SVGProps } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { Fragment } from 'react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import {
     FacebookIcon,
@@ -11,11 +14,7 @@ import {
     PinterestIcon,
     TikTokIcon,
 } from '@/components/UI/SocialIcons';
-import {
-    bangladeshPhoneLink,
-    bangladeshPhoneNumber,
-    services,
-} from '@/lib/site';
+import { services } from '@/lib/site';
 
 const companyLinks = [
     { label: 'About Us', href: '/about-us' },
@@ -27,46 +26,55 @@ const companyLinks = [
     { label: 'Terms & Conditions', href: '/terms-conditions' },
 ];
 
-const socialLinks = [
-    {
-        href: 'https://www.facebook.com/opticoresolutionsltd',
-        label: 'Facebook',
-        icon: FacebookIcon,
-    },
-    { href: 'https://x.com/osl_opticore', label: 'X (Twitter)', icon: XIcon },
-    {
-        href: 'https://www.instagram.com/opticoresolutionsltd',
-        label: 'Instagram',
-        icon: InstagramIcon,
-    },
-    {
-        href: 'https://www.linkedin.com/in/opticoresolutionsltd',
-        label: 'LinkedIn',
-        icon: LinkedInIcon,
-    },
-    {
-        href: 'https://www.youtube.com/@OpticoreSolutionsLtd',
-        label: 'YouTube',
-        icon: YouTubeIcon,
-    },
-    {
-        href: 'https://www.behance.net/opticorsolutionsltd#',
-        label: 'Behance',
-        icon: BehanceIcon,
-    },
-    {
-        href: 'https://www.pinterest.com/opticoresolutionsltd',
-        label: 'Pinterest',
-        icon: PinterestIcon,
-    },
-    {
-        href: 'https://www.tiktok.com/@opticoresolutionsltd',
-        label: 'TikTok',
-        icon: TikTokIcon,
-    },
+const SOCIAL_PLATFORMS: {
+    key: keyof Pick<
+        SiteSettings,
+        | 'socialFacebook'
+        | 'socialX'
+        | 'socialInstagram'
+        | 'socialLinkedin'
+        | 'socialYoutube'
+        | 'socialBehance'
+        | 'socialPinterest'
+        | 'socialTiktok'
+    >;
+    label: string;
+    icon: ComponentType<SVGProps<SVGSVGElement>>;
+}[] = [
+    { key: 'socialFacebook', label: 'Facebook', icon: FacebookIcon },
+    { key: 'socialX', label: 'X (Twitter)', icon: XIcon },
+    { key: 'socialInstagram', label: 'Instagram', icon: InstagramIcon },
+    { key: 'socialLinkedin', label: 'LinkedIn', icon: LinkedInIcon },
+    { key: 'socialYoutube', label: 'YouTube', icon: YouTubeIcon },
+    { key: 'socialBehance', label: 'Behance', icon: BehanceIcon },
+    { key: 'socialPinterest', label: 'Pinterest', icon: PinterestIcon },
+    { key: 'socialTiktok', label: 'TikTok', icon: TikTokIcon },
 ];
 
+function renderMultiline(text: string | null) {
+    if (!text) {
+        return null;
+    }
+
+    return text.split('\n').map((line, index) => (
+        <Fragment key={index}>
+            {index > 0 && <br />}
+            {line}
+        </Fragment>
+    ));
+}
+
 export default function Footer() {
+    const { siteSettings } = usePage<SharedPageProps>().props;
+
+    const socialLinks = SOCIAL_PLATFORMS.filter(({ key }) =>
+        Boolean(siteSettings[key]),
+    ).map(({ key, label, icon }) => ({
+        href: siteSettings[key] as string,
+        label,
+        icon,
+    }));
+
     return (
         <footer className="relative z-10 border-t border-theme bg-theme-surface">
             <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
@@ -93,12 +101,14 @@ export default function Footer() {
                             design, motion, production, and high-performance web
                             experiences.
                         </p>
-                        <MagneticButton
-                            href={bangladeshPhoneLink}
-                            ariaLabel="Call Opticore Solutions Ltd. now"
-                        >
-                            Call now
-                        </MagneticButton>
+                        {siteSettings.phoneBangladeshLink && (
+                            <MagneticButton
+                                href={siteSettings.phoneBangladeshLink}
+                                ariaLabel="Call Opticore Solutions Ltd. now"
+                            >
+                                Call now
+                            </MagneticButton>
+                        )}
                     </div>
 
                     <div>
@@ -141,23 +151,31 @@ export default function Footer() {
                         </h3>
                         <div className="space-y-6 text-sm text-theme-muted">
                             <div className="space-y-3">
-                                <p className="flex items-center gap-3">
-                                    <Mail className="h-4 w-4 text-violet-500 dark:text-violet-300" />
-                                    <a
-                                        href="mailto:osl@opticoresolutionsltd.com"
-                                        className="transition-colors hover:text-theme"
-                                    >
-                                        osl@opticoresolutionsltd.com
-                                    </a>
-                                </p>
-                                <p className="flex items-start gap-3">
-                                    <Phone className="mt-1 h-4 w-4 text-violet-500 dark:text-violet-300" />
-                                    <span>
-                                        +1 (575) 303-6925
-                                        <br />
-                                        {bangladeshPhoneNumber}
-                                    </span>
-                                </p>
+                                {siteSettings.email && (
+                                    <p className="flex items-center gap-3">
+                                        <Mail className="h-4 w-4 text-violet-500 dark:text-violet-300" />
+                                        <a
+                                            href={`mailto:${siteSettings.email}`}
+                                            className="transition-colors hover:text-theme"
+                                        >
+                                            {siteSettings.email}
+                                        </a>
+                                    </p>
+                                )}
+                                {(siteSettings.phoneUsa ||
+                                    siteSettings.phoneBangladesh) && (
+                                    <p className="flex items-start gap-3">
+                                        <Phone className="mt-1 h-4 w-4 text-violet-500 dark:text-violet-300" />
+                                        <span>
+                                            {siteSettings.phoneUsa}
+                                            {siteSettings.phoneUsa &&
+                                                siteSettings.phoneBangladesh && (
+                                                    <br />
+                                                )}
+                                            {siteSettings.phoneBangladesh}
+                                        </span>
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-4 pt-2">
@@ -168,20 +186,22 @@ export default function Footer() {
                                             USA
                                         </p>
                                         <p className="mt-1 text-[13px] leading-relaxed text-theme-subtle">
-                                            Opticore Solutions LLC
-                                            <br />
-                                            1209 Mountain Road PL NE STE N
-                                            <br />
-                                            Albuquerque, NM 87110
+                                            {renderMultiline(
+                                                siteSettings.addressUsa,
+                                            )}
                                         </p>
-                                        <a
-                                            href="https://maps.app.goo.gl/Ghn2hcVHHid6FQwv6"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
-                                        >
-                                            View on Map
-                                        </a>
+                                        {siteSettings.addressUsaMapUrl && (
+                                            <a
+                                                href={
+                                                    siteSettings.addressUsaMapUrl
+                                                }
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                            >
+                                                View on Map
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
 
@@ -192,18 +212,22 @@ export default function Footer() {
                                             Bangladesh
                                         </p>
                                         <p className="mt-1 text-[13px] text-theme-subtle">
-                                            House # 1178, (1st Floor) Apt.- 2E
-                                            <br />
-                                            East Monipur, Mirpur, Dhaka-1216
+                                            {renderMultiline(
+                                                siteSettings.addressBangladesh,
+                                            )}
                                         </p>
-                                        <a
-                                            href="https://maps.app.goo.gl/7zvqD4Lemwst7bEQ8"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
-                                        >
-                                            View on Map
-                                        </a>
+                                        {siteSettings.addressBangladeshMapUrl && (
+                                            <a
+                                                href={
+                                                    siteSettings.addressBangladeshMapUrl
+                                                }
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                            >
+                                                View on Map
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             </div>

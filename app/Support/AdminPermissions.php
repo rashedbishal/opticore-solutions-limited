@@ -39,6 +39,7 @@ class AdminPermissions
             ['key' => 'tasks', 'label' => 'Client Workflow'],
             ['key' => 'client-reviews', 'label' => 'Review Control'],
             ['key' => 'testimonials', 'label' => 'Testimonials'],
+            ['key' => 'configuration', 'label' => 'Configuration'],
         ];
     }
 

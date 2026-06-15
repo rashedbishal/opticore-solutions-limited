@@ -1,5 +1,6 @@
-import type { ContactFormData } from '@/types';
-import { Head, useForm as useInertiaForm } from '@inertiajs/react';
+import type { ContactFormData, SharedPageProps, SiteSettings } from '@/types';
+import type { LucideIcon } from 'lucide-react';
+import { Head, useForm as useInertiaForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BriefcaseBusiness,
@@ -24,66 +25,31 @@ import HandwritingText from '@/components/text-animations/handwriting-text';
 import GlowingKicker from '@/components/UI/GlowingKicker';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
-import { bangladeshPhoneNumber } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
-const socialLinks = [
-    {
-        href: 'https://www.facebook.com/opticoresolutionsltd',
-        label: 'Facebook',
-        icon: Globe,
-    },
-    { href: 'https://x.com/osl_opticore', label: 'X (Twitter)', icon: Send },
-    {
-        href: 'https://www.instagram.com/opticoresolutionsltd',
-        label: 'Instagram',
-        icon: Camera,
-    },
-    {
-        href: 'https://www.linkedin.com/in/opticoresolutionsltd',
-        label: 'LinkedIn',
-        icon: BriefcaseBusiness,
-    },
-    {
-        href: 'https://www.youtube.com/@OpticoreSolutionsLtd',
-        label: 'YouTube',
-        icon: Play,
-    },
-    {
-        href: 'https://www.behance.net/opticorsolutionsltd#',
-        label: 'Behance',
-        icon: Palette,
-    },
-    {
-        href: 'https://www.pinterest.com/opticoresolutionsltd',
-        label: 'Pinterest',
-        icon: Pin,
-    },
-    {
-        href: 'https://www.tiktok.com/@opticoresolutionsltd',
-        label: 'TikTok',
-        icon: Music,
-    },
-];
-
-const contactItems = [
-    {
-        id: 'phone',
-        label: 'Phone Number',
-        value: bangladeshPhoneNumber,
-        subValue: '+1 (575) 303-6925',
-        icon: Phone,
-        color: 'from-violet-500/20 to-violet-500/5',
-        iconColor: 'text-violet-400',
-    },
-    {
-        id: 'email',
-        label: 'Email Address',
-        value: 'osl@opticoresolutionsltd.com',
-        icon: Mail,
-        color: 'from-cyan-500/20 to-cyan-500/5',
-        iconColor: 'text-cyan-400',
-    },
+const SOCIAL_PLATFORMS: {
+    key: keyof Pick<
+        SiteSettings,
+        | 'socialFacebook'
+        | 'socialX'
+        | 'socialInstagram'
+        | 'socialLinkedin'
+        | 'socialYoutube'
+        | 'socialBehance'
+        | 'socialPinterest'
+        | 'socialTiktok'
+    >;
+    label: string;
+    icon: LucideIcon;
+}[] = [
+    { key: 'socialFacebook', label: 'Facebook', icon: Globe },
+    { key: 'socialX', label: 'X (Twitter)', icon: Send },
+    { key: 'socialInstagram', label: 'Instagram', icon: Camera },
+    { key: 'socialLinkedin', label: 'LinkedIn', icon: BriefcaseBusiness },
+    { key: 'socialYoutube', label: 'YouTube', icon: Play },
+    { key: 'socialBehance', label: 'Behance', icon: Palette },
+    { key: 'socialPinterest', label: 'Pinterest', icon: Pin },
+    { key: 'socialTiktok', label: 'TikTok', icon: Music },
 ];
 
 const initialValues: ContactFormData = {
@@ -95,8 +61,37 @@ const initialValues: ContactFormData = {
 };
 
 export default function Contact() {
+    const { siteSettings } = usePage<SharedPageProps>().props;
     const form = useInertiaForm<ContactFormData>(initialValues);
     const [submitted, setSubmitted] = React.useState(false);
+
+    const contactItems = [
+        {
+            id: 'phone',
+            label: 'Phone Number',
+            value: siteSettings.phoneBangladesh,
+            subValue: siteSettings.phoneUsa,
+            icon: Phone,
+            color: 'from-violet-500/20 to-violet-500/5',
+            iconColor: 'text-violet-400',
+        },
+        {
+            id: 'email',
+            label: 'Email Address',
+            value: siteSettings.email,
+            icon: Mail,
+            color: 'from-cyan-500/20 to-cyan-500/5',
+            iconColor: 'text-cyan-400',
+        },
+    ].filter((item) => Boolean(item.value));
+
+    const socialLinks = SOCIAL_PLATFORMS.filter(({ key }) =>
+        Boolean(siteSettings[key]),
+    ).map(({ key, label, icon }) => ({
+        href: siteSettings[key] as string,
+        label,
+        icon,
+    }));
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();

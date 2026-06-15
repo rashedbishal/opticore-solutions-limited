@@ -25,6 +25,7 @@ import {
     ShoppingCart,
     ArrowLeftRight,
     DollarSign,
+    Settings,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -125,6 +126,12 @@ const NAV_ITEMS = [
         href: '/admin/transactions',
         icon: ArrowLeftRight,
         key: 'transactions',
+    },
+    {
+        name: 'Configuration',
+        href: '/admin/configuration',
+        icon: Settings,
+        key: 'configuration',
     },
 ];
 

@@ -57,9 +57,6 @@ export const navigationItems: NavItem[] = [
     { label: 'Hire Us', href: '/hire-us', icon: 'Briefcase' },
 ];
 
-export const bangladeshPhoneNumber = '+88-01896204400';
-export const bangladeshPhoneLink = 'tel:+8801896204400';
-
 export const services: ServiceItem[] = [
     {
         key: 'graphic-design',

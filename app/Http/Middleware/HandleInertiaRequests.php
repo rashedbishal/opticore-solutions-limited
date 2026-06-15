@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Category;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -51,6 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'categories' => fn () => Category::configShape(),
+            'siteSettings' => fn () => SiteSetting::current()->toPublicArray(),
         ];
     }
 }

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             CategorySeeder::class,
             PortfolioSubCategorySeeder::class,
+            SiteSettingSeeder::class,
         ]);
 
         User::firstOrCreate(

@@ -25,12 +25,32 @@ export interface CategoryConfig {
     description: string | null;
 }
 
+export interface SiteSettings {
+    email: string | null;
+    phoneUsa: string | null;
+    phoneBangladesh: string | null;
+    phoneBangladeshLink: string | null;
+    addressUsa: string | null;
+    addressUsaMapUrl: string | null;
+    addressBangladesh: string | null;
+    addressBangladeshMapUrl: string | null;
+    socialFacebook: string | null;
+    socialX: string | null;
+    socialInstagram: string | null;
+    socialLinkedin: string | null;
+    socialYoutube: string | null;
+    socialBehance: string | null;
+    socialPinterest: string | null;
+    socialTiktok: string | null;
+}
+
 export interface SharedPageProps {
     name: string;
     auth: Auth;
     flash: FlashProps;
     meta?: SiteMeta;
     categories: Record<string, CategoryConfig>;
+    siteSettings: SiteSettings;
     [key: string]: unknown;
 }
 
