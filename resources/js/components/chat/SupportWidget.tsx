@@ -572,6 +572,7 @@ export default function SupportWidget({
             {conversation && echoReady && (
                 <SupportWidgetEchoListener
                     conversation={conversation}
+                    setConversation={setConversation}
                     setMessages={setMessages}
                     setUnread={setUnread}
                     isOpenRef={isOpenRef}
@@ -987,6 +988,7 @@ export default function SupportWidget({
 
 interface EchoListenerProps {
     conversation: Conversation;
+    setConversation: React.Dispatch<React.SetStateAction<Conversation | null>>;
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     setUnread: React.Dispatch<React.SetStateAction<number>>;
     isOpenRef: React.MutableRefObject<boolean>;
@@ -996,6 +998,7 @@ interface EchoListenerProps {
 
 function SupportWidgetEchoListener({
     conversation,
+    setConversation,
     setMessages,
     setUnread,
     isOpenRef,
@@ -1140,6 +1143,31 @@ function SupportWidgetEchoListener({
                 );
             },
             [setMessages],
+        ),
+    );
+
+    // Admin deleted this conversation's history — clear it locally and start
+    // a fresh conversation so the user can continue chatting.
+    useEcho<{ conversation_id: number }>(
+        `conversations.${conversation.id}`,
+        'ConversationDeleted',
+        useCallback(
+            (e) => {
+                if (e.conversation_id !== conversation.id) {
+                    return;
+                }
+
+                setMessages([]);
+                setUnread(0);
+
+                axios
+                    .post('/user-chat/init')
+                    .then((res) => {
+                        setConversation(res.data.conversation);
+                    })
+                    .catch(() => {});
+            },
+            [conversation.id, setConversation, setMessages, setUnread],
         ),
     );
 

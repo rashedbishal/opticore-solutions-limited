@@ -6,10 +6,12 @@ use App\Events\OrderUpdated;
 use App\Events\TransactionUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Task;
 use App\Models\Transaction;
 use App\Support\InvoicePdfBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -142,5 +144,41 @@ class TransactionController extends Controller
         TransactionUpdated::dispatch();
 
         return back()->with('success', "All {$validated['status']} transactions erased successfully.");
+    }
+
+    public function clearAll(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'admin_password' => ['required', 'string'],
+            'mother_password' => ['required', 'string'],
+        ]);
+
+        $admin = Auth::guard('admin')->user();
+
+        if (! $admin || ! Hash::check($validated['admin_password'], $admin->password)) {
+            return back()->withErrors(['admin_password' => 'The password you entered is incorrect.']);
+        }
+
+        $motherAdmin = Admin::motherAdmin();
+
+        if (! $motherAdmin || ! Hash::check($validated['mother_password'], $motherAdmin->password)) {
+            return back()->withErrors(['mother_password' => 'The password you entered is incorrect.']);
+        }
+
+        DB::transaction(function () {
+            $transactionIds = Transaction::query()->whereNotNull('transaction_id')->pluck('transaction_id');
+
+            Transaction::query()->delete();
+
+            if ($transactionIds->isNotEmpty()) {
+                DB::table('orders')->whereIn('transaction_id', $transactionIds)->delete();
+                Task::whereIn('transaction_id', $transactionIds)->delete();
+            }
+        });
+
+        OrderUpdated::dispatch();
+        TransactionUpdated::dispatch();
+
+        return back()->with('success', 'All transactions and their linked orders and tasks were cleared successfully.');
     }
 }

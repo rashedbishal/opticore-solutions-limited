@@ -1,14 +1,17 @@
 <?php
 
+use App\Events\ConversationDeleted;
 use App\Events\MessageSent;
 use App\Events\OfferDeleted;
 use App\Mail\ChatMessageReceivedMail;
 use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -289,4 +292,79 @@ it('rejects deleting a message that has no associated offer', function () {
         ->assertStatus(422);
 
     $this->assertDatabaseHas('messages', ['id' => $message->id]);
+});
+
+it('deletes a conversation, its messages, offers, and attachments, then broadcasts the deletion', function () {
+    Event::fake([ConversationDeleted::class]);
+    Storage::fake('local');
+
+    $user = User::factory()->create();
+    $conversation = Conversation::query()->create(['user_id' => $user->id]);
+
+    $path = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf')
+        ->store('chat_attachments', 'local');
+
+    $message = $conversation->messages()->create([
+        'sender_type' => 'user',
+        'sender_id' => $user->id,
+        'message' => 'Here is a file',
+        'attachment_path' => $path,
+        'attachment_type' => 'document',
+    ]);
+
+    $offer = $conversation->offers()->create([
+        'payment_type' => 'single',
+        'description' => 'An offer tied to this conversation',
+        'request_requirements' => true,
+        'price' => 100,
+        'delivery_days' => 5,
+        'status' => 'pending',
+        'offer_token' => 'conversation-delete-offer-token',
+    ]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->deleteJson(route('admin.customer-conversations.destroy', $conversation), [
+            'password' => 'password',
+        ])
+        ->assertSuccessful()
+        ->assertJsonPath('success', true);
+
+    $this->assertDatabaseMissing('conversations', ['id' => $conversation->id]);
+    $this->assertDatabaseMissing('messages', ['id' => $message->id]);
+    $this->assertDatabaseMissing('offers', ['id' => $offer->id]);
+    Storage::disk('local')->assertMissing($path);
+
+    Event::assertDispatched(
+        ConversationDeleted::class,
+        fn (ConversationDeleted $event) => $event->conversationId === $conversation->id,
+    );
+});
+
+it('rejects deleting a conversation with an incorrect password', function () {
+    $user = User::factory()->create();
+    $conversation = Conversation::query()->create(['user_id' => $user->id]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->deleteJson(route('admin.customer-conversations.destroy', $conversation), [
+            'password' => 'wrong-password',
+        ])
+        ->assertStatus(422)
+        ->assertJsonPath('message', 'The password you entered is incorrect.');
+
+    $this->assertDatabaseHas('conversations', ['id' => $conversation->id]);
+});
+
+it('allows a regular admin to delete a conversation using the mother admin password', function () {
+    $regularAdmin = Admin::factory()->withPermissions(['customer-conversations'])->create();
+
+    $user = User::factory()->create();
+    $conversation = Conversation::query()->create(['user_id' => $user->id]);
+
+    $this->actingAs($regularAdmin, 'admin')
+        ->deleteJson(route('admin.customer-conversations.destroy', $conversation), [
+            'password' => 'password',
+        ])
+        ->assertSuccessful();
+
+    $this->assertDatabaseMissing('conversations', ['id' => $conversation->id]);
 });

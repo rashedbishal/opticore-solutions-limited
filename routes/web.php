@@ -214,13 +214,16 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
     Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
     Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
+    Route::delete('/api/customer-conversations/{conversation}', [CustomerConversationController::class, 'destroy'])->name('customer-conversations.destroy');
 
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
 
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::delete('orders/erase', [AdminOrderController::class, 'erase'])->name('orders.erase');
+    Route::delete('orders/clear-all', [AdminOrderController::class, 'clearAll'])->name('orders.clear-all');
     Route::get('transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
     Route::delete('transactions/erase', [AdminTransactionController::class, 'erase'])->name('transactions.erase');
+    Route::delete('transactions/clear-all', [AdminTransactionController::class, 'clearAll'])->name('transactions.clear-all');
     Route::get('transactions/{transaction}/invoice', [AdminTransactionController::class, 'downloadInvoice'])->name('transactions.invoice');
 
     // Client Review Control

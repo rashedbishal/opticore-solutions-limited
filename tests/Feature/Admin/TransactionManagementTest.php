@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use App\Models\Task;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -211,8 +212,83 @@ it('erases failed transactions and their linked orders using the mother admin pa
     $this->assertDatabaseHas('orders', ['id' => $keptOrderId]);
 });
 
+it('rejects clearing all transactions with an incorrect admin password', function () {
+    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+
+    $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
+
+    $this->actingAs($regularAdmin, 'admin')
+        ->delete(route('admin.transactions.clear-all'), [
+            'admin_password' => 'wrong-password',
+            'mother_password' => 'mother-secret',
+        ])
+        ->assertSessionHasErrors(['admin_password']);
+
+    $this->assertDatabaseHas('transactions', ['id' => $transaction->id]);
+});
+
+it('rejects clearing all transactions with an incorrect mother admin password', function () {
+    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+
+    $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
+
+    $this->actingAs($regularAdmin, 'admin')
+        ->delete(route('admin.transactions.clear-all'), [
+            'admin_password' => 'regular-secret',
+            'mother_password' => 'wrong-password',
+        ])
+        ->assertSessionHasErrors(['mother_password']);
+
+    $this->assertDatabaseHas('transactions', ['id' => $transaction->id]);
+});
+
+it('clears all transactions and their linked orders and tasks using double authentication', function () {
+    $regularAdmin = Admin::factory()->regular()->create(['password' => bcrypt('regular-secret')]);
+
+    $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
+
+    $orderId = DB::table('orders')->insertGetId([
+        'name' => 'Linked Order',
+        'email' => 'linked@example.com',
+        'amount' => 50,
+        'currency' => 'USD',
+        'status' => 'Processing',
+        'transaction_id' => 'linked-txn',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $task = Task::factory()->create(['transaction_id' => 'linked-txn']);
+
+    $this->actingAs($regularAdmin, 'admin')
+        ->delete(route('admin.transactions.clear-all'), [
+            'admin_password' => 'regular-secret',
+            'mother_password' => 'mother-secret',
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+    $this->assertDatabaseMissing('orders', ['id' => $orderId]);
+    $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+});
+
+it('allows the mother admin to clear all transactions using their own password twice', function () {
+    createTestTransaction(['transaction_id' => 'mother-txn']);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->delete(route('admin.transactions.clear-all'), [
+            'admin_password' => 'mother-secret',
+            'mother_password' => 'mother-secret',
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('transactions', ['transaction_id' => 'mother-txn']);
+});
+
 it('blocks guests from transaction management routes', function () {
     $this->get(route('admin.transactions.index'))->assertRedirect(route('admin.login'));
     $this->delete(route('admin.transactions.erase'), ['status' => 'Failed', 'password' => 'mother-secret'])
+        ->assertRedirect(route('admin.login'));
+    $this->delete(route('admin.transactions.clear-all'), ['admin_password' => 'mother-secret', 'mother_password' => 'mother-secret'])
         ->assertRedirect(route('admin.login'));
 });

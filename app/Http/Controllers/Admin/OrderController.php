@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\PortfolioSubCategory;
+use App\Models\Task;
 use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -117,5 +119,41 @@ class OrderController extends Controller
         TransactionUpdated::dispatch();
 
         return back()->with('success', "All {$validated['status']} orders erased successfully.");
+    }
+
+    public function clearAll(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'admin_password' => ['required', 'string'],
+            'mother_password' => ['required', 'string'],
+        ]);
+
+        $admin = Auth::guard('admin')->user();
+
+        if (! $admin || ! Hash::check($validated['admin_password'], $admin->password)) {
+            return back()->withErrors(['admin_password' => 'The password you entered is incorrect.']);
+        }
+
+        $motherAdmin = Admin::motherAdmin();
+
+        if (! $motherAdmin || ! Hash::check($validated['mother_password'], $motherAdmin->password)) {
+            return back()->withErrors(['mother_password' => 'The password you entered is incorrect.']);
+        }
+
+        DB::transaction(function () {
+            $transactionIds = DB::table('orders')->whereNotNull('transaction_id')->pluck('transaction_id');
+
+            DB::table('orders')->delete();
+
+            if ($transactionIds->isNotEmpty()) {
+                Transaction::whereIn('transaction_id', $transactionIds)->delete();
+                Task::whereIn('transaction_id', $transactionIds)->delete();
+            }
+        });
+
+        OrderUpdated::dispatch();
+        TransactionUpdated::dispatch();
+
+        return back()->with('success', 'All orders and their linked transactions and tasks were cleared successfully.');
     }
 }

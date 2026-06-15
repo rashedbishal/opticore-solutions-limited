@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\ConversationDeleted;
 use App\Events\MessageSent;
 use App\Events\MessageStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Mail\ChatMessageReceivedMail;
+use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -117,6 +122,37 @@ class CustomerConversationController extends Controller
     public function markAsRead(Conversation $conversation)
     {
         $this->markIncomingMessagesAsRead($conversation, 'user');
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Permanently delete a conversation (and its messages, attachments, and
+     * offers) for both the admin and the client. Requires the mother admin's
+     * password regardless of who is currently logged in.
+     */
+    public function destroy(Conversation $conversation, Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        $motherAdmin = Admin::motherAdmin();
+
+        if (! $motherAdmin || ! Hash::check($validated['password'], $motherAdmin->password)) {
+            return response()->json(['message' => 'The password you entered is incorrect.'], 422);
+        }
+
+        $conversationId = $conversation->id;
+
+        $conversation->messages()
+            ->whereNotNull('attachment_path')
+            ->pluck('attachment_path')
+            ->each(fn (string $path) => Storage::disk('local')->delete($path));
+
+        $conversation->delete();
+
+        broadcast(new ConversationDeleted($conversationId));
 
         return response()->json(['success' => true]);
     }
