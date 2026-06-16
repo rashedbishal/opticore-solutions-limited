@@ -293,8 +293,6 @@ function StatusBadge({ status }: { status: Offer['status'] }) {
 
 // ─── Client view ──────────────────────────────────────────────────────────────
 
-type PostStatus = 'idle' | 'accepted' | 'declined';
-
 interface ClientViewProps {
     offer: Offer;
     isDeleted: boolean;
@@ -302,7 +300,6 @@ interface ClientViewProps {
     onDecline: () => void;
     isAccepting: boolean;
     isDeclining: boolean;
-    postStatus: PostStatus;
 }
 
 function ClientView({
@@ -312,7 +309,6 @@ function ClientView({
     onDecline,
     isAccepting,
     isDeclining,
-    postStatus,
 }: ClientViewProps) {
     const { categories } = usePage<SharedPageProps>().props;
     const catMeta = getCategoryMeta(
@@ -1291,7 +1287,6 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
     const [isDeclining, setIsDeclining] = useState(false);
-    const [postStatus, setPostStatus] = useState<PostStatus>('idle');
     const echoReady = useEchoReady();
 
     // No-op for admin (client-only callback used by echo listener)
@@ -1302,7 +1297,6 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
         try {
             await axios.post(`/offer/${offer.offer_token}/accept`);
-            setPostStatus('accepted');
         } catch {
             setIsAccepting(false);
         }
@@ -1313,7 +1307,6 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
         try {
             await axios.post(`/offer/${offer.offer_token}/decline`);
-            setPostStatus('declined');
             setIsDeclining(false);
         } catch {
             setIsDeclining(false);
@@ -1358,7 +1351,6 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
                     onDecline={handleDecline}
                     isAccepting={isAccepting}
                     isDeclining={isDeclining}
-                    postStatus={postStatus}
                 />
             </AppLayout>
         </>
