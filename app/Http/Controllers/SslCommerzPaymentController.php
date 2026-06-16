@@ -282,9 +282,11 @@ class SslCommerzPaymentController extends Controller
 
         TransactionUpdated::dispatch();
 
-        $this->loginUserFromTransaction($tran_id);
-
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
+
+        if ($this->verifySSLCommerzSignature($request)) {
+            $this->loginUserFromTransaction($tran_id);
+        }
 
         return redirect()->route('home')
             ->with('payment_error', 'Payment failed. Please try again.')
@@ -308,9 +310,11 @@ class SslCommerzPaymentController extends Controller
 
         TransactionUpdated::dispatch();
 
-        $this->loginUserFromTransaction($tran_id);
-
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
+
+        if ($this->verifySSLCommerzSignature($request)) {
+            $this->loginUserFromTransaction($tran_id);
+        }
 
         return redirect()->route('home')
             ->with('payment_error', 'Payment was cancelled.')
@@ -385,6 +389,33 @@ class SslCommerzPaymentController extends Controller
         }
 
         return response('INVALID TRANSACTION', 400);
+    }
+
+    private function verifySSLCommerzSignature(Request $request): bool
+    {
+        $postData = $request->all();
+
+        if (empty($postData['verify_sign']) || empty($postData['verify_key'])) {
+            return false;
+        }
+
+        $keys = explode(',', $postData['verify_key']);
+        $hashData = [];
+
+        foreach ($keys as $key) {
+            $hashData[$key] = $postData[$key] ?? '';
+        }
+
+        $hashData['store_passwd'] = md5(config('sslcommerz.apiCredentials.store_password'));
+
+        ksort($hashData);
+
+        $hashString = '';
+        foreach ($hashData as $key => $value) {
+            $hashString .= $key.'='.$value.'&';
+        }
+
+        return md5(rtrim($hashString, '&')) === $postData['verify_sign'];
     }
 
     private function loginUserFromTransaction(string $tran_id): void
