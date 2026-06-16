@@ -12,13 +12,13 @@ use App\Mail\PaymentSuccessMail;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Support\IdGenerator;
 use App\Support\InvoicePdfBuilder;
 use App\Support\TaskGenerator;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -37,7 +37,7 @@ class SslCommerzPaymentController extends Controller
         $post_data = [];
         $post_data['total_amount'] = '10';
         $post_data['currency'] = 'BDT';
-        $post_data['tran_id'] = uniqid();
+        $post_data['tran_id'] = IdGenerator::transactionId();
 
         $post_data['cus_name'] = 'Customer Name';
         $post_data['cus_email'] = 'customer@mail.com';
@@ -101,7 +101,7 @@ class SslCommerzPaymentController extends Controller
         $post_data = [];
         $post_data['total_amount'] = $cartData->total_amount;
         $post_data['currency'] = $cartData->currency;
-        $post_data['tran_id'] = uniqid();
+        $post_data['tran_id'] = IdGenerator::transactionId();
 
         // CUSTOMER INFORMATION
         $post_data['cus_name'] = $user->name;
@@ -199,7 +199,7 @@ class SslCommerzPaymentController extends Controller
                     ->where('transaction_id', $tran_id)
                     ->update(['status' => 'Processing']);
 
-                $invoiceNumber = 'INV-'.strtoupper(Str::random(8));
+                $invoiceNumber = IdGenerator::invoiceNumber();
 
                 $transaction = Transaction::where('transaction_id', $tran_id)->first();
 
@@ -337,7 +337,7 @@ class SslCommerzPaymentController extends Controller
             if ($validation) {
                 DB::table('orders')->where('transaction_id', $tran_id)->update(['status' => 'Processing']);
 
-                $invoiceNumber = 'INV-'.strtoupper(Str::random(8));
+                $invoiceNumber = IdGenerator::invoiceNumber();
 
                 $transaction = Transaction::where('transaction_id', $tran_id)->first();
 

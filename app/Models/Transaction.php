@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -74,7 +75,7 @@ class Transaction extends Model
             }
 
             $transaction->forceFill([
-                'order_number' => 'ORD-'.str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT),
+                'order_number' => IdGenerator::orderNumber(),
             ])->saveQuietly();
         });
     }
