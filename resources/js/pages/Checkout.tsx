@@ -87,9 +87,7 @@ export default function Checkout({ item }: Props) {
                 plan: item.plan,
                 delivery: item.delivery,
                 subcategory: item.subcategory,
-                ...(item.offer_token
-                    ? { offer_token: item.offer_token }
-                    : {}),
+                ...(item.offer_token ? { offer_token: item.offer_token } : {}),
                 ...(item.milestone_id
                     ? { milestone_id: item.milestone_id }
                     : {}),
