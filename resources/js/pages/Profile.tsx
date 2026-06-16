@@ -122,6 +122,7 @@ const stagger = {
 
 const TASKS_PER_PAGE = 4;
 const ORDERS_PER_PAGE = 3;
+const PENDING_ORDERS_PER_PAGE = 3;
 
 function Pagination({
     page,
@@ -305,10 +306,10 @@ function PendingOrderCard({ order }: { order: PendingOrder }) {
         : null;
 
     return (
-        <Link href={order.checkout_url}>
+        <Link href={order.checkout_url} className="block">
             <motion.div
                 variants={fadeUp}
-                className="neo-panel group relative cursor-pointer overflow-hidden rounded-2xl p-4 transition-all hover:scale-[1.01]"
+                className="neo-panel group relative cursor-pointer overflow-hidden rounded-2xl p-4"
             >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-amber-400/15 to-amber-600/15 text-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.15),inset_0_0_0_1px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(245,158,11,0.1),inset_0_0_0_1px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
@@ -376,6 +377,7 @@ export default function Profile() {
     );
     const [taskPage, setTaskPage] = useState(1);
     const [orderPage, setOrderPage] = useState(1);
+    const [pendingOrderPage, setPendingOrderPage] = useState(1);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const echoReady = useEchoReady();
 
@@ -397,6 +399,19 @@ export default function Profile() {
     const paginatedOrders = orders.slice(
         (currentOrderPage - 1) * ORDERS_PER_PAGE,
         currentOrderPage * ORDERS_PER_PAGE,
+    );
+
+    const pendingOrderTotalPages = Math.max(
+        1,
+        Math.ceil(pendingOrders.length / PENDING_ORDERS_PER_PAGE),
+    );
+    const currentPendingOrderPage = Math.min(
+        pendingOrderPage,
+        pendingOrderTotalPages,
+    );
+    const paginatedPendingOrders = pendingOrders.slice(
+        (currentPendingOrderPage - 1) * PENDING_ORDERS_PER_PAGE,
+        currentPendingOrderPage * PENDING_ORDERS_PER_PAGE,
     );
 
     const { data, setData, put, processing, wasSuccessful } = useForm({
@@ -716,15 +731,22 @@ export default function Profile() {
                                             variants={stagger}
                                             initial="hidden"
                                             animate="visible"
-                                            className="space-y-3"
+                                            className="space-y-4"
                                         >
-                                            {pendingOrders.map((order) => (
-                                                <PendingOrderCard
-                                                    key={order.id}
-                                                    order={order}
-                                                />
-                                            ))}
+                                            {paginatedPendingOrders.map(
+                                                (order) => (
+                                                    <PendingOrderCard
+                                                        key={order.id}
+                                                        order={order}
+                                                    />
+                                                ),
+                                            )}
                                         </motion.div>
+                                        <Pagination
+                                            page={currentPendingOrderPage}
+                                            totalPages={pendingOrderTotalPages}
+                                            onPageChange={setPendingOrderPage}
+                                        />
                                     </div>
                                 )}
 

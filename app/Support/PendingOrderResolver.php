@@ -35,6 +35,7 @@ class PendingOrderResolver
         $offers = $conversation->offers()
             ->where('status', 'accepted')
             ->with(['subCategory', 'milestones'])
+            ->latest('updated_at')
             ->get();
 
         if ($offers->isEmpty()) {
@@ -96,6 +97,7 @@ class PendingOrderResolver
                     price: $price,
                     plan: $milestone->name,
                     deliveryDays: $milestone->delivery_days,
+                    milestoneId: $milestone->id,
                 );
             }
         }
@@ -141,10 +143,16 @@ class PendingOrderResolver
      *     checkout_url: string,
      * }
      */
-    private static function buildEntry(string $id, Offer $offer, float $price, string $plan, ?int $deliveryDays): array
+    private static function buildEntry(string $id, Offer $offer, float $price, string $plan, ?int $deliveryDays, ?int $milestoneId = null): array
     {
         $serviceName = $offer->subCategory?->name
             ?? ($offer->category_slug ? ucwords(str_replace('-', ' ', $offer->category_slug)) : 'Custom Offer');
+
+        $checkoutParams = ['offer_token' => $offer->offer_token];
+
+        if ($milestoneId !== null) {
+            $checkoutParams['milestone_id'] = $milestoneId;
+        }
 
         return [
             'id' => $id,
@@ -153,15 +161,7 @@ class PendingOrderResolver
             'amount' => number_format($price, 2, '.', ''),
             'currency' => 'USD',
             'date' => $offer->updated_at?->format('Y-m-d'),
-            'checkout_url' => route('checkout', [
-                'service' => $serviceName,
-                'plan' => $plan,
-                'price' => '$'.number_format($price, 2),
-                'delivery' => $deliveryDays ? "{$deliveryDays} Days" : '—',
-                'category' => $offer->category_slug ?? '',
-                'subcategory' => $offer->subCategory?->name ?? '',
-                'subcategory_id' => $offer->sub_category_id ?? 0,
-            ]),
+            'checkout_url' => route('checkout', $checkoutParams),
         ];
     }
 }

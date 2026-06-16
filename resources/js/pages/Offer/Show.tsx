@@ -293,6 +293,8 @@ function StatusBadge({ status }: { status: Offer['status'] }) {
 
 // ─── Client view ──────────────────────────────────────────────────────────────
 
+type PostStatus = 'idle' | 'accepted' | 'declined';
+
 interface ClientViewProps {
     offer: Offer;
     isDeleted: boolean;
@@ -300,6 +302,7 @@ interface ClientViewProps {
     onDecline: () => void;
     isAccepting: boolean;
     isDeclining: boolean;
+    postStatus: PostStatus;
 }
 
 function ClientView({
@@ -309,6 +312,7 @@ function ClientView({
     onDecline,
     isAccepting,
     isDeclining,
+    postStatus,
 }: ClientViewProps) {
     const { categories } = usePage<SharedPageProps>().props;
     const catMeta = getCategoryMeta(
@@ -340,6 +344,7 @@ function ClientView({
 
     return (
         <div className="min-h-screen bg-slate-950 pt-24 pb-10 sm:pt-32">
+
             <div className="mx-auto max-w-2xl px-4">
                 {/* Header */}
                 <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
@@ -623,11 +628,20 @@ function ClientView({
                             </h3>
                             <p className="text-sm leading-relaxed text-slate-400">
                                 {offer.status === 'accepted'
-                                    ? 'You accepted this offer. The team will be in touch shortly.'
+                                    ? 'You accepted this offer. Head to your profile to complete payment.'
                                     : offer.status === 'declined'
                                       ? 'You declined this offer.'
                                       : 'This offer has expired.'}
                             </p>
+                            {offer.status === 'accepted' && (
+                                <a
+                                    href="/profile?tab=orders"
+                                    className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-slate-700 px-6 py-2.5 text-sm font-semibold text-white"
+                                >
+                                    <CreditCard size={15} />
+                                    View Pending Orders
+                                </a>
+                            )}
                         </div>
                     </div>
                 ) : null}
@@ -1277,6 +1291,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
     const [isDeclining, setIsDeclining] = useState(false);
+    const [postStatus, setPostStatus] = useState<PostStatus>('idle');
     const echoReady = useEchoReady();
 
     // No-op for admin (client-only callback used by echo listener)
@@ -1287,7 +1302,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
         try {
             await axios.post(`/offer/${offer.offer_token}/accept`);
-            window.close();
+            setPostStatus('accepted');
         } catch {
             setIsAccepting(false);
         }
@@ -1298,7 +1313,8 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
         try {
             await axios.post(`/offer/${offer.offer_token}/decline`);
-            window.close();
+            setPostStatus('declined');
+            setIsDeclining(false);
         } catch {
             setIsDeclining(false);
         }
@@ -1342,6 +1358,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
                     onDecline={handleDecline}
                     isAccepting={isAccepting}
                     isDeclining={isDeclining}
+                    postStatus={postStatus}
                 />
             </AppLayout>
         </>

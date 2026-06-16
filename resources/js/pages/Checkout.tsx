@@ -23,6 +23,8 @@ interface CheckoutItem {
     category: string;
     subcategory: string;
     subcategory_id: number;
+    offer_token?: string;
+    milestone_id?: number | null;
 }
 
 interface Props {
@@ -77,20 +79,20 @@ export default function Checkout({ item }: Props) {
         setIsProcessing(true);
 
         if (sslBtnRef.current) {
-            const totalAmount =
-                currency === 'BDT' && bdtRate !== null
-                    ? Math.round(usdAmount * bdtRate).toString()
-                    : usdAmount.toString();
             (sslBtnRef.current as any).postdata = {
-                total_amount: totalAmount,
                 currency,
                 category_id: item.category,
                 subcategory_id: item.subcategory_id,
                 service: item.service,
                 plan: item.plan,
-                price: item.price,
                 delivery: item.delivery,
                 subcategory: item.subcategory,
+                ...(item.offer_token
+                    ? { offer_token: item.offer_token }
+                    : {}),
+                ...(item.milestone_id
+                    ? { milestone_id: item.milestone_id }
+                    : {}),
             };
         }
 

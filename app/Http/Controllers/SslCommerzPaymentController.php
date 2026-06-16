@@ -9,6 +9,7 @@ use App\Events\TaskCreated;
 use App\Events\TransactionUpdated;
 use App\Library\SslCommerz\SslCommerzNotification;
 use App\Mail\PaymentSuccessMail;
+use App\Models\Offer;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
 use App\Models\User;
@@ -18,89 +19,87 @@ use App\Support\TaskGenerator;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 class SslCommerzPaymentController extends Controller
 {
-    public function exampleEasyCheckout()
-    {
-        return view('exampleEasycheckout');
-    }
-
-    public function exampleHostedCheckout()
-    {
-        return view('exampleHosted');
-    }
-
-    public function index(Request $request)
-    {
-        $post_data = [];
-        $post_data['total_amount'] = '10';
-        $post_data['currency'] = 'BDT';
-        $post_data['tran_id'] = IdGenerator::transactionId();
-
-        $post_data['cus_name'] = 'Customer Name';
-        $post_data['cus_email'] = 'customer@mail.com';
-        $post_data['cus_add1'] = 'Customer Address';
-        $post_data['cus_add2'] = '';
-        $post_data['cus_city'] = '';
-        $post_data['cus_state'] = '';
-        $post_data['cus_postcode'] = '';
-        $post_data['cus_country'] = 'Bangladesh';
-        $post_data['cus_phone'] = '8801XXXXXXXXX';
-        $post_data['cus_fax'] = '';
-
-        $post_data['ship_name'] = 'Store Test';
-        $post_data['ship_add1'] = 'Dhaka';
-        $post_data['ship_add2'] = 'Dhaka';
-        $post_data['ship_city'] = 'Dhaka';
-        $post_data['ship_state'] = 'Dhaka';
-        $post_data['ship_postcode'] = '1000';
-        $post_data['ship_phone'] = '';
-        $post_data['ship_country'] = 'Bangladesh';
-
-        $post_data['shipping_method'] = 'NO';
-        $post_data['product_name'] = 'Computer';
-        $post_data['product_category'] = 'Goods';
-        $post_data['product_profile'] = 'physical-goods';
-
-        $post_data['value_a'] = 'ref001';
-        $post_data['value_b'] = 'ref002';
-        $post_data['value_c'] = 'ref003';
-        $post_data['value_d'] = 'ref004';
-
-        DB::table('orders')
-            ->where('transaction_id', $post_data['tran_id'])
-            ->updateOrInsert([
-                'name' => $post_data['cus_name'],
-                'email' => $post_data['cus_email'],
-                'phone' => $post_data['cus_phone'],
-                'amount' => $post_data['total_amount'],
-                'status' => 'Pending',
-                'address' => $post_data['cus_add1'],
-                'transaction_id' => $post_data['tran_id'],
-                'currency' => $post_data['currency'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-        $sslc = new SslCommerzNotification;
-        $payment_options = $sslc->makePayment($post_data, 'hosted');
-
-        if (! is_array($payment_options)) {
-            print_r($payment_options);
-            $payment_options = [];
-        }
-    }
-
     public function payViaAjax(Request $request)
     {
         $user = $request->user();
         $cartData = json_decode($request->cart_json);
+        $currency = in_array($cartData->currency ?? 'USD', ['USD', 'BDT'])
+            ? ($cartData->currency ?? 'USD')
+            : 'USD';
+
+        // Resolve the canonical price and service context from the database.
+        // The frontend-submitted amount is never used.
+        if (! empty($cartData->offer_token)) {
+            // Custom plan: price comes from the accepted offer record
+            $offer = Offer::where('offer_token', $cartData->offer_token)
+                ->with(['conversation', 'milestones'])
+                ->firstOrFail();
+
+            abort_if($offer->conversation->user_id !== $user->id, 403);
+            abort_if($offer->status !== 'accepted', 422);
+
+            if (! empty($cartData->milestone_id)) {
+                $milestone = $offer->milestones->firstWhere('id', (int) $cartData->milestone_id);
+                abort_if(! $milestone, 422);
+                $usdAmount = (float) $milestone->price;
+                $checkoutUrl = '/checkout?offer_token='.urlencode($cartData->offer_token).'&milestone_id='.urlencode((string) $cartData->milestone_id);
+            } else {
+                $usdAmount = $offer->payment_type === 'single'
+                    ? (float) $offer->price
+                    : (float) $offer->milestones->sum('price');
+                $checkoutUrl = '/checkout?offer_token='.urlencode($cartData->offer_token);
+            }
+
+            abort_if($usdAmount <= 0, 422);
+            $categorySlug = $offer->category_slug;
+            $subcategoryId = $offer->sub_category_id;
+        } else {
+            // Standard plan: price comes from the sub-category's plans JSON
+            $subCategory = PortfolioSubCategory::find((int) ($cartData->subcategory_id ?? 0));
+            abort_if(! $subCategory || empty($subCategory->plans), 422);
+
+            $planKey = strtolower((string) ($cartData->plan ?? ''));
+            abort_if(! isset($subCategory->plans[$planKey]), 422);
+
+            $rawPrice = $subCategory->plans[$planKey]['price'] ?? '';
+            $usdAmount = (float) preg_replace('/[^0-9.]/', '', $rawPrice);
+            abort_if($usdAmount <= 0, 422);
+            $categorySlug = $cartData->category_id ?? null;
+            $subcategoryId = (int) ($cartData->subcategory_id ?? 0) ?: null;
+            $checkoutUrl = '/checkout?'.http_build_query([
+                'service' => $cartData->service ?? '',
+                'plan' => $cartData->plan ?? '',
+                'price' => '$'.number_format($usdAmount, 2),
+                'delivery' => $cartData->delivery ?? '',
+                'category' => $cartData->category_id ?? '',
+                'subcategory' => $cartData->subcategory ?? '',
+                'subcategory_id' => $cartData->subcategory_id ?? '',
+            ]);
+        }
+
+        // Apply BDT conversion server-side using the same cached exchange rate
+        // as the checkout page, so the user always sees a consistent rate.
+        if ($currency === 'BDT') {
+            $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
+                $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+
+                return $response->json('conversion_rate');
+            });
+            abort_if(! $rate, 422);
+            $totalAmount = (string) round($usdAmount * $rate);
+        } else {
+            $totalAmount = (string) $usdAmount;
+        }
 
         $post_data = [];
-        $post_data['total_amount'] = $cartData->total_amount;
-        $post_data['currency'] = $cartData->currency;
+        $post_data['total_amount'] = $totalAmount;
+        $post_data['currency'] = $currency;
         $post_data['tran_id'] = IdGenerator::transactionId();
 
         // CUSTOMER INFORMATION
@@ -120,9 +119,9 @@ class SslCommerzPaymentController extends Controller
         $post_data['product_category'] = 'Virtual';
         $post_data['product_profile'] = 'Virtual';
 
-        // Service identifiers — retrieved in success/ipn via value_a and value_b
-        $post_data['value_a'] = $cartData->category_id;
-        $post_data['value_b'] = $cartData->subcategory_id;
+        // Service identifiers passed through SSLCommerz and available in success/IPN callbacks
+        $post_data['value_a'] = $categorySlug;
+        $post_data['value_b'] = $subcategoryId;
         $post_data['value_c'] = '';
         $post_data['value_d'] = '';
 
@@ -133,26 +132,16 @@ class SslCommerzPaymentController extends Controller
                 'name' => $post_data['cus_name'],
                 'email' => $post_data['cus_email'],
                 'phone' => $post_data['cus_phone'],
-                'amount' => $post_data['total_amount'],
+                'amount' => $totalAmount,
                 'status' => 'Pending',
                 'address' => $post_data['cus_add1'],
                 'transaction_id' => $post_data['tran_id'],
-                'currency' => $post_data['currency'],
-                'category' => $post_data['value_a'],
-                'subcategory_id' => $post_data['value_b'],
+                'currency' => $currency,
+                'category' => $categorySlug,
+                'subcategory_id' => $subcategoryId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-        $checkoutUrl = '/checkout?'.http_build_query([
-            'service' => $cartData->service ?? '',
-            'plan' => $cartData->plan ?? '',
-            'price' => $cartData->price ?? '',
-            'delivery' => $cartData->delivery ?? '',
-            'category' => $cartData->category_id ?? '',
-            'subcategory' => $cartData->subcategory ?? '',
-            'subcategory_id' => $cartData->subcategory_id ?? '',
-        ]);
 
         // Full transaction record
         Transaction::create([
@@ -160,12 +149,12 @@ class SslCommerzPaymentController extends Controller
             'email' => $post_data['cus_email'],
             'phone' => $post_data['cus_phone'],
             'address' => $post_data['cus_add1'],
-            'category' => $post_data['value_a'],
-            'subcategory_id' => $post_data['value_b'] ?: null,
+            'category' => $categorySlug,
+            'subcategory_id' => $subcategoryId,
             'checkout_url' => $checkoutUrl,
             'transaction_id' => $post_data['tran_id'],
-            'amount' => $post_data['total_amount'],
-            'currency' => $post_data['currency'],
+            'amount' => $totalAmount,
+            'currency' => $currency,
             'status' => 'Pending',
         ]);
 

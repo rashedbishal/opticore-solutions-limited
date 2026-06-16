@@ -238,7 +238,6 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 });
 
 // SSLCommerz
-Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
 Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
 Route::post('/success', [SslCommerzPaymentController::class, 'success']);
 Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
