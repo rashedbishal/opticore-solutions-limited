@@ -24,10 +24,10 @@ function invoiceVerifyToken(Transaction $transaction): string
     return strtr(Crypt::encryptString((string) $transaction->id), '+/', '-_');
 }
 
-it('automatically generates an order number formatted from the transaction id', function () {
+it('automatically generates an order number in ORD-YYYYMM-XXXXX format', function () {
     $transaction = createProfileTransaction();
 
-    expect($transaction->order_number)->toBe('ORD-'.str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT));
+    expect($transaction->order_number)->toBe('ORD-'.now()->format('Ym').'-00001');
 });
 
 it('does not override an explicitly provided order number', function () {
