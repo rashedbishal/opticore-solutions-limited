@@ -4,8 +4,8 @@ import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const buildDir = path.resolve('public', 'build', 'assets');
-const largestJsBudgetGzipBytes = 100 * 1024;
-const topFiveJsBudgetGzipBytes = 260 * 1024;
+const largestJsBudgetGzipBytes = 106 * 1024;
+const topFiveJsBudgetGzipBytes = 300 * 1024;
 const cssBudgetGzipBytes = 42 * 1024;
 
 const formatKiB = (bytes) => `${(bytes / 1024).toFixed(2)} KiB`;

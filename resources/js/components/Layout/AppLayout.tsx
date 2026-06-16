@@ -2,12 +2,13 @@ import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import SupportWidget from '@/components/chat/SupportWidget';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
-import ChatWidget from '@/components/UI/ChatWidget';
+
+const ChatWidget = lazy(() => import('@/components/UI/ChatWidget'));
+const SupportWidget = lazy(() => import('@/components/chat/SupportWidget'));
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
@@ -54,14 +55,20 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
                 <Footer />
             </div>
-            <ChatWidget
-                isOpen={openWidget === 'ai'}
-                onOpenChange={(open) => setOpenWidget(open ? 'ai' : null)}
-            />
-            <SupportWidget
-                isOpen={openWidget === 'support'}
-                onOpenChange={(open) => setOpenWidget(open ? 'support' : null)}
-            />
+            <Suspense fallback={null}>
+                <ChatWidget
+                    isOpen={openWidget === 'ai'}
+                    onOpenChange={(open) => setOpenWidget(open ? 'ai' : null)}
+                />
+            </Suspense>
+            <Suspense fallback={null}>
+                <SupportWidget
+                    isOpen={openWidget === 'support'}
+                    onOpenChange={(open) =>
+                        setOpenWidget(open ? 'support' : null)
+                    }
+                />
+            </Suspense>
         </SmoothScroll>
     );
 }
