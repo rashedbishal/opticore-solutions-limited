@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Events\UserPresenceUpdated;
 use App\Http\Controllers\Controller;
+use App\Mail\SecurityAlertMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -43,6 +45,16 @@ class LoginController extends Controller
             $user = Auth::user();
             Cache::put("user_chat_online_{$user->id}", true, now()->addMinutes(2));
             broadcast(new UserPresenceUpdated(userId: $user->id, online: true));
+
+            if ($user->notify_security_alerts) {
+                Mail::to($user->email)->queue(new SecurityAlertMail(
+                    recipientName: $user->name,
+                    type: 'login',
+                    ip: $request->ip(),
+                    userAgent: $request->userAgent() ?? 'Unknown',
+                    time: now()->format('d M Y, H:i T'),
+                ));
+            }
 
             return redirect()->intended('/');
         }

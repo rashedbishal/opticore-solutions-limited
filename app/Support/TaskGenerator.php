@@ -2,11 +2,13 @@
 
 namespace App\Support;
 
+use App\Mail\TaskStatusMail;
 use App\Models\Category;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 /**
@@ -35,7 +37,7 @@ class TaskGenerator
             return null;
         }
 
-        return Task::create([
+        $task = Task::create([
             'client_name' => $transaction->name,
             'user_id' => $user->id,
             'category' => $transaction->category,
@@ -45,6 +47,12 @@ class TaskGenerator
             'state' => 'pending',
             'transaction_id' => $transaction->transaction_id,
         ]);
+
+        if ($user->notify_order_updates) {
+            Mail::to($user->email)->queue(new TaskStatusMail($task, $user->name));
+        }
+
+        return $task;
     }
 
     /**

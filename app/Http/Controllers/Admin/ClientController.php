@@ -15,7 +15,8 @@ class ClientController extends Controller
 {
     public function index(): Response
     {
-        $clients = User::where('role', '!=', 'admin')
+        $clients = User::withTrashed()
+            ->where('role', '!=', 'admin')
             ->withCount(['conversations', 'tasks'])
             ->latest()
             ->paginate(10);
@@ -51,7 +52,7 @@ class ClientController extends Controller
             }
             $user->conversations()->delete();
             $user->tasks()->delete();
-            $user->delete();
+            $user->forceDelete();
         });
 
         return back()->with('success', 'Client and all related data deleted successfully.');

@@ -1,5 +1,5 @@
 import type { SharedPageProps } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
@@ -7,7 +7,6 @@ import {
     Bell,
     Briefcase,
     Calendar,
-    Camera,
     CheckCircle,
     ChevronLeft,
     ChevronRight,
@@ -29,8 +28,8 @@ import {
     Trash2,
     User,
 } from 'lucide-react';
-import { useRef, useState } from 'react';
-import { update as profileUpdate } from '@/actions/App/Http/Controllers/ProfileController';
+import { useState } from 'react';
+import { deleteAccount, update as profileUpdate, updatePassword, updatePreferences } from '@/actions/App/Http/Controllers/ProfileController';
 import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
@@ -76,6 +75,9 @@ interface Props {
     tasks: WorkflowTask[];
     orders: Order[];
     pendingOrders: PendingOrder[];
+    notifyOrderUpdates: boolean;
+    notifySecurityAlerts: boolean;
+    isSocialAccount: boolean;
 }
 
 const TASK_STATE_STYLES: Record<
@@ -177,10 +179,10 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
     return (
         <motion.div
             variants={fadeUp}
-            className="neo-panel relative overflow-hidden rounded-2xl p-4"
+            className="neo-panel relative overflow-hidden rounded-xl p-2.5 sm:rounded-2xl sm:p-4"
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-violet-400/15 to-violet-600/15 text-violet-500 shadow-[0_2px_8px_rgba(139,92,246,0.15),inset_0_0_0_1px_rgba(139,92,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] sm:h-10 sm:w-10 sm:rounded-xl dark:shadow-[0_2px_8px_rgba(139,92,246,0.1),inset_0_0_0_1px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
                     {task.image_url ? (
                         <img
                             src={task.image_url}
@@ -188,21 +190,21 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
                             className="h-full w-full object-cover"
                         />
                     ) : (
-                        <Package className="h-5 w-5" />
+                        <Package className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                     )}
                 </div>
 
-                <div className="flex-1 space-y-1">
-                    <div className="text-sm font-bold text-theme">
+                <div className="min-w-0 flex-1">
+                    <div className="truncate text-xs font-bold text-theme sm:text-sm">
                         {task.task_name}
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted capitalize">
-                        <span>
+                    <div className="flex items-center gap-x-2 text-[10px] text-theme-muted capitalize sm:text-xs">
+                        <span className="truncate">
                             {task.category.replace(/-/g, ' ')}
                             {task.sub_category ? ` · ${task.sub_category}` : ''}
                         </span>
                         {formattedDate && (
-                            <span className="flex items-center gap-1 normal-case">
+                            <span className="hidden items-center gap-1 normal-case sm:flex">
                                 <Calendar className="h-3 w-3 text-cyan-500" />
                                 {formattedDate}
                             </span>
@@ -210,14 +212,12 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
                     </div>
                 </div>
 
-                <div className="flex flex-row items-center sm:flex-col sm:items-end">
-                    <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase sm:px-3 sm:py-1 sm:text-[10px] ${stateInfo.className}`}
-                    >
-                        <StateIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        {stateInfo.label}
-                    </span>
-                </div>
+                <span
+                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase sm:px-3 sm:py-1 sm:text-[10px] ${stateInfo.className}`}
+                >
+                    <StateIcon className="hidden h-2.5 w-2.5 sm:block" />
+                    {stateInfo.label}
+                </span>
             </div>
         </motion.div>
     );
@@ -241,53 +241,49 @@ function OrderCard({ order }: { order: Order }) {
     return (
         <motion.div
             variants={fadeUp}
-            className="neo-panel relative overflow-hidden rounded-2xl p-4"
+            className="neo-panel relative overflow-hidden rounded-xl p-2.5 sm:rounded-2xl sm:p-4"
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                    <FileText className="h-5 w-5" />
+            <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-b from-cyan-400/15 to-cyan-600/15 text-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15),inset_0_0_0_1px_rgba(6,182,212,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] sm:h-10 sm:w-10 sm:rounded-xl dark:shadow-[0_2px_8px_rgba(6,182,212,0.1),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                    <FileText className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                 </div>
 
-                <div className="flex-1 space-y-1">
-                    <div className="flex flex-wrap items-baseline gap-x-2">
-                        <div className="text-sm font-bold text-theme capitalize">
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-1.5">
+                        <div className="truncate text-xs font-bold text-theme capitalize sm:text-sm">
                             {serviceName}
                         </div>
-                        <div className="font-mono text-xs text-theme-muted">
+                        <div className="hidden font-mono text-xs text-theme-muted sm:block">
                             {order.order_number}
                         </div>
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted">
-                        <div className="flex items-center gap-1.5">
-                            <CreditCard className="h-3 w-3 text-cyan-500" />
-                            {order.currency}{' '}
-                            {Number(order.amount).toLocaleString()}
-                        </div>
+                    <div className="flex items-center gap-2 text-[10px] text-theme-muted sm:text-xs">
+                        <span className="flex items-center gap-1">
+                            <CreditCard className="h-2.5 w-2.5 text-cyan-500 sm:h-3 sm:w-3" />
+                            {order.currency} {Number(order.amount).toLocaleString()}
+                        </span>
                         {formattedDate && (
-                            <div className="flex items-center gap-1.5">
+                            <span className="hidden items-center gap-1 sm:flex">
                                 <Calendar className="h-3 w-3 text-cyan-500" />
                                 {formattedDate}
-                            </div>
+                            </span>
                         )}
                     </div>
                 </div>
 
-                <div className="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold text-emerald-500 sm:px-3 sm:py-1 sm:text-[10px]">
-                        <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                <div className="flex shrink-0 items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-emerald-500 sm:px-3 sm:py-1 sm:text-[10px]">
+                        <CheckCircle className="hidden h-2.5 w-2.5 sm:block" />
                         Paid
                     </span>
                     {order.invoice_number && (
                         <a
-                            href={ordersRoutes.invoice.url({
-                                transaction: order.id,
-                            })}
+                            href={ordersRoutes.invoice.url({ transaction: order.id })}
                             download={`Invoice-${order.invoice_number}.pdf`}
-                            className="neo-btn-ghost flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 dark:text-zinc-300"
+                            className="neo-btn-ghost flex h-6 w-fit items-center rounded-lg px-1.5 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 sm:h-7 sm:px-2 dark:text-zinc-300"
                         >
-                            <Download className="mr-1.5 h-3 w-3 text-cyan-500" />
-                            Download Invoice
+                            <Download className="h-3 w-3 text-cyan-500 sm:mr-1.5" />
+                            <span className="hidden sm:inline">Download Invoice</span>
                         </a>
                     )}
                 </div>
@@ -309,47 +305,47 @@ function PendingOrderCard({ order }: { order: PendingOrder }) {
         <Link href={order.checkout_url} className="block">
             <motion.div
                 variants={fadeUp}
-                className="neo-panel group relative cursor-pointer overflow-hidden rounded-2xl p-4"
+                className="neo-panel group relative cursor-pointer overflow-hidden rounded-xl p-2.5 sm:rounded-2xl sm:p-4"
             >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-amber-400/15 to-amber-600/15 text-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.15),inset_0_0_0_1px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[0_2px_8px_rgba(245,158,11,0.1),inset_0_0_0_1px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                        <Clock className="h-5 w-5" />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-b from-amber-400/15 to-amber-600/15 text-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.15),inset_0_0_0_1px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] sm:h-10 sm:w-10 sm:rounded-xl dark:shadow-[0_2px_8px_rgba(245,158,11,0.1),inset_0_0_0_1px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)]">
+                        <Clock className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                     </div>
 
-                    <div className="flex-1 space-y-1">
-                        <div className="flex flex-wrap items-baseline gap-x-2">
-                            <div className="text-sm font-bold text-theme capitalize">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline gap-1.5">
+                            <div className="truncate text-xs font-bold text-theme capitalize sm:text-sm">
                                 {order.service}
                             </div>
-                            <div className="text-xs text-theme-muted">
+                            <div className="shrink-0 text-[10px] text-theme-muted sm:text-xs">
                                 {order.plan}
                             </div>
                         </div>
-
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-muted">
-                            <div className="flex items-center gap-1.5">
-                                <CreditCard className="h-3 w-3 text-amber-500" />
-                                {order.currency}{' '}
-                                {Number(order.amount).toLocaleString()}
-                            </div>
+                        <div className="flex items-center gap-2 text-[10px] text-theme-muted sm:text-xs">
+                            <span className="flex items-center gap-1">
+                                <CreditCard className="h-2.5 w-2.5 text-amber-500 sm:h-3 sm:w-3" />
+                                {order.currency} {Number(order.amount).toLocaleString()}
+                            </span>
                             {formattedDate && (
-                                <div className="flex items-center gap-1.5">
+                                <span className="hidden items-center gap-1 sm:flex">
                                     <Calendar className="h-3 w-3 text-amber-500" />
                                     {formattedDate}
-                                </div>
+                                </span>
                             )}
                         </div>
                     </div>
 
-                    <div className="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[9px] font-bold text-amber-500 sm:px-3 sm:py-1 sm:text-[10px]">
-                            <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                            Awaiting Payment
+                    <div className="flex shrink-0 items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold text-amber-500 sm:px-3 sm:py-1 sm:text-[10px]">
+                            <Clock className="hidden h-2.5 w-2.5 sm:block" />
+                            <span className="sm:hidden">Pending</span>
+                            <span className="hidden sm:inline">Awaiting Payment</span>
                         </span>
-                        <span className="neo-btn-ghost flex h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all group-hover:scale-105 dark:text-zinc-300">
+                        <span className="neo-btn-ghost hidden h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all group-hover:scale-105 sm:flex dark:text-zinc-300">
                             Proceed to Checkout
                             <ArrowRight className="ml-1.5 h-3 w-3 text-amber-500" />
                         </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-amber-500 sm:hidden" />
                     </div>
                 </div>
             </motion.div>
@@ -364,21 +360,33 @@ export default function Profile() {
         tasks = [],
         orders = [],
         pendingOrders = [],
+        notifyOrderUpdates = true,
+        notifySecurityAlerts = true,
+        isSocialAccount = false,
     } = usePage<SharedPageProps & Props>().props;
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialTab = searchParams.get('tab') ?? 'overview';
 
-    const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
     const [promoEmails, setPromoEmails] = useState(true);
-    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [orderUpdates, setOrderUpdates] = useState(notifyOrderUpdates);
+    const [securityAlerts, setSecurityAlerts] = useState(notifySecurityAlerts);
     const [paymentModalOpen, setPaymentModalOpen] = useState(
         !!flash?.payment_success,
     );
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    const {
+        data: deleteData,
+        setData: setDeleteData,
+        delete: deleteSubmit,
+        processing: deleteProcessing,
+        errors: deleteErrors,
+        reset: deleteReset,
+    } = useForm({ password: '' });
     const [taskPage, setTaskPage] = useState(1);
     const [orderPage, setOrderPage] = useState(1);
     const [pendingOrderPage, setPendingOrderPage] = useState(1);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const echoReady = useEchoReady();
 
     const taskTotalPages = Math.max(
@@ -421,17 +429,19 @@ export default function Profile() {
         country: (auth.user?.country as string) ?? '',
     });
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => setPreviewImage(reader.result as string);
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const triggerFileInput = () => fileInputRef.current?.click();
+    const {
+        data: pwData,
+        setData: setPwData,
+        put: pwPut,
+        processing: pwProcessing,
+        wasSuccessful: pwWasSuccessful,
+        errors: pwErrors,
+        reset: pwReset,
+    } = useForm({
+        current_password: '',
+        password: '',
+        password_confirmation: '',
+    });
 
     return (
         <>
@@ -520,11 +530,8 @@ export default function Profile() {
 
                         <Tabs defaultValue={initialTab} className="w-full">
                             <div className="relative">
-                                {/* Scroll Indicators: Stronger "Peek" effect */}
-                                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background via-background/60 to-transparent sm:hidden" />
-                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background via-background/60 to-transparent sm:hidden" />
-
-                                <TabsList className="neo-tab-list mb-8 gap-4 overflow-x-auto overflow-y-hidden sm:gap-6">
+                                <div className="mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                                <TabsList variant="line" className="h-auto w-full gap-1 py-3">
                                     {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                     {(
                                         [
@@ -558,13 +565,14 @@ export default function Profile() {
                                         <TabsTrigger
                                             key={value}
                                             value={value}
-                                            className="neo-tab-item flex items-center gap-2 px-4 py-2.5 text-xs transition-all duration-300 hover:scale-[1.02] sm:px-6 sm:py-3 sm:text-sm"
+                                            className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent after:!hidden sm:px-5 sm:py-2.5 sm:text-sm"
                                         >
-                                            <Icon className="drop-icon-sm h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                            {label}
+                                            <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
+                                            <span>{value === 'settings' ? <><span className="sm:hidden">Settings</span><span className="hidden sm:inline">{label}</span></> : label}</span>
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>
+                                </div>
                             </div>
 
                             {/* Overview Tab */}
@@ -575,19 +583,11 @@ export default function Profile() {
                                 {/* L1 — Profile Overview Card */}
                                 <motion.div
                                     variants={fadeUp}
-                                    className="neo-panel flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center sm:p-8"
+                                    className="neo-panel flex flex-col items-start gap-3 p-4 sm:flex-row sm:items-center sm:gap-6 sm:p-8"
                                 >
                                     {/* L2 — Avatar: elevated atop the card */}
-                                    <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
-                                        {previewImage ? (
-                                            <img
-                                                src={previewImage}
-                                                alt="Profile Preview"
-                                                className="h-full w-full object-cover"
-                                            />
-                                        ) : (
-                                            <User className="drop-icon-sm h-10 w-10" />
-                                        )}
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-cyan-400/20 to-cyan-600/20 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.18),inset_0_0_0_1px_rgba(6,182,212,0.25),inset_0_1px_2px_rgba(255,255,255,0.5)] sm:h-20 sm:w-20 sm:rounded-3xl dark:shadow-[0_4px_12px_rgba(6,182,212,0.12),inset_0_0_0_1px_rgba(6,182,212,0.3),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+                                        <User className="drop-icon-sm h-7 w-7 sm:h-10 sm:w-10" />
                                     </div>
 
                                     <div className="w-full flex-1">
@@ -601,7 +601,7 @@ export default function Profile() {
                                             <Mail className="h-4 w-4 shrink-0" />
                                             {auth.user?.email}
                                         </div>
-                                        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                                        <div className="mt-2 flex flex-row flex-wrap gap-2 sm:mt-4 sm:gap-3">
                                             <span className="w-fit rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[9px] font-bold tracking-widest text-cyan-500 uppercase sm:text-[10px]">
                                                 Verified Client
                                             </span>
@@ -731,7 +731,7 @@ export default function Profile() {
                                             variants={stagger}
                                             initial="hidden"
                                             animate="visible"
-                                            className="space-y-4"
+                                            className="space-y-3"
                                         >
                                             {paginatedPendingOrders.map(
                                                 (order) => (
@@ -839,47 +839,6 @@ export default function Profile() {
                                             Profile updated successfully.
                                         </div>
                                     )}
-
-                                    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleFileChange}
-                                            accept="image/*"
-                                            className="hidden"
-                                        />
-                                        <div
-                                            onClick={triggerFileInput}
-                                            className="group relative flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-gradient-to-b from-white to-slate-50 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.9)] dark:border-zinc-600 dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.12)]"
-                                        >
-                                            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                                                <Camera className="h-6 w-6 text-white" />
-                                            </div>
-                                            {previewImage ? (
-                                                <img
-                                                    src={previewImage}
-                                                    alt="Preview"
-                                                    className="h-full w-full object-cover"
-                                                />
-                                            ) : (
-                                                <User className="h-10 w-10 text-theme-muted" />
-                                            )}
-                                        </div>
-                                        <div className="text-center sm:text-left">
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={triggerFileInput}
-                                                className="neo-btn-ghost rounded-xl text-zinc-600 transition-all hover:scale-[1.02] dark:text-zinc-300"
-                                            >
-                                                Upload Avatar
-                                            </Button>
-                                            <p className="mt-2 text-xs text-theme-muted">
-                                                JPG, GIF or PNG. Max size of
-                                                800K
-                                            </p>
-                                        </div>
-                                    </div>
 
                                     <div className="grid gap-6 sm:grid-cols-2">
                                         <div className="space-y-2">
@@ -1024,7 +983,13 @@ export default function Profile() {
                                     {/* L1 — Change Password card */}
                                     <motion.form
                                         variants={fadeUp}
-                                        onSubmit={(e) => e.preventDefault()}
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            pwPut(updatePassword.url(), {
+                                                preserveScroll: true,
+                                                onSuccess: () => pwReset(),
+                                            });
+                                        }}
                                         className="neo-panel space-y-8 p-6 sm:p-8"
                                     >
                                         <div>
@@ -1038,6 +1003,13 @@ export default function Profile() {
                                             </p>
                                         </div>
 
+                                        {pwWasSuccessful && (
+                                            <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-500">
+                                                <CheckCircle className="h-4 w-4 shrink-0" />
+                                                Password updated successfully.
+                                            </div>
+                                        )}
+
                                         <div className="max-w-md space-y-6">
                                             <div className="space-y-2">
                                                 <Label
@@ -1049,8 +1021,13 @@ export default function Profile() {
                                                 <Input
                                                     id="current_password"
                                                     type="password"
+                                                    value={pwData.current_password}
+                                                    onChange={(e) => setPwData('current_password', e.target.value)}
                                                     className="neo-field rounded-xl"
                                                 />
+                                                {pwErrors.current_password && (
+                                                    <p className="text-xs text-red-500">{pwErrors.current_password}</p>
+                                                )}
                                             </div>
                                             <div className="space-y-2">
                                                 <Label
@@ -1062,8 +1039,13 @@ export default function Profile() {
                                                 <Input
                                                     id="new_password"
                                                     type="password"
+                                                    value={pwData.password}
+                                                    onChange={(e) => setPwData('password', e.target.value)}
                                                     className="neo-field rounded-xl"
                                                 />
+                                                {pwErrors.password && (
+                                                    <p className="text-xs text-red-500">{pwErrors.password}</p>
+                                                )}
                                             </div>
                                             <div className="space-y-2">
                                                 <Label
@@ -1075,70 +1057,34 @@ export default function Profile() {
                                                 <Input
                                                     id="confirm_password"
                                                     type="password"
+                                                    value={pwData.password_confirmation}
+                                                    onChange={(e) => setPwData('password_confirmation', e.target.value)}
                                                     className="neo-field rounded-xl"
                                                 />
+                                                {pwErrors.password_confirmation && (
+                                                    <p className="text-xs text-red-500">{pwErrors.password_confirmation}</p>
+                                                )}
                                             </div>
                                         </div>
 
                                         <div className="flex justify-start border-t border-slate-200 pt-4 dark:border-zinc-700">
                                             <Button
                                                 type="submit"
-                                                disabled={false}
+                                                disabled={pwProcessing}
                                                 className="neo-btn-primary min-w-[160px] rounded-xl transition-all hover:scale-[1.02]"
                                             >
-                                                Update Password
+                                                {pwProcessing ? (
+                                                    <span className="flex items-center gap-2">
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                        Updating…
+                                                    </span>
+                                                ) : (
+                                                    'Update Password'
+                                                )}
                                             </Button>
                                         </div>
                                     </motion.form>
 
-                                    {/* L1 — 2FA card */}
-                                    <motion.div
-                                        variants={fadeUp}
-                                        className="neo-panel space-y-6 p-6 sm:p-8"
-                                    >
-                                        <div>
-                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
-                                                Two-Factor Authentication
-                                            </h2>
-                                            <p className="text-sm text-theme-muted">
-                                                Add additional security to your
-                                                account using two-factor
-                                                authentication.
-                                            </p>
-                                        </div>
-
-                                        {/* L2 — Toggle row: inner card */}
-                                        <div className="neo-row flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-                                            <div>
-                                                <div className="font-bold text-theme">
-                                                    Secure your account
-                                                </div>
-                                                <div className="mt-1 text-sm text-theme-muted">
-                                                    Two-factor authentication is
-                                                    currently{' '}
-                                                    {twoFactorEnabled
-                                                        ? 'enabled'
-                                                        : 'disabled'}
-                                                    .
-                                                </div>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setTwoFactorEnabled(
-                                                        !twoFactorEnabled,
-                                                    )
-                                                }
-                                                className={`w-fit transition-colors ${twoFactorEnabled ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted hover:text-theme'}`}
-                                            >
-                                                {twoFactorEnabled ? (
-                                                    <ToggleRight className="h-10 w-10" />
-                                                ) : (
-                                                    <ToggleLeft className="h-10 w-10" />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </motion.div>
                                 </motion.div>
                             </TabsContent>
 
@@ -1174,11 +1120,28 @@ export default function Profile() {
                                                         Order Updates
                                                     </div>
                                                     <div className="mt-0.5 text-xs text-theme-muted">
-                                                        Receive emails about
-                                                        your order status.
+                                                        Receive emails when your order status changes.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="drop-icon-emerald h-8 w-8 cursor-not-allowed text-emerald-500" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const next = !orderUpdates;
+                                                        setOrderUpdates(next);
+                                                        router.patch(
+                                                            updatePreferences.url(),
+                                                            { notify_order_updates: next },
+                                                            { preserveScroll: true },
+                                                        );
+                                                    }}
+                                                    className={`transition-colors ${orderUpdates ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
+                                                >
+                                                    {orderUpdates ? (
+                                                        <ToggleRight className="h-8 w-8" />
+                                                    ) : (
+                                                        <ToggleLeft className="h-8 w-8" />
+                                                    )}
+                                                </button>
                                             </div>
 
                                             <div className="neo-row flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -1219,7 +1182,25 @@ export default function Profile() {
                                                         changes.
                                                     </div>
                                                 </div>
-                                                <ToggleRight className="drop-icon-emerald h-8 w-8 cursor-not-allowed text-emerald-500" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const next = !securityAlerts;
+                                                        setSecurityAlerts(next);
+                                                        router.patch(
+                                                            updatePreferences.url(),
+                                                            { notify_security_alerts: next },
+                                                            { preserveScroll: true },
+                                                        );
+                                                    }}
+                                                    className={`transition-colors ${securityAlerts ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
+                                                >
+                                                    {securityAlerts ? (
+                                                        <ToggleRight className="h-8 w-8" />
+                                                    ) : (
+                                                        <ToggleLeft className="h-8 w-8" />
+                                                    )}
+                                                </button>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -1237,16 +1218,16 @@ export default function Profile() {
                                                 Danger Zone
                                             </h2>
                                             <p className="mt-2 mb-6 max-w-xl text-sm text-red-500/70">
-                                                Permanently delete your account
-                                                and all of your data. This
-                                                action cannot be undone. All
-                                                your current active orders will
-                                                be cancelled.
+                                                Deactivate your account and
+                                                disable login access. Your
+                                                orders and data remain intact.
+                                                You can sign up again with the
+                                                same email to restore access.
                                             </p>
-                                            {/* L2 — Destructive button: 3D red */}
                                             <Button
                                                 type="button"
                                                 variant="destructive"
+                                                onClick={() => setDeleteModalOpen(true)}
                                                 className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-500/8 to-red-500/15 text-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.1),inset_0_0_0_1px_rgba(239,68,68,0.2),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all hover:scale-[1.02] hover:border-red-500 hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-[0_6px_16px_rgba(239,68,68,0.4),inset_0_0_0_1px_rgba(239,68,68,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]"
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />{' '}
@@ -1254,6 +1235,101 @@ export default function Profile() {
                                             </Button>
                                         </div>
                                     </motion.div>
+
+                                    {/* Delete account confirmation modal */}
+                                    <Modal
+                                        open={deleteModalOpen}
+                                        title="Delete Account"
+                                        onClose={() => {
+                                            if (!deleteProcessing) {
+                                                setDeleteModalOpen(false);
+                                                deleteReset();
+                                            }
+                                        }}
+                                    >
+                                        <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                deleteSubmit(deleteAccount.url(), {
+                                                    onSuccess: () => {
+                                                        setDeleteModalOpen(false);
+                                                        deleteReset();
+                                                    },
+                                                });
+                                            }}
+                                            className="space-y-6"
+                                        >
+                                            {/* Warning notice */}
+                                            <div className="flex items-start gap-3 rounded-2xl border border-red-500/20 bg-red-500/5 p-4">
+                                                <Trash2 className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+                                                <p className="text-sm leading-relaxed text-red-500/80">
+                                                    {isSocialAccount
+                                                        ? 'Your account will be deactivated and you will be signed out immediately. All your orders and data remain intact. You can sign in again with Google or Facebook to restore full access.'
+                                                        : 'Your account will be deactivated and you will be signed out immediately. All your orders and data remain intact. You can sign up again with the same email and password to restore full access.'}
+                                                </p>
+                                            </div>
+
+                                            {/* Password confirmation — only for non-social accounts */}
+                                            {!isSocialAccount && (
+                                                <div className="space-y-2">
+                                                    <Label
+                                                        htmlFor="delete_password"
+                                                        className="text-theme"
+                                                    >
+                                                        Confirm your password to continue
+                                                    </Label>
+                                                    <Input
+                                                        id="delete_password"
+                                                        type="password"
+                                                        autoComplete="current-password"
+                                                        placeholder="Enter your current password"
+                                                        value={deleteData.password}
+                                                        onChange={(e) =>
+                                                            setDeleteData('password', e.target.value)
+                                                        }
+                                                        className="neo-field rounded-xl"
+                                                    />
+                                                    {deleteErrors.password && (
+                                                        <p className="text-xs text-red-500">
+                                                            {deleteErrors.password}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    disabled={deleteProcessing}
+                                                    onClick={() => {
+                                                        setDeleteModalOpen(false);
+                                                        deleteReset();
+                                                    }}
+                                                    className="rounded-xl"
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    type="submit"
+                                                    disabled={deleteProcessing || (!isSocialAccount && !deleteData.password)}
+                                                    className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-500 to-red-600 text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] disabled:pointer-events-none disabled:opacity-50"
+                                                >
+                                                    {deleteProcessing ? (
+                                                        <span className="flex items-center gap-2">
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                            Deleting…
+                                                        </span>
+                                                    ) : (
+                                                        <span className="flex items-center gap-2">
+                                                            <Trash2 className="h-4 w-4" />
+                                                            Yes, Delete My Account
+                                                        </span>
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    </Modal>
                                 </motion.div>
                             </TabsContent>
                             <div className="mb-24 sm:mb-0" />

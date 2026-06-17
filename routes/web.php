@@ -131,6 +131,9 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         // Profile
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+        Route::patch('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences');
+        Route::delete('/profile', [ProfileController::class, 'deleteAccount'])->name('profile.delete');
         Route::get('/orders/{transaction}/invoice', [ProfileController::class, 'downloadInvoice'])->name('orders.invoice');
         Route::get('/orders/invoice/verify/{token}', [ProfileController::class, 'verifyInvoice'])->name('orders.invoice.verify');
 
@@ -203,7 +206,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class);
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
-    Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy');
+    Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy')->withTrashed();
     Route::resource('tasks', TaskController::class);
 
     // Customer Support Chat Routes

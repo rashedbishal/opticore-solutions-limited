@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Events\MessageSent;
 use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
+use App\Mail\TaskStatusMail;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\PortfolioSubCategory;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -108,6 +110,8 @@ class TaskController extends Controller
 
         $task = Task::create($validated);
 
+        $this->sendTaskStatusEmail($task->fresh()->load('user'));
+
         if ($validated['state'] === 'delivered') {
             $this->sendDeliveryMessage($task);
         }
@@ -178,12 +182,22 @@ class TaskController extends Controller
 
         unset($validated['image'], $validated['remove_image'], $validated['password']);
 
+        $previousState = $task->state;
+
         $task->update($validated);
 
-        TaskUpdated::dispatch($task->fresh());
+        $freshTask = $task->fresh()->load(['user', 'subCategory']);
+
+        TaskUpdated::dispatch($freshTask);
+
+        $stateChanged = isset($validated['state']) && $validated['state'] !== $previousState;
+
+        if ($stateChanged) {
+            $this->sendTaskStatusEmail($freshTask);
+        }
 
         if ($becomingDelivered) {
-            $this->sendDeliveryMessage($task->fresh()->load(['user', 'subCategory']));
+            $this->sendDeliveryMessage($freshTask);
         }
 
         return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
@@ -208,6 +222,17 @@ class TaskController extends Controller
         $task->delete();
 
         return back()->with('success', 'Task deleted successfully.');
+    }
+
+    private function sendTaskStatusEmail(Task $task): void
+    {
+        $user = $task->user ?? User::find($task->user_id);
+
+        if (! $user || ! $user->notify_order_updates) {
+            return;
+        }
+
+        Mail::to($user->email)->queue(new TaskStatusMail($task, $user->name));
     }
 
     private function sendDeliveryMessage(Task $task): void

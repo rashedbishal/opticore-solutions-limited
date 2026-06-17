@@ -8,7 +8,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -24,10 +26,33 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => [
+                'required', 'string', 'lowercase', 'email', 'max:255',
+                Rule::unique('users')->whereNull('deleted_at'),
+            ],
             'phone_number' => ['nullable', 'string', 'max:20', 'regex:/^\+[1-9]\d{1,14}$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $deleted = User::withTrashed()
+            ->where('email', $request->email)
+            ->whereNotNull('deleted_at')
+            ->first();
+
+        if ($deleted) {
+            $deleted->restore();
+            $deleted->update([
+                'name' => $request->name,
+                'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
+            ]);
+
+            Auth::login($deleted);
+
+            return $deleted->email_verified_at
+                ? redirect()->intended('/')
+                : redirect()->route('verification.notice');
+        }
 
         $user = User::create([
             'name' => $request->name,

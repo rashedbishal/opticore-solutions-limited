@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserPresenceUpdated;
+use App\Mail\SecurityAlertMail;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Support\InvoicePdfBuilder;
@@ -9,7 +11,12 @@ use App\Support\PendingOrderResolver;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\LaravelPdf\PdfBuilder;
@@ -51,6 +58,9 @@ class ProfileController extends Controller
                     'date' => $transaction->created_at?->format('Y-m-d'),
                 ]),
             'pendingOrders' => PendingOrderResolver::forUser($user),
+            'notifyOrderUpdates' => (bool) $user->notify_order_updates,
+            'notifySecurityAlerts' => (bool) $user->notify_security_alerts,
+            'isSocialAccount' => (bool) ($user->google_id || $user->facebook_id),
         ]);
     }
 
@@ -66,6 +76,65 @@ class ProfileController extends Controller
         $request->user()->update($validated);
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = $request->user();
+
+        $user->update(['password' => Hash::make($request->password)]);
+
+        if ($user->notify_security_alerts) {
+            Mail::to($user->email)->queue(new SecurityAlertMail(
+                recipientName: $user->name,
+                type: 'password_change',
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? 'Unknown',
+                time: now()->format('d M Y, H:i T'),
+            ));
+        }
+
+        return back()->with('password_updated', true);
+    }
+
+    public function updatePreferences(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'notify_order_updates' => ['sometimes', 'boolean'],
+            'notify_security_alerts' => ['sometimes', 'boolean'],
+        ]);
+
+        $request->user()->update($validated);
+
+        return back();
+    }
+
+    public function deleteAccount(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $isSocialAccount = (bool) ($user->google_id || $user->facebook_id);
+
+        if (! $isSocialAccount) {
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ]);
+        }
+
+        Cache::forget("user_chat_online_{$user->id}");
+        broadcast(new UserPresenceUpdated(userId: $user->id, online: false));
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $user->delete();
+
+        return redirect('/');
     }
 
     public function downloadInvoice(Request $request, Transaction $transaction): PdfBuilder

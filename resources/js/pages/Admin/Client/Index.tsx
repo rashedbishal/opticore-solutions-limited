@@ -11,6 +11,7 @@ import {
     MessageSquare,
     Phone,
     Trash2,
+    UserX,
     Workflow,
     X,
 } from 'lucide-react';
@@ -27,6 +28,7 @@ interface ClientRecord {
     role: string;
     created_at: string;
     email_verified_at: string | null;
+    deleted_at: string | null;
     conversations_count: number;
     tasks_count: number;
 }
@@ -192,7 +194,7 @@ export default function ClientIndex({ clients }: Props) {
                             clients.data.map((client) => (
                                 <tr
                                     key={client.id}
-                                    className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
+                                    className={`border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5 ${client.deleted_at ? 'opacity-60' : ''}`}
                                 >
                                     {/* Client */}
                                     <td className="px-6 py-4">
@@ -267,17 +269,27 @@ export default function ClientIndex({ clients }: Props) {
 
                                     {/* Status */}
                                     <td className="hidden px-6 py-4 sm:table-cell">
-                                        {client.email_verified_at ? (
-                                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
-                                                <CheckCircle className="h-3 w-3" />
-                                                Verified
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400">
-                                                <Clock className="h-3 w-3" />
-                                                Unverified
-                                            </span>
-                                        )}
+                                        <div className="flex flex-col gap-1.5">
+                                            {client.deleted_at && (
+                                                <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400">
+                                                    <UserX className="h-3 w-3" />
+                                                    Deleted
+                                                </span>
+                                            )}
+                                            {!client.deleted_at && (
+                                                client.email_verified_at ? (
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+                                                        <CheckCircle className="h-3 w-3" />
+                                                        Verified
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400">
+                                                        <Clock className="h-3 w-3" />
+                                                        Unverified
+                                                    </span>
+                                                )
+                                            )}
+                                        </div>
                                     </td>
 
                                     {/* Joined */}

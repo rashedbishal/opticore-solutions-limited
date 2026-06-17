@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SecurityAlertMail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -32,7 +35,7 @@ class SocialController extends Controller
         return Socialite::driver($provider)->redirect();
     }
 
-    public function callback(string $provider): RedirectResponse
+    public function callback(Request $request, string $provider): RedirectResponse
     {
         if (! in_array($provider, $this->supportedProviders(), true)) {
             throw new NotFoundHttpException;
@@ -54,15 +57,24 @@ class SocialController extends Controller
             return redirect()->route('login')->withErrors(['social' => $message]);
         }
 
-        $user = User::where($provider.'_id', $socialUser->getId())
+        $user = User::withTrashed()
+            ->where($provider.'_id', $socialUser->getId())
             ->orWhere('email', $socialUser->getEmail())
             ->first();
 
         if ($user) {
+            if ($user->trashed()) {
+                $user->restore();
+            }
+
             $user->update([
                 $provider.'_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
             ]);
+
+            if (! $user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
         } else {
             $user = User::create([
                 'name' => $socialUser->getName(),
@@ -70,11 +82,22 @@ class SocialController extends Controller
                 'password' => Hash::make(Str::random(24)),
                 $provider.'_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
-                'email_verified_at' => now(), // Social accounts are usually verified
             ]);
+
+            $user->markEmailAsVerified();
         }
 
         Auth::login($user);
+
+        if ($user->notify_security_alerts) {
+            Mail::to($user->email)->queue(new SecurityAlertMail(
+                recipientName: $user->name,
+                type: 'login',
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? 'Unknown',
+                time: now()->format('d M Y, H:i T'),
+            ));
+        }
 
         return redirect()->intended('/');
     }
