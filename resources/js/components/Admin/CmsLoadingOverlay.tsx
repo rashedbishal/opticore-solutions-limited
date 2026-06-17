@@ -9,6 +9,11 @@ const ACCESSING_PREFIX = 'Accessing ';
 const FALLBACK_SECTION = 'Module';
 const SIGN_OUT_LABEL = 'Signing Out';
 const LOGOUT_PATH = adminRoutes.logout.url();
+
+const POST_LABEL_OVERRIDES: Record<string, string> = {
+    '/admin/subscriptions/offer-email': 'Sending Broadcasting Email',
+    '/admin/subscriptions/custom-email': 'Sending Email',
+};
 const LOGO_SRC = '/images/logo/OSL-Logo.png';
 
 const CORNER_BRACKETS = [
@@ -38,6 +43,7 @@ const CMS_NAV_SECTIONS: { name: string; href: string }[] = [
     { name: 'Testimonials', href: '/admin/testimonials' },
     { name: 'Orders', href: '/admin/orders' },
     { name: 'Transactions', href: '/admin/transactions' },
+    { name: 'Subscriptions', href: '/admin/subscriptions' },
 ];
 
 function resolveSectionLabel(pathname: string): string {
@@ -185,7 +191,9 @@ export default function CmsLoadingOverlay({
             setLabel(
                 method === 'post' && url.pathname === LOGOUT_PATH
                     ? SIGN_OUT_LABEL
-                    : ACCESSING_PREFIX + resolveSectionLabel(url.pathname),
+                    : method === 'post' && POST_LABEL_OVERRIDES[url.pathname]
+                      ? POST_LABEL_OVERRIDES[url.pathname]
+                      : ACCESSING_PREFIX + resolveSectionLabel(url.pathname),
             );
 
             showTimer = setTimeout(() => setVisible(true), SHOW_DELAY_MS);

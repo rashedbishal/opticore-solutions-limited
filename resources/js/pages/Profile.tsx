@@ -29,7 +29,12 @@ import {
     User,
 } from 'lucide-react';
 import { useState } from 'react';
-import { deleteAccount, update as profileUpdate, updatePassword, updatePreferences } from '@/actions/App/Http/Controllers/ProfileController';
+import {
+    deleteAccount,
+    update as profileUpdate,
+    updatePassword,
+    updatePreferences,
+} from '@/actions/App/Http/Controllers/ProfileController';
 import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
@@ -260,7 +265,8 @@ function OrderCard({ order }: { order: Order }) {
                     <div className="flex items-center gap-2 text-[10px] text-theme-muted sm:text-xs">
                         <span className="flex items-center gap-1">
                             <CreditCard className="h-2.5 w-2.5 text-cyan-500 sm:h-3 sm:w-3" />
-                            {order.currency} {Number(order.amount).toLocaleString()}
+                            {order.currency}{' '}
+                            {Number(order.amount).toLocaleString()}
                         </span>
                         {formattedDate && (
                             <span className="hidden items-center gap-1 sm:flex">
@@ -278,12 +284,16 @@ function OrderCard({ order }: { order: Order }) {
                     </span>
                     {order.invoice_number && (
                         <a
-                            href={ordersRoutes.invoice.url({ transaction: order.id })}
+                            href={ordersRoutes.invoice.url({
+                                transaction: order.id,
+                            })}
                             download={`Invoice-${order.invoice_number}.pdf`}
                             className="neo-btn-ghost flex h-6 w-fit items-center rounded-lg px-1.5 text-[9px] font-bold text-zinc-600 transition-all hover:scale-105 sm:h-7 sm:px-2 dark:text-zinc-300"
                         >
                             <Download className="h-3 w-3 text-cyan-500 sm:mr-1.5" />
-                            <span className="hidden sm:inline">Download Invoice</span>
+                            <span className="hidden sm:inline">
+                                Download Invoice
+                            </span>
                         </a>
                     )}
                 </div>
@@ -324,7 +334,8 @@ function PendingOrderCard({ order }: { order: PendingOrder }) {
                         <div className="flex items-center gap-2 text-[10px] text-theme-muted sm:text-xs">
                             <span className="flex items-center gap-1">
                                 <CreditCard className="h-2.5 w-2.5 text-amber-500 sm:h-3 sm:w-3" />
-                                {order.currency} {Number(order.amount).toLocaleString()}
+                                {order.currency}{' '}
+                                {Number(order.amount).toLocaleString()}
                             </span>
                             {formattedDate && (
                                 <span className="hidden items-center gap-1 sm:flex">
@@ -339,7 +350,9 @@ function PendingOrderCard({ order }: { order: PendingOrder }) {
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold text-amber-500 sm:px-3 sm:py-1 sm:text-[10px]">
                             <Clock className="hidden h-2.5 w-2.5 sm:block" />
                             <span className="sm:hidden">Pending</span>
-                            <span className="hidden sm:inline">Awaiting Payment</span>
+                            <span className="hidden sm:inline">
+                                Awaiting Payment
+                            </span>
                         </span>
                         <span className="neo-btn-ghost hidden h-7 w-fit items-center rounded-lg px-2 text-[9px] font-bold text-zinc-600 transition-all group-hover:scale-105 sm:flex dark:text-zinc-300">
                             Proceed to Checkout
@@ -531,47 +544,66 @@ export default function Profile() {
                         <Tabs defaultValue={initialTab} className="w-full">
                             <div className="relative">
                                 <div className="mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                                <TabsList variant="line" className="h-auto w-full gap-1 py-3">
-                                    {/* L3 — Tab triggers: 3D buttons atop the bar */}
-                                    {(
-                                        [
-                                            {
-                                                value: 'overview',
-                                                icon: User,
-                                                label: 'Overview',
-                                            },
-                                            {
-                                                value: 'orders',
-                                                icon: Receipt,
-                                                label: 'Orders',
-                                            },
-                                            {
-                                                value: 'settings',
-                                                icon: Settings,
-                                                label: 'Account Settings',
-                                            },
-                                            {
-                                                value: 'security',
-                                                icon: Shield,
-                                                label: 'Security',
-                                            },
-                                            {
-                                                value: 'preferences',
-                                                icon: Bell,
-                                                label: 'Preferences',
-                                            },
-                                        ] as const
-                                    ).map(({ value, icon: Icon, label }) => (
-                                        <TabsTrigger
-                                            key={value}
-                                            value={value}
-                                            className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent after:!hidden sm:px-5 sm:py-2.5 sm:text-sm"
-                                        >
-                                            <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
-                                            <span>{value === 'settings' ? <><span className="sm:hidden">Settings</span><span className="hidden sm:inline">{label}</span></> : label}</span>
-                                        </TabsTrigger>
-                                    ))}
-                                </TabsList>
+                                    <TabsList
+                                        variant="line"
+                                        className="h-auto w-full gap-1 py-3"
+                                    >
+                                        {/* L3 — Tab triggers: 3D buttons atop the bar */}
+                                        {(
+                                            [
+                                                {
+                                                    value: 'overview',
+                                                    icon: User,
+                                                    label: 'Overview',
+                                                },
+                                                {
+                                                    value: 'orders',
+                                                    icon: Receipt,
+                                                    label: 'Orders',
+                                                },
+                                                {
+                                                    value: 'settings',
+                                                    icon: Settings,
+                                                    label: 'Account Settings',
+                                                },
+                                                {
+                                                    value: 'security',
+                                                    icon: Shield,
+                                                    label: 'Security',
+                                                },
+                                                {
+                                                    value: 'preferences',
+                                                    icon: Bell,
+                                                    label: 'Preferences',
+                                                },
+                                            ] as const
+                                        ).map(
+                                            ({ value, icon: Icon, label }) => (
+                                                <TabsTrigger
+                                                    key={value}
+                                                    value={value}
+                                                    className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 after:!hidden hover:text-zinc-800 sm:px-5 sm:py-2.5 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent"
+                                                >
+                                                    <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
+                                                    <span>
+                                                        {value ===
+                                                        'settings' ? (
+                                                            <>
+                                                                <span className="sm:hidden">
+                                                                    Settings
+                                                                </span>
+                                                                <span className="hidden sm:inline">
+                                                                    {label}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            label
+                                                        )}
+                                                    </span>
+                                                </TabsTrigger>
+                                            ),
+                                        )}
+                                    </TabsList>
                                 </div>
                             </div>
 
@@ -1021,12 +1053,23 @@ export default function Profile() {
                                                 <Input
                                                     id="current_password"
                                                     type="password"
-                                                    value={pwData.current_password}
-                                                    onChange={(e) => setPwData('current_password', e.target.value)}
+                                                    value={
+                                                        pwData.current_password
+                                                    }
+                                                    onChange={(e) =>
+                                                        setPwData(
+                                                            'current_password',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     className="neo-field rounded-xl"
                                                 />
                                                 {pwErrors.current_password && (
-                                                    <p className="text-xs text-red-500">{pwErrors.current_password}</p>
+                                                    <p className="text-xs text-red-500">
+                                                        {
+                                                            pwErrors.current_password
+                                                        }
+                                                    </p>
                                                 )}
                                             </div>
                                             <div className="space-y-2">
@@ -1040,11 +1083,18 @@ export default function Profile() {
                                                     id="new_password"
                                                     type="password"
                                                     value={pwData.password}
-                                                    onChange={(e) => setPwData('password', e.target.value)}
+                                                    onChange={(e) =>
+                                                        setPwData(
+                                                            'password',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     className="neo-field rounded-xl"
                                                 />
                                                 {pwErrors.password && (
-                                                    <p className="text-xs text-red-500">{pwErrors.password}</p>
+                                                    <p className="text-xs text-red-500">
+                                                        {pwErrors.password}
+                                                    </p>
                                                 )}
                                             </div>
                                             <div className="space-y-2">
@@ -1057,12 +1107,23 @@ export default function Profile() {
                                                 <Input
                                                     id="confirm_password"
                                                     type="password"
-                                                    value={pwData.password_confirmation}
-                                                    onChange={(e) => setPwData('password_confirmation', e.target.value)}
+                                                    value={
+                                                        pwData.password_confirmation
+                                                    }
+                                                    onChange={(e) =>
+                                                        setPwData(
+                                                            'password_confirmation',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     className="neo-field rounded-xl"
                                                 />
                                                 {pwErrors.password_confirmation && (
-                                                    <p className="text-xs text-red-500">{pwErrors.password_confirmation}</p>
+                                                    <p className="text-xs text-red-500">
+                                                        {
+                                                            pwErrors.password_confirmation
+                                                        }
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
@@ -1084,7 +1145,6 @@ export default function Profile() {
                                             </Button>
                                         </div>
                                     </motion.form>
-
                                 </motion.div>
                             </TabsContent>
 
@@ -1120,18 +1180,25 @@ export default function Profile() {
                                                         Order Updates
                                                     </div>
                                                     <div className="mt-0.5 text-xs text-theme-muted">
-                                                        Receive emails when your order status changes.
+                                                        Receive emails when your
+                                                        order status changes.
                                                     </div>
                                                 </div>
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        const next = !orderUpdates;
+                                                        const next =
+                                                            !orderUpdates;
                                                         setOrderUpdates(next);
                                                         router.patch(
                                                             updatePreferences.url(),
-                                                            { notify_order_updates: next },
-                                                            { preserveScroll: true },
+                                                            {
+                                                                notify_order_updates:
+                                                                    next,
+                                                            },
+                                                            {
+                                                                preserveScroll: true,
+                                                            },
                                                         );
                                                     }}
                                                     className={`transition-colors ${orderUpdates ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
@@ -1185,12 +1252,18 @@ export default function Profile() {
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        const next = !securityAlerts;
+                                                        const next =
+                                                            !securityAlerts;
                                                         setSecurityAlerts(next);
                                                         router.patch(
                                                             updatePreferences.url(),
-                                                            { notify_security_alerts: next },
-                                                            { preserveScroll: true },
+                                                            {
+                                                                notify_security_alerts:
+                                                                    next,
+                                                            },
+                                                            {
+                                                                preserveScroll: true,
+                                                            },
                                                         );
                                                     }}
                                                     className={`transition-colors ${securityAlerts ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
@@ -1227,7 +1300,9 @@ export default function Profile() {
                                             <Button
                                                 type="button"
                                                 variant="destructive"
-                                                onClick={() => setDeleteModalOpen(true)}
+                                                onClick={() =>
+                                                    setDeleteModalOpen(true)
+                                                }
                                                 className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-500/8 to-red-500/15 text-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.1),inset_0_0_0_1px_rgba(239,68,68,0.2),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all hover:scale-[1.02] hover:border-red-500 hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-[0_6px_16px_rgba(239,68,68,0.4),inset_0_0_0_1px_rgba(239,68,68,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]"
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />{' '}
@@ -1250,12 +1325,17 @@ export default function Profile() {
                                         <form
                                             onSubmit={(e) => {
                                                 e.preventDefault();
-                                                deleteSubmit(deleteAccount.url(), {
-                                                    onSuccess: () => {
-                                                        setDeleteModalOpen(false);
-                                                        deleteReset();
+                                                deleteSubmit(
+                                                    deleteAccount.url(),
+                                                    {
+                                                        onSuccess: () => {
+                                                            setDeleteModalOpen(
+                                                                false,
+                                                            );
+                                                            deleteReset();
+                                                        },
                                                     },
-                                                });
+                                                );
                                             }}
                                             className="space-y-6"
                                         >
@@ -1276,22 +1356,30 @@ export default function Profile() {
                                                         htmlFor="delete_password"
                                                         className="text-theme"
                                                     >
-                                                        Confirm your password to continue
+                                                        Confirm your password to
+                                                        continue
                                                     </Label>
                                                     <Input
                                                         id="delete_password"
                                                         type="password"
                                                         autoComplete="current-password"
                                                         placeholder="Enter your current password"
-                                                        value={deleteData.password}
+                                                        value={
+                                                            deleteData.password
+                                                        }
                                                         onChange={(e) =>
-                                                            setDeleteData('password', e.target.value)
+                                                            setDeleteData(
+                                                                'password',
+                                                                e.target.value,
+                                                            )
                                                         }
                                                         className="neo-field rounded-xl"
                                                     />
                                                     {deleteErrors.password && (
                                                         <p className="text-xs text-red-500">
-                                                            {deleteErrors.password}
+                                                            {
+                                                                deleteErrors.password
+                                                            }
                                                         </p>
                                                     )}
                                                 </div>
@@ -1303,7 +1391,9 @@ export default function Profile() {
                                                     variant="outline"
                                                     disabled={deleteProcessing}
                                                     onClick={() => {
-                                                        setDeleteModalOpen(false);
+                                                        setDeleteModalOpen(
+                                                            false,
+                                                        );
                                                         deleteReset();
                                                     }}
                                                     className="rounded-xl"
@@ -1312,7 +1402,11 @@ export default function Profile() {
                                                 </Button>
                                                 <Button
                                                     type="submit"
-                                                    disabled={deleteProcessing || (!isSocialAccount && !deleteData.password)}
+                                                    disabled={
+                                                        deleteProcessing ||
+                                                        (!isSocialAccount &&
+                                                            !deleteData.password)
+                                                    }
                                                     className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-500 to-red-600 text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] disabled:pointer-events-none disabled:opacity-50"
                                                 >
                                                     {deleteProcessing ? (
@@ -1323,7 +1417,8 @@ export default function Profile() {
                                                     ) : (
                                                         <span className="flex items-center gap-2">
                                                             <Trash2 className="h-4 w-4" />
-                                                            Yes, Delete My Account
+                                                            Yes, Delete My
+                                                            Account
                                                         </span>
                                                     )}
                                                 </Button>

@@ -1,8 +1,14 @@
 import type { SharedPageProps, SiteSettings } from '@/types';
 import type { ComponentType, SVGProps } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Mail, MapPin, Phone } from 'lucide-react';
-import { Fragment } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Mail, MapPin, Phone, CheckCircle, Loader2 } from 'lucide-react';
+import { Fragment, useState, useRef, useCallback } from 'react';
+import {
+    check,
+    subscribe,
+    unsubscribe,
+} from '@/actions/App/Http/Controllers/SubscriptionController';
 import MagneticButton from '@/components/UI/MagneticButton';
 import {
     FacebookIcon,
@@ -75,6 +81,93 @@ export default function Footer() {
         icon,
     }));
 
+    const [email, setEmail] = useState('');
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const [checking, setChecking] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const checkEmail = useCallback(async (value: string) => {
+        if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            setIsSubscribed(false);
+
+            return;
+        }
+
+        setChecking(true);
+
+        try {
+            const res = await fetch(check.url({ query: { email: value } }));
+            const data = await res.json();
+            setIsSubscribed(Boolean(data.subscribed));
+        } catch {
+            setIsSubscribed(false);
+        } finally {
+            setChecking(false);
+        }
+    }, []);
+
+    function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const value = e.target.value;
+        setEmail(value);
+
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        debounceRef.current = setTimeout(() => checkEmail(value), 500);
+    }
+
+    function getCsrf(): string {
+        return (
+            document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+                ?.content ?? ''
+        );
+    }
+
+    async function handleAction() {
+        if (!email || loading) {
+            return;
+        }
+
+        setLoading(true);
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': getCsrf(),
+        };
+
+        try {
+            if (isSubscribed) {
+                const res = await fetch(unsubscribe.url(), {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ email }),
+                });
+
+                if (res.ok) {
+                    setEmail('');
+                    setIsSubscribed(false);
+                }
+            } else {
+                const res = await fetch(subscribe.url(), {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ email }),
+                });
+
+                if (res.ok) {
+                    setModalOpen(true);
+                    setEmail('');
+                    setIsSubscribed(false);
+                }
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <footer className="relative z-10 border-t border-theme bg-theme-surface">
             <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
@@ -109,6 +202,43 @@ export default function Footer() {
                                 Call now
                             </MagneticButton>
                         )}
+
+                        {/* Newsletter subscription */}
+                        <div className="pt-1">
+                            <p className="mb-2 text-[11px] font-semibold tracking-wider text-theme-muted uppercase">
+                                Newsletter
+                            </p>
+                            <p className="mb-3 text-xs leading-relaxed text-theme-subtle">
+                                Subscribe for updates &amp; exclusive offers.
+                            </p>
+                            <div className="flex gap-2">
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={handleEmailChange}
+                                    placeholder="your@email.com"
+                                    className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white placeholder-white/25 transition-all outline-none focus:border-violet-500/40 focus:bg-violet-500/5"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAction}
+                                    disabled={loading || checking || !email}
+                                    className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                                        isSubscribed
+                                            ? 'border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
+                                            : 'border border-violet-500/30 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20'
+                                    }`}
+                                >
+                                    {loading || checking ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    ) : isSubscribed ? (
+                                        'Unsubscribe'
+                                    ) : (
+                                        'Subscribe'
+                                    )}
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -258,6 +388,98 @@ export default function Footer() {
                     </p>
                 </div>
             </div>
+
+            {/* Subscription success modal */}
+            <AnimatePresence>
+                {modalOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.18 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style={{
+                            backdropFilter: 'blur(6px)',
+                            background: 'rgba(0,0,0,0.65)',
+                        }}
+                        onClick={() => setModalOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.88, y: -20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: -12 }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 380,
+                                damping: 28,
+                            }}
+                            className="relative w-full max-w-sm overflow-hidden rounded-2xl text-center"
+                            style={{
+                                background:
+                                    'linear-gradient(148deg, #0e1225, #090d1b)',
+                                border: '1px solid rgba(124,58,237,0.35)',
+                                boxShadow:
+                                    '0 0 0 1px rgba(124,58,237,0.08), 0 32px 80px rgba(0,0,0,0.85), 0 0 70px rgba(124,58,237,0.2)',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/70 to-transparent" />
+
+                            <div className="px-6 py-8">
+                                <motion.div
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{
+                                        duration: 1.6,
+                                        repeat: Infinity,
+                                        ease: 'easeInOut',
+                                    }}
+                                    className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+                                    style={{
+                                        background: 'rgba(124,58,237,0.12)',
+                                        border: '1px solid rgba(124,58,237,0.35)',
+                                        boxShadow:
+                                            '0 0 28px rgba(124,58,237,0.25)',
+                                    }}
+                                >
+                                    <CheckCircle className="h-7 w-7 text-violet-400" />
+                                </motion.div>
+
+                                <p className="mb-1 font-mono text-[9px] tracking-[0.28em] text-violet-400/60 uppercase">
+                                    ◈ Subscription Confirmed
+                                </p>
+                                <h3 className="text-base font-semibold text-white">
+                                    You're subscribed!
+                                </h3>
+                                <p className="mt-2 text-xs leading-relaxed text-white/50">
+                                    You'll receive exclusive offers and updates
+                                    from Opticore Solutions.
+                                </p>
+
+                                <motion.button
+                                    onClick={() => setModalOpen(false)}
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="relative mt-6 inline-flex w-full items-center justify-center overflow-hidden rounded-xl border border-violet-500/30 bg-gradient-to-br from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_18px_rgba(124,58,237,0.3)] transition-all hover:from-violet-500 hover:to-indigo-500"
+                                >
+                                    <motion.div
+                                        animate={{ x: ['-120%', '220%'] }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            repeatDelay: 1,
+                                            ease: 'easeInOut',
+                                        }}
+                                        className="pointer-events-none absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                    />
+                                    <span className="relative">Got it</span>
+                                </motion.button>
+                            </div>
+
+                            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/35 to-transparent" />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </footer>
     );
 }

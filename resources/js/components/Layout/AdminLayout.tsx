@@ -26,6 +26,7 @@ import {
     ArrowLeftRight,
     DollarSign,
     Settings,
+    Send,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -132,6 +133,12 @@ const NAV_ITEMS = [
         href: '/admin/configuration',
         icon: Settings,
         key: 'configuration',
+    },
+    {
+        name: 'Subscriptions',
+        href: '/admin/subscriptions',
+        icon: Send,
+        key: 'subscriptions',
     },
 ];
 

@@ -276,8 +276,8 @@ export default function ClientIndex({ clients }: Props) {
                                                     Deleted
                                                 </span>
                                             )}
-                                            {!client.deleted_at && (
-                                                client.email_verified_at ? (
+                                            {!client.deleted_at &&
+                                                (client.email_verified_at ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
                                                         <CheckCircle className="h-3 w-3" />
                                                         Verified
@@ -287,8 +287,7 @@ export default function ClientIndex({ clients }: Props) {
                                                         <Clock className="h-3 w-3" />
                                                         Unverified
                                                     </span>
-                                                )
-                                            )}
+                                                ))}
                                         </div>
                                     </td>
 

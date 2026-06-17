@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
@@ -45,6 +46,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SslCommerzPaymentController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\RedirectAdminToPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -155,6 +157,11 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     });
 });
 
+// Subscription (public)
+Route::get('/subscription/check', [SubscriptionController::class, 'check'])->name('subscription.check');
+Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+Route::post('/subscription/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('subscription.unsubscribe');
+
 Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])
     ->name('chat.attachment.download')
     ->middleware('auth:web,admin');
@@ -238,6 +245,14 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     // Site Configuration
     Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('configuration.index');
     Route::put('/configuration', [AdminConfigurationController::class, 'update'])->name('configuration.update');
+
+    // Subscriptions
+    Route::get('subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::delete('subscriptions/{subscription}', [AdminSubscriptionController::class, 'destroy'])->name('subscriptions.destroy');
+    Route::get('subscriptions/offer-email', [AdminSubscriptionController::class, 'offerEmail'])->name('subscriptions.offer-email');
+    Route::post('subscriptions/offer-email', [AdminSubscriptionController::class, 'sendOfferEmail'])->name('subscriptions.offer-email.send');
+    Route::get('subscriptions/custom-email', [AdminSubscriptionController::class, 'customEmail'])->name('subscriptions.custom-email');
+    Route::post('subscriptions/custom-email', [AdminSubscriptionController::class, 'sendCustomEmail'])->name('subscriptions.custom-email.send');
 });
 
 // SSLCommerz
