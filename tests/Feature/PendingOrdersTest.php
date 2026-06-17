@@ -81,8 +81,7 @@ it('shows a pending order for an accepted single-payment offer', function () {
             ->where('pendingOrders.0.amount', '500.00')
             ->where('pendingOrders.0.currency', 'USD')
             ->where('pendingOrders.0.checkout_url', fn (string $url) => str_contains($url, '/checkout')
-                && str_contains($url, 'category=web-development')
-                && str_contains($url, 'subcategory_id='.$subCategory->id)
+                && str_contains($url, 'offer_token='.$offer->offer_token)
             )
         );
 });
