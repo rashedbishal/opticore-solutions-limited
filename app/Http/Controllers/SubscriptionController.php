@@ -30,7 +30,7 @@ class SubscriptionController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        Subscription::where('email', strtolower(trim($request->email)))->delete();
+        Subscription::where('email', strtolower(trim($request->email)))->first()?->delete();
 
         return response()->json(['subscribed' => false]);
     }

@@ -1,4 +1,4 @@
-import type { SharedPageProps } from '@/types';
+import type { SharedPageProps, User } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
@@ -13,7 +13,7 @@ import {
     X,
     Zap,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface CheckoutItem {
     service: string;
@@ -33,6 +33,24 @@ interface Props {
 
 type Currency = 'USD' | 'BDT';
 
+interface GooglePayConfig {
+    gateway: string;
+    gatewayMerchantId: string;
+    merchantId: string;
+    merchantName: string;
+    allowedAuthMethods: string;
+    allowedCardNetworks: string;
+    environment: 'TEST' | 'PRODUCTION';
+}
+
+const REQUIRED_FIELDS: { key: keyof User; label: string }[] = [
+    { key: 'name', label: 'Full Name' },
+    { key: 'email', label: 'Email Address' },
+    { key: 'phone_number', label: 'Phone Number' },
+    { key: 'address', label: 'Address' },
+    { key: 'country', label: 'Country' },
+];
+
 export default function Checkout({ item }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
     const [currency, setCurrency] = useState<Currency>('USD');
@@ -43,13 +61,26 @@ export default function Checkout({ item }: Props) {
     const sslBtnRef = useRef<HTMLButtonElement>(null);
     const sslScriptLoaded = useRef(false);
 
-    const REQUIRED_FIELDS: { key: keyof typeof auth.user; label: string }[] = [
-        { key: 'name', label: 'Full Name' },
-        { key: 'email', label: 'Email Address' },
-        { key: 'phone_number', label: 'Phone Number' },
-        { key: 'address', label: 'Address' },
-        { key: 'country', label: 'Country' },
-    ];
+    const [gpayConfig, setGpayConfig] = useState<GooglePayConfig | null>(null);
+    const [gpayScriptLoaded, setGpayScriptLoaded] = useState(false);
+    const [gpayProcessing, setGpayProcessing] = useState(false);
+    const [gpayError, setGpayError] = useState<string | null>(null);
+    const gpayContainerRef = useRef<HTMLDivElement>(null);
+
+    const getMissingFields = useCallback(
+        () =>
+            REQUIRED_FIELDS.filter(({ key }) => !auth.user?.[key]).map(
+                ({ label }) => label,
+            ),
+        [auth.user],
+    );
+
+    function getCsrf(): string {
+        return (
+            document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+                ?.content ?? ''
+        );
+    }
 
     const usdAmount = parseFloat(item.price.replace(/[^0-9.]/g, ''));
 
@@ -66,9 +97,7 @@ export default function Checkout({ item }: Props) {
     }, []);
 
     const handlePay = () => {
-        const missing = REQUIRED_FIELDS.filter(
-            ({ key }) => !auth.user?.[key],
-        ).map(({ label }) => label);
+        const missing = getMissingFields();
 
         if (missing.length > 0) {
             setMissingFields(missing);
@@ -108,6 +137,186 @@ export default function Checkout({ item }: Props) {
             document.body.appendChild(script);
         }
     };
+
+    // Google Pay button config has a 3-requests/day cap on SSLCommerz's end,
+    // so the backend caches it — this just asks for whatever's cached/fresh.
+    useEffect(() => {
+        fetch('/gpay/config')
+            .then((r) => r.json())
+            .then((data) => {
+                if (data.available) {
+                    setGpayConfig(data.config);
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    useEffect(() => {
+        if (!gpayConfig) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://pay.google.com/gp/p/js/pay.js';
+        script.async = true;
+        script.onload = () => setGpayScriptLoaded(true);
+        document.body.appendChild(script);
+
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, [gpayConfig]);
+
+    function submitOtpForm(html: string) {
+        const container = document.createElement('div');
+        container.style.display = 'none';
+        container.innerHTML = html;
+        document.body.appendChild(container);
+        container.querySelector('form')?.submit();
+    }
+
+    const handleGooglePayClick = useCallback(
+        (paymentsClient: any, paymentDataRequest: any) => {
+            const missing = getMissingFields();
+
+            if (missing.length > 0) {
+                setMissingFields(missing);
+
+                return;
+            }
+
+            setGpayProcessing(true);
+            setGpayError(null);
+
+            paymentsClient
+                .loadPaymentData(paymentDataRequest)
+                .then((paymentData: any) => {
+                    const token =
+                        paymentData.paymentMethodData.tokenizationData.token;
+
+                    return fetch('/gpay/charge', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': getCsrf(),
+                        },
+                        body: JSON.stringify({
+                            googlepay_token: token,
+                            category_id: item.category,
+                            subcategory_id: item.subcategory_id,
+                            service: item.service,
+                            plan: item.plan,
+                            delivery: item.delivery,
+                            subcategory: item.subcategory,
+                            ...(item.offer_token
+                                ? { offer_token: item.offer_token }
+                                : {}),
+                            ...(item.milestone_id
+                                ? { milestone_id: item.milestone_id }
+                                : {}),
+                        }),
+                    });
+                })
+                .then((res: Response) => res.json())
+                .then((data: any) => {
+                    if (data.status === 'success') {
+                        if (data.type === 'otp' && data.html) {
+                            submitOtpForm(data.html);
+                        } else if (data.return_url) {
+                            window.location.href = data.return_url;
+                        } else {
+                            setGpayError(
+                                'Payment could not be completed. Please try again.',
+                            );
+                            setGpayProcessing(false);
+                        }
+                    } else {
+                        setGpayError(
+                            data.message ??
+                                'Google Pay payment failed. Please try again.',
+                        );
+                        setGpayProcessing(false);
+                    }
+                })
+                .catch((err: any) => {
+                    if (err?.statusCode !== 'CANCELED') {
+                        setGpayError(
+                            'Something went wrong with Google Pay. Please try again.',
+                        );
+                    }
+
+                    setGpayProcessing(false);
+                });
+        },
+        [getMissingFields, item],
+    );
+
+    useEffect(() => {
+        if (
+            !gpayScriptLoaded ||
+            !gpayConfig ||
+            bdtRate === null ||
+            !gpayContainerRef.current
+        ) {
+            return;
+        }
+
+        const w = window as any;
+        const paymentsClient = new w.google.payments.api.PaymentsClient({
+            environment: gpayConfig.environment,
+        });
+
+        const paymentDataRequest = {
+            apiVersion: 2,
+            apiVersionMinor: 0,
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
+                    parameters: {
+                        allowedAuthMethods:
+                            gpayConfig.allowedAuthMethods.split(','),
+                        allowedCardNetworks:
+                            gpayConfig.allowedCardNetworks.split(','),
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: gpayConfig.gateway,
+                            gatewayMerchantId: gpayConfig.gatewayMerchantId,
+                        },
+                    },
+                },
+            ],
+            merchantInfo: {
+                merchantId: gpayConfig.merchantId,
+                merchantName: gpayConfig.merchantName,
+            },
+            transactionInfo: {
+                totalPriceStatus: 'FINAL',
+                totalPrice: (usdAmount * bdtRate).toFixed(2),
+                currencyCode: 'BDT',
+                countryCode: 'BD',
+            },
+        };
+
+        const button = paymentsClient.createButton({
+            buttonColor: 'black',
+            buttonType: 'pay',
+            onClick: () =>
+                handleGooglePayClick(paymentsClient, paymentDataRequest),
+        });
+
+        const container = gpayContainerRef.current;
+        container.innerHTML = '';
+        container.appendChild(button);
+    }, [
+        gpayScriptLoaded,
+        gpayConfig,
+        bdtRate,
+        usdAmount,
+        handleGooglePayClick,
+    ]);
 
     const displayPrice =
         currency === 'BDT' && bdtRate !== null
@@ -362,6 +571,33 @@ export default function Checkout({ item }: Props) {
                                         order: 'init',
                                     } as Record<string, string>)}
                                 />
+
+                                {/* Google Pay — only renders once SSLCommerz confirms it's enabled for this store */}
+                                {gpayConfig && (
+                                    <div className="mt-4">
+                                        <div className="mb-3 flex items-center gap-3">
+                                            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+                                            <span className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase dark:text-zinc-500">
+                                                Or
+                                            </span>
+                                            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+                                        </div>
+                                        <div
+                                            ref={gpayContainerRef}
+                                            className={
+                                                gpayProcessing
+                                                    ? 'pointer-events-none opacity-60'
+                                                    : ''
+                                            }
+                                        />
+                                        {gpayError && (
+                                            <p className="mt-2 flex items-center gap-1.5 text-xs text-red-500">
+                                                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                                                {gpayError}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="rounded-[2rem] border border-cyan-100/50 bg-gradient-to-b from-cyan-50 to-white p-5 shadow-[0_4px_12px_rgba(34,211,238,0.1),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:border-cyan-900/50 dark:from-cyan-950/40 dark:to-zinc-900 dark:shadow-[0_4px_12px_rgba(34,211,238,0.05),inset_0_0_0_1px_rgba(34,211,238,0.2),inset_0_1px_2px_rgba(255,255,255,0.1)]">

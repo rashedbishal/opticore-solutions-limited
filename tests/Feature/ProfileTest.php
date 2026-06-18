@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PortfolioSubCategory;
+use App\Models\Subscription;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
@@ -49,20 +50,21 @@ it('renders the profile page with the user\'s workflow tasks and processing orde
 
     $subCategory = PortfolioSubCategory::factory()->create(['name' => 'Logo Design']);
 
-    $task = Task::factory()->create([
-        'user_id' => $user->id,
-        'sub_category_id' => $subCategory->id,
-        'task_name' => 'My Task',
-        'state' => 'in progress',
-    ]);
-
-    Task::factory()->create(['user_id' => $otherUser->id]);
-
     $processingOrder = createProfileTransaction([
         'email' => $user->email,
         'subcategory_id' => $subCategory->id,
         'invoice_number' => 'INV-1',
     ]);
+
+    $task = Task::factory()->create([
+        'user_id' => $user->id,
+        'sub_category_id' => $subCategory->id,
+        'task_name' => 'My Task',
+        'state' => 'in progress',
+        'transaction_id' => $processingOrder->transaction_id,
+    ]);
+
+    Task::factory()->create(['user_id' => $otherUser->id]);
 
     createProfileTransaction([
         'email' => $user->email,
@@ -82,6 +84,7 @@ it('renders the profile page with the user\'s workflow tasks and processing orde
             ->where('tasks.0.id', $task->id)
             ->where('tasks.0.task_name', 'My Task')
             ->where('tasks.0.sub_category', 'Logo Design')
+            ->where('tasks.0.order_number', $processingOrder->order_number)
             ->has('orders', 1)
             ->where('orders.0.id', $processingOrder->id)
             ->where('orders.0.order_number', $processingOrder->order_number)
@@ -193,4 +196,36 @@ it('returns not found for a tampered invoice verification token', function () {
     $this->actingAs($user)
         ->get(route('orders.invoice.verify', ['token' => 'tampered-token']))
         ->assertNotFound();
+});
+
+it('defaults new accounts to promotional emails turned off', function () {
+    $user = User::factory()->create();
+
+    expect($user->refresh()->notify_promotional_emails)->toBeFalse();
+});
+
+it('adds the account email to the newsletter list when promotional emails is turned on', function () {
+    $user = User::factory()->create(['email' => 'promo-on@example.com']);
+
+    $this->actingAs($user)
+        ->patch(route('profile.preferences'), ['notify_promotional_emails' => true])
+        ->assertRedirect();
+
+    expect($user->refresh()->notify_promotional_emails)->toBeTrue();
+    expect(Subscription::where('email', 'promo-on@example.com')->exists())->toBeTrue();
+});
+
+it('removes the account email from the newsletter list when promotional emails is turned off', function () {
+    $user = User::factory()->create([
+        'email' => 'promo-off@example.com',
+        'notify_promotional_emails' => true,
+    ]);
+    Subscription::create(['email' => 'promo-off@example.com']);
+
+    $this->actingAs($user)
+        ->patch(route('profile.preferences'), ['notify_promotional_emails' => false])
+        ->assertRedirect();
+
+    expect($user->refresh()->notify_promotional_emails)->toBeFalse();
+    expect(Subscription::where('email', 'promo-off@example.com')->exists())->toBeFalse();
 });

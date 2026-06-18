@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\JobListingController as AdminJobListingController
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PendingPaymentController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\ClientReviewController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GooglePayCheckoutController;
 use App\Http\Controllers\HireUsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
@@ -144,6 +146,10 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
         Route::get('/checkout/exchange-rate', [CheckoutController::class, 'exchangeRate'])->name('checkout.exchange-rate');
 
+        // Google Pay (SSLCommerz Merchant Hosted Payment API)
+        Route::get('/gpay/config', [GooglePayCheckoutController::class, 'config'])->name('gpay.config');
+        Route::post('/gpay/charge', [GooglePayCheckoutController::class, 'charge'])->name('gpay.charge');
+
         // Client Reviews
         Route::post('/reviews', [ClientReviewController::class, 'store'])->name('reviews.store')->middleware('throttle:5,1');
 
@@ -225,6 +231,8 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
     Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
     Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
+    Route::get('/api/customer-conversations/{conversation}/pending-payments', [PendingPaymentController::class, 'index'])->name('customer-conversations.pending-payments.index');
+    Route::delete('/api/customer-conversations/{conversation}/pending-payments/{pendingPayment}', [PendingPaymentController::class, 'destroy'])->name('customer-conversations.pending-payments.destroy');
     Route::delete('/api/customer-conversations/{conversation}', [CustomerConversationController::class, 'destroy'])->name('customer-conversations.destroy');
 
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);

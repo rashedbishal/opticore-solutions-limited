@@ -54,6 +54,14 @@ class Task extends Model
     }
 
     /**
+     * Get the order (transaction) this task was provisioned from.
+     */
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id', 'transaction_id');
+    }
+
+    /**
      * Get the client review for this task.
      */
     public function review(): HasOne

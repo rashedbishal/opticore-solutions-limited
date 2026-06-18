@@ -25,9 +25,11 @@ import {
     Search,
     Send,
     Trash2,
+    Wallet,
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
@@ -322,6 +324,8 @@ export default function Index() {
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
+    const [showPendingPaymentsModal, setShowPendingPaymentsModal] =
+        useState(false);
     const [isUserTyping, setIsUserTyping] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null);
     const [deletePassword, setDeletePassword] = useState('');
@@ -741,6 +745,17 @@ export default function Index() {
                 )}
             </AnimatePresence>
 
+            {/* Pending Payments Modal */}
+            <AnimatePresence>
+                {showPendingPaymentsModal && activeConv && (
+                    <PendingPaymentsModal
+                        conversationId={activeConv.id}
+                        userName={activeConv.user.name}
+                        onClose={() => setShowPendingPaymentsModal(false)}
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Sidebar List — full-width on mobile, 1/3 on desktop */}
             <div
                 className={`${activeConv ? 'hidden md:flex' : 'flex'} w-full flex-col border-r border-violet-500/10 bg-[#060c1a]/60 md:w-1/3`}
@@ -936,13 +951,24 @@ export default function Index() {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => setShowOfferModal(true)}
-                                className="flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition hover:border-violet-500/50 hover:bg-violet-500/20"
-                            >
-                                <Package size={13} />
-                                Create an Offer
-                            </button>
+                            <div className="flex shrink-0 items-center gap-2">
+                                <button
+                                    onClick={() =>
+                                        setShowPendingPaymentsModal(true)
+                                    }
+                                    className="flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 transition hover:border-cyan-500/50 hover:bg-cyan-500/20"
+                                >
+                                    <Wallet size={13} />
+                                    Pending Payments
+                                </button>
+                                <button
+                                    onClick={() => setShowOfferModal(true)}
+                                    className="flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition hover:border-violet-500/50 hover:bg-violet-500/20"
+                                >
+                                    <Package size={13} />
+                                    Create an Offer
+                                </button>
+                            </div>
                         </div>
 
                         <div className="flex-1 space-y-4 overflow-y-auto p-3 md:p-6">

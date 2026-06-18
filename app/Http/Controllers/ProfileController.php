@@ -28,7 +28,7 @@ class ProfileController extends Controller
         $user = $request->user();
 
         return Inertia::render('Profile', [
-            'tasks' => Task::with('subCategory')
+            'tasks' => Task::with(['subCategory', 'transaction'])
                 ->where('user_id', $user->id)
                 ->latest()
                 ->get()
@@ -37,6 +37,7 @@ class ProfileController extends Controller
                     'task_name' => $task->task_name,
                     'category' => $task->category,
                     'sub_category' => $task->subCategory?->name,
+                    'order_number' => $task->transaction?->order_number,
                     'date' => $task->date?->format('Y-m-d'),
                     'state' => $task->state,
                     'image_url' => $task->image_path ? asset('storage/'.$task->image_path) : null,
@@ -60,6 +61,7 @@ class ProfileController extends Controller
             'pendingOrders' => PendingOrderResolver::forUser($user),
             'notifyOrderUpdates' => (bool) $user->notify_order_updates,
             'notifySecurityAlerts' => (bool) $user->notify_security_alerts,
+            'notifyPromotionalEmails' => (bool) $user->notify_promotional_emails,
             'isSocialAccount' => (bool) ($user->google_id || $user->facebook_id),
         ]);
     }
@@ -107,6 +109,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'notify_order_updates' => ['sometimes', 'boolean'],
             'notify_security_alerts' => ['sometimes', 'boolean'],
+            'notify_promotional_emails' => ['sometimes', 'boolean'],
         ]);
 
         $request->user()->update($validated);

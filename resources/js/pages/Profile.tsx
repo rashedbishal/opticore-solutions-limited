@@ -28,7 +28,7 @@ import {
     Trash2,
     User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     deleteAccount,
     update as profileUpdate,
@@ -49,6 +49,7 @@ interface WorkflowTask {
     task_name: string;
     category: string;
     sub_category: string | null;
+    order_number: string | null;
     date: string | null;
     state: 'pending' | 'in progress' | 'delivered';
     image_url: string | null;
@@ -82,6 +83,7 @@ interface Props {
     pendingOrders: PendingOrder[];
     notifyOrderUpdates: boolean;
     notifySecurityAlerts: boolean;
+    notifyPromotionalEmails: boolean;
     isSocialAccount: boolean;
 }
 
@@ -200,8 +202,15 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <div className="truncate text-xs font-bold text-theme sm:text-sm">
-                        {task.task_name}
+                    <div className="flex items-baseline gap-1.5">
+                        <div className="truncate text-xs font-bold text-theme sm:text-sm">
+                            {task.task_name}
+                        </div>
+                        {task.order_number && (
+                            <div className="hidden font-mono text-xs text-theme-muted sm:block">
+                                {task.order_number}
+                            </div>
+                        )}
                     </div>
                     <div className="flex items-center gap-x-2 text-[10px] text-theme-muted capitalize sm:text-xs">
                         <span className="truncate">
@@ -375,19 +384,27 @@ export default function Profile() {
         pendingOrders = [],
         notifyOrderUpdates = true,
         notifySecurityAlerts = true,
+        notifyPromotionalEmails = false,
         isSocialAccount = false,
     } = usePage<SharedPageProps & Props>().props;
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialTab = searchParams.get('tab') ?? 'overview';
 
-    const [promoEmails, setPromoEmails] = useState(true);
+    const [promoEmails, setPromoEmails] = useState(notifyPromotionalEmails);
     const [orderUpdates, setOrderUpdates] = useState(notifyOrderUpdates);
     const [securityAlerts, setSecurityAlerts] = useState(notifySecurityAlerts);
     const [paymentModalOpen, setPaymentModalOpen] = useState(
         !!flash?.payment_success,
     );
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    // Unlike the other two toggles, this one can also change from outside its
+    // own click handler (footer newsletter form, admin removing a subscriber),
+    // delivered via the realtime partial reload below — keep local state synced.
+    useEffect(() => {
+        setPromoEmails(notifyPromotionalEmails);
+    }, [notifyPromotionalEmails]);
 
     const {
         data: deleteData,
@@ -461,11 +478,23 @@ export default function Profile() {
             <Head title="My Profile — Opticore" />
 
             {echoReady && auth.user && (
-                <RealtimeTableListener
-                    channel={`App.Models.User.${auth.user.id}`}
-                    event="TaskUpdated"
-                    only={['tasks']}
-                />
+                <>
+                    <RealtimeTableListener
+                        channel={`App.Models.User.${auth.user.id}`}
+                        event="TaskUpdated"
+                        only={['tasks']}
+                    />
+                    <RealtimeTableListener
+                        channel={`App.Models.User.${auth.user.id}`}
+                        event="PromotionalEmailPreferenceUpdated"
+                        only={['notifyPromotionalEmails']}
+                    />
+                    <RealtimeTableListener
+                        channel={`App.Models.User.${auth.user.id}`}
+                        event="PendingPaymentDeleted"
+                        only={['pendingOrders']}
+                    />
+                </>
             )}
 
             <div className="relative min-h-screen pb-24">
@@ -1223,11 +1252,21 @@ export default function Profile() {
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        setPromoEmails(
-                                                            !promoEmails,
-                                                        )
-                                                    }
+                                                    onClick={() => {
+                                                        const next =
+                                                            !promoEmails;
+                                                        setPromoEmails(next);
+                                                        router.patch(
+                                                            updatePreferences.url(),
+                                                            {
+                                                                notify_promotional_emails:
+                                                                    next,
+                                                            },
+                                                            {
+                                                                preserveScroll: true,
+                                                            },
+                                                        );
+                                                    }}
                                                     className={`transition-colors ${promoEmails ? 'drop-icon-emerald text-emerald-500' : 'text-theme-muted'}`}
                                                 >
                                                     {promoEmails ? (

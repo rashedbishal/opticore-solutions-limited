@@ -1,4 +1,3 @@
-import type { TransactionMonth } from '@/components/Admin/MonthlyTransactionsChart';
 import type { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
@@ -12,14 +11,9 @@ import {
     Loader2,
     Radio,
 } from 'lucide-react';
-import { lazy, Suspense } from 'react';
 import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import useEchoReady from '@/hooks/useEchoReady';
-
-const MonthlyTransactionsChart = lazy(
-    () => import('@/components/Admin/MonthlyTransactionsChart'),
-);
 
 interface DashboardProps {
     stats: {
@@ -32,22 +26,9 @@ interface DashboardProps {
         processing: number;
         deliveredThisMonth: number;
     };
-    transactions: {
-        monthly: TransactionMonth[];
-    };
 }
 
-function ChartSkeleton() {
-    return (
-        <div className="h-full w-full animate-pulse rounded-lg bg-violet-500/5" />
-    );
-}
-
-export default function Dashboard({
-    stats,
-    workflow,
-    transactions,
-}: DashboardProps) {
+export default function Dashboard({ stats, workflow }: DashboardProps) {
     const echoReady = useEchoReady();
 
     const cards = [
@@ -144,11 +125,6 @@ export default function Dashboard({
                         channel="admin.tasks"
                         event="TaskUpdated"
                         only={['workflow']}
-                    />
-                    <RealtimeTableListener
-                        channel="admin.transactions"
-                        event="TransactionUpdated"
-                        only={['transactions']}
                     />
                 </>
             )}
@@ -286,71 +262,6 @@ export default function Dashboard({
                     ))}
                 </div>
             </div>
-
-            {/* ── Monthly Transactions ── */}
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.6, ease: 'easeOut' }}
-                className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm"
-            >
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
-
-                <div className="relative z-10 mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h3 className="text-sm font-semibold tracking-wide text-white">
-                                Monthly Transactions
-                            </h3>
-                            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-emerald-400/60 uppercase">
-                                <Radio className="h-3 w-3 animate-pulse" />
-                                Live
-                            </span>
-                        </div>
-                        <p className="mt-1 font-mono text-[10px] tracking-[0.2em] text-violet-400/50 uppercase">
-                            Revenue & Volume — Last 12 Months
-                        </p>
-                    </div>
-                    <Link
-                        href="/admin/transactions"
-                        className="group/link flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/60 transition-colors hover:text-cyan-300"
-                    >
-                        View Transactions
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-1" />
-                    </Link>
-                </div>
-
-                <div className="relative z-10 h-80 w-full">
-                    <Suspense fallback={<ChartSkeleton />}>
-                        <MonthlyTransactionsChart data={transactions.monthly} />
-                    </Suspense>
-                </div>
-
-                <div className="relative z-10 mt-4 flex items-center gap-5 border-t border-violet-500/10 pt-4">
-                    <div className="flex items-center gap-2">
-                        <span
-                            className="h-2 w-2 rounded-sm bg-violet-500"
-                            style={{
-                                boxShadow: '0 0 8px rgba(139,92,246,0.8)',
-                            }}
-                        />
-                        <span className="font-mono text-[10px] tracking-[0.15em] text-slate-400 uppercase">
-                            Revenue
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span
-                            className="h-2 w-2 rounded-full bg-cyan-400"
-                            style={{
-                                boxShadow: '0 0 8px rgba(34,211,238,0.8)',
-                            }}
-                        />
-                        <span className="font-mono text-[10px] tracking-[0.15em] text-slate-400 uppercase">
-                            Transactions
-                        </span>
-                    </div>
-                </div>
-            </motion.div>
         </div>
     );
 }
