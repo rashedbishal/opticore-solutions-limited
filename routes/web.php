@@ -105,7 +105,7 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
     Route::post('/api/appointment', [OriginalAppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
     Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
-    Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:30,1');
+    Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:12,1');
 
     // User Auth Routes
     Route::middleware('guest')->group(function () {
@@ -163,9 +163,19 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
 });
 
 // Subscription (public)
-Route::get('/subscription/check', [SubscriptionController::class, 'check'])->name('subscription.check');
-Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
-Route::post('/subscription/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('subscription.unsubscribe');
+Route::get('/subscription/check', [SubscriptionController::class, 'check'])->name('subscription.check')->middleware('throttle:5,1');
+Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe')->middleware('throttle:5,1');
+Route::post('/subscription/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('subscription.unsubscribe')->middleware('throttle:5,1');
+
+// Subscription confirmation links — clicked from the emailed confirm link,
+// never called by frontend JS, so only the signed signature (not a request
+// middleware) proves the click came from that confirmation email.
+Route::get('/subscription/confirm-subscribe', [SubscriptionController::class, 'confirmSubscribe'])
+    ->name('subscription.confirm-subscribe')
+    ->middleware('signed');
+Route::get('/subscription/confirm-unsubscribe', [SubscriptionController::class, 'confirmUnsubscribe'])
+    ->name('subscription.confirm-unsubscribe')
+    ->middleware('signed');
 
 Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])
     ->name('chat.attachment.download')
@@ -264,7 +274,10 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 
 // SSLCommerz
 Route::middleware('throttle:payment-callback')->group(function () {
-    Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+    // payViaAjax reads the customer from $request->user(), unlike SSLCommerz's
+    // stock example (which builds cus_* fields straight from the POST body) —
+    // so, unlike the gateway callbacks below, it needs an authenticated user.
+    Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax'])->middleware('auth');
     Route::post('/success', [SslCommerzPaymentController::class, 'success']);
     Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
     Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);

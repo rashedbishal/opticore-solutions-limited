@@ -293,7 +293,7 @@ Instructions:
 4. Don\'t mention that you are an AI model; act as the Opticore Assistant.';
 
         try {
-            $client = new Client(['verify' => false]);
+            $client = new Client;
 
             $response = $client->post('https://api.groq.com/openai/v1/chat/completions', [
                 'headers' => [

@@ -3,12 +3,12 @@
 use App\Models\User;
 
 it('identifies an admin user by role', function () {
-    $user = new User(['role' => 'admin']);
+    $user = (new User)->forceFill(['role' => 'admin']);
     expect($user->isAdmin())->toBeTrue();
 });
 
 it('identifies a regular user as non-admin', function () {
-    $user = new User(['role' => 'client']);
+    $user = (new User)->forceFill(['role' => 'client']);
     expect($user->isAdmin())->toBeFalse();
 });
 

@@ -1,39 +1,95 @@
 <?php
 
+use App\Mail\ConfirmSubscriptionMail;
+use App\Mail\ConfirmUnsubscribeMail;
+use App\Mail\ManageSubscriptionFromProfileMail;
 use App\Models\Admin;
 use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
-it('allows a guest to subscribe to the newsletter', function () {
+it('emails a confirmation link instead of subscribing a guest immediately', function () {
+    Mail::fake();
+
     $this->postJson(route('subscription.subscribe'), ['email' => 'guest@example.com'])
         ->assertOk()
-        ->assertJson(['subscribed' => true]);
+        ->assertJson(['status' => 'pending']);
+
+    expect(Subscription::where('email', 'guest@example.com')->exists())->toBeFalse();
+    Mail::assertQueued(ConfirmSubscriptionMail::class);
+});
+
+it('emails a confirmation link instead of unsubscribing a guest immediately', function () {
+    Subscription::create(['email' => 'guest@example.com']);
+    Mail::fake();
+
+    $this->postJson(route('subscription.unsubscribe'), ['email' => 'guest@example.com'])
+        ->assertOk()
+        ->assertJson(['status' => 'pending']);
+
+    expect(Subscription::where('email', 'guest@example.com')->exists())->toBeTrue();
+    Mail::assertQueued(ConfirmUnsubscribeMail::class);
+});
+
+it('subscribes a guest once their emailed confirmation link is visited', function () {
+    $url = URL::temporarySignedRoute(
+        'subscription.confirm-subscribe',
+        now()->addHours(24),
+        ['email' => 'guest@example.com'],
+    );
+
+    $this->get($url)->assertRedirect('/');
 
     expect(Subscription::where('email', 'guest@example.com')->exists())->toBeTrue();
 });
 
-it('allows a guest to unsubscribe from the newsletter', function () {
+it('unsubscribes a guest once their emailed confirmation link is visited', function () {
     Subscription::create(['email' => 'guest@example.com']);
 
-    $this->postJson(route('subscription.unsubscribe'), ['email' => 'guest@example.com'])
-        ->assertOk()
-        ->assertJson(['subscribed' => false]);
+    $url = URL::temporarySignedRoute(
+        'subscription.confirm-unsubscribe',
+        now()->addHours(24),
+        ['email' => 'guest@example.com'],
+    );
+
+    $this->get($url)->assertRedirect('/');
 
     expect(Subscription::where('email', 'guest@example.com')->exists())->toBeFalse();
 });
 
-it('turns on a matching registered user\'s promotional emails preference when subscribing via the footer', function () {
-    $user = User::factory()->create(['email' => 'client@example.com']);
+it('rejects a confirmation link whose email was tampered with after signing', function () {
+    $url = URL::temporarySignedRoute(
+        'subscription.confirm-subscribe',
+        now()->addHours(24),
+        ['email' => 'guest@example.com'],
+    );
 
-    expect($user->refresh()->notify_promotional_emails)->toBeFalse();
+    // The email appears URL-encoded (guest%40example.com) — swap just the
+    // local part so the replacement survives encoding.
+    $tamperedUrl = str_replace('guest', 'victim', $url);
 
-    $this->postJson(route('subscription.subscribe'), ['email' => 'client@example.com'])
-        ->assertOk();
+    $this->get($tamperedUrl)->assertForbidden();
 
-    expect($user->refresh()->notify_promotional_emails)->toBeTrue();
+    expect(Subscription::where('email', 'victim@example.com')->exists())->toBeFalse();
 });
 
-it('turns off a matching registered user\'s promotional emails preference when unsubscribing via the footer', function () {
+it('never subscribes a registered client directly from the public form', function () {
+    Mail::fake();
+    $user = User::factory()->create(['email' => 'client@example.com']);
+
+    $this->postJson(route('subscription.subscribe'), ['email' => 'client@example.com'])
+        ->assertOk()
+        ->assertJson(['status' => 'pending']);
+
+    expect($user->refresh()->notify_promotional_emails)->toBeFalse();
+    expect(Subscription::where('email', 'client@example.com')->exists())->toBeFalse();
+    Mail::assertQueued(ManageSubscriptionFromProfileMail::class);
+    Mail::assertNotQueued(ConfirmSubscriptionMail::class);
+});
+
+it('never unsubscribes a registered client directly from the public form', function () {
+    Mail::fake();
     $user = User::factory()->create([
         'email' => 'client@example.com',
         'notify_promotional_emails' => true,
@@ -41,25 +97,30 @@ it('turns off a matching registered user\'s promotional emails preference when u
     Subscription::create(['email' => 'client@example.com']);
 
     $this->postJson(route('subscription.unsubscribe'), ['email' => 'client@example.com'])
-        ->assertOk();
+        ->assertOk()
+        ->assertJson(['status' => 'pending']);
 
-    expect($user->refresh()->notify_promotional_emails)->toBeFalse();
-    expect(Subscription::where('email', 'client@example.com')->exists())->toBeFalse();
+    expect($user->refresh()->notify_promotional_emails)->toBeTrue();
+    expect(Subscription::where('email', 'client@example.com')->exists())->toBeTrue();
+    Mail::assertQueued(ManageSubscriptionFromProfileMail::class);
+    Mail::assertNotQueued(ConfirmUnsubscribeMail::class);
 });
 
-it('does not error when subscribing or unsubscribing an email with no matching user account', function () {
-    $this->postJson(route('subscription.subscribe'), ['email' => 'nouser@example.com'])
-        ->assertOk();
+it('turns on a matching registered user\'s promotional emails preference when their confirmation link is visited', function () {
+    $user = User::factory()->create(['email' => 'client@example.com']);
 
-    expect(Subscription::where('email', 'nouser@example.com')->exists())->toBeTrue();
+    $url = URL::temporarySignedRoute(
+        'subscription.confirm-subscribe',
+        now()->addHours(24),
+        ['email' => 'client@example.com'],
+    );
 
-    $this->postJson(route('subscription.unsubscribe'), ['email' => 'nouser@example.com'])
-        ->assertOk();
+    $this->get($url)->assertRedirect('/');
 
-    expect(Subscription::where('email', 'nouser@example.com')->exists())->toBeFalse();
+    expect($user->refresh()->notify_promotional_emails)->toBeTrue();
 });
 
-it('turns off a matching user\'s promotional emails preference when an admin removes the subscriber', function () {
+it('turns off a matching registered user\'s promotional emails preference when an admin removes the subscriber', function () {
     $admin = Admin::factory()->create();
     $user = User::factory()->create([
         'email' => 'client@example.com',

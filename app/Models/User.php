@@ -12,7 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone_number', 'address', 'country', 'password', 'google_id', 'facebook_id', 'avatar', 'role', 'notify_order_updates', 'notify_security_alerts', 'notify_promotional_emails'])]
+// 'role' is deliberately excluded — it must only ever be set directly, never
+// through mass assignment, so no future request-driven update path can let a
+// user grant themselves admin.
+#[Fillable(['name', 'email', 'phone_number', 'address', 'country', 'password', 'google_id', 'facebook_id', 'avatar', 'notify_order_updates', 'notify_security_alerts', 'notify_promotional_emails'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {

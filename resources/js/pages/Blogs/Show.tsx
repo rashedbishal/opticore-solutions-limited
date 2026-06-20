@@ -12,8 +12,17 @@ interface BlogShowProps {
 export default function BlogShow({ dbBlog }: BlogShowProps) {
     const post = dbBlog;
 
+    // DOMPurify needs a real DOM (`window`), which doesn't exist during
+    // Inertia's Node SSR pass. Render nothing there rather than skipping
+    // sanitization — falling back to the unsanitized string would put raw
+    // HTML into the server-rendered page source itself, which the browser
+    // parses and executes before React ever hydrates. The sanitized
+    // content takes over as soon as client-side hydration runs.
     const sanitizedContent = useMemo(
-        () => DOMPurify.sanitize(post?.content ?? ''),
+        () =>
+            typeof window === 'undefined'
+                ? ''
+                : DOMPurify.sanitize(post?.content ?? ''),
         [post?.content],
     );
 

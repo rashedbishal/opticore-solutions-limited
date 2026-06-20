@@ -17,7 +17,12 @@ return [
         'refund_status' => '/validator/api/merchantTransIDvalidationAPI.php',
     ],
     'apiDomain' => $apiDomain,
-    'connect_from_localhost' => env('IS_LOCALHOST', false), // For Sandbox, use "true", For Live, use "false"
+    // Requires APP_ENV=local in addition to IS_LOCALHOST, so a stray
+    // IS_LOCALHOST=true left in a deployed .env can't disable TLS
+    // verification in production. Uses env() rather than app()->environment()
+    // because config files load before the container's environment binding
+    // exists.
+    'connect_from_localhost' => env('APP_ENV') === 'local' && env('IS_LOCALHOST', false),
     'success_url' => '/success',
     'failed_url' => '/fail',
     'cancel_url' => '/cancel',

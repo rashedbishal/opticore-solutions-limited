@@ -18,6 +18,7 @@ export interface FlashProps {
     } | null;
     payment_error?: string | null;
     checkout_url?: string | null;
+    subscription?: 'subscribed' | 'unsubscribed' | null;
 }
 
 export interface CategoryConfig {
