@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -81,27 +80,5 @@ class CheckoutController extends Controller
         });
 
         return response()->json(['rate' => $rate]);
-    }
-
-    public function process(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'payment_method' => ['required', 'string', 'in:sslcommerz'],
-        ]);
-
-        $service = $request->input('service', 'Service');
-        $plan = $request->input('plan', 'Standard');
-        $price = $request->input('price', '$10');
-        $delivery = $request->input('delivery', '4 Days');
-
-        return redirect()->route('profile')->with('invoice', [
-            'service' => $service,
-            'plan' => $plan,
-            'price' => $price,
-            'delivery' => $delivery,
-            'payment_method' => $request->input('payment_method'),
-            'ordered_at' => now()->toIso8601String(),
-            'invoice_id' => strtoupper(substr(md5(uniqid()), 0, 8)),
-        ]);
     }
 }

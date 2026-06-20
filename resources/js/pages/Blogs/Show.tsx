@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
+import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
+import { useMemo } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 
 interface BlogShowProps {
@@ -9,6 +11,11 @@ interface BlogShowProps {
 
 export default function BlogShow({ dbBlog }: BlogShowProps) {
     const post = dbBlog;
+
+    const sanitizedContent = useMemo(
+        () => DOMPurify.sanitize(post?.content ?? ''),
+        [post?.content],
+    );
 
     const handleShare = (platform: 'facebook' | 'twitter') => {
         const url = encodeURIComponent(window.location.href);
@@ -158,7 +165,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                     <div
                                         className="whitespace-pre-wrap"
                                         dangerouslySetInnerHTML={{
-                                            __html: post.content,
+                                            __html: sanitizedContent,
                                         }}
                                     />
 

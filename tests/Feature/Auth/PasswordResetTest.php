@@ -25,14 +25,49 @@ it('sends a reset link notification for a known email', function () {
     Notification::assertSentTo($user, ResetPassword::class);
 });
 
-it('does not error when requesting a reset link for an unknown email', function () {
+it('responds identically for an unknown email as for a known one, to avoid leaking which emails are registered', function () {
     Notification::fake();
+
+    $known = User::factory()->create();
+    $expectedStatus = 'If an account exists for that email address, we have emailed a password reset link.';
+
+    $this->post(route('password.email'), ['email' => $known->email])
+        ->assertRedirect()
+        ->assertSessionHas('status', $expectedStatus);
 
     $this->post(route('password.email'), ['email' => 'nobody@example.com'])
         ->assertRedirect()
-        ->assertSessionHasErrors('email');
+        ->assertSessionHas('status', $expectedStatus)
+        ->assertSessionDoesntHaveErrors('email');
 
-    Notification::assertNothingSent();
+    Notification::assertSentTo($known, ResetPassword::class);
+    Notification::assertSentTimes(ResetPassword::class, 1);
+});
+
+it('rate limits repeated reset requests aimed at the same email', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    foreach (range(1, 3) as $_) {
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertStatus(302);
+    }
+
+    $this->post(route('password.email'), ['email' => $user->email])
+        ->assertStatus(429);
+});
+
+it('rate limits reset requests across many different emails from one source', function () {
+    Notification::fake();
+
+    foreach (range(1, 10) as $i) {
+        $this->post(route('password.email'), ['email' => "enumerate-{$i}@example.com"])
+            ->assertStatus(302);
+    }
+
+    $this->post(route('password.email'), ['email' => 'enumerate-11@example.com'])
+        ->assertStatus(429);
 });
 
 it('requires a valid email to request a reset link', function () {

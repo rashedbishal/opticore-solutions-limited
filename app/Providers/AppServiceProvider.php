@@ -43,6 +43,15 @@ class AppServiceProvider extends ServiceProvider
      * - login / admin-login: keyed by email + IP so each account has its own
      *   independent counter and a shared IP cannot lock out other accounts.
      * - register: keyed by IP only since no account exists yet.
+     * - password-reset: both keyed by email + IP (stop repeated resets
+     *   aimed at one target) and capped per IP alone (stop one IP rotating
+     *   through many target emails to enumerate accounts or mass-spam reset
+     *   emails).
+     * - payment-callback: SSLCommerz's redirect/IPN endpoints can't require
+     *   auth or carry a CSRF token, so they're public by necessity. The
+     *   limit is deliberately generous (real traffic per checkout is a
+     *   handful of requests) — it only exists to bound outright flooding,
+     *   never to risk dropping a legitimate gateway callback or IPN retry.
      */
     protected function configureRateLimiters(): void
     {
@@ -60,6 +69,19 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(3)->by(
                 Str::lower($request->string('email')).'|'.$request->ip()
             );
+        });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            return [
+                Limit::perMinute(3)->by(
+                    Str::lower($request->string('email')).'|'.$request->ip()
+                ),
+                Limit::perMinute(10)->by($request->ip()),
+            ];
+        });
+
+        RateLimiter::for('payment-callback', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
         });
     }
 
@@ -80,5 +102,14 @@ class AppServiceProvider extends ServiceProvider
                 ->numbers()
             : null,
         );
+
+        // Symfony already marks the cookie secure when it detects an HTTPS
+        // request (relying on the trusted X-Forwarded-Proto header from the
+        // proxy), but that's silent and depends on perfect proxy config.
+        // Force it explicitly in production so a misconfigured/missing
+        // forwarded-proto header can never silently downgrade the cookie.
+        if (app()->isProduction()) {
+            config(['session.secure' => true]);
+        }
     }
 }

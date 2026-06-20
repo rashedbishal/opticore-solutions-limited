@@ -135,6 +135,15 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // Free the email for a future registration. Orders, invoices, and
+        // workflow tasks stay intact and admin-visible — they key off this
+        // row's id (Task) or their own independent email snapshot
+        // (Transaction), never the live email below.
+        $user->forceFill([
+            'original_email' => $user->original_email ?? $user->email,
+            'email' => "deleted-user-{$user->id}@deleted.invalid",
+        ])->save();
+
         $user->delete();
 
         return redirect('/');

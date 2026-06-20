@@ -26,6 +26,20 @@ it('lists clients with conversation and task counts', function () {
         );
 });
 
+it('shows the original email for a self-deleted client instead of the mangled placeholder', function () {
+    $client = User::factory()->create(['role' => 'user', 'email' => 'self-deleted@example.com']);
+
+    $this->actingAs($client)
+        ->delete(route('profile.delete'), ['password' => 'password'])
+        ->assertRedirect('/');
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data.0.original_email', 'self-deleted@example.com')
+        );
+});
+
 it('does not list admin accounts in the client index', function () {
     $client = User::factory()->create(['role' => 'user', 'name' => 'Real Client']);
     User::factory()->create(['role' => 'admin', 'name' => 'Admin Masquerading As User']);

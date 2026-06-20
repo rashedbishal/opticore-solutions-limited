@@ -166,7 +166,9 @@ it('charges via google pay and returns a regular redirect when no 3ds is require
         && $request['success_url'] === url('/success')
         && $request['fail_url'] === url('/fail')
         && $request['cancel_url'] === url('/cancel')
-        && $request['ipn_url'] === url('/ipn'));
+        && $request['ipn_url'] === url('/ipn')
+        && is_string($request['value_c'])
+        && strlen($request['value_c']) === 64);
 });
 
 it('charges via google pay and returns an otp form when 3ds is required', function () {

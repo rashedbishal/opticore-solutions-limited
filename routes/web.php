@@ -114,7 +114,7 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::get('/register', [RegisterController::class, 'create'])->name('register');
         Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:register');
         Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
-        Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware('throttle:password-reset');
         Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
         Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 
@@ -143,7 +143,6 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-        Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
         Route::get('/checkout/exchange-rate', [CheckoutController::class, 'exchangeRate'])->name('checkout.exchange-rate');
 
         // Google Pay (SSLCommerz Merchant Hosted Payment API)
@@ -264,8 +263,10 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 });
 
 // SSLCommerz
-Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
-Route::post('/success', [SslCommerzPaymentController::class, 'success']);
-Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
-Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
-Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+Route::middleware('throttle:payment-callback')->group(function () {
+    Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+    Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+    Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+    Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+    Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+});

@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OfferMilestone extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+        'revisions',
+        'delivery_days',
+        'price',
+        'sort_order',
+    ];
 
     protected function casts(): array
     {

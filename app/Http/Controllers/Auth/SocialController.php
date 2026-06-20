@@ -59,8 +59,26 @@ class SocialController extends Controller
 
         $user = User::withTrashed()
             ->where($provider.'_id', $socialUser->getId())
-            ->orWhere('email', $socialUser->getEmail())
             ->first();
+
+        if (! $user) {
+            $emailMatch = User::withTrashed()
+                ->where('email', $socialUser->getEmail())
+                ->first();
+
+            if ($emailMatch && ! $emailMatch->hasVerifiedEmail()) {
+                Log::warning('Social login blocked: matched email is unverified.', [
+                    'provider' => $provider,
+                    'email' => $socialUser->getEmail(),
+                ]);
+
+                return redirect()->route('login')->withErrors([
+                    'social' => 'An account with this email already exists but has not been verified. Please log in with your password, or use "Forgot password" to reset it.',
+                ]);
+            }
+
+            $user = $emailMatch;
+        }
 
         if ($user) {
             if ($user->trashed()) {
@@ -71,10 +89,6 @@ class SocialController extends Controller
                 $provider.'_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
             ]);
-
-            if (! $user->hasVerifiedEmail()) {
-                $user->markEmailAsVerified();
-            }
         } else {
             $user = User::create([
                 'name' => $socialUser->getName(),
@@ -88,6 +102,7 @@ class SocialController extends Controller
         }
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         if ($user->notify_security_alerts) {
             Mail::to($user->email)->queue(new SecurityAlertMail(

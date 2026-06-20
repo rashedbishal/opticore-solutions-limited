@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Support\GooglePaySslCommerz;
 use App\Support\IdGenerator;
+use App\Support\PaymentReturnToken;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -126,6 +127,7 @@ class GooglePayCheckoutController extends Controller
             'product_profile' => 'non-physical-goods',
             'value_a' => $categorySlug,
             'value_b' => $subcategoryId,
+            'value_c' => PaymentReturnToken::generate($tranId),
             'enable_cus_googlepay' => 1,
         ]);
 

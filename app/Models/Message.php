@@ -9,7 +9,16 @@ class Message extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'sender_type',
+        'sender_id',
+        'message',
+        'attachment_path',
+        'attachment_type',
+        'delivered_at',
+        'read_at',
+        'offer_id',
+    ];
 
     protected function casts(): array
     {

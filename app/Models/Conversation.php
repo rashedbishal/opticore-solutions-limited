@@ -9,7 +9,11 @@ class Conversation extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'last_message',
+        'last_message_at',
+    ];
 
     protected $casts = [
         'last_message_at' => 'datetime',

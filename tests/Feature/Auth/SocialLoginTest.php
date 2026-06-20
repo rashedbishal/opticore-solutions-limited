@@ -106,6 +106,27 @@ it('logs in an existing user matched by provider id', function () {
     $this->assertAuthenticatedAs($existing);
 });
 
+it('refuses to auto-link a social login to an existing user whose email is unverified', function () {
+    $existing = User::factory()->unverified()->create(['email' => 'unverified@example.com']);
+
+    Socialite::fake('google', (new SocialiteUser)->map([
+        'id' => 'google-attacker-1',
+        'name' => 'Attacker Controlled',
+        'email' => 'unverified@example.com',
+        'avatar' => 'https://example.com/attacker.jpg',
+    ]));
+
+    $this->get(route('social.callback', ['provider' => 'google']))
+        ->assertRedirect(route('login'))
+        ->assertSessionHasErrors('social');
+
+    $this->assertGuest();
+
+    $existing->refresh();
+    expect($existing->google_id)->toBeNull();
+    expect($existing->hasVerifiedEmail())->toBeFalse();
+});
+
 it('returns a 404 for an unsupported social provider on callback', function () {
     $this->get(route('social.callback', ['provider' => 'twitter']))
         ->assertNotFound();

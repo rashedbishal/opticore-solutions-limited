@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
@@ -79,6 +80,36 @@ it('rejects an invalid phone number format', function () {
         'password_confirmation' => 'Password123!',
         'phone_number' => '01700000000',
     ])->assertInvalid(['phone_number']);
+});
+
+it('creates a brand new, unrelated account when registering with an email that belonged to a deleted account', function () {
+    $original = User::factory()->create(['email' => 'reclaim@example.com', 'email_verified_at' => now()]);
+    $task = Task::factory()->create(['user_id' => $original->id]);
+
+    $this->actingAs($original)
+        ->delete(route('profile.delete'), ['password' => 'password'])
+        ->assertRedirect('/');
+
+    $this->post(route('register'), [
+        'name' => 'Attacker',
+        'email' => 'reclaim@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertRedirect(route('verification.notice'));
+
+    $newUser = User::where('email', 'reclaim@example.com')->first();
+
+    expect($newUser)->not->toBeNull();
+    expect($newUser->id)->not->toBe($original->id);
+    expect($newUser->email_verified_at)->toBeNull();
+    $this->assertAuthenticatedAs($newUser);
+
+    $original->refresh();
+    expect($original->trashed())->toBeTrue();
+    expect($original->original_email)->toBe('reclaim@example.com');
+
+    // The old account's workflow history stays put — it never transfers to the new account.
+    expect(Task::find($task->id)->user_id)->toBe($original->id);
 });
 
 it('accepts a valid E.164 phone number', function () {

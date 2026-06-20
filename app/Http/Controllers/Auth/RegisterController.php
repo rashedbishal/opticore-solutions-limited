@@ -8,7 +8,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
@@ -34,26 +33,6 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $deleted = User::withTrashed()
-            ->where('email', $request->email)
-            ->whereNotNull('deleted_at')
-            ->first();
-
-        if ($deleted) {
-            $deleted->restore();
-            $deleted->update([
-                'name' => $request->name,
-                'password' => Hash::make($request->password),
-                'phone_number' => $request->phone_number,
-            ]);
-
-            Auth::login($deleted);
-
-            return $deleted->email_verified_at
-                ? redirect()->intended('/')
-                : redirect()->route('verification.notice');
-        }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -71,6 +50,7 @@ class RegisterController extends Controller
         }
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect()->route('verification.notice');
     }

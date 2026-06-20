@@ -8,7 +8,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Offer extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'sub_category_id',
+        'category_slug',
+        'payment_type',
+        'description',
+        'request_requirements',
+        'price',
+        'delivery_days',
+        'revisions',
+        'expires_at',
+        'offer_token',
+        'status',
+    ];
 
     protected function casts(): array
     {

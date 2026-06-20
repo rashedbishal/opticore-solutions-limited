@@ -389,7 +389,11 @@ export default function Profile() {
     } = usePage<SharedPageProps & Props>().props;
 
     const searchParams = new URLSearchParams(window.location.search);
-    const initialTab = searchParams.get('tab') ?? 'overview';
+    const requestedTab = searchParams.get('tab') ?? 'overview';
+    const initialTab =
+        isSocialAccount && requestedTab === 'security'
+            ? 'overview'
+            : requestedTab;
 
     const [promoEmails, setPromoEmails] = useState(notifyPromotionalEmails);
     const [orderUpdates, setOrderUpdates] = useState(notifyOrderUpdates);
@@ -606,32 +610,44 @@ export default function Profile() {
                                                     label: 'Preferences',
                                                 },
                                             ] as const
-                                        ).map(
-                                            ({ value, icon: Icon, label }) => (
-                                                <TabsTrigger
-                                                    key={value}
-                                                    value={value}
-                                                    className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 after:!hidden hover:text-zinc-800 sm:px-5 sm:py-2.5 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent"
-                                                >
-                                                    <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
-                                                    <span>
-                                                        {value ===
-                                                        'settings' ? (
-                                                            <>
-                                                                <span className="sm:hidden">
-                                                                    Settings
-                                                                </span>
-                                                                <span className="hidden sm:inline">
-                                                                    {label}
-                                                                </span>
-                                                            </>
-                                                        ) : (
-                                                            label
-                                                        )}
-                                                    </span>
-                                                </TabsTrigger>
-                                            ),
-                                        )}
+                                        )
+                                            .filter(
+                                                ({ value }) =>
+                                                    !(
+                                                        isSocialAccount &&
+                                                        value === 'security'
+                                                    ),
+                                            )
+                                            .map(
+                                                ({
+                                                    value,
+                                                    icon: Icon,
+                                                    label,
+                                                }) => (
+                                                    <TabsTrigger
+                                                        key={value}
+                                                        value={value}
+                                                        className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 after:!hidden hover:text-zinc-800 sm:px-5 sm:py-2.5 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent"
+                                                    >
+                                                        <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
+                                                        <span>
+                                                            {value ===
+                                                            'settings' ? (
+                                                                <>
+                                                                    <span className="sm:hidden">
+                                                                        Settings
+                                                                    </span>
+                                                                    <span className="hidden sm:inline">
+                                                                        {label}
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                label
+                                                            )}
+                                                        </span>
+                                                    </TabsTrigger>
+                                                ),
+                                            )}
                                     </TabsList>
                                 </div>
                             </div>
@@ -1032,150 +1048,153 @@ export default function Profile() {
                                 </motion.form>
                             </TabsContent>
 
-                            {/* Security Tab */}
-                            <TabsContent
-                                value="security"
-                                className="outline-none"
-                            >
-                                <motion.div
-                                    variants={stagger}
-                                    className="space-y-8"
+                            {/* Security Tab — not rendered for social-login accounts, which have no known password to change */}
+                            {!isSocialAccount && (
+                                <TabsContent
+                                    value="security"
+                                    className="outline-none"
                                 >
-                                    {/* L1 — Change Password card */}
-                                    <motion.form
-                                        variants={fadeUp}
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            pwPut(updatePassword.url(), {
-                                                preserveScroll: true,
-                                                onSuccess: () => pwReset(),
-                                            });
-                                        }}
-                                        className="neo-panel space-y-8 p-6 sm:p-8"
+                                    <motion.div
+                                        variants={stagger}
+                                        className="space-y-8"
                                     >
-                                        <div>
-                                            <h2 className="text-lg font-bold text-theme sm:text-xl">
-                                                Change Password
-                                            </h2>
-                                            <p className="text-sm text-theme-muted">
-                                                Ensure your account is using a
-                                                long, random password to stay
-                                                secure.
-                                            </p>
-                                        </div>
-
-                                        {pwWasSuccessful && (
-                                            <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-500">
-                                                <CheckCircle className="h-4 w-4 shrink-0" />
-                                                Password updated successfully.
+                                        {/* L1 — Change Password card */}
+                                        <motion.form
+                                            variants={fadeUp}
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                pwPut(updatePassword.url(), {
+                                                    preserveScroll: true,
+                                                    onSuccess: () => pwReset(),
+                                                });
+                                            }}
+                                            className="neo-panel space-y-8 p-6 sm:p-8"
+                                        >
+                                            <div>
+                                                <h2 className="text-lg font-bold text-theme sm:text-xl">
+                                                    Change Password
+                                                </h2>
+                                                <p className="text-sm text-theme-muted">
+                                                    Ensure your account is using
+                                                    a long, random password to
+                                                    stay secure.
+                                                </p>
                                             </div>
-                                        )}
 
-                                        <div className="max-w-md space-y-6">
-                                            <div className="space-y-2">
-                                                <Label
-                                                    htmlFor="current_password"
-                                                    className="text-theme"
-                                                >
-                                                    Current Password
-                                                </Label>
-                                                <Input
-                                                    id="current_password"
-                                                    type="password"
-                                                    value={
-                                                        pwData.current_password
-                                                    }
-                                                    onChange={(e) =>
-                                                        setPwData(
-                                                            'current_password',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="neo-field rounded-xl"
-                                                />
-                                                {pwErrors.current_password && (
-                                                    <p className="text-xs text-red-500">
-                                                        {
-                                                            pwErrors.current_password
+                                            {pwWasSuccessful && (
+                                                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-500">
+                                                    <CheckCircle className="h-4 w-4 shrink-0" />
+                                                    Password updated
+                                                    successfully.
+                                                </div>
+                                            )}
+
+                                            <div className="max-w-md space-y-6">
+                                                <div className="space-y-2">
+                                                    <Label
+                                                        htmlFor="current_password"
+                                                        className="text-theme"
+                                                    >
+                                                        Current Password
+                                                    </Label>
+                                                    <Input
+                                                        id="current_password"
+                                                        type="password"
+                                                        value={
+                                                            pwData.current_password
                                                         }
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label
-                                                    htmlFor="new_password"
-                                                    className="text-theme"
-                                                >
-                                                    New Password
-                                                </Label>
-                                                <Input
-                                                    id="new_password"
-                                                    type="password"
-                                                    value={pwData.password}
-                                                    onChange={(e) =>
-                                                        setPwData(
-                                                            'password',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="neo-field rounded-xl"
-                                                />
-                                                {pwErrors.password && (
-                                                    <p className="text-xs text-red-500">
-                                                        {pwErrors.password}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label
-                                                    htmlFor="confirm_password"
-                                                    className="text-theme"
-                                                >
-                                                    Confirm New Password
-                                                </Label>
-                                                <Input
-                                                    id="confirm_password"
-                                                    type="password"
-                                                    value={
-                                                        pwData.password_confirmation
-                                                    }
-                                                    onChange={(e) =>
-                                                        setPwData(
-                                                            'password_confirmation',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="neo-field rounded-xl"
-                                                />
-                                                {pwErrors.password_confirmation && (
-                                                    <p className="text-xs text-red-500">
-                                                        {
-                                                            pwErrors.password_confirmation
+                                                        onChange={(e) =>
+                                                            setPwData(
+                                                                'current_password',
+                                                                e.target.value,
+                                                            )
                                                         }
-                                                    </p>
-                                                )}
+                                                        className="neo-field rounded-xl"
+                                                    />
+                                                    {pwErrors.current_password && (
+                                                        <p className="text-xs text-red-500">
+                                                            {
+                                                                pwErrors.current_password
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label
+                                                        htmlFor="new_password"
+                                                        className="text-theme"
+                                                    >
+                                                        New Password
+                                                    </Label>
+                                                    <Input
+                                                        id="new_password"
+                                                        type="password"
+                                                        value={pwData.password}
+                                                        onChange={(e) =>
+                                                            setPwData(
+                                                                'password',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className="neo-field rounded-xl"
+                                                    />
+                                                    {pwErrors.password && (
+                                                        <p className="text-xs text-red-500">
+                                                            {pwErrors.password}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label
+                                                        htmlFor="confirm_password"
+                                                        className="text-theme"
+                                                    >
+                                                        Confirm New Password
+                                                    </Label>
+                                                    <Input
+                                                        id="confirm_password"
+                                                        type="password"
+                                                        value={
+                                                            pwData.password_confirmation
+                                                        }
+                                                        onChange={(e) =>
+                                                            setPwData(
+                                                                'password_confirmation',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className="neo-field rounded-xl"
+                                                    />
+                                                    {pwErrors.password_confirmation && (
+                                                        <p className="text-xs text-red-500">
+                                                            {
+                                                                pwErrors.password_confirmation
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div className="flex justify-start border-t border-slate-200 pt-4 dark:border-zinc-700">
-                                            <Button
-                                                type="submit"
-                                                disabled={pwProcessing}
-                                                className="neo-btn-primary min-w-[160px] rounded-xl transition-all hover:scale-[1.02]"
-                                            >
-                                                {pwProcessing ? (
-                                                    <span className="flex items-center gap-2">
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                        Updating…
-                                                    </span>
-                                                ) : (
-                                                    'Update Password'
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </motion.form>
-                                </motion.div>
-                            </TabsContent>
+                                            <div className="flex justify-start border-t border-slate-200 pt-4 dark:border-zinc-700">
+                                                <Button
+                                                    type="submit"
+                                                    disabled={pwProcessing}
+                                                    className="neo-btn-primary min-w-[160px] rounded-xl transition-all hover:scale-[1.02]"
+                                                >
+                                                    {pwProcessing ? (
+                                                        <span className="flex items-center gap-2">
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                            Updating…
+                                                        </span>
+                                                    ) : (
+                                                        'Update Password'
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </motion.form>
+                                    </motion.div>
+                                </TabsContent>
+                            )}
 
                             {/* Preferences Tab */}
                             <TabsContent

@@ -15,6 +15,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Support\IdGenerator;
 use App\Support\InvoicePdfBuilder;
+use App\Support\PaymentReturnToken;
 use App\Support\TaskGenerator;
 use DB;
 use Illuminate\Http\Request;
@@ -101,6 +102,7 @@ class SslCommerzPaymentController extends Controller
         $post_data['total_amount'] = $totalAmount;
         $post_data['currency'] = $currency;
         $post_data['tran_id'] = IdGenerator::transactionId();
+        $post_data['value_c'] = PaymentReturnToken::generate($post_data['tran_id']);
 
         // CUSTOMER INFORMATION
         $post_data['cus_name'] = $user->name;
@@ -122,7 +124,6 @@ class SslCommerzPaymentController extends Controller
         // Service identifiers passed through SSLCommerz and available in success/IPN callbacks
         $post_data['value_a'] = $categorySlug;
         $post_data['value_b'] = $subcategoryId;
-        $post_data['value_c'] = '';
         $post_data['value_d'] = '';
 
         // Pending order record (SSLCommerz convention)
@@ -229,7 +230,9 @@ class SslCommerzPaymentController extends Controller
                 TransactionUpdated::dispatch();
                 OrderUpdated::dispatch();
 
-                $this->loginUserFromTransaction($tran_id);
+                if (PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+                    $this->loginUserFromTransaction($request, $tran_id);
+                }
 
                 return redirect()->route('profile')->with('payment_success', [
                     'invoice_number' => $invoiceNumber,
@@ -241,7 +244,9 @@ class SslCommerzPaymentController extends Controller
         } elseif ($order_details->status === 'Processing' || $order_details->status === 'Complete') {
             $existing = Transaction::where('transaction_id', $tran_id)->first();
 
-            $this->loginUserFromTransaction($tran_id);
+            if (PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+                $this->loginUserFromTransaction($request, $tran_id);
+            }
 
             return redirect()->route('profile')->with('payment_success', [
                 'invoice_number' => $existing?->invoice_number,
@@ -273,8 +278,8 @@ class SslCommerzPaymentController extends Controller
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
 
-        if ($this->verifySSLCommerzSignature($request)) {
-            $this->loginUserFromTransaction($tran_id);
+        if ($this->verifySSLCommerzSignature($request) && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+            $this->loginUserFromTransaction($request, $tran_id);
         }
 
         return redirect()->route('home')
@@ -301,8 +306,8 @@ class SslCommerzPaymentController extends Controller
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
 
-        if ($this->verifySSLCommerzSignature($request)) {
-            $this->loginUserFromTransaction($tran_id);
+        if ($this->verifySSLCommerzSignature($request) && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+            $this->loginUserFromTransaction($request, $tran_id);
         }
 
         return redirect()->route('home')
@@ -407,7 +412,7 @@ class SslCommerzPaymentController extends Controller
         return md5(rtrim($hashString, '&')) === $postData['verify_sign'];
     }
 
-    private function loginUserFromTransaction(string $tran_id): void
+    private function loginUserFromTransaction(Request $request, string $tran_id): void
     {
         $transaction = Transaction::where('transaction_id', $tran_id)->first();
 
@@ -416,6 +421,7 @@ class SslCommerzPaymentController extends Controller
 
             if ($user) {
                 Auth::login($user);
+                $request->session()->regenerate();
             }
         }
     }

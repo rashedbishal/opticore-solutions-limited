@@ -23,6 +23,7 @@ interface ClientRecord {
     id: number;
     name: string;
     email: string;
+    original_email: string | null;
     phone_number: string | null;
     avatar: string | null;
     role: string;
@@ -217,7 +218,8 @@ export default function ClientIndex({ clients }: Props) {
                                                     {client.name}
                                                 </p>
                                                 <p className="mt-0.5 truncate text-xs text-zinc-500">
-                                                    {client.email}
+                                                    {client.original_email ??
+                                                        client.email}
                                                 </p>
                                             </div>
                                         </div>
