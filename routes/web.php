@@ -24,7 +24,6 @@ use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AppointmentController as OriginalAppointmentController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -82,7 +81,6 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
     Route::get('/faq', [PageController::class, 'faq'])->name('faq');
     Route::get('/message-from-md', [PageController::class, 'messageFromMd'])->name('messageFromMd');
-    Route::get('/request-appointment', [PageController::class, 'requestAppointment'])->name('requestAppointment');
     Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacyPolicy');
     Route::get('/terms-conditions', [PageController::class, 'termsConditions'])->name('termsConditions');
 
@@ -103,7 +101,6 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     Route::get('/portfolio-item/{portfolio}', [PortfolioController::class, 'preview'])->name('portfolioPreview');
 
     Route::post('/api/contact', [ContactController::class, 'store'])->name('contactStore')->middleware('throttle:5,1');
-    Route::post('/api/appointment', [OriginalAppointmentController::class, 'store'])->name('appointmentStore')->middleware('throttle:5,1');
     Route::post('/api/career/apply', [CareerController::class, 'apply'])->name('careerApply')->middleware('throttle:3,1');
     Route::post('/chat', [ChatController::class, 'handleChat'])->name('chat')->middleware('throttle:12,1');
 
@@ -192,10 +189,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/offer/{token}/decline', [OfferController::class, 'decline'])->name('offer.decline');
 });
 
-// Offer edit — admin only
+// Offer edit — admin only. The route name isn't under the `admin.` prefix, so
+// the permission middleware can't auto-derive a section key for it; the
+// "customer-conversations" permission check happens explicitly inside
+// OfferController::update() instead. `admin.session` still applies here so a
+// demoted/revoked admin is force-logged-out immediately, same as every CMS route.
 Route::put('/offer/{token}', [OfferController::class, 'update'])
     ->name('offer.update')
-    ->middleware('auth:admin');
+    ->middleware(['auth:admin', 'admin.session']);
 
 // Admin Auth Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -213,12 +214,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('portfolios', AdminPortfolioController::class);
+    Route::resource('portfolios', AdminPortfolioController::class)->except(['show']);
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
-    Route::resource('sub-categories', PortfolioSubCategoryController::class);
+    Route::resource('sub-categories', PortfolioSubCategoryController::class)->except(['show']);
     Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
     Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');
-    Route::resource('blogs', AdminBlogController::class);
+    Route::resource('blogs', AdminBlogController::class)->except(['show']);
     Route::resource('faqs', AdminFaqController::class);
     Route::resource('job-listings', AdminJobListingController::class);
     Route::resource('job-applications', AdminJobApplicationController::class)->only(['index', 'destroy']);
@@ -226,10 +227,10 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::resource('brands', BrandController::class)->except(['show', 'create', 'edit']);
     Route::resource('chats', ChatSessionController::class)->only(['index', 'show', 'destroy']);
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except(['show']);
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy')->withTrashed();
-    Route::resource('tasks', TaskController::class);
+    Route::resource('tasks', TaskController::class)->except(['show']);
 
     // Customer Support Chat Routes
     Route::get('/customer-conversations', [CustomerConversationController::class, 'index'])->name('customer-conversations.index');

@@ -100,8 +100,12 @@ abstract class AbstractSslCommerz implements SslCommerzInterface
                     $response = json_encode(['status' => 'success', 'data' => $sslcz['GatewayPageURL'], 'logo' => $sslcz['storeLogo']]);
                 }
             } else {
-                if (strpos($sslcz['failedreason'], 'Store Credential') === false) {
-                    $message = $sslcz['failedreason'];
+                $failedReason = is_array($sslcz) ? ($sslcz['failedreason'] ?? null) : null;
+
+                if ($failedReason === null) {
+                    $message = 'Unable to reach the payment gateway. Please try again.';
+                } elseif (strpos($failedReason, 'Store Credential') === false) {
+                    $message = $failedReason;
                 } else {
                     $message = 'Check the SSLCZ_TESTMODE and SSLCZ_STORE_PASSWORD value in your .env; DO NOT USE MERCHANT PANEL PASSWORD HERE.';
                 }

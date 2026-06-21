@@ -135,3 +135,33 @@ it('turns off a matching registered user\'s promotional emails preference when a
     expect($user->refresh()->notify_promotional_emails)->toBeFalse();
     expect(Subscription::where('email', 'client@example.com')->exists())->toBeFalse();
 });
+
+it('blocks a regular admin without the subscriptions permission from viewing or removing subscribers', function () {
+    $admin = Admin::factory()->regular()->create();
+    $subscription = Subscription::create(['email' => 'guarded@example.com']);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.subscriptions.index'))
+        ->assertForbidden();
+
+    $this->actingAs($admin, 'admin')
+        ->delete(route('admin.subscriptions.destroy', $subscription))
+        ->assertForbidden();
+
+    expect(Subscription::where('email', 'guarded@example.com')->exists())->toBeTrue();
+});
+
+it('allows a regular admin with the subscriptions permission to view and remove subscribers', function () {
+    $admin = Admin::factory()->withPermissions(['subscriptions'])->create();
+    $subscription = Subscription::create(['email' => 'allowed@example.com']);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.subscriptions.index'))
+        ->assertSuccessful();
+
+    $this->actingAs($admin, 'admin')
+        ->delete(route('admin.subscriptions.destroy', $subscription))
+        ->assertRedirect();
+
+    expect(Subscription::where('email', 'allowed@example.com')->exists())->toBeFalse();
+});

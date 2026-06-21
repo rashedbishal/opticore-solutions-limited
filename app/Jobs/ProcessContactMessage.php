@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Mail\ContactMessageMail;
 use App\Models\Contact;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Mail;
 
 class ProcessContactMessage implements ShouldQueue
 {
@@ -22,7 +24,6 @@ class ProcessContactMessage implements ShouldQueue
      */
     public function handle(): void
     {
-        // Place heavy operations here, like API calls or sending emails to admin/client
-        // Mail::to('admin@opticore.com')->send(new ContactMessageMail($this->contact));
+        Mail::to(config('mail.from.address'))->send(new ContactMessageMail($this->contact));
     }
 }

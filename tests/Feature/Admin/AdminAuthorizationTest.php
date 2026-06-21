@@ -166,3 +166,19 @@ it('blocks unauthenticated DELETE to admin client-reviews destroy', function () 
     $this->delete(route('admin.client-reviews.destroy', $review))->assertRedirect(route('admin.login'));
     $this->assertDatabaseHas('client_reviews', ['id' => $review->id]);
 });
+
+// --- Resources with no "show" view (no controller show() method exists) ---
+// Route::resource() registers a "show" route by default; without ->except(['show'])
+// this would 500 ("Call to undefined method ...::show()") instead of cleanly
+// rejecting GET (405, since PUT/PATCH/DELETE still match the same URI).
+it('rejects GET rather than crashing when an admin opens a direct link to a resource with no show view', function (string $routeUri) {
+    $this->actingAs($this->admin, 'admin')
+        ->get($routeUri)
+        ->assertStatus(405);
+})->with([
+    fn () => '/admin/blogs/'.Blog::factory()->create()->id,
+    fn () => '/admin/portfolios/'.Portfolio::factory()->create()->id,
+    fn () => '/admin/sub-categories/'.PortfolioSubCategory::factory()->create()->id,
+    fn () => '/admin/tasks/'.Task::factory()->create()->id,
+    fn () => '/admin/users/'.Admin::factory()->create()->id,
+]);

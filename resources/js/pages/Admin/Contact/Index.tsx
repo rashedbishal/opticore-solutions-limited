@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Mail, MessageSquare, Trash2 } from 'lucide-react';
+import { ChevronDown, Mail, MessageSquare, Phone, Trash2 } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -11,6 +11,7 @@ interface Contact {
     id: number;
     name: string;
     email: string;
+    phone: string | null;
     subject: string | null;
     message: string;
     created_at: string;
@@ -149,6 +150,11 @@ export default function ContactIndex({ contacts }: Props) {
                                                 <p className="mt-0.5 max-w-[14rem] truncate text-xs text-zinc-500 sm:max-w-none">
                                                     {contact.email}
                                                 </p>
+                                                {contact.phone && (
+                                                    <p className="mt-0.5 text-xs text-zinc-600">
+                                                        {contact.phone}
+                                                    </p>
+                                                )}
                                             </td>
 
                                             {/* Subject */}
@@ -257,20 +263,36 @@ export default function ContactIndex({ contacts }: Props) {
                                                                             contact.created_at,
                                                                         )}
                                                                     </span>
-                                                                    <a
-                                                                        href={`mailto:${contact.email}`}
-                                                                        onClick={(
-                                                                            e,
-                                                                        ) =>
-                                                                            e.stopPropagation()
-                                                                        }
-                                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-400"
-                                                                    >
-                                                                        <Mail className="h-3.5 w-3.5" />
-                                                                        Reply
-                                                                        via
-                                                                        email
-                                                                    </a>
+                                                                    <div className="flex items-center gap-2">
+                                                                        {contact.phone && (
+                                                                            <a
+                                                                                href={`tel:${contact.phone}`}
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) =>
+                                                                                    e.stopPropagation()
+                                                                                }
+                                                                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-400"
+                                                                            >
+                                                                                <Phone className="h-3.5 w-3.5" />
+                                                                                Call
+                                                                            </a>
+                                                                        )}
+                                                                        <a
+                                                                            href={`mailto:${contact.email}`}
+                                                                            onClick={(
+                                                                                e,
+                                                                            ) =>
+                                                                                e.stopPropagation()
+                                                                            }
+                                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-400"
+                                                                        >
+                                                                            <Mail className="h-3.5 w-3.5" />
+                                                                            Reply
+                                                                            via
+                                                                            email
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </motion.div>

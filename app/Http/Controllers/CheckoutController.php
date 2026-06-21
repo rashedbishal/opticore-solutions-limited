@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -74,7 +75,11 @@ class CheckoutController extends Controller
     public function exchangeRate(): JsonResponse
     {
         $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
-            $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+            try {
+                $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+            } catch (ConnectionException) {
+                return null;
+            }
 
             return $response->json('conversion_rate');
         });

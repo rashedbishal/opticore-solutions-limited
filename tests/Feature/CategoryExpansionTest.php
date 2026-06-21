@@ -46,26 +46,3 @@ it('includes a newly added category in the shared categories prop on an offer pa
             ->where('categories.photography.label', 'Photography')
         );
 });
-
-it('loads request-appointment with the shared categories prop and accepts a new category as the service', function () {
-    $category = Category::factory()->create([
-        'slug' => 'photography',
-        'label' => 'Photography',
-    ]);
-
-    $this->get(route('requestAppointment'))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('RequestAppointment')
-            ->where('categories.photography.label', 'Photography')
-        );
-
-    $this->post('/api/appointment', [
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-        'phone' => '0123456789',
-        'service' => $category->label,
-        'preferred_date' => now()->addDays(3)->toDateString(),
-        'message' => 'Looking forward to it.',
-    ])->assertSessionHasNoErrors();
-});

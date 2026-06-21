@@ -307,8 +307,8 @@ export default function PortfolioSubCategoryShow({
                             </p>
                             <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                                 <MagneticButton
-                                    href="/request-appointment"
-                                    ariaLabel="Request a project appointment"
+                                    href="/contact"
+                                    ariaLabel="Contact us about a project"
                                 >
                                     Start a Project
                                 </MagneticButton>

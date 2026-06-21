@@ -79,6 +79,13 @@ class SslCommerzNotification extends AbstractSslCommerz
 
                 // TO CONVERT AS OBJECT
                 $result = json_decode($result);
+
+                if (! $result) {
+                    $this->error = 'Invalid response from SSLCOMMERZ';
+
+                    return false;
+                }
+
                 $this->sslc_data = $result;
 
                 // TRANSACTION INFO

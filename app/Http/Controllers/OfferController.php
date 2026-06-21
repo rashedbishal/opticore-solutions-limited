@@ -75,6 +75,12 @@ class OfferController extends Controller
 
     public function update(string $token, Request $request): JsonResponse
     {
+        // This route isn't under the `admin.` name prefix, so the
+        // EnsureAdminHasPermission middleware can't derive a section key for
+        // it automatically — check the "Customer Support" permission
+        // explicitly instead, since offers are part of that feature.
+        abort_unless(Auth::guard('admin')->user()->canAccess('customer-conversations'), 403);
+
         $offer = Offer::where('offer_token', $token)
             ->with(['milestones', 'conversation'])
             ->firstOrFail();

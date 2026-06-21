@@ -93,13 +93,12 @@ class UserController extends Controller
         $canEditProfile = $actor->isMotherAdmin() || $editingSelf;
         $canEditPermissions = $actor->isMotherAdmin() && ! $editingSelf;
 
-        $rules = [
-            'password' => 'nullable|string|min:8',
-        ];
+        $rules = [];
 
         if ($canEditProfile) {
             $rules['name'] = 'required|string|max:255';
             $rules['email'] = ['required', 'email', 'max:255', Rule::unique('admin.admins', 'email')->ignore($user->id)];
+            $rules['password'] = 'nullable|string|min:8';
         }
 
         if ($canEditPermissions) {
@@ -114,10 +113,15 @@ class UserController extends Controller
         if ($canEditProfile) {
             $payload['name'] = $validated['name'];
             $payload['email'] = $validated['email'];
-        }
 
-        if (! empty($validated['password'])) {
-            $payload['password'] = Hash::make($validated['password']);
+            // Password is gated by canEditProfile too — only the mother
+            // admin or the account owner may change it. Without this, an
+            // admin holding only the "users" (Admins section) permission
+            // could silently reset another regular admin's password and
+            // hijack their account.
+            if (! empty($validated['password'])) {
+                $payload['password'] = Hash::make($validated['password']);
+            }
         }
 
         if ($canEditPermissions && ! $user->isMotherAdmin()) {

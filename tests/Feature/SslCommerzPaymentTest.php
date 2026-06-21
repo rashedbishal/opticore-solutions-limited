@@ -181,6 +181,18 @@ it('does not log in on a cancelled payment callback when the return token is mis
     $this->assertGuest();
 });
 
+it('redirects gracefully instead of crashing when the success callback references an unknown transaction', function () {
+    $this->post('/success', [
+        'tran_id' => 'TRX-DOES-NOT-EXIST',
+    ])->assertRedirect(route('home'));
+});
+
+it('returns an error response instead of crashing when the IPN callback references an unknown transaction', function () {
+    $this->post('/ipn', [
+        'tran_id' => 'TRX-DOES-NOT-EXIST',
+    ])->assertStatus(400)->assertSeeText('INVALID TRANSACTION');
+});
+
 it('rate limits the SSLCommerz callback routes to bound flooding, sharing one cap per IP', function () {
     foreach (range(1, 60) as $i) {
         $this->post('/fail', ['tran_id' => "TRX-FLOOD-{$i}"])

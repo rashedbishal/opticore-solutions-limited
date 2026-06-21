@@ -125,7 +125,6 @@ it('renders each of the static informational pages', function (string $routeName
     ['contact', 'Contact'],
     ['faq', 'FAQ'],
     ['messageFromMd', 'MessageFromMd'],
-    ['requestAppointment', 'RequestAppointment'],
     ['privacyPolicy', 'PrivacyPolicy'],
     ['termsConditions', 'TermsConditions'],
 ]);

@@ -321,9 +321,9 @@ export default function MessageFromMd() {
                                     </div>
                                     <div className="shrink-0">
                                         <MagneticButton
-                                            href="/request-appointment"
+                                            href="/contact"
                                             className="group/btn"
-                                            ariaLabel={''}
+                                            ariaLabel="Contact us to start a conversation"
                                         >
                                             <span className="flex items-center gap-2 px-2 whitespace-nowrap">
                                                 Start Conversation

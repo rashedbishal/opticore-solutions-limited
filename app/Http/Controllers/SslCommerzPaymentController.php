@@ -18,6 +18,7 @@ use App\Support\InvoicePdfBuilder;
 use App\Support\PaymentReturnToken;
 use App\Support\TaskGenerator;
 use DB;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -88,7 +89,11 @@ class SslCommerzPaymentController extends Controller
         // as the checkout page, so the user always sees a consistent rate.
         if ($currency === 'BDT') {
             $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
-                $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+                try {
+                    $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+                } catch (ConnectionException) {
+                    return null;
+                }
 
                 return $response->json('conversion_rate');
             });
@@ -181,7 +186,7 @@ class SslCommerzPaymentController extends Controller
             ->select('transaction_id', 'status', 'currency', 'amount')
             ->first();
 
-        if ($order_details->status === 'Pending') {
+        if ($order_details && $order_details->status === 'Pending') {
             $validation = $sslc->orderValidate($request->all(), $tran_id, $order_details->amount, $order_details->currency);
 
             if ($validation) {
@@ -241,7 +246,7 @@ class SslCommerzPaymentController extends Controller
                     'tran_id' => $tran_id,
                 ]);
             }
-        } elseif ($order_details->status === 'Processing' || $order_details->status === 'Complete') {
+        } elseif ($order_details && ($order_details->status === 'Processing' || $order_details->status === 'Complete')) {
             $existing = Transaction::where('transaction_id', $tran_id)->first();
 
             if (PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
@@ -327,6 +332,10 @@ class SslCommerzPaymentController extends Controller
             ->where('transaction_id', $tran_id)
             ->select('transaction_id', 'status', 'currency', 'amount')
             ->first();
+
+        if (! $order_details) {
+            return response('INVALID TRANSACTION', 400);
+        }
 
         if ($order_details->status === 'Pending') {
             $sslc = new SslCommerzNotification;

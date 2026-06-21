@@ -335,7 +335,7 @@ it('ignores a crafted permissions payload when a regular admin edits themselves'
     expect($this->regular->permissions)->toBe($originalPermissions);
 });
 
-it('restricts a regular admin updating another admin to the password field only', function () {
+it('blocks a regular admin from changing anything on another regular admin, including their password', function () {
     $other = Admin::factory()->regular()->create([
         'name' => 'Original Name',
         'email' => 'original@example.com',
@@ -357,7 +357,7 @@ it('restricts a regular admin updating another admin to the password field only'
     expect($other->email)->toBe('original@example.com');
     expect($other->full_access)->toBeFalse();
     expect($other->permissions)->toBe([]);
-    expect($other->password)->not->toBe($oldHash);
+    expect($other->password)->toBe($oldHash);
 });
 
 it('does not change the password when the password field is empty on update', function () {

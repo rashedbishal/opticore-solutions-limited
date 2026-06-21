@@ -131,7 +131,7 @@ export default function ServicePageTemplate({
                             </p>
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                                 <MagneticButton
-                                    href="/request-appointment"
+                                    href="/contact"
                                     ariaLabel={`Start a ${service.name} project`}
                                 >
                                     Start a Project
@@ -363,8 +363,8 @@ export default function ServicePageTemplate({
                         </p>
                         <div className="mt-8 flex justify-center">
                             <MagneticButton
-                                href="/request-appointment"
-                                ariaLabel="Request an appointment"
+                                href="/contact"
+                                ariaLabel="Contact us to start your project"
                             >
                                 Start Your Project{' '}
                                 <ArrowRight className="ml-2 h-4 w-4" />

@@ -285,10 +285,10 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                             with creative ambition, let's talk.
                                         </p>
                                         <Link
-                                            href="/request-appointment"
+                                            href="/contact"
                                             className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 text-[10px] font-bold tracking-widest text-dark uppercase transition-transform hover:scale-105 md:h-12 md:rounded-xl md:px-6 md:text-xs"
                                         >
-                                            Request Appointment
+                                            Contact Us
                                         </Link>
                                     </div>
                                 </div>

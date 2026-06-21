@@ -160,15 +160,6 @@ export interface ContactFormData {
     message: string;
 }
 
-export interface AppointmentFormData {
-    name: string;
-    email: string;
-    phone: string;
-    service: string;
-    preferred_date: string;
-    message: string;
-}
-
 export interface CareerFormData {
     name: string;
     email: string;

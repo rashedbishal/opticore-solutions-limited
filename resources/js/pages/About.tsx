@@ -1,6 +1,5 @@
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { clientLogos } from '@/lib/site';
@@ -198,14 +197,6 @@ export default function About() {
                             delivery, or a partner that can connect strategy
                             with execution, Opticore is ready.
                         </p>
-                        <div className="mt-8 flex justify-center">
-                            <MagneticButton
-                                href="/request-appointment"
-                                ariaLabel="Request an appointment"
-                            >
-                                Start a Conversation
-                            </MagneticButton>
-                        </div>
                     </div>
                 </div>
             </section>

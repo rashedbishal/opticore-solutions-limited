@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Support\GooglePaySslCommerz;
 use App\Support\IdGenerator;
 use App\Support\PaymentReturnToken;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -92,7 +93,11 @@ class GooglePayCheckoutController extends Controller
         [$usdAmount, $categorySlug, $subcategoryId, $checkoutUrl] = $this->resolveOrder($validated, $user->id);
 
         $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
-            $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+            try {
+                $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+            } catch (ConnectionException) {
+                return null;
+            }
 
             return $response->json('conversion_rate');
         });

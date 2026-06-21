@@ -43,6 +43,7 @@ class AdminPermissions
             ['key' => 'orders', 'label' => 'Orders'],
             ['key' => 'transactions', 'label' => 'Transactions'],
             ['key' => 'configuration', 'label' => 'Configuration'],
+            ['key' => 'subscriptions', 'label' => 'Subscriptions'],
         ];
     }
 

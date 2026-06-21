@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Offer;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -248,4 +249,63 @@ it('blocks non-admin users from updating an offer', function () {
         ->assertUnauthorized();
 
     expect($offer->fresh()->description)->not->toBe('Trying to edit my own offer');
+});
+
+it('blocks a regular admin without the customer-conversations permission from updating an offer', function () {
+    $admin = Admin::factory()->regular()->create();
+
+    $user = User::factory()->create();
+    $offer = createOfferForUser($user);
+
+    $this->actingAs($admin, 'admin')
+        ->putJson(route('offer.update', $offer->offer_token), [
+            'payment_type' => 'single',
+            'description' => 'Should be blocked',
+            'price' => 100,
+            'delivery_days' => 5,
+        ])
+        ->assertForbidden();
+
+    expect($offer->fresh()->description)->not->toBe('Should be blocked');
+});
+
+it('allows a regular admin with the customer-conversations permission to update an offer', function () {
+    $admin = Admin::factory()->withPermissions(['customer-conversations'])->create();
+
+    $user = User::factory()->create();
+    $offer = createOfferForUser($user);
+
+    $this->actingAs($admin, 'admin')
+        ->putJson(route('offer.update', $offer->offer_token), [
+            'payment_type' => 'single',
+            'description' => 'Approved update',
+            'price' => 100,
+            'delivery_days' => 5,
+        ])
+        ->assertSuccessful();
+
+    expect($offer->fresh()->description)->toBe('Approved update');
+});
+
+it('logs out a regular admin instead of updating an offer when their permissions changed mid-session', function () {
+    $admin = Admin::factory()->withPermissions(['customer-conversations'])->create();
+    $staleStamp = $admin->securityStamp();
+
+    $admin->forceFill(['permissions' => []])->save();
+
+    $user = User::factory()->create();
+    $offer = createOfferForUser($user);
+
+    $response = $this->actingAs($admin->fresh(), 'admin')
+        ->withSession(['admin_security_stamp' => $staleStamp])
+        ->putJson(route('offer.update', $offer->offer_token), [
+            'payment_type' => 'single',
+            'description' => 'Should not apply',
+            'price' => 100,
+            'delivery_days' => 5,
+        ]);
+
+    $response->assertRedirect(route('admin.login'));
+    expect(Auth::guard('admin')->check())->toBeFalse();
+    expect($offer->fresh()->description)->not->toBe('Should not apply');
 });

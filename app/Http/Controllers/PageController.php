@@ -120,16 +120,6 @@ class PageController extends Controller
         ]);
     }
 
-    public function requestAppointment(): Response
-    {
-        return Inertia::render('RequestAppointment', [
-            'meta' => [
-                'title' => 'Request Appointment — Opticore Solutions Ltd.',
-                'description' => 'Book a project consultation with Opticore Solutions Ltd.',
-            ],
-        ]);
-    }
-
     public function privacyPolicy(): Response
     {
         return Inertia::render('PrivacyPolicy', [

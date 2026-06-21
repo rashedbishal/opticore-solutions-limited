@@ -762,7 +762,7 @@ export const faqItems: FaqItem[] = [
     },
     {
         question: 'How do I get started with a project?',
-        answer: 'You can reach out through our contact form or request an appointment. We will review your goals, timeline, and scope, then recommend the most effective starting point.',
+        answer: 'You can reach out through our contact form. We will review your goals, timeline, and scope, then recommend the most effective starting point.',
     },
     {
         question: 'What is your typical project turnaround time?',
@@ -846,7 +846,7 @@ export const privacySections = [
         id: 'how-we-use-information',
         title: 'How We Use Information',
         body: [
-            'To respond to inquiries, schedule appointments, evaluate applications, and manage active client projects.',
+            'To respond to inquiries, evaluate applications, and manage active client projects.',
             'To improve our website experience, refine service delivery, and maintain secure communication across our systems.',
             'To share proposals, updates, deliverables, invoices, or relevant service information when needed.',
         ],
