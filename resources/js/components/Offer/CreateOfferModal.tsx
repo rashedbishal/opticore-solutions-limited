@@ -26,38 +26,31 @@ import {
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-const MAIN_CATEGORIES = [
-    {
-        slug: 'graphic-design',
-        label: 'Graphic Design',
+// Cosmetic-only: a dedicated icon/color for the categories this agency
+// originally shipped with. This must never be the source of truth for which
+// category_slug values are selectable — that has to come from the live
+// `categories` prop (which mirrors what the backend actually validates
+// against), otherwise a renamed/removed category here would still render as
+// pickable but fail with a 422 the moment it's submitted.
+const CATEGORY_STYLES: Record<string, { Icon: LucideIcon; color: string }> = {
+    'graphic-design': {
         Icon: Palette,
         color: 'from-purple-600 to-violet-700',
     },
-    {
-        slug: 'digital-marketing',
-        label: 'Digital Marketing',
+    'digital-marketing': {
         Icon: TrendingUp,
         color: 'from-blue-600 to-sky-700',
     },
-    {
-        slug: 'video-editing',
-        label: 'Video Editing',
-        Icon: Video,
-        color: 'from-orange-600 to-red-700',
-    },
-    {
-        slug: '3d-production',
-        label: '3D Production',
-        Icon: Box,
-        color: 'from-cyan-600 to-teal-700',
-    },
-    {
-        slug: 'web-development',
-        label: 'Web Development',
-        Icon: Code,
-        color: 'from-green-600 to-emerald-700',
-    },
-] as const;
+    'video-editing': { Icon: Video, color: 'from-orange-600 to-red-700' },
+    '3d-production': { Icon: Box, color: 'from-cyan-600 to-teal-700' },
+    'web-development': { Icon: Code, color: 'from-green-600 to-emerald-700' },
+};
+
+// Neutral fallback styling for any category without a dedicated style above.
+const DEFAULT_CATEGORY_STYLE = {
+    Icon: Sparkles,
+    color: 'from-slate-600 to-slate-700',
+};
 
 type CategorySlug = string;
 
@@ -76,10 +69,6 @@ const CATEGORY_COLORS: Record<string, string> = {
     '3d-production': 'from-cyan-600 to-teal-700',
     'web-development': 'from-green-600 to-emerald-700',
 };
-
-// Neutral fallback styling for categories added via the CMS beyond the
-// original 5 hardcoded ones above.
-const EXTRA_CATEGORY_COLOR = 'from-slate-600 to-slate-700';
 
 interface CategoryOption {
     slug: string;
@@ -200,20 +189,22 @@ export default function CreateOfferModal({
 }: CreateOfferModalProps) {
     const { categories } = usePage<SharedPageProps>().props;
 
-    // Categories added via the CMS beyond the original 5 get a generic card.
-    const extraCategories: CategoryOption[] = Object.entries(categories)
-        .filter(([slug]) => !MAIN_CATEGORIES.some((cat) => cat.slug === slug))
-        .map(([slug, category]) => ({
-            slug,
-            label: category.label,
-            Icon: Sparkles,
-            color: EXTRA_CATEGORY_COLOR,
-        }));
+    // Every selectable option comes straight from the live category list —
+    // the same list the backend validates category_slug against — so a
+    // category that's been renamed or removed in the CMS can never show up
+    // here as a pickable-but-doomed-to-422 option.
+    const displayCategories: CategoryOption[] = Object.entries(categories).map(
+        ([slug, category]) => {
+            const style = CATEGORY_STYLES[slug] ?? DEFAULT_CATEGORY_STYLE;
 
-    const displayCategories: CategoryOption[] = [
-        ...MAIN_CATEGORIES,
-        ...extraCategories,
-    ];
+            return {
+                slug,
+                label: category.label,
+                Icon: style.Icon,
+                color: style.color,
+            };
+        },
+    );
 
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [direction, setDirection] = useState(1);
