@@ -7,6 +7,7 @@ use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     $this->admin = Admin::factory()->create();
@@ -119,6 +120,25 @@ it('dispatches a delivery message and broadcasts it when a task transitions to d
     Event::assertDispatched(MessageSent::class, function (MessageSent $event) use ($message) {
         return $event->message->id === $message->id;
     });
+});
+
+it('does not email a task status update to a client who deleted their own account', function () {
+    Mail::fake();
+
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id,
+        'state' => 'pending',
+    ]);
+
+    $this->user->delete();
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.tasks.update', $task), [
+            'state' => 'in progress',
+        ])
+        ->assertRedirect(route('admin.tasks.index'));
+
+    Mail::assertNothingQueued();
 });
 
 it('rejects marking a task delivered without the current admin password', function () {

@@ -42,11 +42,14 @@ class AppServiceProvider extends ServiceProvider
      *
      * - login / admin-login: keyed by email + IP so each account has its own
      *   independent counter and a shared IP cannot lock out other accounts.
+     *   Each also adds a second, IP-less cap on the account alone, so an
+     *   attacker rotating source IPs to brute-force one target account
+     *   can't get a fresh allowance from every new IP.
      * - register: keyed by IP only since no account exists yet.
-     * - password-reset: both keyed by email + IP (stop repeated resets
-     *   aimed at one target) and capped per IP alone (stop one IP rotating
-     *   through many target emails to enumerate accounts or mass-spam reset
-     *   emails).
+     * - password-reset: keyed by email + IP (stop repeated resets aimed at
+     *   one target), capped per IP alone (stop one IP rotating through many
+     *   target emails to enumerate accounts or mass-spam reset emails), and
+     *   capped per email alone (stop IP-rotation email-bombing one target).
      * - payment-callback: SSLCommerz's redirect/IPN endpoints can't require
      *   auth or carry a CSRF token, so they're public by necessity. The
      *   limit is deliberately generous (real traffic per checkout is a
@@ -56,9 +59,12 @@ class AppServiceProvider extends ServiceProvider
     protected function configureRateLimiters(): void
     {
         RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(5)->by(
-                Str::lower($request->string('email')).'|'.$request->ip()
-            );
+            $email = Str::lower($request->string('email'));
+
+            return [
+                Limit::perMinute(5)->by($email.'|'.$request->ip()),
+                Limit::perHour(10)->by('account:'.$email),
+            ];
         });
 
         RateLimiter::for('register', function (Request $request) {
@@ -66,17 +72,21 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('admin-login', function (Request $request) {
-            return Limit::perMinute(3)->by(
-                Str::lower($request->string('email')).'|'.$request->ip()
-            );
+            $email = Str::lower($request->string('email'));
+
+            return [
+                Limit::perMinute(3)->by($email.'|'.$request->ip()),
+                Limit::perHour(8)->by('account:'.$email),
+            ];
         });
 
         RateLimiter::for('password-reset', function (Request $request) {
+            $email = Str::lower($request->string('email'));
+
             return [
-                Limit::perMinute(3)->by(
-                    Str::lower($request->string('email')).'|'.$request->ip()
-                ),
+                Limit::perMinute(3)->by($email.'|'.$request->ip()),
                 Limit::perMinute(10)->by($request->ip()),
+                Limit::perHour(8)->by('account:'.$email),
             ];
         });
 

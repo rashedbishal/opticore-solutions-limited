@@ -40,7 +40,9 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            RateLimiter::clear(md5('login'.Str::lower($request->string('email')).'|'.$request->ip()));
+            $email = Str::lower($request->string('email'));
+            RateLimiter::clear(md5('login'.$email.'|'.$request->ip()));
+            RateLimiter::clear(md5('login'.'account:'.$email));
 
             $user = Auth::user();
             Cache::put("user_chat_online_{$user->id}", true, now()->addMinutes(2));

@@ -36,7 +36,9 @@ class LoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
 
-            RateLimiter::clear(md5('admin-login'.Str::lower($request->string('email')).'|'.$request->ip()));
+            $email = Str::lower($request->string('email'));
+            RateLimiter::clear(md5('admin-login'.$email.'|'.$request->ip()));
+            RateLimiter::clear(md5('admin-login'.'account:'.$email));
 
             $admin = Auth::guard('admin')->user();
 

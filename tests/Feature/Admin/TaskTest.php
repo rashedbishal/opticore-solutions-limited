@@ -46,6 +46,21 @@ it('can store a new task', function () {
     ]);
 });
 
+it('still shows the client email in the task list after the client deletes their own account', function () {
+    $client = User::factory()->create(['email' => 'soon-gone@example.com']);
+    $task = Task::factory()->create(['user_id' => $client->id]);
+    $client->delete();
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.tasks.index'))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Task/Index')
+            ->where('tasks.data.0.id', $task->id)
+            ->where('tasks.data.0.client_email', 'soon-gone@example.com')
+        );
+});
+
 it('displays the task edit page with required props', function () {
     $task = Task::factory()->create(['user_id' => $this->user->id]);
 

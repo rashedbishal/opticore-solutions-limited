@@ -64,13 +64,21 @@ class SubscriptionController extends Controller
 
     public function sendCustomEmail(Request $request): RedirectResponse
     {
+        $emailList = function (string $attribute, mixed $value, \Closure $fail) {
+            foreach (array_map('trim', explode(',', (string) $value)) as $email) {
+                if ($email !== '' && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $fail("The {$attribute} field must contain only valid, comma-separated email addresses.");
+                }
+            }
+        };
+
         $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
-            'to' => ['required', 'string'],
-            'cc' => ['nullable', 'string'],
-            'bcc' => ['nullable', 'string'],
+            'to' => ['required', 'string', $emailList],
+            'cc' => ['nullable', 'string', $emailList],
+            'bcc' => ['nullable', 'string', $emailList],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:10240'],
         ]);

@@ -14,11 +14,23 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],
-            'session_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         $message = $validated['message'];
-        $sessionId = $validated['session_id'] ?? (string) Str::uuid();
+
+        // The session id is never trusted from client input — a value
+        // supplied in the request body would let any visitor "continue"
+        // (i.e. write into) any other visitor's chat just by guessing or
+        // observing their id. Instead it's tied to this visitor's own
+        // server-side session, which every guest already gets (HttpOnly,
+        // signed, web middleware group) — so the chat still works without
+        // login, but one browser can never write into another's session.
+        $sessionId = $request->session()->get('chat_session_id');
+
+        if (! $sessionId) {
+            $sessionId = (string) Str::uuid();
+            $request->session()->put('chat_session_id', $sessionId);
+        }
 
         $session = ChatSession::firstOrCreate(
             ['session_id' => $sessionId],
@@ -296,6 +308,8 @@ Instructions:
             $client = new Client;
 
             $response = $client->post('https://api.groq.com/openai/v1/chat/completions', [
+                'connect_timeout' => 5,
+                'timeout' => 15,
                 'headers' => [
                     'Authorization' => 'Bearer '.$apiKey,
                     'Content-Type' => 'application/json',

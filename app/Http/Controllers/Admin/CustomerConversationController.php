@@ -85,7 +85,7 @@ class CustomerConversationController extends Controller
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             $path = $file->store('chat_attachments', 'local');
-            $type = explode('/', $file->getMimeType())[0] === 'image' ? 'image' : 'document';
+            $type = str_starts_with($file->getMimeType() ?? '', 'image/') ? 'image' : 'document';
         }
 
         $userOnline = Cache::has("user_chat_online_{$conversation->user_id}");
@@ -111,7 +111,11 @@ class CustomerConversationController extends Controller
 
         if (! $userOnline) {
             $user = $conversation->user;
-            if ($user) {
+
+            // A trashed user's email is rewritten to an unreachable
+            // placeholder on self-deletion — never queue mail to it even
+            // though the relation is kept (for CMS display) after deletion.
+            if ($user && ! $user->trashed()) {
                 Mail::to($user->email)->queue(new ChatMessageReceivedMail($message));
             }
         }

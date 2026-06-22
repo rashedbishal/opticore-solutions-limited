@@ -38,11 +38,13 @@ class Task extends Model
     }
 
     /**
-     * Get the user this task belongs to.
+     * Get the user this task belongs to. Includes soft-deleted users so a
+     * client's task history (and their email/name) stays visible in the CMS
+     * after they delete their own account.
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     /**

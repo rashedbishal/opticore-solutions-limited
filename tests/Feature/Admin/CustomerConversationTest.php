@@ -44,6 +44,20 @@ it('lists conversations with unread counts and online status', function () {
         ->assertJsonPath('data.0.is_online', true);
 });
 
+it('still includes the client name/email after the client deletes their own account', function () {
+    $user = User::factory()->create(['name' => 'Soon Gone']);
+    $conversation = Conversation::query()->create(['user_id' => $user->id]);
+    $user->delete();
+
+    expect($user->trashed())->toBeTrue();
+
+    $this->actingAs($this->admin, 'admin')
+        ->getJson(route('admin.customer-conversations.list'))
+        ->assertSuccessful()
+        ->assertJsonPath('data.0.id', $conversation->id)
+        ->assertJsonPath('data.0.user.name', 'Soon Gone');
+});
+
 it('filters conversations by client name search', function () {
     $matching = User::factory()->create(['name' => 'Findable Person']);
     $other = User::factory()->create(['name' => 'Different Person']);
@@ -116,6 +130,23 @@ it('queues a notification email when the user is offline', function () {
     Mail::assertQueued(ChatMessageReceivedMail::class, function (ChatMessageReceivedMail $mail) use ($user) {
         return $mail->hasTo($user->email);
     });
+});
+
+it('does not queue a notification email when the client deleted their own account', function () {
+    Event::fake([MessageSent::class]);
+    Mail::fake();
+
+    $user = User::factory()->create();
+    $conversation = Conversation::query()->create(['user_id' => $user->id]);
+    $user->delete();
+
+    $this->actingAs($this->admin, 'admin')
+        ->postJson(route('admin.customer-conversations.send', $conversation), [
+            'message' => 'Are you there?',
+        ])
+        ->assertSuccessful();
+
+    Mail::assertNothingQueued();
 });
 
 it('does not queue a notification email when the user is online', function () {

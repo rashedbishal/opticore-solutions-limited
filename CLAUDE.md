@@ -1,3 +1,80 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Opticore Solutions, with an admin CMS, a real-time customer support chat (Reverb broadcasting), an offer/checkout flow with SSLCommerz (incl. Google Pay), and a Gemini-powered chat widget.
+
+## Commands
+
+### Backend (PHP)
+- `composer dev` — run dev stack concurrently: `php artisan serve`, queue listener, `pail` logs, and `npm run dev` (Vite).
+- `php artisan test --compact` — run the Pest/PHPUnit suite. Filter with `--filter=testName`.
+- `composer test` — clears config cache, runs `pint --test`, then the full test suite (used in CI-like checks).
+- `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
+- `vendor/bin/pint --dirty --format agent` — format only changed PHP files; run this after any PHP edit before finishing.
+- `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the `pgsql` test config variant (used by some CI lanes) instead of the default `phpunit.xml`.
+
+### Frontend (JS/TS)
+- `npm run dev` — Vite dev server. `npm run build` / `npm run build:ssr` — production build.
+- `npm run lint` / `npm run lint:check` — ESLint (fix / check-only).
+- `npm run format` / `npm run format:check` — Prettier.
+- `npm run types:check` — TypeScript, no emit.
+- `npm run test` — Vitest unit tests (jsdom). `npm run test:e2e` — Playwright specs in `e2e/`.
+- `npm run perf:bundle-check` — fails the build if JS bundle size regresses (see `scripts/perf/check-bundle-size.mjs`).
+- `php artisan wayfinder:generate` — regenerate typed route/controller helpers in `resources/js/actions` and `resources/js/routes` after changing controllers or `routes/web.php`.
+
+### Combined CI check
+- `composer ci:check` — regenerates Wayfinder, then runs `lint:check`, `format:check`, `types:check`, and the test suite. Run this (or the equivalent individual commands) before considering backend+frontend work done.
+
+## Architecture
+
+### Dual-database auth: `web` vs `admin`
+There are two completely separate user systems backed by two separate Postgres databases:
+- **`User`** (`app/Models/User.php`) — site customers/clients, default `pgsql` connection, `auth:web` guard, soft-deletes.
+- **`Admin`** (`app/Models/Admin.php`) — CMS staff, **separate `admin` DB connection** (`config/database.php` `'admin'` connection, env `DB_ADMIN_*`), `auth:admin` guard.
+
+Several routes intentionally accept either guard (`auth:web,admin`) — e.g. offer viewing and chat attachment downloads — because both customers and staff can legitimately hit them.
+
+### Admin permission system
+`app/Support/AdminPermissions.php` is the **single source of truth** for grantable CMS sections. Each `key` must simultaneously match:
+1. the route-name segment after `admin.` (e.g. `admin.portfolios.index` → `portfolios`),
+2. the `key` in `NAV_ITEMS` in the admin layout (`resources/js/components/Admin`/`AdminLayout`),
+3. the whitelist used by the `admin.permission` middleware (`EnsureAdminHasPermission`).
+
+`Admin::canAccess($key)` returns true for the mother admin (`is_super_admin`) or `full_access` admins, otherwise checks the `permissions` array column. The mother admin (`Admin::motherAdmin()`) is the immutable master account used to gate destructive actions, and is exempt from session invalidation.
+
+`EnsureAdminSessionIsCurrent` (alias `admin.session`) force-logs-out a non-mother admin mid-session if their `securityStamp()` (hash of password + `full_access` + `permissions`) no longer matches what was stamped into the session at login — i.e. if the mother admin changes their access while they're logged in.
+
+Routes under `admin.permission` derive the required key from the route name automatically; routes that don't follow the `admin.<key>.*` convention (e.g. `offer.update`) check `Admin::canAccess()` explicitly inside the controller instead.
+
+### Real-time (Laravel Reverb)
+`routes/channels.php` defines private/presence channels for per-user notifications (`App.Models.User.{id}`), customer↔admin conversations (`conversations.{id}`, dual-guard), and admin-only dashboards (`admin.conversations`, `admin.orders`, `admin.transactions`, `admin.tasks` — each gated by the matching `canAccess()` permission key). The `/broadcasting/auth` route promotes the `admin` guard to default when an admin is subscribing, so `Broadcast::auth()` resolves the right user; it's also CSRF-exempt because Pusher.js authorizes via JSON, not a form post. Use the `echo-development` / `echo-react-development` skills when touching any of this.
+
+### Payments: SSLCommerz + Google Pay
+- `app/Library/SslCommerz/` wraps the SSLCommerz gateway SDK; `SslCommerzPaymentController` exposes `/pay-via-ajax`, `/success`, `/fail`, `/cancel`, `/ipn` (all under `throttle:payment-callback`, CSRF-exempt since the gateway POSTs directly).
+- `GooglePayCheckoutController` + `app/Support/GooglePaySslCommerz.php` implement Google Pay via SSLCommerz's Merchant-Hosted Payment API (`/gpay/config`, `/gpay/charge`).
+- `app/Support/PendingOrderResolver.php`, `PaymentReturnToken.php`, and `IdGenerator.php` support the checkout/offer-acceptance → pending-order → transaction pipeline. `InvoicePdfBuilder.php` (with `spatie/laravel-pdf`) generates downloadable/verifiable invoices (`orders/{transaction}/invoice`, signed verify link).
+- See `[[project_sslcommerz_instructions]]`-style context in memory for the gateway setup sequence; don't re-derive it from scratch.
+
+### Offers & customer conversations
+Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer conversation thread (`Conversation`/`Message`); the client views/accepts/declines via a signed-token URL (`/offer/{token}`). Accepting an offer feeds the checkout/payment pipeline. `app/Events/` has granular broadcast events for offers, orders, transactions, tasks, and conversations — check for an existing event before adding ad hoc broadcasting.
+
+### Error pages
+`bootstrap/app.php` intercepts HTTP exceptions for status codes `403, 404, 429, 500, 503` and renders them through `resources/js/pages/Error.tsx` via Inertia (instead of Laravel's default error HTML), so the SPA never falls back to a full-page reload. `Error.tsx` opts out of the normal layout since shared layout data may be unavailable when an error fires.
+
+### Frontend structure
+- Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.
+- `resources/js/actions` and `resources/js/routes` are **Wayfinder-generated** — don't hand-edit; run `php artisan wayfinder:generate` instead.
+- `resources/js/components/UI` holds shared/shadcn-derived primitives (see `components.json`); check there before adding a new component.
+- Heavy/animated homepage sections are `React.lazy()`-loaded with `<Suspense>` to keep initial bundle small — follow this pattern for similarly heavy new sections (see `PERFORMANCE.md`).
+
+### Testing conventions
+- Pest tests live in `tests/Feature` (mirrors `Admin/`, `Auth/`, `Console/`, `Support/` areas) and `tests/Unit`. There's heavy coverage of authorization edge cases — see `tests/Feature/Admin/AdminAuthorizationTest.php`, `AuthorizationGapsTest.php`, `BroadcastChannelAuthorizationTest.php`, and `AdminSessionInvalidationTest.php` as the reference pattern when adding any new permission-gated route or channel.
+- Two PHPUnit configs exist: `phpunit.xml` (default, `pgsql`, local-style DB names) and `phpunit.pgsql.xml` (CI variant, different DB names/admin connection env). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.
+- Playwright e2e specs live in `e2e/` (numbered, e.g. `01-admin-login.spec.ts`) with shared helpers in `e2e/utils/`.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 

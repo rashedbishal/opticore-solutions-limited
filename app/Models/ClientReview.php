@@ -38,9 +38,13 @@ class ClientReview extends Model
         return $this->belongsTo(Task::class);
     }
 
+    /**
+     * Includes soft-deleted users so a review stays attributable in the CMS
+     * after the reviewing client deletes their own account.
+     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function subCategory(): BelongsTo

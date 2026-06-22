@@ -76,7 +76,8 @@ class CheckoutController extends Controller
     {
         $rate = Cache::remember('exchange_rate_usd_bdt', now()->addHours(6), function () {
             try {
-                $response = Http::get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
+                $response = Http::connectTimeout(3)->timeout(5)
+                    ->get('https://v6.exchangerate-api.com/v6/'.config('services.exchangerate.key').'/pair/USD/BDT');
             } catch (ConnectionException) {
                 return null;
             }

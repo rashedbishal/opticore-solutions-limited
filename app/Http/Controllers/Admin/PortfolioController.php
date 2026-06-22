@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePortfolioRequest;
+use App\Http\Requests\UpdatePortfolioRequest;
 use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -73,19 +74,9 @@ class PortfolioController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StorePortfolioRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'sub_category_id' => ['nullable', 'integer', 'exists:portfolio_sub_categories,id'],
-            'alt' => ['nullable', 'string', 'max:255'],
-            'media' => [
-                'required',
-                'file',
-                'max:307200',
-                'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm',
-            ],
-        ]);
+        $validated = $request->validated();
 
         $mediaType = $this->detectMediaType($request->file('media'));
         $path = $request->file('media')->store('portfolios', 'public');
@@ -132,19 +123,9 @@ class PortfolioController extends Controller
         ]);
     }
 
-    public function update(Request $request, Portfolio $portfolio): RedirectResponse
+    public function update(UpdatePortfolioRequest $request, Portfolio $portfolio): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'sub_category_id' => ['nullable', 'integer', 'exists:portfolio_sub_categories,id'],
-            'alt' => ['nullable', 'string', 'max:255'],
-            'media' => [
-                'nullable',
-                'file',
-                'max:307200',
-                'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm',
-            ],
-        ]);
+        $validated = $request->validated();
 
         // Derive category_slug for backward compatibility
         $categorySlug = null;

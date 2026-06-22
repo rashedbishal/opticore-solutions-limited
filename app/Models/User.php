@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -36,6 +37,23 @@ class User extends Authenticatable implements MustVerifyEmail
             'notify_security_alerts' => 'boolean',
             'notify_promotional_emails' => 'boolean',
         ];
+    }
+
+    /**
+     * Self-deletion rewrites `email` to an unreachable placeholder (to free
+     * the address for reuse) and stashes the real one in `original_email`.
+     * Reading it back transparently as `original_email` once the account is
+     * trashed means every CMS view that displays `$user->email` keeps
+     * showing the client's real address, not the placeholder, without each
+     * call site needing to know about this swap.
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => $this->trashed() && $this->original_email
+                ? $this->original_email
+                : $value,
+        );
     }
 
     /**

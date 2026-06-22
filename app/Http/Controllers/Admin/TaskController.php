@@ -228,7 +228,10 @@ class TaskController extends Controller
     {
         $user = $task->user ?? User::find($task->user_id);
 
-        if (! $user || ! $user->notify_order_updates) {
+        // A trashed user's email is rewritten to an unreachable placeholder
+        // on self-deletion (see ProfileController::deleteAccount) — never
+        // queue mail to it even though the relation is kept for CMS display.
+        if (! $user || $user->trashed() || ! $user->notify_order_updates) {
             return;
         }
 

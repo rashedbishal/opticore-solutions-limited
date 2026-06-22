@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreBlogRequest;
+use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -37,17 +38,9 @@ class BlogController extends Controller
         return Inertia::render('Admin/Blog/Create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreBlogRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'excerpt' => 'nullable|string',
-            'content' => 'required|string',
-            'author' => 'nullable|string|max:255',
-            'read_time' => 'nullable|string|max:255',
-            'image' => 'nullable|image|max:10240',
-        ]);
+        $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['title']).'-'.uniqid();
 
@@ -70,17 +63,9 @@ class BlogController extends Controller
         ]);
     }
 
-    public function update(Request $request, Blog $blog): RedirectResponse
+    public function update(UpdateBlogRequest $request, Blog $blog): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'excerpt' => 'nullable|string',
-            'content' => 'required|string',
-            'author' => 'nullable|string|max:255',
-            'read_time' => 'nullable|string|max:255',
-            'image' => 'nullable|image|max:10240',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             // Delete old image

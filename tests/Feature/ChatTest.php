@@ -52,15 +52,16 @@ it('replies with contact information when asked how to get in touch', function (
         ->toContain('hello@opticoresolutions.com');
 });
 
-it('continues an existing chat session when a session_id is provided', function () {
+it('continues the same chat session across requests from the same browser', function () {
     $first = $this->postJson(route('chat'), ['message' => 'Hello there'])
         ->assertSuccessful();
 
     $sessionId = $first->json('session_id');
 
+    // No session_id is sent here — continuity now comes entirely from this
+    // test client's own (cookie-carried) session, never from client input.
     $this->postJson(route('chat'), [
         'message' => 'What services do you offer?',
-        'session_id' => $sessionId,
     ])->assertSuccessful()
         ->assertJsonPath('session_id', $sessionId);
 
@@ -70,12 +71,27 @@ it('continues an existing chat session when a session_id is provided', function 
     expect($session->messages)->toHaveCount(4);
 });
 
-it('generates a new session id when none is provided', function () {
+it('generates a new session id when none exists yet', function () {
     $response = $this->postJson(route('chat'), ['message' => 'Hello there'])
         ->assertSuccessful();
 
     expect($response->json('session_id'))->toBeString()->not->toBeEmpty();
     expect(ChatSession::query()->where('session_id', $response->json('session_id'))->exists())->toBeTrue();
+});
+
+it("ignores a client-supplied session_id, so one visitor can never write into another visitor's chat", function () {
+    $victimSession = ChatSession::query()->create(['session_id' => 'victim-session-id', 'title' => 'Victim chat']);
+    $victimSession->messages()->create(['sender' => 'user', 'content' => 'Original victim message']);
+
+    $response = $this->postJson(route('chat'), [
+        'message' => 'Trying to hijack the victim session',
+        'session_id' => 'victim-session-id',
+    ])->assertSuccessful();
+
+    expect($response->json('session_id'))->not->toBe('victim-session-id');
+
+    $victimSession->refresh();
+    expect($victimSession->messages)->toHaveCount(1);
 });
 
 it('falls back to a static reply when the message does not match any known topic and no AI key is configured', function () {

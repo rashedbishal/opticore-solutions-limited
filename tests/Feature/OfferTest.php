@@ -59,6 +59,20 @@ it('shows an offer to any admin without allowing them to respond', function () {
         );
 });
 
+it('still shows the client name to an admin after the client deletes their own account', function () {
+    $user = User::factory()->create(['name' => 'Soon Gone']);
+    $offer = createOfferForUser($user);
+    $user->delete();
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('offer.show', $offer->offer_token))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Offer/Show')
+            ->where('offer.conversation.user.name', 'Soon Gone')
+        );
+});
+
 it('forbids a different client from viewing someone else’s offer', function () {
     $owner = User::factory()->create();
     $offer = createOfferForUser($owner);

@@ -19,9 +19,16 @@ class Conversation extends Model
         'last_message_at' => 'datetime',
     ];
 
+    /**
+     * Include soft-deleted users so a conversation's name/email still
+     * render after the client deletes their own account — otherwise this
+     * relation silently resolves to null and crashes every frontend view
+     * that reads `conversation.user.*` without a guard (admin chat list,
+     * offer edit page, etc.).
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function messages()

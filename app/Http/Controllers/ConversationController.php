@@ -130,7 +130,7 @@ class ConversationController extends Controller
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             $path = $file->store('chat_attachments', 'local');
-            $type = explode('/', $file->getMimeType())[0] === 'image' ? 'image' : 'document';
+            $type = str_starts_with($file->getMimeType() ?? '', 'image/') ? 'image' : 'document';
         }
 
         $anyAdminOnline = Cache::has('admin_online');
