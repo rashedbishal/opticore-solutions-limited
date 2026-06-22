@@ -335,13 +335,32 @@ export default function CreateOfferModal({
                 mapped[key] = Array.isArray(val) ? val[0] : String(val);
             });
 
-            if (Object.keys(mapped).length > 0) {
-                setErrors(mapped);
-            } else {
-                setErrors({
-                    general: 'Failed to send offer. Please try again.',
-                });
+            // Only these keys have a dedicated field in the UI below. Any
+            // other key (category_slug, payment_type, revisions,
+            // expires_at, a top-level milestones array error, ...) would
+            // otherwise be captured here and never shown anywhere, leaving
+            // the admin staring at a modal that silently does nothing.
+            const renderedKeys = new Set([
+                'description',
+                'price',
+                'delivery_days',
+            ]);
+            const isRendered = (key: string) =>
+                renderedKeys.has(key) ||
+                /^milestone_\d+_(name|days|price)$/.test(key);
+
+            const hasUnrenderedErrors = Object.keys(mapped).some(
+                (key) => !isRendered(key),
+            );
+
+            if (hasUnrenderedErrors || Object.keys(mapped).length === 0) {
+                mapped.general =
+                    Object.keys(mapped).length > 0
+                        ? Object.values(mapped).join(' ')
+                        : 'Failed to send offer. Please try again.';
             }
+
+            setErrors(mapped);
         } finally {
             setIsSending(false);
         }

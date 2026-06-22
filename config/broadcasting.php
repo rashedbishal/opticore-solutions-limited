@@ -42,7 +42,12 @@ return [
                 'useTLS' => env('REVERB_SCHEME', 'http') === 'https',
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Without these, a hung/unreachable Reverb server blocks the
+                // whole request indefinitely — every action that broadcasts
+                // a `ShouldBroadcastNow` event (e.g. sending a chat message
+                // or offer) would hang instead of failing fast.
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ],
         ],
 
