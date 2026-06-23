@@ -36,6 +36,39 @@ it('creates a category', function () {
     ]);
 });
 
+it('accepts a description up to the validated 500-character max without a db error', function () {
+    // Regression test: `description` used to be varchar(255) while this
+    // validation rule allowed up to 500 — Postgres rejected the insert
+    // outright instead of truncating, producing an unhandled 500.
+    $longDescription = str_repeat('a', 500);
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.categories.store'), [
+            'label' => 'Long Description Category',
+            'description' => $longDescription,
+        ])
+        ->assertRedirect(route('admin.categories.index'));
+
+    $this->assertDatabaseHas('categories', [
+        'label' => 'Long Description Category',
+        'description' => $longDescription,
+    ]);
+});
+
+it('accepts an updated description up to the validated 500-character max without a db error', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    $longDescription = str_repeat('b', 500);
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.categories.update', $category), [
+            'label' => $category->label,
+            'description' => $longDescription,
+        ])
+        ->assertRedirect(route('admin.categories.index'));
+
+    expect($category->refresh()->description)->toBe($longDescription);
+});
+
 it('rejects category creation with missing required fields', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.categories.store'), [])

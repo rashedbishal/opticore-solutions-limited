@@ -29,6 +29,7 @@ interface CheckoutItem {
 
 interface Props {
     item: CheckoutItem;
+    sslEmbedScriptUrl: string;
 }
 
 type Currency = 'USD' | 'BDT';
@@ -51,7 +52,14 @@ const REQUIRED_FIELDS: { key: keyof User; label: string }[] = [
     { key: 'country', label: 'Country' },
 ];
 
-export default function Checkout({ item }: Props) {
+// How long to keep the "Pay Now" button disabled after the hidden
+// SSLCommerz button is clicked. embed.min.js still has its own AJAX
+// round-trip to /pay-via-ajax and a popup to open after that click —
+// re-enabling the button before that finishes is exactly what let a second
+// click queue up a second, fully independent transaction + popup.
+const POPUP_OPEN_GRACE_MS = 2500;
+
+export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
     const [currency, setCurrency] = useState<Currency>('USD');
     const [bdtRate, setBdtRate] = useState<number | null>(null);
@@ -97,6 +105,13 @@ export default function Checkout({ item }: Props) {
     }, []);
 
     const handlePay = () => {
+        // Guards against any re-entrant call while a previous attempt's
+        // delayed click is still pending — belt-and-suspenders alongside
+        // the visible button's `disabled` state below.
+        if (isProcessing) {
+            return;
+        }
+
         const missing = getMissingFields();
 
         if (missing.length > 0) {
@@ -123,16 +138,19 @@ export default function Checkout({ item }: Props) {
             };
         }
 
+        const clickAndRelease = () => {
+            sslBtnRef.current?.click();
+            setTimeout(() => setIsProcessing(false), POPUP_OPEN_GRACE_MS);
+        };
+
         if (sslScriptLoaded.current) {
-            setIsProcessing(false);
-            setTimeout(() => sslBtnRef.current?.click(), 100);
+            setTimeout(clickAndRelease, 100);
         } else {
             const script = document.createElement('script');
-            script.src = `https://sandbox.sslcommerz.com/embed.min.js?${Math.random().toString(36).substring(7)}`;
+            script.src = `${sslEmbedScriptUrl}?${Math.random().toString(36).substring(7)}`;
             script.onload = () => {
                 sslScriptLoaded.current = true;
-                setIsProcessing(false);
-                setTimeout(() => sslBtnRef.current?.click(), 300);
+                setTimeout(clickAndRelease, 300);
             };
             document.body.appendChild(script);
         }

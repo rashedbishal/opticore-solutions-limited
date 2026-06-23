@@ -56,6 +56,7 @@ class CheckoutController extends Controller
                     'offer_token' => $offerToken,
                     'milestone_id' => $milestoneId,
                 ],
+                'sslEmbedScriptUrl' => config('sslcommerz.embedScriptUrl'),
             ]);
         }
 
@@ -69,6 +70,7 @@ class CheckoutController extends Controller
                 'subcategory' => $request->query('subcategory', ''),
                 'subcategory_id' => (int) $request->query('subcategory_id', 0),
             ],
+            'sslEmbedScriptUrl' => config('sslcommerz.embedScriptUrl'),
         ]);
     }
 
