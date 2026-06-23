@@ -11,43 +11,41 @@ const INPUT =
 const LABEL =
     'mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase';
 
-interface CategoryData {
-    id: number;
-    slug: string;
-    label: string;
-    description: string | null;
-    sort_order: number;
+function slugify(value: string): string {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 }
 
-interface Props {
-    category: CategoryData;
-}
-
-export function CategoryForm({ category }: Partial<Props>) {
-    const isEditing = Boolean(category);
+export default function CategoryCreate() {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [slugEditedManually, setSlugEditedManually] = useState(false);
     const { data, setData, post, processing } = useForm({
-        ...(isEditing ? { _method: 'PUT' } : {}),
-        slug: category?.slug ?? '',
-        label: category?.label ?? '',
-        description: category?.description ?? '',
-        sort_order: category?.sort_order ?? 0,
+        slug: '',
+        label: '',
+        description: '',
+        sort_order: 0,
     });
+
+    const updateLabel = (value: string) => {
+        setData((current) => ({
+            ...current,
+            label: value,
+            slug: slugEditedManually ? current.slug : slugify(value),
+        }));
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(
-            isEditing
-                ? adminRoutes.categories.update.url(category!.id)
-                : adminRoutes.categories.store.url(),
-            {
-                onError: (errs) =>
-                    setErrorMessages(
-                        Object.values(errs).filter(Boolean) as string[],
-                    ),
-            },
-        );
+        post(adminRoutes.categories.store.url(), {
+            onError: (errs) =>
+                setErrorMessages(
+                    Object.values(errs).filter(Boolean) as string[],
+                ),
+        });
     };
 
     return (
@@ -61,33 +59,32 @@ export function CategoryForm({ category }: Partial<Props>) {
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                     <div className="grid gap-6">
                         <div>
-                            <label className={LABEL}>Slug</label>
-                            <input
-                                type="text"
-                                value={data.slug}
-                                onChange={(e) =>
-                                    setData('slug', e.target.value)
-                                }
-                                placeholder="e.g. graphic-design"
-                                disabled={isEditing}
-                                className={`${INPUT} ${isEditing ? 'cursor-not-allowed opacity-60' : ''}`}
-                            />
-                            {isEditing && (
-                                <p className="mt-1.5 text-xs text-zinc-500">
-                                    The slug cannot be changed after creation.
-                                </p>
-                            )}
-                        </div>
-                        <div>
                             <label className={LABEL}>Label</label>
                             <input
                                 type="text"
                                 value={data.label}
-                                onChange={(e) =>
-                                    setData('label', e.target.value)
-                                }
+                                onChange={(e) => updateLabel(e.target.value)}
                                 placeholder="e.g. Graphic Design"
                                 className={INPUT}
+                            />
+                        </div>
+                        <div>
+                            <label className={LABEL}>
+                                Slug{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (auto-generated from the label — edit to
+                                    customize)
+                                </span>
+                            </label>
+                            <input
+                                type="text"
+                                value={data.slug}
+                                onChange={(e) => {
+                                    setSlugEditedManually(true);
+                                    setData('slug', e.target.value);
+                                }}
+                                placeholder="e.g. graphic-design"
+                                className={`${INPUT} font-mono`}
                             />
                         </div>
                         <div>
@@ -133,10 +130,7 @@ export function CategoryForm({ category }: Partial<Props>) {
                             </>
                         ) : (
                             <>
-                                <Save className="h-4 w-4" />{' '}
-                                {isEditing
-                                    ? 'Update Category'
-                                    : 'Save Category'}
+                                <Save className="h-4 w-4" /> Save Category
                             </>
                         )}
                     </button>
@@ -150,10 +144,6 @@ export function CategoryForm({ category }: Partial<Props>) {
             </form>
         </>
     );
-}
-
-export default function CategoryCreate() {
-    return <CategoryForm />;
 }
 
 CategoryCreate.layout = (page: ReactNode) => (

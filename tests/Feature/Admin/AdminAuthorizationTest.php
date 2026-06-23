@@ -3,6 +3,7 @@
 use App\Models\Admin;
 use App\Models\Blog;
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\ClientReview;
 use App\Models\Contact;
 use App\Models\Portfolio;
@@ -94,6 +95,30 @@ it('blocks unauthenticated DELETE to admin sub-categories destroy', function () 
     $this->assertDatabaseHas('portfolio_sub_categories', ['id' => $subCategory->id]);
 });
 
+// --- Categories ---
+it('blocks unauthenticated GET to admin categories index', function () {
+    $this->get(route('admin.categories.index'))->assertRedirect(route('admin.login'));
+});
+
+it('blocks unauthenticated POST to admin categories store', function () {
+    $this->post(route('admin.categories.store'), ['label' => 'Injected'])->assertRedirect(route('admin.login'));
+    $this->assertDatabaseMissing('categories', ['label' => 'Injected']);
+});
+
+it('blocks unauthenticated PUT to admin categories update', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+
+    $this->put(route('admin.categories.update', $category), ['label' => 'Hacked'])->assertRedirect(route('admin.login'));
+    $this->assertDatabaseMissing('categories', ['label' => 'Hacked']);
+});
+
+it('blocks unauthenticated DELETE to admin categories destroy', function () {
+    $category = Category::query()->create(['slug' => 'auth-sweep-category', 'label' => 'Auth Sweep Category']);
+
+    $this->delete(route('admin.categories.destroy', $category))->assertRedirect(route('admin.login'));
+    $this->assertDatabaseHas('categories', ['id' => $category->id]);
+});
+
 // --- Tasks ---
 it('blocks unauthenticated GET to admin tasks index', function () {
     $this->get(route('admin.tasks.index'))->assertRedirect(route('admin.login'));
@@ -178,6 +203,7 @@ it('rejects GET rather than crashing when an admin opens a direct link to a reso
 })->with([
     fn () => '/admin/blogs/'.Blog::factory()->create()->id,
     fn () => '/admin/portfolios/'.Portfolio::factory()->create()->id,
+    fn () => '/admin/categories/'.Category::factory()->create()->id,
     fn () => '/admin/sub-categories/'.PortfolioSubCategory::factory()->create()->id,
     fn () => '/admin/tasks/'.Task::factory()->create()->id,
     fn () => '/admin/users/'.Admin::factory()->create()->id,

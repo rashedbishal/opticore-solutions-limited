@@ -71,11 +71,6 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs');
     Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blogShow');
-    Route::get('/graphic-design', [ServiceController::class, 'graphicDesign'])->name('graphicDesign');
-    Route::get('/digital-marketing', [ServiceController::class, 'digitalMarketing'])->name('digitalMarketing');
-    Route::get('/video-editing', [ServiceController::class, 'videoEditing'])->name('videoEditing');
-    Route::get('/3d-production', [ServiceController::class, 'threeDProduction'])->name('threeDProduction');
-    Route::get('/web-development', [ServiceController::class, 'webDevelopment'])->name('webDevelopment');
     Route::get('/about-us', [PageController::class, 'aboutUs'])->name('aboutUs');
     Route::get('/career', [PageController::class, 'career'])->name('career');
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -216,6 +211,8 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class)->except(['show']);
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
+    Route::post('categories/{category}/gallery', [AdminCategoryController::class, 'galleryStore'])->name('categories.gallery.store');
+    Route::delete('categories/{category}/gallery/{item}', [AdminCategoryController::class, 'galleryDestroy'])->name('categories.gallery.destroy');
     Route::resource('sub-categories', PortfolioSubCategoryController::class)->except(['show']);
     Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
     Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');
@@ -284,3 +281,16 @@ Route::middleware('throttle:payment-callback')->group(function () {
     Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
     Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 });
+
+// CMS-managed service pages (e.g. /video-editing). Single-segment wildcard —
+// Laravel matches routes in registration order across the *entire* file, not
+// just within one group, so this MUST stay the very last route defined in
+// this file, after the admin route block too — otherwise it silently
+// shadows any literal route registered below it (this previously broke
+// plain `/admin` once, since "admin" satisfies the slug pattern just as
+// well as a real service slug). ServiceController::show() 404s any unknown
+// or inactive slug via an explicit is_active-scoped lookup.
+Route::middleware(RedirectAdminToPanel::class)
+    ->get('/{slug}', [ServiceController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('services.show');

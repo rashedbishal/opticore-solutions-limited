@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Blog;
+use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
@@ -40,17 +41,34 @@ it('returns 404 for an unknown blog slug', function () {
     $this->get(route('blogShow', 'does-not-exist'))->assertNotFound();
 });
 
-it('renders each of the five service pages', function (string $routeName, string $component) {
-    $this->get(route($routeName))
+it('renders a cms-managed service page', function () {
+    // CategorySeeder (run automatically in TestCase::setUp) seeds
+    // 'video-editing' with real marketing content and is_active = true.
+    $category = Category::query()->where('slug', 'video-editing')->first();
+
+    $this->get('/'.$category->slug)
         ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component($component));
-})->with([
-    ['graphicDesign', 'Services/GraphicDesign'],
-    ['digitalMarketing', 'Services/DigitalMarketing'],
-    ['videoEditing', 'Services/VideoEditing'],
-    ['threeDProduction', 'Services/ThreeDProduction'],
-    ['webDevelopment', 'Services/WebDevelopment'],
-]);
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Services/Show')
+            ->where('service.name', $category->label)
+        );
+});
+
+it('returns 404 for an inactive or unknown service slug', function () {
+    Category::factory()->create(['slug' => 'hidden-category', 'is_active' => false]);
+
+    $this->get('/hidden-category')->assertNotFound();
+    $this->get('/totally-unknown-slug')->assertNotFound();
+});
+
+it('does not let the service catch-all route shadow other top-level pages', function () {
+    $this->get(route('aboutUs'))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page->component('About'));
+
+    $this->get(route('hireUs'))->assertSuccessful();
+    $this->get(route('contact'))->assertSuccessful();
+});
 
 it('renders the portfolio landing page with category cards', function () {
     $this->get(route('portfolio'))

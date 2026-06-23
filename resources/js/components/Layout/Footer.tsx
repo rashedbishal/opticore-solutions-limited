@@ -21,7 +21,6 @@ import {
     PinterestIcon,
     TikTokIcon,
 } from '@/components/UI/SocialIcons';
-import { services } from '@/lib/site';
 
 const companyLinks = [
     { label: 'About Us', href: '/about-us' },
@@ -104,7 +103,8 @@ const SUBSCRIPTION_MODAL_COPY: Record<
 };
 
 export default function Footer() {
-    const { siteSettings, flash } = usePage<SharedPageProps>().props;
+    const { siteSettings, footerServices, flash } =
+        usePage<SharedPageProps>().props;
 
     const socialLinks = SOCIAL_PLATFORMS.filter(({ key }) =>
         Boolean(siteSettings[key]),
@@ -290,9 +290,9 @@ export default function Footer() {
                                 Services
                             </h3>
                             <div className="space-y-3">
-                                {services.map((item) => (
+                                {footerServices.map((item) => (
                                     <Link
-                                        key={item.href}
+                                        key={item.slug}
                                         href={item.href}
                                         className="block text-sm text-theme-muted transition-colors hover:text-theme"
                                     >

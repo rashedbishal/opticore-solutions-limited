@@ -61,8 +61,15 @@ Routes under `admin.permission` derive the required key from the route name auto
 ### Offers & customer conversations
 Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer conversation thread (`Conversation`/`Message`); the client views/accepts/declines via a signed-token URL (`/offer/{token}`). Accepting an offer feeds the checkout/payment pipeline. `app/Events/` has granular broadcast events for offers, orders, transactions, tasks, and conversations — check for an existing event before adding ad hoc broadcasting.
 
+### Two unrelated "chat" systems — don't conflate them
+- **`ChatSession`/`ChatMessage`** (`ChatController::handleChat`) is the public Gemini-powered FAQ widget: anonymous, tied to a `chat_session_id` stored in the visitor's server-side session (never trusted from request input, so one browser can't write into another's session), not broadcast over Reverb.
+- **`Conversation`/`Message`** (`ConversationController`, `Admin/CustomerConversationController`) is the authenticated customer↔admin support chat described above, broadcast live via Reverb.
+
 ### Error pages
 `bootstrap/app.php` intercepts HTTP exceptions for status codes `403, 404, 429, 500, 503` and renders them through `resources/js/pages/Error.tsx` via Inertia (instead of Laravel's default error HTML), so the SPA never falls back to a full-page reload. `Error.tsx` opts out of the normal layout since shared layout data may be unavailable when an error fires.
+
+### Security headers & rate limiting
+`app/Http/Middleware/SecurityHeaders.php` sets a strict CSP in production only (disabled locally so Vite HMR over plain HTTP still works). It allowlists each third-party origin actually in use (Google Pay, SSLCommerz embedded checkout/3DS redirect, Google Fonts, the Reverb websocket, Google Maps) and computes a `sha256` hash of Inertia's inline `data-page` JSON payload per-response rather than using `'unsafe-inline'`. Named rate limiters live in `app/Providers/AppServiceProvider.php::configureRateLimiters()` (`login`, `admin-login`, `register`, `password-reset`, `payment-callback`) — auth limiters deliberately cap by `email+ip` *and* by account-alone, so an attacker rotating source IPs can't get a fresh allowance against one target.
 
 ### Frontend structure
 - Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.

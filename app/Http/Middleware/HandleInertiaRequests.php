@@ -53,6 +53,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'categories' => fn () => Category::configShape(),
+            'footerServices' => fn () => Category::servicePageLinks(),
             'siteSettings' => fn () => SiteSetting::current()->toPublicArray(),
         ];
     }

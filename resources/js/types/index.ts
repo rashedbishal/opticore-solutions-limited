@@ -45,12 +45,19 @@ export interface SiteSettings {
     socialTiktok: string | null;
 }
 
+export interface FooterServiceLink {
+    slug: string;
+    name: string;
+    href: string;
+}
+
 export interface SharedPageProps {
     name: string;
     auth: Auth;
     flash: FlashProps;
     meta?: SiteMeta;
     categories: Record<string, CategoryConfig>;
+    footerServices: FooterServiceLink[];
     siteSettings: SiteSettings;
     [key: string]: unknown;
 }

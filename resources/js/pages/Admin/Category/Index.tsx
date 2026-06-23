@@ -12,6 +12,7 @@ interface Category {
     label: string;
     description: string | null;
     sort_order: number;
+    is_active: boolean;
 }
 
 interface PaginationLink {
@@ -81,6 +82,9 @@ export default function CategoryIndex({ categories }: Props) {
                             <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Sort
                             </th>
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
+                                Marketing Page
+                            </th>
                             <th className="px-6 py-3 text-right font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Actions
                             </th>
@@ -115,6 +119,19 @@ export default function CategoryIndex({ categories }: Props) {
                                 <td className="px-6 py-2 text-sm whitespace-nowrap text-zinc-400">
                                     {category.sort_order}
                                 </td>
+                                <td className="px-6 py-2 whitespace-nowrap">
+                                    <span
+                                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
+                                            category.is_active
+                                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                                                : 'border-zinc-500/20 bg-zinc-500/10 text-zinc-500'
+                                        }`}
+                                    >
+                                        {category.is_active
+                                            ? 'Active'
+                                            : 'Hidden'}
+                                    </span>
+                                </td>
                                 <td className="px-6 py-2 text-right text-sm whitespace-nowrap">
                                     <Link
                                         href={adminRoutes.categories.edit.url(
@@ -139,7 +156,7 @@ export default function CategoryIndex({ categories }: Props) {
                         {categories.data.length === 0 && (
                             <tr>
                                 <td
-                                    colSpan={4}
+                                    colSpan={5}
                                     className="px-6 py-16 text-center"
                                 >
                                     <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
