@@ -55,6 +55,19 @@ it('auto-generates the slug from the label when none is provided', function () {
     ]);
 });
 
+it('appends a numeric suffix instead of crashing when two labels auto-generate the same slug', function () {
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.categories.store'), ['label' => 'Motion Graphics'])
+        ->assertRedirect(route('admin.categories.index'));
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.categories.store'), ['label' => 'Motion Graphics!!!'])
+        ->assertRedirect(route('admin.categories.index'));
+
+    $this->assertDatabaseHas('categories', ['label' => 'Motion Graphics', 'slug' => 'motion-graphics']);
+    $this->assertDatabaseHas('categories', ['label' => 'Motion Graphics!!!', 'slug' => 'motion-graphics-2']);
+});
+
 it('rejects category creation with a duplicate slug', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.categories.store'), [
@@ -183,13 +196,73 @@ it('rejects an icon outside the allowed list when updating a category', function
         ->assertInvalid(['icon']);
 });
 
-it('persists headings, sub_services, reasons, process, and the active flag when updating a category', function () {
+it('rejects a color outside the allowed palette when updating a category', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.categories.update', $category), [
+            'label' => $category->label,
+            'color' => 'not-a-real-color',
+        ])
+        ->assertInvalid(['color']);
+});
+
+it('requires a long description when publishing a category', function () {
+    $category = Category::query()->create(['slug' => 'unpublished-category', 'label' => 'Unpublished Category']);
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.categories.update', $category), [
+            'label' => $category->label,
+            'is_active' => true,
+            'long_description' => '',
+        ])
+        ->assertInvalid(['long_description']);
+
+    expect($category->refresh()->is_active)->toBeFalse();
+});
+
+it('allows publishing a category once a long description is provided', function () {
+    $category = Category::query()->create(['slug' => 'publishable-category', 'label' => 'Publishable Category']);
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.categories.update', $category), [
+            'label' => $category->label,
+            'is_active' => true,
+            'long_description' => 'A full hero paragraph for the marketing page.',
+        ])
+        ->assertRedirect(route('admin.categories.index'));
+
+    $category->refresh();
+    expect($category->is_active)->toBeTrue();
+    expect($category->long_description)->toBe('A full hero paragraph for the marketing page.');
+});
+
+it('preserves the other headings sections when only one section is submitted', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    $originalProcessHeading = $category->headings['process'];
+
+    $this->actingAs($this->admin, 'admin')
+        ->put(route('admin.categories.update', $category), [
+            'label' => $category->label,
+            'headings' => [
+                'capabilities' => ['eyebrow' => 'New Eyebrow', 'title' => 'New Title'],
+            ],
+        ])
+        ->assertRedirect(route('admin.categories.index'));
+
+    $category->refresh();
+    expect($category->headings['capabilities']['title'])->toBe('New Title');
+    expect($category->headings['process'])->toBe($originalProcessHeading);
+});
+
+it('persists headings, sub_services, reasons, process, color, and the active flag when updating a category', function () {
     $category = Category::query()->where('slug', 'graphic-design')->first();
 
     $this->actingAs($this->admin, 'admin')
         ->put(route('admin.categories.update', $category), [
             'label' => $category->label,
             'is_active' => false,
+            'color' => 'teal',
             'headings' => [
                 'capabilities' => ['eyebrow' => 'Scope', 'title' => 'What We Do'],
             ],
@@ -208,6 +281,7 @@ it('persists headings, sub_services, reasons, process, and the active flag when 
     $category->refresh();
 
     expect($category->is_active)->toBeFalse();
+    expect($category->color)->toBe('teal');
     expect($category->headings['capabilities']['title'])->toBe('What We Do');
     expect($category->sub_services[0]['title'])->toBe('Sub One');
     expect($category->reasons[0]['title'])->toBe('Reason One');
@@ -353,4 +427,31 @@ it('allows a regular admin granted the categories permission', function () {
     $this->actingAs($admin, 'admin')
         ->get(route('admin.categories.index'))
         ->assertSuccessful();
+});
+
+it('blocks a regular admin without the categories permission from the gallery routes', function () {
+    $admin = Admin::factory()->regular()->create();
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    $item = $category->portfolioItems()->create([
+        'title' => 'Guarded Item',
+        'category' => 'Test',
+        'alt' => 'Guarded Item',
+        'image' => 'categories/guarded.jpg',
+        'sort_order' => 0,
+    ]);
+
+    $this->actingAs($admin, 'admin')
+        ->post(route('admin.categories.gallery.store', $category), [
+            'title' => 'Injected',
+            'category' => 'Test',
+            'image' => UploadedFile::fake()->image('work.jpg'),
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($admin, 'admin')
+        ->delete(route('admin.categories.gallery.destroy', [$category, $item]))
+        ->assertForbidden();
+
+    $this->assertDatabaseMissing('category_portfolio_items', ['title' => 'Injected']);
+    $this->assertDatabaseHas('category_portfolio_items', ['id' => $item->id]);
 });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use App\Models\Category;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -27,6 +28,20 @@ it('renders hire us sub-categories from cms data', function () {
             ->where('subCategories.graphic-design.0.rating', 4.9)
             ->where('subCategories.graphic-design.0.reviews', 156)
             ->where('subCategories.graphic-design.0.image', asset('storage/'.$subCategory->image))
+        );
+});
+
+it('sources hire us tab icon and color from the cms-managed category instead of a hardcoded list', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    $category->update(['icon' => 'Paintbrush', 'color' => 'rose']);
+
+    $this->get('/hire-us')
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('HireUs')
+            ->where('categories.graphic-design.label', $category->label)
+            ->where('categories.graphic-design.icon', 'Paintbrush')
+            ->where('categories.graphic-design.color', 'rose')
         );
 });
 

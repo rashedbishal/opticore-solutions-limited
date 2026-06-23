@@ -24,6 +24,8 @@ export interface FlashProps {
 export interface CategoryConfig {
     label: string;
     description: string | null;
+    icon: string | null;
+    color: string | null;
 }
 
 export interface SiteSettings {

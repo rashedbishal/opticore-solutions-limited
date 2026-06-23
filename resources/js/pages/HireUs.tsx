@@ -1,20 +1,13 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    ArrowRight,
-    PenTool,
-    Globe,
-    Film,
-    Box,
-    Code2,
-    Sparkles,
-    Star,
-    Zap,
-    Users,
-} from 'lucide-react';
+import { ArrowRight, Star, Zap, Users } from 'lucide-react';
 import { useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
+import {
+    resolveCategoryColor,
+    resolveCategoryIcon,
+} from '@/lib/categoryVisuals';
 
 interface HireUsSubCategory {
     name: string;
@@ -29,62 +22,19 @@ interface Props {
     subCategories: Record<string, HireUsSubCategory[]>;
 }
 
-const services = [
-    {
-        id: 'graphic-design',
-        name: 'Graphics Design',
-        icon: PenTool,
-        color: 'text-pink-500',
-        bg: 'bg-pink-500/10',
-    },
-    {
-        id: '3d-production',
-        name: '3D Production',
-        icon: Box,
-        color: 'text-violet-500',
-        bg: 'bg-violet-500/10',
-    },
-    {
-        id: 'web-development',
-        name: 'Web Development',
-        icon: Code2,
-        color: 'text-emerald-500',
-        bg: 'bg-emerald-500/10',
-    },
-    {
-        id: 'digital-marketing',
-        name: 'Digital Marketing',
-        icon: Globe,
-        color: 'text-orange-500',
-        bg: 'bg-orange-500/10',
-    },
-    {
-        id: 'video-editing',
-        name: 'Video Editing',
-        icon: Film,
-        color: 'text-cyan-500',
-        bg: 'bg-cyan-500/10',
-    },
-];
-
 const HireUsPage = ({ subCategories = {} }: Props) => {
     const { categories } = usePage<SharedPageProps>().props;
 
-    // Categories added via the CMS beyond the original 5 get a generic tab.
-    const extraTabs = Object.entries(categories)
-        .filter(([slug]) => !services.some((service) => service.id === slug))
-        .map(([slug, category]) => ({
-            id: slug,
-            name: category.label,
-            icon: Sparkles,
-            color: 'text-slate-400',
-            bg: 'bg-slate-500/10',
-        }));
+    // Tabs are fully CMS-driven: name, icon, and color all come from the
+    // category's admin-managed fields, not a hardcoded list.
+    const tabs = Object.entries(categories).map(([slug, category]) => ({
+        id: slug,
+        name: category.label,
+        icon: resolveCategoryIcon(category.icon),
+        ...resolveCategoryColor(category.color),
+    }));
 
-    const tabs = [...services, ...extraTabs];
-
-    // Initialize activeTab with the first service's id from the 'services' array.
-    const [activeTab, setActiveTab] = useState(services[0].id);
+    const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? '');
 
     return (
         <>
@@ -153,7 +103,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                                 className={`drop-icon relative flex items-center justify-center rounded-xl p-2 transition-all duration-500 ${
                                                     isActive
                                                         ? 'bg-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2)]'
-                                                        : `${service.bg} ${service.color} group-hover:scale-110 group-hover:bg-theme-surface`
+                                                        : `${service.bg} ${service.text} group-hover:scale-110 group-hover:bg-theme-surface`
                                                 }`}
                                             >
                                                 <Icon className="h-5 w-5" />

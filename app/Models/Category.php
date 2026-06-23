@@ -17,6 +17,7 @@ class Category extends Model
         'description',
         'sort_order',
         'icon',
+        'color',
         'long_description',
         'headings',
         'sub_services',
@@ -49,9 +50,10 @@ class Category extends Model
 
     /**
      * Cached category list keyed by slug, in the same shape as the former
-     * config('portfolio.categories') array.
+     * config('portfolio.categories') array. `icon`/`color` are additive —
+     * consumers that only destructure `label`/`description` are unaffected.
      *
-     * @return array<string, array{label: string, description: string|null}>
+     * @return array<string, array{label: string, description: string|null, icon: string|null, color: string|null}>
      */
     public static function configShape(): array
     {
@@ -64,6 +66,8 @@ class Category extends Model
                     $category->slug => [
                         'label' => $category->label,
                         'description' => $category->description,
+                        'icon' => $category->icon,
+                        'color' => $category->color,
                     ],
                 ])
                 ->toArray();

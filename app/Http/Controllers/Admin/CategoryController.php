@@ -33,6 +33,15 @@ class CategoryController extends Controller
         'Code2', 'Terminal',
     ];
 
+    /**
+     * Color keys mapped to literal Tailwind classes in
+     * resources/js/lib/categoryVisuals.ts — keep both lists in sync.
+     */
+    public const ALLOWED_COLORS = [
+        'pink', 'violet', 'emerald', 'orange', 'cyan',
+        'blue', 'amber', 'rose', 'teal', 'slate',
+    ];
+
     public function index(): Response
     {
         return Inertia::render('Admin/Category/Index', [
@@ -59,12 +68,31 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $validated['slug'] = ! empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['label']);
+        $base = ! empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['label']);
+        $validated['slug'] = $this->uniqueSlug($base);
 
         Category::create($validated);
         $this->flushCategoryCaches();
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created.');
+    }
+
+    /**
+     * Appends a numeric suffix until the slug is unique. Needed because the
+     * auto-generated-from-label slug (see Create.tsx) never goes through
+     * StoreCategoryRequest's `unique` rule — it's computed after validation.
+     */
+    private function uniqueSlug(string $base): string
+    {
+        $slug = $base;
+        $suffix = 2;
+
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 
     public function edit(Category $category): Response
@@ -79,6 +107,7 @@ class CategoryController extends Controller
                 'description' => $category->description,
                 'sort_order' => $category->sort_order,
                 'icon' => $category->icon,
+                'color' => $category->color,
                 'long_description' => $category->long_description,
                 'is_active' => $category->is_active,
                 'headings' => [
@@ -102,12 +131,24 @@ class CategoryController extends Controller
                 ])->values(),
             ],
             'allowed_icons' => self::ALLOWED_ICONS,
+            'allowed_colors' => self::ALLOWED_COLORS,
         ]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->update($request->validated());
+        $validated = $request->validated();
+
+        // Shallow-merge by section instead of replacing the whole column, so
+        // a partial payload (e.g. a direct API call missing a section) can
+        // never silently wipe out the other three headings sections. Each
+        // section is still fully replaced as a unit — that matches how the
+        // edit form always submits a section's eyebrow + title together.
+        if (array_key_exists('headings', $validated)) {
+            $validated['headings'] = array_replace($category->headings ?? [], $validated['headings'] ?? []);
+        }
+
+        $category->update($validated);
         $this->flushCategoryCaches();
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
@@ -122,13 +163,19 @@ class CategoryController extends Controller
             return back()->with('error', 'Cannot delete a category that still has sub-categories or portfolio items.');
         }
 
-        $category->portfolioItems->each(function (CategoryPortfolioItem $item) {
-            if (! str_starts_with($item->image, '/') && ! str_starts_with($item->image, 'http')) {
-                Storage::disk('public')->delete($item->image);
-            }
-        });
+        // Collect paths before deleting so a failed DB delete never leaves
+        // gallery files removed while their DB rows still exist — the DB
+        // delete (which cascades CategoryPortfolioItem via FK) runs first;
+        // file cleanup is best-effort afterward.
+        $imagePaths = $category->portfolioItems
+            ->reject(fn (CategoryPortfolioItem $item) => str_starts_with($item->image, '/') || str_starts_with($item->image, 'http'))
+            ->pluck('image')
+            ->all();
 
         $category->delete();
+
+        Storage::disk('public')->delete($imagePaths);
+
         $this->flushCategoryCaches();
 
         return back()->with('success', 'Category deleted.');
@@ -146,14 +193,20 @@ class CategoryController extends Controller
 
         $path = $request->file('image')->store('categories', 'public');
 
-        $category->portfolioItems()->create([
-            'title' => $validated['title'],
-            'category' => $validated['category'],
-            'description' => $validated['description'] ?? null,
-            'alt' => $validated['alt'] ?? $validated['title'],
-            'image' => $path,
-            'sort_order' => ($category->portfolioItems()->max('sort_order') ?? 0) + 10,
-        ]);
+        try {
+            $category->portfolioItems()->create([
+                'title' => $validated['title'],
+                'category' => $validated['category'],
+                'description' => $validated['description'] ?? null,
+                'alt' => $validated['alt'] ?? $validated['title'],
+                'image' => $path,
+                'sort_order' => ($category->portfolioItems()->max('sort_order') ?? 0) + 10,
+            ]);
+        } catch (\Throwable $e) {
+            Storage::disk('public')->delete($path);
+
+            throw $e;
+        }
 
         return back()->with('success', 'Selected Work item added.');
     }

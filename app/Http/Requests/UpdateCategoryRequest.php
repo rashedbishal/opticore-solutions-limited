@@ -26,7 +26,13 @@ class UpdateCategoryRequest extends FormRequest
             // Marketing/service-page fields — all optional so a category
             // can keep being a plain hire-us grouping with none of this set.
             'icon' => ['nullable', 'string', Rule::in(CategoryController::ALLOWED_ICONS)],
-            'long_description' => ['nullable', 'string', 'max:2000'],
+            'color' => ['nullable', 'string', Rule::in(CategoryController::ALLOWED_COLORS)],
+            // Required only when publishing — otherwise a category can be
+            // marked active with an empty hero paragraph on a live page.
+            'long_description' => [
+                Rule::requiredIf(fn () => $this->boolean('is_active')),
+                'nullable', 'string', 'max:2000',
+            ],
             'is_active' => ['boolean'],
 
             'headings' => ['nullable', 'array'],

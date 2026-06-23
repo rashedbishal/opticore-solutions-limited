@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
+import { CATEGORY_COLOR_MAP } from '@/lib/categoryVisuals';
 import adminRoutes from '@/routes/admin';
 
 const INPUT =
@@ -54,6 +55,7 @@ interface CategoryData {
     description: string | null;
     sort_order: number;
     icon: string | null;
+    color: string | null;
     long_description: string | null;
     is_active: boolean;
     headings: Headings;
@@ -66,6 +68,7 @@ interface CategoryData {
 interface Props {
     category: CategoryData;
     allowed_icons: string[];
+    allowed_colors: string[];
 }
 
 const HEADING_SECTIONS: { id: keyof Headings; label: string }[] = [
@@ -75,7 +78,11 @@ const HEADING_SECTIONS: { id: keyof Headings; label: string }[] = [
     { id: 'selectedWork', label: 'Selected Work' },
 ];
 
-export default function CategoryEdit({ category, allowed_icons }: Props) {
+export default function CategoryEdit({
+    category,
+    allowed_icons,
+    allowed_colors,
+}: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
     const requestDelete = (action: () => void) => setDeleteTarget(() => action);
@@ -91,6 +98,7 @@ export default function CategoryEdit({ category, allowed_icons }: Props) {
         description: category.description ?? '',
         sort_order: category.sort_order,
         icon: category.icon ?? allowed_icons[0] ?? '',
+        color: category.color ?? allowed_colors[0] ?? '',
         long_description: category.long_description ?? '',
         is_active: category.is_active,
         headings: category.headings,
@@ -293,21 +301,55 @@ export default function CategoryEdit({ category, allowed_icons }: Props) {
                         Marketing Page Content
                     </h2>
                     <div className="grid gap-6">
-                        <div>
-                            <label className={LABEL}>Icon</label>
-                            <select
-                                value={data.icon}
-                                onChange={(e) =>
-                                    setData('icon', e.target.value)
-                                }
-                                className={INPUT}
-                            >
-                                {allowed_icons.map((icon) => (
-                                    <option key={icon} value={icon}>
-                                        {icon}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <div>
+                                <label className={LABEL}>
+                                    Icon{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (hero icon + Hire Us tab)
+                                    </span>
+                                </label>
+                                <select
+                                    value={data.icon}
+                                    onChange={(e) =>
+                                        setData('icon', e.target.value)
+                                    }
+                                    className={INPUT}
+                                >
+                                    {allowed_icons.map((icon) => (
+                                        <option key={icon} value={icon}>
+                                            {icon}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className={LABEL}>
+                                    Color{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (Hire Us tab accent)
+                                    </span>
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className={`inline-block h-9 w-9 shrink-0 rounded-lg border border-white/10 ${CATEGORY_COLOR_MAP[data.color]?.swatch ?? ''}`}
+                                        aria-hidden="true"
+                                    />
+                                    <select
+                                        value={data.color}
+                                        onChange={(e) =>
+                                            setData('color', e.target.value)
+                                        }
+                                        className={INPUT}
+                                    >
+                                        {allowed_colors.map((color) => (
+                                            <option key={color} value={color}>
+                                                {color}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label className={LABEL}>

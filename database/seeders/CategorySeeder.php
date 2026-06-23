@@ -58,6 +58,7 @@ class CategorySeeder extends Seeder
                 'description' => 'Bold, polished brand visuals built to earn trust at first sight and stay memorable long after the scroll.',
                 'long_description' => 'We shape visual identities that feel premium, coherent, and commercial. From startups finding their voice to established teams refreshing their look, Opticore designs systems that hold together across print, digital, packaging, and campaigns.',
                 'icon' => 'PenTool',
+                'color' => 'pink',
                 'headings' => [
                     'capabilities' => ['eyebrow' => 'Visual Scope', 'title' => 'Defining Your Brand Edge'],
                     'whyOpticore' => ['eyebrow' => 'The Standard', 'title' => 'Why Brands Trust Our Eye'],
@@ -84,6 +85,7 @@ class CategorySeeder extends Seeder
                 'description' => 'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
                 'long_description' => 'Opticore builds digital marketing programs that feel as refined as the brand itself. We blend paid media, SEO, content, and channel operations into a plan designed for predictable growth instead of disconnected tactics.',
                 'icon' => 'Globe',
+                'color' => 'orange',
                 'headings' => [
                     'capabilities' => ['eyebrow' => 'Growth Toolkit', 'title' => 'Systems for Global Visibility'],
                     'whyOpticore' => ['eyebrow' => 'The Advantage', 'title' => 'Why Partners Scale With Us'],
@@ -109,6 +111,7 @@ class CategorySeeder extends Seeder
                 'description' => 'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
                 'long_description' => "We edit with pace, structure, and taste. Whether it is short-form social, YouTube, branded explainers, or corporate communication, Opticore shapes footage into confident, polished narratives that respect the audience's time.",
                 'icon' => 'Film',
+                'color' => 'cyan',
                 'headings' => [
                     'capabilities' => ['eyebrow' => 'Motion Craft', 'title' => 'Precision Cinematic Retention'],
                     'whyOpticore' => ['eyebrow' => 'The Rhythm', 'title' => 'Why Creators Trust Our Cut'],
@@ -134,6 +137,7 @@ class CategorySeeder extends Seeder
                 'description' => 'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
                 'long_description' => 'Opticore creates 3D visuals that help products, spaces, and concepts feel tangible before they ever reach the market. We focus on lighting, materials, composition, and motion so the final output feels convincing and commercially polished.',
                 'icon' => 'Box',
+                'color' => 'violet',
                 'headings' => [
                     'capabilities' => ['eyebrow' => 'Spatial Fidelity', 'title' => 'Building Immersive Worlds'],
                     'whyOpticore' => ['eyebrow' => 'The Precision', 'title' => 'Why Detail is Everything to Us'],
@@ -158,6 +162,7 @@ class CategorySeeder extends Seeder
                 'description' => 'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
                 'long_description' => 'We build websites that feel premium in both design and engineering. From landing pages to custom web apps, Opticore pairs visual polish with strong frontend performance, structured backend logic, and a conversion-focused content flow.',
                 'icon' => 'Code2',
+                'color' => 'emerald',
                 'headings' => [
                     'capabilities' => ['eyebrow' => 'Stack Setup', 'title' => 'Polished Brand Experience'],
                     'whyOpticore' => ['eyebrow' => 'The Engine', 'title' => 'Why Performance is Non-Negotiable'],
@@ -187,6 +192,7 @@ class CategorySeeder extends Seeder
                     'description' => $data['description'],
                     'long_description' => $data['long_description'],
                     'icon' => $data['icon'],
+                    'color' => $data['color'],
                     'headings' => $data['headings'],
                     'sub_services' => $data['sub_services'],
                     'reasons' => self::DEFAULT_REASONS,

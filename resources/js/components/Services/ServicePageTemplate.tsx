@@ -1,61 +1,15 @@
 import type { ServicePageContent } from '@/types';
 import type { Variants } from 'framer-motion';
-import type { LucideIcon } from 'lucide-react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    ArrowRight,
-    Check,
-    Palette,
-    Megaphone,
-    Clapperboard,
-    Box,
-    Code2,
-    PenTool,
-    Paintbrush,
-    Video,
-    Film,
-    MonitorPlay,
-    Layers,
-    BoxSelect,
-    Globe,
-    Terminal,
-    Smartphone,
-    Camera,
-    ScanLine,
-    Cpu,
-    Sparkles,
-} from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
+import {
+    CATEGORY_ICON_MAP,
+    DEFAULT_CATEGORY_ICON,
+} from '@/lib/categoryVisuals';
 import GradientText from '../text-animations/gradient-text';
-
-// Icon mapping for service pages
-const iconMap: Record<string, LucideIcon> = {
-    // Graphic Design icons
-    Palette,
-    PenTool,
-    Paintbrush,
-    // Video Editing icons
-    Clapperboard,
-    Video,
-    Film,
-    MonitorPlay,
-    Camera,
-    ScanLine,
-    // Digital Marketing icons
-    Megaphone,
-    Globe,
-    Smartphone,
-    // 3D Production icons
-    Box,
-    Layers,
-    BoxSelect,
-    Cpu,
-    // Web Development icons
-    Code2,
-    Terminal,
-};
 
 const easing = [0.22, 1, 0.36, 1] as const;
 
@@ -94,7 +48,8 @@ interface ServicePageTemplateProps {
 export default function ServicePageTemplate({
     service,
 }: ServicePageTemplateProps) {
-    const ServiceIcon = iconMap[service.icon] || Sparkles;
+    const ServiceIcon =
+        CATEGORY_ICON_MAP[service.icon] ?? DEFAULT_CATEGORY_ICON;
 
     return (
         <>
