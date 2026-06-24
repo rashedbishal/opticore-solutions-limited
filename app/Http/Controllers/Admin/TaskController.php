@@ -91,7 +91,7 @@ class TaskController extends Controller
             'task_name' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
             'state' => ['nullable', 'string', 'in:pending,in progress,delivered'],
-            'image' => ['nullable', 'image', 'max:4096'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ]);
 
         if (! isset($validated['state'])) {
@@ -150,7 +150,7 @@ class TaskController extends Controller
             'date' => ['sometimes', 'required', 'date'],
             'state' => ['sometimes', 'required', 'string', 'in:pending,in progress,delivered'],
             'password' => ['nullable', 'string'],
-            'image' => ['nullable', 'image', 'max:4096'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
         ]);
 

@@ -267,13 +267,14 @@ class SslCommerzPaymentController extends Controller
     public function fail(Request $request)
     {
         $tran_id = $request->input('tran_id');
+        $signatureValid = $this->verifySSLCommerzSignature($request);
 
         $order_details = DB::table('orders')
             ->where('transaction_id', $tran_id)
             ->select('transaction_id', 'status')
             ->first();
 
-        if ($order_details && $order_details->status === 'Pending') {
+        if ($signatureValid && $order_details && $order_details->status === 'Pending') {
             DB::table('orders')->where('transaction_id', $tran_id)->update(['status' => 'Failed']);
             Transaction::where('transaction_id', $tran_id)->update(['status' => 'Failed']);
             OrderUpdated::dispatch();
@@ -283,7 +284,7 @@ class SslCommerzPaymentController extends Controller
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
 
-        if ($this->verifySSLCommerzSignature($request) && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+        if ($signatureValid && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
             $this->loginUserFromTransaction($request, $tran_id);
         }
 
@@ -295,13 +296,14 @@ class SslCommerzPaymentController extends Controller
     public function cancel(Request $request)
     {
         $tran_id = $request->input('tran_id');
+        $signatureValid = $this->verifySSLCommerzSignature($request);
 
         $order_details = DB::table('orders')
             ->where('transaction_id', $tran_id)
             ->select('transaction_id', 'status')
             ->first();
 
-        if ($order_details && $order_details->status === 'Pending') {
+        if ($signatureValid && $order_details && $order_details->status === 'Pending') {
             DB::table('orders')->where('transaction_id', $tran_id)->update(['status' => 'Cancelled']);
             Transaction::where('transaction_id', $tran_id)->update(['status' => 'Cancelled']);
             OrderUpdated::dispatch();
@@ -311,7 +313,7 @@ class SslCommerzPaymentController extends Controller
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
 
-        if ($this->verifySSLCommerzSignature($request) && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+        if ($signatureValid && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
             $this->loginUserFromTransaction($request, $tran_id);
         }
 

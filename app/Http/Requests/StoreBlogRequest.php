@@ -23,7 +23,7 @@ class StoreBlogRequest extends FormRequest
             'content' => ['required', 'string'],
             'author' => ['nullable', 'string', 'max:255'],
             'read_time' => ['nullable', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'max:10240'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
         ];
     }
 }

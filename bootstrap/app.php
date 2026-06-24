@@ -21,10 +21,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Trust all proxies so nginx-terminated TLS is recognised correctly.
-        // Without this, Laravel sees HTTP instead of HTTPS, session/cookie
-        // Secure flags are wrong, and broadcast channel auth returns 403.
-        $middleware->trustProxies(at: '*');
+        // Trust the proxy (nginx) for scheme/host/port so TLS termination is
+        // recognised correctly — without this, Laravel sees HTTP instead of
+        // HTTPS, session/cookie Secure flags are wrong, and broadcast channel
+        // auth returns 403. Deliberately not trusting X-Forwarded-For: under
+        // `at: '*'`, Laravel trusts whichever IP is currently REMOTE_ADDR as
+        // "the proxy" on every request, which lets a client's own forged
+        // X-Forwarded-For header override $request->ip() and bypass the IP
+        // half of every rate limiter. REMOTE_ADDR is already the real client
+        // IP here (nginx sets it via the FastCGI REMOTE_ADDR param), so
+        // dropping X-Forwarded-For from the trusted set keeps IP-based
+        // limiters accurate without affecting TLS/scheme detection.
+        $middleware->trustProxies(
+            at: '*',
+            headers: Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+                | Request::HEADER_X_FORWARDED_PREFIX
+                | Request::HEADER_X_FORWARDED_AWS_ELB,
+        );
 
         // Exclude the broadcasting auth endpoint from CSRF so the Pusher.js
         // authorizer (which sends JSON, not a form) is never blocked by CSRF.

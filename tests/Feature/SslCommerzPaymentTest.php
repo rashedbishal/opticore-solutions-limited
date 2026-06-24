@@ -193,6 +193,66 @@ it('returns an error response instead of crashing when the IPN callback referenc
     ])->assertStatus(400)->assertSeeText('INVALID TRANSACTION');
 });
 
+it('marks a pending order failed on a validly signed fail callback', function () {
+    $transaction = createPaymentOrder('TRX-FAIL-VALID-1', 'valid-fail@example.com', 'Pending');
+
+    $payload = validSslCommerzSignature([
+        'tran_id' => $transaction->transaction_id,
+        'status' => 'FAILED',
+    ], 'test-store-password');
+
+    $this->post('/fail', $payload)->assertRedirect(route('home'));
+
+    expect($transaction->refresh()->status)->toBe('Failed');
+    expect(DB::table('orders')->where('transaction_id', $transaction->transaction_id)->value('status'))->toBe('Failed');
+});
+
+it('does not change order status on a fail callback with an invalid signature', function () {
+    $transaction = createPaymentOrder('TRX-FAIL-BADSIG-1', 'badsig-fail@example.com', 'Pending');
+
+    $this->post('/fail', [
+        'tran_id' => $transaction->transaction_id,
+        'status' => 'FAILED',
+        'verify_key' => 'tran_id,status',
+        'verify_sign' => 'not-a-real-signature',
+    ]);
+
+    expect($transaction->refresh()->status)->toBe('Pending');
+    expect(DB::table('orders')->where('transaction_id', $transaction->transaction_id)->value('status'))->toBe('Pending');
+});
+
+it('does not change order status on a fail callback with no signature at all', function () {
+    $transaction = createPaymentOrder('TRX-FAIL-NOSIG-1', 'nosig-fail@example.com', 'Pending');
+
+    $this->post('/fail', ['tran_id' => $transaction->transaction_id]);
+
+    expect($transaction->refresh()->status)->toBe('Pending');
+    expect(DB::table('orders')->where('transaction_id', $transaction->transaction_id)->value('status'))->toBe('Pending');
+});
+
+it('marks a pending order cancelled on a validly signed cancel callback', function () {
+    $transaction = createPaymentOrder('TRX-CANCEL-VALID-1', 'valid-cancel@example.com', 'Pending');
+
+    $payload = validSslCommerzSignature([
+        'tran_id' => $transaction->transaction_id,
+        'status' => 'CANCELLED',
+    ], 'test-store-password');
+
+    $this->post('/cancel', $payload)->assertRedirect(route('home'));
+
+    expect($transaction->refresh()->status)->toBe('Cancelled');
+    expect(DB::table('orders')->where('transaction_id', $transaction->transaction_id)->value('status'))->toBe('Cancelled');
+});
+
+it('does not change order status on a cancel callback with no signature at all', function () {
+    $transaction = createPaymentOrder('TRX-CANCEL-NOSIG-1', 'nosig-cancel@example.com', 'Pending');
+
+    $this->post('/cancel', ['tran_id' => $transaction->transaction_id]);
+
+    expect($transaction->refresh()->status)->toBe('Pending');
+    expect(DB::table('orders')->where('transaction_id', $transaction->transaction_id)->value('status'))->toBe('Pending');
+});
+
 it('rate limits the SSLCommerz callback routes to bound flooding, sharing one cap per IP', function () {
     foreach (range(1, 60) as $i) {
         $this->post('/fail', ['tran_id' => "TRX-FLOOD-{$i}"])

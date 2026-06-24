@@ -14,7 +14,7 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 - `composer test` — clears config cache, runs `pint --test`, then the full test suite (used in CI-like checks).
 - `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
 - `vendor/bin/pint --dirty --format agent` — format only changed PHP files; run this after any PHP edit before finishing.
-- `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the `pgsql` test config variant (used by some CI lanes) instead of the default `phpunit.xml`.
+- `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the alternate local-environment config (different DB names/`APP_ENV`) instead of the default `phpunit.xml`. GitHub Actions CI uses the default `phpunit.xml`, not this one.
 
 ### Frontend (JS/TS)
 - `npm run dev` — Vite dev server. `npm run build` / `npm run build:ssr` — production build.
@@ -40,7 +40,7 @@ Several routes intentionally accept either guard (`auth:web,admin`) — e.g. off
 ### Admin permission system
 `app/Support/AdminPermissions.php` is the **single source of truth** for grantable CMS sections. Each `key` must simultaneously match:
 1. the route-name segment after `admin.` (e.g. `admin.portfolios.index` → `portfolios`),
-2. the `key` in `NAV_ITEMS` in the admin layout (`resources/js/components/Admin`/`AdminLayout`),
+2. the `key` in `NAV_ITEMS` in `resources/js/components/Layout/AdminLayout.tsx`,
 3. the whitelist used by the `admin.permission` middleware (`EnsureAdminHasPermission`).
 
 `Admin::canAccess($key)` returns true for the mother admin (`is_super_admin`) or `full_access` admins, otherwise checks the `permissions` array column. The mother admin (`Admin::motherAdmin()`) is the immutable master account used to gate destructive actions, and is exempt from session invalidation.
@@ -79,7 +79,7 @@ Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer con
 
 ### Testing conventions
 - Pest tests live in `tests/Feature` (mirrors `Admin/`, `Auth/`, `Console/`, `Support/` areas) and `tests/Unit`. There's heavy coverage of authorization edge cases — see `tests/Feature/Admin/AdminAuthorizationTest.php`, `AuthorizationGapsTest.php`, `BroadcastChannelAuthorizationTest.php`, and `AdminSessionInvalidationTest.php` as the reference pattern when adding any new permission-gated route or channel.
-- Two PHPUnit configs exist: `phpunit.xml` (default, `pgsql`, local-style DB names) and `phpunit.pgsql.xml` (CI variant, different DB names/admin connection env). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.
+- Two PHPUnit configs exist: `phpunit.xml` (default — this is what GitHub Actions CI runs, DB names `opticoresolutions_test`/`opticoresolutions_admin_test`) and `phpunit.pgsql.xml` (alternate local config, `APP_ENV=testing_pgsql`, different DB names `opticore_test`/`opticore_admin_test`). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.
 - Playwright e2e specs live in `e2e/` (numbered, e.g. `01-admin-login.spec.ts`) with shared helpers in `e2e/utils/`.
 
 <laravel-boost-guidelines>

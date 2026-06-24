@@ -88,7 +88,7 @@ class PortfolioSubCategoryController extends Controller
             'price' => ['nullable', 'string', 'max:50'],
             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
             'reviews_count' => ['nullable', 'integer', 'min:0', 'max:999999'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
@@ -172,7 +172,7 @@ class PortfolioSubCategoryController extends Controller
             'price' => ['nullable', 'string', 'max:50'],
             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
             'reviews_count' => ['nullable', 'integer', 'min:0', 'max:999999'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'plans' => ['nullable', 'array'],
             'plans.basic' => ['nullable', 'array'],

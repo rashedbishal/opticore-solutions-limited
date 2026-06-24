@@ -184,7 +184,7 @@ class CategoryController extends Controller
     public function galleryStore(Request $request, Category $category): RedirectResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'image', 'max:4096'],
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
             'title' => ['required', 'string', 'max:100'],
             'category' => ['required', 'string', 'max:60'],
             'description' => ['nullable', 'string', 'max:500'],
