@@ -37,7 +37,7 @@ it('stores a new blog post and redirects to index', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.blogs.store'), [
             'title' => 'How to Build a Brand',
-            'category' => 'Design',
+            'category' => 'Graphic Design',
             'content' => 'This is the full blog content.',
             'excerpt' => 'A short excerpt.',
             'author' => 'Rashed',
@@ -52,7 +52,7 @@ it('auto-generates a unique slug on store', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.blogs.store'), [
             'title' => 'My Blog Post',
-            'category' => 'Technology',
+            'category' => 'Digital Marketing',
             'content' => 'Content here.',
         ]);
 
@@ -67,7 +67,7 @@ it('stores a blog post with an uploaded image', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.blogs.store'), [
             'title' => 'Blog With Image',
-            'category' => 'Marketing',
+            'category' => 'Web Development',
             'content' => 'Content here.',
             'image' => UploadedFile::fake()->image('cover.jpg', 800, 400),
         ]);
@@ -87,7 +87,7 @@ it('clears the blog index cache when storing a new post', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.blogs.store'), [
             'title' => 'Cache Buster Post',
-            'category' => 'Design',
+            'category' => 'Graphic Design',
             'content' => 'Some content.',
         ]);
 
@@ -109,13 +109,23 @@ it('validates category is required when storing a blog', function () {
         ->assertInvalid(['category']);
 });
 
+it('rejects a category that is not in the Categories CMS', function () {
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.blogs.store'), [
+            'title' => 'Title Only',
+            'category' => 'Not A Real Category',
+            'content' => 'Content here.',
+        ])
+        ->assertInvalid(['category']);
+});
+
 it('rejects a blog image exceeding 10 MB', function () {
     Storage::fake('public');
 
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.blogs.store'), [
             'title' => 'Huge Image Blog',
-            'category' => 'Design',
+            'category' => 'Graphic Design',
             'content' => 'Content.',
             'image' => UploadedFile::fake()->create('huge.jpg', 11_000, 'image/jpeg'),
         ])
@@ -143,7 +153,7 @@ it('updates a blog post and redirects to index', function () {
     $this->actingAs($this->admin, 'admin')
         ->put(route('admin.blogs.update', $blog), [
             'title' => 'New Title',
-            'category' => 'Design',
+            'category' => 'Graphic Design',
             'content' => 'Updated content.',
         ])
         ->assertRedirect(route('admin.blogs.index'));
@@ -182,7 +192,7 @@ it('clears slug and post caches when updating a blog', function () {
     $this->actingAs($this->admin, 'admin')
         ->put(route('admin.blogs.update', $blog), [
             'title' => 'Updated',
-            'category' => 'Design',
+            'category' => 'Graphic Design',
             'content' => 'Content.',
         ]);
 

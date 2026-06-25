@@ -17,10 +17,14 @@ interface Props {
         read_time: string | null;
         image: string | null;
     };
+    categories: string[];
 }
 
-export default function BlogEdit({ blog }: Props) {
+export default function BlogEdit({ blog, categories }: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const categoryOptions = categories.includes(blog.category)
+        ? categories
+        : [blog.category, ...categories];
     const { data, setData, post, processing } = useForm({
         _method: 'PUT',
         title: blog.title,
@@ -96,21 +100,11 @@ export default function BlogEdit({ blog }: Props) {
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             >
-                                <option value="Graphic Design">
-                                    Graphic Design
-                                </option>
-                                <option value="Digital Marketing">
-                                    Digital Marketing
-                                </option>
-                                <option value="Video Editing">
-                                    Video Editing
-                                </option>
-                                <option value="3D Production">
-                                    3D Production
-                                </option>
-                                <option value="Web Development">
-                                    Web Development
-                                </option>
+                                {categoryOptions.map((category) => (
+                                    <option key={category} value={category}>
+                                        {category}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 

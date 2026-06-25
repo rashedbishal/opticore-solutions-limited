@@ -6,11 +6,15 @@ import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
-export default function BlogCreate() {
+interface Props {
+    categories: string[];
+}
+
+export default function BlogCreate({ categories }: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, post, processing } = useForm({
         title: '',
-        category: 'Graphic Design',
+        category: categories[0] ?? '',
         excerpt: '',
         content: '',
         author: '',
@@ -121,21 +125,14 @@ export default function BlogCreate() {
                                         }
                                         className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                                     >
-                                        <option value="Graphic Design">
-                                            Graphic Design
-                                        </option>
-                                        <option value="Digital Marketing">
-                                            Digital Marketing
-                                        </option>
-                                        <option value="Video Editing">
-                                            Video Editing
-                                        </option>
-                                        <option value="3D Production">
-                                            3D Production
-                                        </option>
-                                        <option value="Web Development">
-                                            Web Development
-                                        </option>
+                                        {categories.map((category) => (
+                                            <option
+                                                key={category}
+                                                value={category}
+                                            >
+                                                {category}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
 

@@ -6,17 +6,15 @@ import BlogCard from '@/components/Blogs/BlogCard';
 import FilterBar from '@/components/Blogs/FilterBar';
 import GradientOrb from '@/components/UI/GradientOrb';
 
-const categories: BlogCategory[] = [
-    'All',
-    'Graphic Design',
-    'Digital Marketing',
-    'Video Editing',
-    '3D Production',
-    'Web Development',
-];
-
-export default function BlogIndex({ dbBlogs }: { dbBlogs?: BlogPost[] }) {
+export default function BlogIndex({
+    dbBlogs,
+    categories,
+}: {
+    dbBlogs?: BlogPost[];
+    categories?: string[];
+}) {
     const blogs = dbBlogs || [];
+    const filterCategories: BlogCategory[] = ['All', ...(categories ?? [])];
     const [activeCategory, setActiveCategory] = useState<BlogCategory>('All');
 
     const filteredBlogs =
@@ -76,7 +74,7 @@ export default function BlogIndex({ dbBlogs }: { dbBlogs?: BlogPost[] }) {
                     </div>
 
                     <FilterBar
-                        categories={categories}
+                        categories={filterCategories}
                         activeCategory={activeCategory}
                         onCategoryChange={setActiveCategory}
                     />

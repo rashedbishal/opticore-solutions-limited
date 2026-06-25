@@ -5,12 +5,7 @@ export interface BlogPost {
     slug: string;
     title: string;
     description: string;
-    category:
-        | 'Graphic Design'
-        | 'Digital Marketing'
-        | 'Video Editing'
-        | '3D Production'
-        | 'Web Development';
+    category: string;
     image: string;
     author: string;
     date: string;
@@ -18,4 +13,4 @@ export interface BlogPost {
     content: string | React.ReactNode;
 }
 
-export type BlogCategory = BlogPost['category'] | 'All';
+export type BlogCategory = string;

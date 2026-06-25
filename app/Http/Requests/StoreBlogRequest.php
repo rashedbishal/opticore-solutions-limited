@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreBlogRequest extends FormRequest
 {
@@ -12,13 +14,13 @@ class StoreBlogRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, string|Rule>>
      */
     public function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'category' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', Rule::in(array_column(Category::configShape(), 'label'))],
             'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],
             'author' => ['nullable', 'string', 'max:255'],

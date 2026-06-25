@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,12 @@ class BlogController extends Controller
         Storage::disk('public')->delete($cleanedPath);
     }
 
+    /** @return array<int, string> */
+    private function categoryOptions(): array
+    {
+        return array_values(array_column(Category::configShape(), 'label'));
+    }
+
     public function index(): Response
     {
         return Inertia::render('Admin/Blog/Index', [
@@ -35,7 +42,9 @@ class BlogController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Blog/Create');
+        return Inertia::render('Admin/Blog/Create', [
+            'categories' => $this->categoryOptions(),
+        ]);
     }
 
     public function store(StoreBlogRequest $request): RedirectResponse
@@ -60,6 +69,7 @@ class BlogController extends Controller
     {
         return Inertia::render('Admin/Blog/Edit', [
             'blog' => $blog,
+            'categories' => $this->categoryOptions(),
         ]);
     }
 

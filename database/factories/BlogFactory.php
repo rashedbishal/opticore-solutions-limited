@@ -18,7 +18,13 @@ class BlogFactory extends Factory
         return [
             'title' => $title,
             'slug' => Str::slug($title).'-'.uniqid(),
-            'category' => fake()->randomElement(['Design', 'Marketing', 'Technology', 'Development']),
+            'category' => fake()->randomElement([
+                'Graphic Design',
+                'Digital Marketing',
+                'Video Editing',
+                '3D Production',
+                'Web Development',
+            ]),
             'excerpt' => fake()->sentence(12),
             'content' => fake()->paragraphs(4, true),
             'author' => fake()->name(),

@@ -13,9 +13,11 @@ vi.mock('@inertiajs/react', async () => {
     };
 });
 
+const categories = ['Graphic Design', 'Digital Marketing'];
+
 describe('Admin Blog Create', () => {
     it('renders without crashing', () => {
-        render(<BlogCreate />);
+        render(<BlogCreate categories={categories} />);
 
         expect(screen.getByText('Post Title')).toBeInTheDocument();
         expect(
@@ -28,7 +30,7 @@ describe('Admin Blog Create', () => {
 
     it('updates field values as the user types', async () => {
         const user = userEvent.setup();
-        render(<BlogCreate />);
+        render(<BlogCreate categories={categories} />);
 
         const titleInput = screen.getByPlaceholderText(
             'Enter an engaging title...',
@@ -48,7 +50,7 @@ describe('Admin Blog Create', () => {
     });
 
     it('shows validation error messages when submitting an empty form', async () => {
-        const { container } = render(<BlogCreate />);
+        const { container } = render(<BlogCreate categories={categories} />);
 
         const form = container.querySelector('form');
         expect(form).not.toBeNull();

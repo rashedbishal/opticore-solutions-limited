@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -34,6 +35,7 @@ class BlogController extends Controller
 
         return Inertia::render('Blogs/Index', [
             'dbBlogs' => $dbBlogs,
+            'categories' => array_values(array_column(Category::configShape(), 'label')),
             'meta' => [
                 'title' => 'Blog — Opticore Solutions Ltd.',
                 'description' => 'Read the latest insights on design, tech, and marketing from the Opticore team.',

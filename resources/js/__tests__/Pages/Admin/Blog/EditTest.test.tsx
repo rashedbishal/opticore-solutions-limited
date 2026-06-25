@@ -30,9 +30,11 @@ const emptyBlog = {
     content: '',
 };
 
+const categories = ['Graphic Design', 'Digital Marketing'];
+
 describe('Admin Blog Edit', () => {
     it('renders without crashing', () => {
-        render(<BlogEdit blog={blog} />);
+        render(<BlogEdit blog={blog} categories={categories} />);
 
         expect(screen.getByText('Edit Blog Post')).toBeInTheDocument();
         expect(screen.getByDisplayValue('Existing Post')).toBeInTheDocument();
@@ -43,7 +45,7 @@ describe('Admin Blog Edit', () => {
 
     it('updates field values as the user types', async () => {
         const user = userEvent.setup();
-        render(<BlogEdit blog={blog} />);
+        render(<BlogEdit blog={blog} categories={categories} />);
 
         const titleInput = screen.getByDisplayValue('Existing Post');
 
@@ -54,7 +56,9 @@ describe('Admin Blog Edit', () => {
     });
 
     it('shows validation error messages when submitting an empty form', async () => {
-        const { container } = render(<BlogEdit blog={emptyBlog} />);
+        const { container } = render(
+            <BlogEdit blog={emptyBlog} categories={categories} />,
+        );
 
         const form = container.querySelector('form');
         expect(form).not.toBeNull();
