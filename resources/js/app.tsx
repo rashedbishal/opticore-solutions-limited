@@ -3,7 +3,7 @@ import '../css/app.css';
 import type { ComponentType, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { hydrateRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 import LogoutOverlay from '@/components/UI/LogoutOverlay';
 
@@ -107,10 +107,6 @@ createInertiaApp({
         return page.default;
     },
     setup({ el, App, props }) {
-        if (import.meta.env.SSR) {
-            return;
-        }
-
         if ('requestIdleCallback' in window) {
             (
                 window as Window & {
@@ -121,7 +117,8 @@ createInertiaApp({
             setTimeout(() => void initializeRealtime(), 0);
         }
 
-        createRoot(el).render(
+        hydrateRoot(
+            el,
             <StrictMode>
                 <LogoutOverlay />
                 <App {...props} />

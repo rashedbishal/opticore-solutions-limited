@@ -19,6 +19,25 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
+     * Routes excluded from SSR: authenticated/transactional areas (admin
+     * panel, dashboard, checkout, offers, customer chat) that are behind
+     * auth and haven't been audited for server-render safety (live chat
+     * state, payment widgets, etc.). Public marketing pages stay SSR'd.
+     *
+     * @var array<int, string>
+     */
+    protected $withoutSsr = [
+        'admin/*',
+        'dashboard',
+        'profile',
+        'checkout',
+        'checkout/*',
+        'gpay/*',
+        'offer/*',
+        'orders/*',
+    ];
+
+    /**
      * Determines the current asset version.
      *
      * @see https://inertiajs.com/asset-versioning
