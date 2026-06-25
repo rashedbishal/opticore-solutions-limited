@@ -350,6 +350,9 @@ export default function EditTask({
                                 <img
                                     src={previewUrl}
                                     alt="Task image"
+                                    decoding="async"
+                                    width={96}
+                                    height={96}
                                     className="h-24 w-24 rounded-lg object-cover"
                                 />
                                 <button

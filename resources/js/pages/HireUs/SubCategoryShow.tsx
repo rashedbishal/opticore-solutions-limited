@@ -321,6 +321,8 @@ function ReviewMedia({
                 <img
                     src={file.url}
                     alt="Delivered work"
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
             )}
@@ -706,6 +708,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 <img
                                     src={item.media_path ?? PLACEHOLDER}
                                     alt={item.alt}
+                                    decoding="async"
                                     onError={(e) => {
                                         e.currentTarget.src = PLACEHOLDER;
                                     }}
@@ -867,6 +870,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                                 PLACEHOLDER
                                             }
                                             alt={activeItem.alt}
+                                            decoding="async"
                                             className="relative z-10 h-full w-full object-contain"
                                             onError={(e) => {
                                                 e.currentTarget.src =
@@ -2177,6 +2181,8 @@ export default function SubCategoryShow({
                                             <img
                                                 src={service.image}
                                                 alt={service.name}
+                                                loading="lazy"
+                                                decoding="async"
                                                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                 onError={(e) => {
                                                     e.currentTarget.style.display =
@@ -2317,6 +2323,7 @@ export default function SubCategoryShow({
                                 <img
                                     src={reviewLightboxItem.url}
                                     alt="Delivered work"
+                                    decoding="async"
                                     className="aspect-video w-full object-contain"
                                 />
                             )}

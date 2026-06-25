@@ -134,6 +134,8 @@ function ExpandModal({
                             <img
                                 src={item.src}
                                 alt={item.title}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover"
                                 draggable={false}
                             />
@@ -244,6 +246,8 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                         <img
                             src={item.src}
                             alt={item.title}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
                             draggable={false}
                         />
@@ -405,6 +409,8 @@ export default function NebulaCluster() {
                             <img
                                 src={item.src}
                                 alt={item.title}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-3">

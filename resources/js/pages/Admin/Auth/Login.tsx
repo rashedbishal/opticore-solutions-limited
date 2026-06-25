@@ -1,6 +1,6 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
-import { AnimatePresence, motion, useAnimation } from 'framer-motion';
+import { AnimatePresence, m as motion, useAnimation } from 'framer-motion';
 import {
     AlertTriangle,
     CheckCircle,
@@ -666,6 +666,9 @@ export default function Login({ successName }: { successName?: string }) {
                                     <img
                                         src="/favicon.ico"
                                         alt="Opticore"
+                                        decoding="async"
+                                        width={44}
+                                        height={36}
                                         className="relative h-9 w-11 object-contain"
                                     />
                                 </motion.div>

@@ -27,6 +27,53 @@ export default defineConfig({
         host: 'localhost',
     },
 
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (
+                        id.includes('node_modules/react/') ||
+                        id.includes('node_modules/react-dom/') ||
+                        id.includes('node_modules/scheduler/')
+                    ) {
+                        return 'vendor-react';
+                    }
+
+                    if (
+                        id.includes('node_modules/framer-motion/') ||
+                        id.includes('node_modules/motion-dom/') ||
+                        id.includes('node_modules/motion-utils/')
+                    ) {
+                        return 'vendor-framer';
+                    }
+
+                    if (
+                        id.includes('node_modules/three/') ||
+                        id.includes('node_modules/@react-three/')
+                    ) {
+                        return 'vendor-three';
+                    }
+
+                    if (
+                        id.includes('node_modules/gsap/') ||
+                        id.includes('node_modules/animejs/') ||
+                        id.includes('node_modules/@studio-freight/lenis/')
+                    ) {
+                        return 'vendor-anim-misc';
+                    }
+
+                    if (id.includes('node_modules/recharts/')) {
+                        return 'vendor-charts';
+                    }
+
+                    if (id.includes('node_modules/radix-ui/')) {
+                        return 'vendor-radix';
+                    }
+                },
+            },
+        },
+    },
+
     test: {
         environment: 'jsdom',
         globals: true,

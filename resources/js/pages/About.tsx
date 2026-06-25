@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import Marquee from '@/components/UI/Marquee';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { clientLogos } from '@/lib/site';

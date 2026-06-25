@@ -194,6 +194,10 @@ export default function PortfolioEdit({
                                 <img
                                     src={portfolio.media_path}
                                     alt="Current"
+                                    loading="lazy"
+                                    decoding="async"
+                                    width={160}
+                                    height={96}
                                     className="h-24 w-40 rounded-lg border border-white/10 object-cover"
                                 />
                             )}

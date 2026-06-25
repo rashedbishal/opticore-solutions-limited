@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import GradientOrb from '@/components/UI/GradientOrb';
 import { cn } from '@/lib/utils';
 
@@ -57,11 +57,13 @@ export default function GuestLayout({
                             <img
                                 src="/images/logo/opticore.webp"
                                 alt="Opticore Solutions"
+                                decoding="async"
                                 className="block h-10 w-auto sm:h-14 dark:hidden [@media(max-height:400px)]:h-6 [@media(max-height:600px)]:h-8"
                             />
                             <img
                                 src="/images/logo/opticore-white.webp"
                                 alt="Opticore Solutions"
+                                decoding="async"
                                 className="hidden h-10 w-auto sm:h-14 dark:block [@media(max-height:400px)]:h-6 [@media(max-height:600px)]:h-8"
                             />
                         </Link>

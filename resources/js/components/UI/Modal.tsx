@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';

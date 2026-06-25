@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import { Quote, Star } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -490,6 +490,10 @@ export default function OrbitingTestimonials({
                                     <img
                                         src={activeItem.image}
                                         alt={activeItem.name}
+                                        loading="lazy"
+                                        decoding="async"
+                                        width={40}
+                                        height={40}
                                         className="h-10 w-10 rounded-full object-cover ring-2 ring-violet-500/30"
                                     />
                                 ) : (
@@ -603,6 +607,8 @@ export default function OrbitingTestimonials({
                                             src={item.image}
                                             alt={item.name}
                                             draggable={false}
+                                            loading="lazy"
+                                            decoding="async"
                                             style={{
                                                 width: '100%',
                                                 height: '100%',

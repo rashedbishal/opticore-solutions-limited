@@ -9,7 +9,10 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+        {{-- Only Roboto Mono is actually rendered: --font-sans resolves to the self-hosted Geist Variable font (see resources/css/app.css), so Plus Jakarta Sans was never visible. --}}
+        {{-- Preload hint starts the download in parallel with other critical resources --}}
+        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap" as="style">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
 
         <script src="/theme-init.js"></script>
         @viteReactRefresh

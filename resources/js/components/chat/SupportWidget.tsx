@@ -3,7 +3,7 @@ import type { Variants } from 'framer-motion';
 import { usePage } from '@inertiajs/react';
 import { echo, useEcho } from '@laravel/echo-react';
 import axios from 'axios';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     Clock,
     CreditCard,

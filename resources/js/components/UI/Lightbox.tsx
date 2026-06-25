@@ -1,5 +1,5 @@
 import type { PortfolioItem } from '@/types';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 

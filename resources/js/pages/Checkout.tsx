@@ -1,6 +1,6 @@
 import type { SharedPageProps, User } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     AlertCircle,
     ArrowRight,

@@ -1,10 +1,7 @@
 'use client';
 
-import { gsap } from 'gsap';
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import type { gsap as GsapType } from 'gsap';
 import { useEffect, useRef, useState } from 'react';
-
-gsap.registerPlugin(ScrambleTextPlugin);
 
 export interface HoverScrambleProps {
     duration?: number;
@@ -15,6 +12,27 @@ export interface HoverScrambleProps {
     triggerOnMount?: boolean;
     trigger?: boolean;
 }
+
+type GsapCore = typeof GsapType;
+
+let gsapPromise: Promise<GsapCore> | null = null;
+
+const getGsap = (): Promise<GsapCore> => {
+    if (!gsapPromise) {
+        gsapPromise = (async () => {
+            const [{ gsap }, { ScrambleTextPlugin }] = await Promise.all([
+                import('gsap'),
+                import('gsap/ScrambleTextPlugin'),
+            ]);
+
+            gsap.registerPlugin(ScrambleTextPlugin);
+
+            return gsap;
+        })();
+    }
+
+    return gsapPromise;
+};
 
 const HoverScramble: React.FC<HoverScrambleProps> = ({
     duration = 0.8,
@@ -27,12 +45,14 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
 }) => {
     const textRef = useRef<HTMLSpanElement>(null);
     const [isAnimating, setIsAnimating] = useState(false);
-    const tweenRef = useRef<gsap.core.Tween | null>(null);
+    const tweenRef = useRef<any>(null);
 
-    const scramble = () => {
+    const scramble = async () => {
         if (!textRef.current) {
             return;
         }
+
+        const gsap = await getGsap();
 
         setIsAnimating(true);
 
@@ -54,19 +74,13 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
             return;
         }
 
-        scramble();
-    };
-
-    const handleMouseLeave = () => {
-        // We don't necessarily want to stop the animation on leave
-        // but we can ensure the text is correct if needed.
+        void scramble();
     };
 
     useEffect(() => {
         if (triggerOnMount) {
-            // Small delay to ensure the menu opening animation has started
             const timer = setTimeout(() => {
-                scramble();
+                void scramble();
             }, 100);
 
             return () => clearTimeout(timer);
@@ -79,7 +93,7 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
     useEffect(() => {
         if (trigger !== prevTrigger.current) {
             prevTrigger.current = trigger;
-            scramble();
+            void scramble();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [trigger]);
@@ -98,7 +112,6 @@ const HoverScramble: React.FC<HoverScrambleProps> = ({
             className={`inline-block font-mono tracking-tight ${className}`}
             style={{ minWidth: `${children.length}ch` }}
             onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
         >
             {children}
         </span>

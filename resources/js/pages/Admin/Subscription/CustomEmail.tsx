@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm, router } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     ArrowLeft,
     Send,

@@ -1,6 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     ArrowRight,
     BadgeCheck,
@@ -194,6 +194,8 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
                         <img
                             src={task.image_url}
                             alt={task.task_name}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover"
                         />
                     ) : (

@@ -1,6 +1,6 @@
 import type { Testimonial } from '@/types';
 import type { Variants } from 'framer-motion';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     Star,
     Mountain,

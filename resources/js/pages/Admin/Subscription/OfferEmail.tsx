@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm, router } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowLeft, ImageIcon, Upload, X, Send, Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -224,6 +224,7 @@ export default function OfferEmail() {
                                 <img
                                     src={preview}
                                     alt="Preview"
+                                    decoding="async"
                                     className="max-h-72 w-full bg-black/40 object-contain"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-white/10 bg-black/70 px-4 py-2.5 backdrop-blur-sm">

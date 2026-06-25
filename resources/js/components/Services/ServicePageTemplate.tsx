@@ -1,7 +1,7 @@
 import type { ServicePageContent } from '@/types';
 import type { Variants } from 'framer-motion';
 import { Head, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';

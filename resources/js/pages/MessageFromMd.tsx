@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { Quote, CheckCircle2, ArrowRight } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
@@ -96,6 +96,7 @@ export default function MessageFromMd() {
                                     <img
                                         src={mdImage}
                                         alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
+                                        decoding="async"
                                         className="h-full w-full scale-105 object-cover filter transition-all duration-700 group-hover:scale-100 group-hover:grayscale-0"
                                     />
 

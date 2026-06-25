@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import {
     Sparkles,
     ArrowRight,
@@ -221,6 +221,8 @@ export default function HireUs() {
                                         <img
                                             src={sub.image}
                                             alt={sub.name}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0"
                                         />
                                     </div>

@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { termsSections } from '@/lib/site';

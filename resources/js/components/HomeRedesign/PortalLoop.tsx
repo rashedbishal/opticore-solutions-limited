@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { m as motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
 // Ultra-optimized images: low resolution and high compression for maximum speed

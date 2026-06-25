@@ -1,6 +1,6 @@
 import type { FormEventHandler } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import {
     Package,
     Clock,

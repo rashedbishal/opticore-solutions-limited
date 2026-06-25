@@ -526,6 +526,8 @@ export default function CategoryEdit({
                                     <img
                                         src={item.image_url}
                                         alt={item.alt}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="h-full w-full object-cover"
                                     />
                                 </div>

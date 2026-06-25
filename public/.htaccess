@@ -29,3 +29,12 @@
     php_value upload_max_filesize 300M
     php_value post_max_size 300M
 </IfModule>
+
+# Long-term caching for content-hashed Vite build assets.
+# Every file under build/assets/ has a content hash in its name, so
+# max-age=1 year + immutable is safe — a new deploy = new hash = new URL.
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m|^/build/assets/|">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+</IfModule>

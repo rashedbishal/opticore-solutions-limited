@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import DOMPurify from 'dompurify';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
 import { useMemo } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
@@ -154,6 +154,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                             <img
                                 src={post.image}
                                 alt={post.title}
+                                decoding="async"
                                 className="h-full w-full object-cover"
                             />
                         </motion.div>

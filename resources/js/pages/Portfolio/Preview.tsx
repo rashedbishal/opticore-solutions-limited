@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowLeft, X } from 'lucide-react';
 
 interface PortfolioItem {
@@ -107,6 +107,7 @@ export default function PortfolioPreview({ item }: Props) {
                             <img
                                 src={item.media_path ?? PLACEHOLDER}
                                 alt={item.alt}
+                                decoding="async"
                                 onError={(e) => {
                                     e.currentTarget.src = PLACEHOLDER;
                                 }}

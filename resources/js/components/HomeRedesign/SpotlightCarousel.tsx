@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
@@ -203,6 +203,10 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                             <img
                                 src={item.image}
                                 alt={item.name}
+                                loading="lazy"
+                                decoding="async"
+                                width={48}
+                                height={48}
                                 className="drop-icon h-full w-full rounded-full object-cover"
                             />
                         </div>

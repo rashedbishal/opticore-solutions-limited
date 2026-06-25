@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
     Banknote,

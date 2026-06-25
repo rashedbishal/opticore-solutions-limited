@@ -1,6 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Star, Zap, Users } from 'lucide-react';
 import { useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
@@ -153,6 +153,8 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                                 <img
                                                     src={item.image}
                                                     alt={item.name}
+                                                    loading="lazy"
+                                                    decoding="async"
                                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                                 <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />

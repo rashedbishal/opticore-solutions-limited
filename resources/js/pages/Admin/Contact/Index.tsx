@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import { ChevronDown, Mail, MessageSquare, Phone, Trash2 } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';

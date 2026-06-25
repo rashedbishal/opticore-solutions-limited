@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm, router } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     Plus,
     Trash2,
@@ -197,6 +197,8 @@ export default function BrandIndex({ brands }: Props) {
                                                 <img
                                                     src={brand.logo_path}
                                                     alt={brand.name}
+                                                    loading="lazy"
+                                                    decoding="async"
                                                     className="h-full w-full object-contain"
                                                 />
                                             </div>
@@ -346,6 +348,7 @@ export default function BrandIndex({ brands }: Props) {
                                                     <img
                                                         src={previewUrl}
                                                         alt="Preview"
+                                                        decoding="async"
                                                         className="h-full w-full object-contain"
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">

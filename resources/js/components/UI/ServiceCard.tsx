@@ -1,7 +1,7 @@
 import type { ServiceItem, PortfolioItem } from '@/types';
 import type { Variants } from 'framer-motion';
 import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     Box,
     Clapperboard,
@@ -159,6 +159,8 @@ export default function ServiceCard({
                                             'https://placehold.co/600x400/111/555'
                                         }
                                         alt={item.alt}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="h-full w-full object-cover"
                                     />
                                 </motion.div>

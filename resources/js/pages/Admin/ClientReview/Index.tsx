@@ -165,6 +165,10 @@ function ReviewCard({
                         <img
                             src={review.image_url}
                             alt="Work proof"
+                            loading="lazy"
+                            decoding="async"
+                            width={64}
+                            height={64}
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">

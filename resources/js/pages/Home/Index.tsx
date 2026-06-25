@@ -14,17 +14,21 @@ import {
     PenTool,
     Sparkles,
 } from 'lucide-react';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { lazy, useEffect, useRef, useState, Suspense } from 'react';
 
 // import KineticBento from '@/components/HomeRedesign/KineticBento';
 // import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
 // import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
-import NebulaCluster from '@/components/HomeRedesign/NebulaCluster';
 // import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
 // import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
 // import PortalLoop from '@/components/HomeRedesign/PortalLoop';
-import SpotlightCarousel from '@/components/HomeRedesign/SpotlightCarousel';
 // import StackedTestimonials from '@/components/HomeRedesign/StackedTestimonials';
+const NebulaCluster = lazy(
+    () => import('@/components/HomeRedesign/NebulaCluster'),
+);
+const SpotlightCarousel = lazy(
+    () => import('@/components/HomeRedesign/SpotlightCarousel'),
+);
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';

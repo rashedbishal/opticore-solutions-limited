@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
     CheckCircle,
@@ -204,6 +204,10 @@ export default function ClientIndex({ clients }: Props) {
                                                 <img
                                                     src={client.avatar}
                                                     alt={client.name}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    width={36}
+                                                    height={36}
                                                     className="h-9 w-9 shrink-0 rounded-full object-cover"
                                                 />
                                             ) : (

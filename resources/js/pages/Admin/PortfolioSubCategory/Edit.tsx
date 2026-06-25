@@ -393,6 +393,8 @@ export default function PortfolioSubCategoryEdit({
                             <img
                                 src={subCategory.image_url}
                                 alt="Current image"
+                                loading="lazy"
+                                decoding="async"
                                 className="mt-2 mb-3 h-24 w-auto rounded-md object-cover"
                             />
                         )}
@@ -802,6 +804,8 @@ export default function PortfolioSubCategoryEdit({
                                             <img
                                                 src={item.media_path}
                                                 alt={item.alt ?? ''}
+                                                loading="lazy"
+                                                decoding="async"
                                                 className="h-full w-full object-cover"
                                             />
                                         )

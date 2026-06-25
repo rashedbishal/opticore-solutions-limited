@@ -1,7 +1,7 @@
 import type { PaymentReceivedPayload } from '@/components/Admin/PaymentNotificationListener';
 import type { SharedPageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     LayoutDashboard,
     Image,
@@ -554,6 +554,9 @@ export default function AdminLayout({
                             <img
                                 src="/favicon.ico"
                                 alt="Opticore"
+                                decoding="async"
+                                width={20}
+                                height={20}
                                 className="relative h-5 w-5 object-contain"
                             />
                         </div>

@@ -1,6 +1,6 @@
 import type { CareerFormData, JobListing } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     Briefcase,
     CheckCircle2,

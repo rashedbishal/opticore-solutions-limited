@@ -1,7 +1,7 @@
 import type { ContactFormData, SharedPageProps, SiteSettings } from '@/types';
 import type { LucideIcon } from 'lucide-react';
 import { Head, useForm as useInertiaForm, usePage } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import {
     BriefcaseBusiness,
     Camera,

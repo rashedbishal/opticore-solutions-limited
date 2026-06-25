@@ -112,6 +112,10 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                             <img
                                                 src={portfolio.media_path}
                                                 alt={portfolio.title}
+                                                loading="lazy"
+                                                decoding="async"
+                                                width={40}
+                                                height={40}
                                                 className="h-10 w-10 rounded border border-white/10 object-cover"
                                             />
                                         )

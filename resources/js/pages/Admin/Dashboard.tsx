@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     ArrowRight,
     CheckCircle2,

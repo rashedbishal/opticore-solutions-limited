@@ -1,6 +1,6 @@
 import type { Variants } from 'framer-motion';
 import { Head, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowRight, FolderKanban, Layers3 } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';

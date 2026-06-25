@@ -68,6 +68,9 @@ Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer con
 - **`ChatSession`/`ChatMessage`** (`ChatController::handleChat`) is the public Gemini-powered FAQ widget: anonymous, tied to a `chat_session_id` stored in the visitor's server-side session (never trusted from request input, so one browser can't write into another's session), not broadcast over Reverb.
 - **`Conversation`/`Message`** (`ConversationController`, `Admin/CustomerConversationController`) is the authenticated customer↔admin support chat described above, broadcast live via Reverb.
 
+### Newsletter subscriptions
+`SubscriptionController` (public) exposes double opt-in subscribe/unsubscribe via signed confirmation links emailed to the address (`ConfirmSubscriptionMail`, `ConfirmUnsubscribeMail`) — a `Subscription` record isn't activated/removed until the link is clicked, not on the initial form POST. `Admin/SubscriptionController` lets staff browse subscribers and blast an offer or custom email to the list (`OfferMail`/`CustomMail`). All public subscription routes are throttled (`throttle:5,1`).
+
 ### Error pages
 `bootstrap/app.php` intercepts HTTP exceptions for status codes `403, 404, 429, 500, 503` and renders them through `resources/js/pages/Error.tsx` via Inertia (instead of Laravel's default error HTML), so the SPA never falls back to a full-page reload. `Error.tsx` opts out of the normal layout since shared layout data may be unavailable when an error fires.
 

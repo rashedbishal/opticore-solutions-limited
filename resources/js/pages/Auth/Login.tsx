@@ -53,6 +53,7 @@ export default function Login({ status }: { status?: string }) {
                             src="https://www.svgrepo.com/show/475656/google-color.svg"
                             className="h-4 w-4 sm:h-5 sm:w-5"
                             alt="Google"
+                            decoding="async"
                         />
                         <span className="text-xs font-bold text-foreground sm:text-sm [@media(max-height:500px)]:hidden">
                             Google

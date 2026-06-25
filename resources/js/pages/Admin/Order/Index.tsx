@@ -1,6 +1,6 @@
 import type { FormEvent, ReactNode } from 'react';
 import { Link, router, useForm } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
     Eye,

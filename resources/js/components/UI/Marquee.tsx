@@ -62,9 +62,11 @@ export default function Marquee({ items }: MarqueeProps) {
                             className="group mx-12 flex h-24 cursor-pointer items-center justify-center transition-all duration-500 hover:scale-110 sm:mx-20 sm:h-32 md:h-40"
                         >
                             {item.logo_path ? (
-                                <img 
-                                    src={item.logo_path} 
-                                    alt={item.name} 
+                                <img
+                                    src={item.logo_path}
+                                    alt={item.name}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="h-full w-auto max-w-[200px] object-contain opacity-50 grayscale transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]"
                                 />
                             ) : Icon ? (

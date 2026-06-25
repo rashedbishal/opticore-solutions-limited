@@ -317,6 +317,10 @@ export default function StackedTestimonials({
                                         <img
                                             src={testimonial.image}
                                             alt={testimonial.name}
+                                            loading="lazy"
+                                            decoding="async"
+                                            width={44}
+                                            height={44}
                                             className="h-11 w-11 rounded-full object-cover"
                                             draggable={false}
                                         />

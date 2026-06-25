@@ -170,6 +170,8 @@ export default function BlogEdit({ blog, categories }: Props) {
                                 <img
                                     src={blog.image}
                                     alt="Current"
+                                    loading="lazy"
+                                    decoding="async"
                                     className="h-auto w-48 rounded-lg border border-white/10 object-cover"
                                 />
                             </div>

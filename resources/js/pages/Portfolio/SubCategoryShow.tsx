@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { motion, useInView } from 'framer-motion';
+import { m as motion, useInView } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Film, FolderOpen } from 'lucide-react';
 import { useRef } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';

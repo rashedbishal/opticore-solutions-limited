@@ -147,6 +147,10 @@ export default function TestimonialEdit({ testimonial }: Props) {
                                 <img
                                     src={testimonial.image_url}
                                     alt={testimonial.name}
+                                    loading="lazy"
+                                    decoding="async"
+                                    width={48}
+                                    height={48}
                                     className="mb-2 h-12 w-12 rounded-full border border-white/10 object-cover"
                                 />
                             )}
