@@ -39,7 +39,7 @@ jobs:
       # 1. Fetch source at the exact SHA that passed CI.
       # -----------------------------------------------------------------
       - name: Checkout source at CI commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           path: _checkout
@@ -50,7 +50,7 @@ jobs:
       #    lint, type-check, and bundle-budget checks in CI.
       # -----------------------------------------------------------------
       - name: Download verified frontend build from CI
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: frontend-build-${{ github.event.workflow_run.head_sha }}
           path: _frontend_build
