@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { m as motion } from 'framer-motion';
+import { domAnimation, LazyMotion, m as motion } from 'framer-motion';
 import { ArrowLeft, X } from 'lucide-react';
 
 interface PortfolioItem {
@@ -37,7 +37,7 @@ export default function PortfolioPreview({ item }: Props) {
         .replace(/\b\w/g, (c) => c.toUpperCase());
 
     return (
-        <>
+        <LazyMotion features={domAnimation}>
             <Head>
                 <title>{`${item.title} — Opticore Solutions Ltd.`}</title>
                 <meta name="description" content={item.alt || item.title} />
@@ -117,7 +117,7 @@ export default function PortfolioPreview({ item }: Props) {
                     </motion.div>
                 </div>
             </motion.div>
-        </>
+        </LazyMotion>
     );
 }
 

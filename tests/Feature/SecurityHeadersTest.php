@@ -55,3 +55,31 @@ it('allows the Inertia data-page script via a hash computed from the actual resp
 
     expect($response->headers->get('Content-Security-Policy'))->toContain($expectedHash);
 });
+
+it('allows every inline script in the response, not just the Inertia data-page payload', function () {
+    app()->instance('env', 'production');
+
+    try {
+        $response = $this->get('/');
+    } finally {
+        app()->instance('env', 'testing');
+    }
+
+    $content = $response->getContent();
+    preg_match_all('/<script(?![^>]*\ssrc=)[^>]*>(.*?)<\/script>/s', $content, $matches);
+
+    // At minimum: the Inertia data-page payload, the theme-detection IIFE,
+    // and the Roboto Mono font-swap script in app.blade.php (Laravel Boost
+    // may also inject its own dev-only browser-logger script, so this isn't
+    // pinned to an exact count) — if this drops below 3, a real inline
+    // script regressed to needing 'unsafe-inline' or got silently dropped.
+    expect(count($matches[1]))->toBeGreaterThanOrEqual(3);
+
+    $csp = $response->headers->get('Content-Security-Policy');
+
+    foreach ($matches[1] as $scriptContent) {
+        $expectedHash = "'sha256-".base64_encode(hash('sha256', $scriptContent, true))."'";
+
+        expect($csp)->toContain($expectedHash);
+    }
+});

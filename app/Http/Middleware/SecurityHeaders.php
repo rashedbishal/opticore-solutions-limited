@@ -64,13 +64,14 @@ class SecurityHeaders
     }
 
     /**
-     * Inertia embeds the initial page payload as an inline
-     * `<script data-page type="application/json">`, which CSP's script-src
-     * governs regardless of the non-executable MIME type, and which has no
-     * nonce hook for this specific tag. Its content is fully
-     * server-controlled (json_encode of the resolved page props) and
-     * differs per response, so it's allowed via a hash computed from what
-     * was actually rendered rather than 'unsafe-inline'.
+     * Hashes every inline `<script>` actually present in the response —
+     * Inertia's `<script data-page type="application/json">` payload (fully
+     * server-controlled, differs per response) and any static inline
+     * scripts in the Blade layout (e.g. the early dark-mode/theme-detection
+     * IIFE in app.blade.php). None of these have a nonce hook, so each is
+     * allowed via a hash of what was actually rendered rather than
+     * 'unsafe-inline'. Scripts with a `src` attribute are external and
+     * already covered by `'self'`, so they're excluded from the match.
      */
     private function scriptHashes(Response $response): string
     {
@@ -80,10 +81,15 @@ class SecurityHeaders
             return '';
         }
 
-        if (! preg_match('/<script data-page="[^"]*" type="application\/json">(.*?)<\/script>/s', $content, $matches)) {
+        if (! preg_match_all('/<script(?![^>]*\ssrc=)[^>]*>(.*?)<\/script>/s', $content, $matches)) {
             return '';
         }
 
-        return "'sha256-".base64_encode(hash('sha256', $matches[1], true))."' ";
+        $hashes = array_map(
+            fn (string $scriptContent) => "'sha256-".base64_encode(hash('sha256', $scriptContent, true))."'",
+            $matches[1],
+        );
+
+        return implode(' ', $hashes).' ';
     }
 }

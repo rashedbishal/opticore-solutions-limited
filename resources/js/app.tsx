@@ -3,7 +3,7 @@ import '../css/app.css';
 import type { ComponentType, ReactNode } from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { StrictMode } from 'react';
-import { hydrateRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 import LogoutOverlay from '@/components/UI/LogoutOverlay';
 
@@ -117,12 +117,23 @@ createInertiaApp({
             setTimeout(() => void initializeRealtime(), 0);
         }
 
-        hydrateRoot(
-            el,
+        const app = (
             <StrictMode>
                 <LogoutOverlay />
                 <App {...props} />
-            </StrictMode>,
+            </StrictMode>
         );
+
+        // HandleInertiaRequests::$withoutSsr skips SSR for admin/dashboard/
+        // checkout/etc., so #app is empty for those pages — hydrateRoot()
+        // requires existing server-rendered markup to reconcile against,
+        // and throws a hydration-mismatch error (#418) against an empty
+        // container. Use createRoot() for those instead; hydrateRoot() only
+        // for pages that actually came from the SSR-rendered root template.
+        if (el.hasChildNodes()) {
+            hydrateRoot(el, app);
+        } else {
+            createRoot(el).render(app);
+        }
     },
 });

@@ -10,13 +10,18 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         {{-- Only Roboto Mono is actually rendered: --font-sans resolves to the self-hosted Geist Variable font (see resources/css/app.css), so Plus Jakarta Sans was never visible. --}}
-        {{-- Roboto Mono isn't needed for first paint (body text uses the self-hosted Geist font), so load it without blocking the render: swap the media type once it's fetched. --}}
+        {{-- Roboto Mono isn't needed for first paint (body text uses the self-hosted Geist font), so load it without blocking the render: swap the media type once it's fetched. An inline `onload` attribute can't satisfy CSP (hashes don't cover event-handler attributes), so the swap runs from an inline <script> instead, which SecurityHeaders hashes and allows like any other inline script here. --}}
         <link
+            id="font-roboto-mono"
             rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap"
             media="print"
-            onload="this.media='all'"
         >
+        <script>
+            document.getElementById('font-roboto-mono').addEventListener('load', function () {
+                this.media = 'all';
+            });
+        </script>
         <noscript>
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap">
         </noscript>

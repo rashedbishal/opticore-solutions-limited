@@ -1,6 +1,12 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
-import { AnimatePresence, m as motion, useAnimation } from 'framer-motion';
+import {
+    AnimatePresence,
+    domAnimation,
+    LazyMotion,
+    m as motion,
+    useAnimation,
+} from 'framer-motion';
 import {
     AlertTriangle,
     CheckCircle,
@@ -90,13 +96,24 @@ function GridBackground() {
     );
 }
 
+// Deterministic pseudo-random in [0, 1) — PARTICLES is computed once at
+// module scope, which runs separately during SSR and client hydration;
+// Math.random() would produce different positions each time and trip a
+// React hydration mismatch (error #418), since this page renders bare
+// (Login.layout below skips AppLayout, so there's no client-only gating).
+function seededRandom(seed: number): number {
+    const x = Math.sin(seed) * 10000;
+
+    return x - Math.floor(x);
+}
+
 const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
     id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 2 + 1,
-    duration: Math.random() * 6 + 4,
-    delay: Math.random() * 4,
+    x: seededRandom(i * 1.1) * 100,
+    y: seededRandom(i * 2.3) * 100,
+    size: seededRandom(i * 3.7) * 2 + 1,
+    duration: seededRandom(i * 4.9) * 6 + 4,
+    delay: seededRandom(i * 5.3) * 4,
 }));
 
 interface ErrorDialogProps {
@@ -459,7 +476,7 @@ export default function Login({ successName }: { successName?: string }) {
     };
 
     return (
-        <>
+        <LazyMotion features={domAnimation}>
             <Head title="Secure Access" />
 
             <AnimatePresence>
@@ -861,7 +878,7 @@ export default function Login({ successName }: { successName?: string }) {
                     />
                 )}
             </AnimatePresence>
-        </>
+        </LazyMotion>
     );
 }
 
