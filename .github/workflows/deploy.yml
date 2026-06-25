@@ -50,7 +50,7 @@ jobs:
       #    lint, type-check, and bundle-budget checks in CI.
       # -----------------------------------------------------------------
       - name: Download verified frontend build from CI
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: frontend-build-${{ github.event.workflow_run.head_sha }}
           path: _frontend_build
