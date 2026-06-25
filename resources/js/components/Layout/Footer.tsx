@@ -232,7 +232,7 @@ export default function Footer() {
                             {siteSettings.phoneBangladeshLink && (
                                 <MagneticButton
                                     href={siteSettings.phoneBangladeshLink}
-                                    ariaLabel="Call Opticore Solutions Ltd. now"
+                                    ariaLabel="Call now — Opticore Solutions Ltd."
                                 >
                                     Call now
                                 </MagneticButton>

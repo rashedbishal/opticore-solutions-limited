@@ -883,7 +883,7 @@
     /* Semantic dark-mode design tokens (Standard AA Contrast) */
     --theme-text: oklch(0.94 0 0);
     --theme-text-muted: oklch(0.65 0 0);
-    --theme-text-subtle: oklch(0.55 0 0);
+    --theme-text-subtle: oklch(0.6 0 0);
     --theme-surface: oklch(1 0 0 / 0.05);
     --theme-surface-hover: oklch(1 0 0 / 0.08);
     --theme-border: oklch(1 0 0 / 0.12);

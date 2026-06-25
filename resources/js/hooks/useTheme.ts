@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 type Theme = 'light' | 'dark';
 
 const STORAGE_KEY = 'preferred-theme';
+const THEME_CHANGE_EVENT = 'opticore:theme-change';
 
 function applyTheme(theme: Theme): void {
     if (theme === 'dark') {
@@ -13,23 +14,43 @@ function applyTheme(theme: Theme): void {
 }
 
 function resolveTheme(): Theme {
-    const stored =
-        typeof window !== 'undefined'
-            ? (localStorage.getItem(STORAGE_KEY) as Theme | null)
-            : null;
+    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
 
     if (stored === 'dark' || stored === 'light') {
         return stored;
     }
 
-    return typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light';
 }
 
+function getServerSnapshot(): Theme {
+    return 'light';
+}
+
+function subscribe(callback: () => void): () => void {
+    const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQueryList.addEventListener('change', callback);
+    window.addEventListener(THEME_CHANGE_EVENT, callback);
+
+    return () => {
+        mediaQueryList.removeEventListener('change', callback);
+        window.removeEventListener(THEME_CHANGE_EVENT, callback);
+    };
+}
+
 export function useTheme() {
-    const [theme, setTheme] = useState<Theme>(resolveTheme);
+    // useSyncExternalStore is the SSR-safe way to read browser-only state:
+    // it renders getServerSnapshot() ('light') during SSR and the initial
+    // client hydration pass — matching the server output exactly — then
+    // switches to the real resolveTheme() value right after, without
+    // tripping a React hydration mismatch (error #418).
+    const theme = useSyncExternalStore(
+        subscribe,
+        resolveTheme,
+        getServerSnapshot,
+    );
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -45,9 +66,10 @@ export function useTheme() {
     const toggle = () => {
         const next: Theme = theme === 'dark' ? 'light' : 'dark';
 
-        setTheme(next);
         localStorage.setItem(STORAGE_KEY, next);
-        applyTheme(next);
+        // localStorage writes don't fire a `storage` event in the same tab,
+        // so dispatch our own event for subscribe() to pick up.
+        window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
     };
 
     return { theme, toggle, mounted };

@@ -756,7 +756,7 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                                 <div className="flex items-center rounded-full border border-slate-300 bg-linear-to-b from-slate-100 to-slate-200 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                                     <MagneticButton
                                         href="/hire-us"
-                                        ariaLabel="Hire Opticore Solutions Ltd. now"
+                                        ariaLabel="Hire Us — contact Opticore Solutions Ltd. now"
                                         className="neo-btn-primary rounded-full px-10 py-4 text-base font-black tracking-tight shadow-xl"
                                     >
                                         Hire Us{' '}
