@@ -96,6 +96,12 @@ const items: NebulaEntry[] = [
     },
 ];
 
+// The grid/scatter thumbnails render at well under 400px; request a smaller
+// variant than the modal's full-size `item.src` to cut transfer bytes.
+function unsplashThumb(src: string, width: number): string {
+    return src.replace(/([?&])w=\d+/, `$1w=${width}`) + '&q=60&auto=format';
+}
+
 // ── Expand modal (portal, highest z-index, scroll-locked) ─────────────────────
 
 function ExpandModal({
@@ -244,7 +250,7 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                         onClick={onSelect}
                     >
                         <img
-                            src={item.src}
+                            src={unsplashThumb(item.src, 380)}
                             alt={item.title}
                             loading="lazy"
                             decoding="async"
@@ -407,7 +413,7 @@ export default function NebulaCluster() {
                             }`}
                         >
                             <img
-                                src={item.src}
+                                src={unsplashThumb(item.src, 380)}
                                 alt={item.title}
                                 loading="lazy"
                                 decoding="async"

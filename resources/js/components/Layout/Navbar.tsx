@@ -157,13 +157,19 @@ export default function Navbar() {
                             <img
                                 src="/images/logo/opticore.webp"
                                 alt="Opticore Solutions"
+                                width={135}
+                                height={48}
                                 decoding="async"
+                                fetchPriority="high"
                                 className="block h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:hidden"
                             />
                             <img
                                 src="/images/logo/opticore-white.webp"
                                 alt="Opticore Solutions"
+                                width={135}
+                                height={48}
                                 decoding="async"
+                                fetchPriority="high"
                                 className="hidden h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:block"
                             />
                         </Link>

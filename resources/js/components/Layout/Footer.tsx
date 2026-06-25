@@ -208,6 +208,8 @@ export default function Footer() {
                                 <img
                                     src="/images/logo/opticore.webp"
                                     alt="Opticore Solutions"
+                                    width={180}
+                                    height={64}
                                     loading="lazy"
                                     decoding="async"
                                     className="h-16 w-auto shrink-0 object-contain dark:hidden"
@@ -215,6 +217,8 @@ export default function Footer() {
                                 <img
                                     src="/images/logo/opticore-white.webp"
                                     alt="Opticore Solutions"
+                                    width={180}
+                                    height={64}
                                     loading="lazy"
                                     decoding="async"
                                     className="hidden h-16 w-auto shrink-0 object-contain dark:block"
