@@ -26,8 +26,8 @@ import {
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-// Cosmetic-only: a dedicated icon/color for the categories this agency
-// originally shipped with. This must never be the source of truth for which
+// Cosmetic-only: a dedicated icon for the categories this agency originally
+// shipped with. This must never be the source of truth for which
 // category_slug values are selectable — that has to come from the live
 // `categories` prop (which mirrors what the backend actually validates
 // against), otherwise a renamed/removed category here would still render as
@@ -54,43 +54,11 @@ const DEFAULT_CATEGORY_STYLE = {
 
 type CategorySlug = string;
 
-const CATEGORY_LABELS: Record<string, string> = {
-    'graphic-design': 'Graphic Design',
-    'digital-marketing': 'Digital Marketing',
-    'video-editing': 'Video Editing',
-    '3d-production': '3D Production',
-    'web-development': 'Web Development',
-};
-
-const CATEGORY_COLORS: Record<string, string> = {
-    'graphic-design': 'from-purple-600 to-violet-700',
-    'digital-marketing': 'from-blue-600 to-sky-700',
-    'video-editing': 'from-orange-600 to-red-700',
-    '3d-production': 'from-cyan-600 to-teal-700',
-    'web-development': 'from-green-600 to-emerald-700',
-};
-
 interface CategoryOption {
     slug: string;
     label: string;
     Icon: LucideIcon;
     color: string;
-}
-
-/**
- * Resolve a human-readable label for a category slug, falling back to the
- * CMS-managed category label for categories beyond the original 5, then to
- * the raw slug.
- */
-function resolveCategoryLabel(
-    slug: string | null | undefined,
-    categories: Record<string, { label: string }>,
-): string {
-    if (!slug) {
-        return '';
-    }
-
-    return CATEGORY_LABELS[slug] ?? categories[slug]?.label ?? slug;
 }
 
 interface MilestoneForm {
@@ -1214,5 +1182,3 @@ export default function CreateOfferModal({
 
     return createPortal(content, document.body);
 }
-
-export { CATEGORY_LABELS, CATEGORY_COLORS, resolveCategoryLabel };

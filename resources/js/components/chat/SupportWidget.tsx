@@ -20,8 +20,8 @@ import {
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
+import { resolveCategoryLabel } from '@/lib/offerCategory';
 import { cn } from '@/lib/utils';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB

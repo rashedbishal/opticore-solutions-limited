@@ -28,12 +28,24 @@ import {
     Wallet,
     X,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
+import React, {
+    lazy,
+    Suspense,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
-import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
+import { resolveCategoryLabel } from '@/lib/offerCategory';
+
+const PendingPaymentsModal = lazy(
+    () => import('@/components/Admin/PendingPaymentsModal'),
+);
+const CreateOfferModal = lazy(
+    () => import('@/components/Offer/CreateOfferModal'),
+);
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -736,23 +748,27 @@ export default function Index() {
             {/* Offer Modal */}
             <AnimatePresence>
                 {showOfferModal && activeConv && (
-                    <CreateOfferModal
-                        conversationId={activeConv.id}
-                        userName={activeConv.user.name}
-                        onOfferSent={handleOfferSent}
-                        onClose={() => setShowOfferModal(false)}
-                    />
+                    <Suspense fallback={null}>
+                        <CreateOfferModal
+                            conversationId={activeConv.id}
+                            userName={activeConv.user.name}
+                            onOfferSent={handleOfferSent}
+                            onClose={() => setShowOfferModal(false)}
+                        />
+                    </Suspense>
                 )}
             </AnimatePresence>
 
             {/* Pending Payments Modal */}
             <AnimatePresence>
                 {showPendingPaymentsModal && activeConv && (
-                    <PendingPaymentsModal
-                        conversationId={activeConv.id}
-                        userName={activeConv.user.name}
-                        onClose={() => setShowPendingPaymentsModal(false)}
-                    />
+                    <Suspense fallback={null}>
+                        <PendingPaymentsModal
+                            conversationId={activeConv.id}
+                            userName={activeConv.user.name}
+                            onClose={() => setShowPendingPaymentsModal(false)}
+                        />
+                    </Suspense>
                 )}
             </AnimatePresence>
 
