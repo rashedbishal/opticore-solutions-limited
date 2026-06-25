@@ -16,13 +16,6 @@ import {
 } from 'lucide-react';
 import { lazy, useEffect, useRef, useState, Suspense } from 'react';
 
-// import KineticBento from '@/components/HomeRedesign/KineticBento';
-// import GlobeCarousel from '@/components/HomeRedesign/GlobeCarousel';
-// import LiquidShuffle from '@/components/HomeRedesign/LiquidShuffle';
-// import OrbitingShowcase from '@/components/HomeRedesign/OrbitingShowcase';
-// import OrbitingTestimonials from '@/components/HomeRedesign/OrbitingTestimonials';
-// import PortalLoop from '@/components/HomeRedesign/PortalLoop';
-// import StackedTestimonials from '@/components/HomeRedesign/StackedTestimonials';
 const NebulaCluster = lazy(
     () => import('@/components/HomeRedesign/NebulaCluster'),
 );
@@ -140,6 +133,10 @@ function LazySection({
     );
 }
 
+// Temporarily disabled for testing — set back to true to re-enable the
+// letter-by-letter arrival animation on the hero headline.
+const HERO_TEXT_ANIMATION_ENABLED = true;
+
 function HeroHeadline() {
     const phrases = [
         'deliver creative <br/> graphic design solutions <br/> for businesses',
@@ -153,6 +150,21 @@ function HeroHeadline() {
     const phraseRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
+        if (!HERO_TEXT_ANIMATION_ENABLED) {
+            const el = phraseRef.current;
+
+            if (el) {
+                el.style.opacity = '1';
+                el.querySelectorAll<HTMLElement>('.anime-letter').forEach(
+                    (letter) => {
+                        letter.style.opacity = '1';
+                    },
+                );
+            }
+
+            return;
+        }
+
         let animeInstance: any;
 
         const run = async () => {
@@ -253,7 +265,11 @@ function HeroHeadline() {
                                     <span
                                         key={`char-${ci}`}
                                         className="anime-letter gradient-text"
-                                        style={{ opacity: 0 }}
+                                        style={{
+                                            opacity: HERO_TEXT_ANIMATION_ENABLED
+                                                ? 0
+                                                : 1,
+                                        }}
                                     >
                                         {char}
                                     </span>
@@ -546,29 +562,9 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                     </div>
                 }
             >
-                {/*<Section2 />*/}
-                {/*<Section3 />*/}
-                {/*<Section4 />*/}
-                {/*<Section5 />*/}
             </Suspense>
 
             <div className="relative z-10">
-                {/* <section className="bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
-                            Portfolio Concept 1
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Portal Loop
-                        </h2>
-                        <p className="mt-4 text-theme-muted">
-                            Scroll down to experience the zoom motion
-                        </p>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[90vh]">
-                    <PortalLoop />
-                </LazySection> */}
 
                 {/* Nebula Cluster */}
                 <div className="relative overflow-hidden">
@@ -580,67 +576,11 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                         className="bottom-0 left-0 h-[500px] w-[500px] -translate-x-1/3 translate-y-1/3"
                         color="rgb(6 182 212 / 0.14)"
                     />
-                    {/* <section className="border-t border-theme bg-background/60 py-20">
-                        <div className="mx-auto max-w-7xl px-4 text-center">
-                            <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
-                                Portfolio Concept 2
-                            </span>
-                            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                                Nebula Cluster
-                            </h2>
-                            <p className="mt-4 text-theme-muted">
-                                Move your mouse to interact with the cluster
-                            </p>
-                        </div>
-                    </section> */}
                     <LazySection minHeightClassName="min-h-[90vh]">
                         <NebulaCluster />
                     </LazySection>
                 </div>
 
-                {/* <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
-                            Portfolio Concept 3
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Kinetic Bento
-                        </h2>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[90vh]">
-                    <KineticBento />
-                </LazySection> */}
-
-                {/* Liquid Shuffle */}
-                {/* <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-pink-400 uppercase">
-                            Testimonial Concept 1
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Liquid Shuffle
-                        </h2>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[70vh]">
-                    <LiquidShuffle />
-                </LazySection> */}
-
-                {/* Orbiting Showcase */}
-                {/* <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-cyan-400 uppercase">
-                            Testimonial Concept 2
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Orbiting Showcase
-                        </h2>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[90vh]">
-                    <OrbitingShowcase />
-                </LazySection> */}
 
                 {/* Spotlight Carousel */}
                 <div className="relative overflow-hidden">
@@ -652,58 +592,12 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                         className="right-0 bottom-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
                         color="rgb(6 182 212 / 0.12)"
                     />
-                    {/* <section className="border-t border-theme bg-background/60 py-20">
-                        <div className="mx-auto max-w-7xl px-4 text-center">
-                            <span className="mb-4 block text-sm font-bold tracking-widest text-violet-400 uppercase">
-                                Testimonial Concept 3
-                            </span>
-                            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                                Spotlight Carousel
-                            </h2>
-                            <p className="mt-4 text-theme-muted">
-                                Drag to swipe · click side cards to focus · ← →
-                                to step
-                            </p>
-                        </div>
-                    </section> */}
+                    
                     <LazySection minHeightClassName="min-h-[70vh]">
                         <SpotlightCarousel testimonials={testimonials} />
                     </LazySection>
                 </div>
 
-                {/* Stacked Depth */}
-                {/* <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-amber-400 uppercase">
-                            Testimonial Concept 4
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Stacked Depth
-                        </h2>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[70vh]">
-                    <StackedTestimonials />
-                </LazySection> */}
-
-                {/* Orbiting Testimonials */}
-                {/* <section className="border-t border-theme bg-background py-20">
-                    <div className="mx-auto max-w-7xl px-4 text-center">
-                        <span className="mb-4 block text-sm font-bold tracking-widest text-emerald-400 uppercase">
-                            Testimonial Concept 5
-                        </span>
-                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase md:text-6xl">
-                            Orbiting Testimonials
-                        </h2>
-                        <p className="mt-4 text-theme-muted">
-                            Drag to spin · Click an avatar to focus · ← → to
-                            step
-                        </p>
-                    </div>
-                </section>
-                <LazySection minHeightClassName="min-h-[70vh]">
-                    <OrbitingTestimonials />
-                </LazySection> */}
             </div>
 
             {/* Marquee */}
