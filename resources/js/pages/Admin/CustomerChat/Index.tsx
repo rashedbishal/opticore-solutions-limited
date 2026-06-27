@@ -33,7 +33,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CurrentOrdersModal from '@/components/Admin/CurrentOrdersModal';
 import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
+import { resolveCategoryLabel } from '@/lib/offerCategory';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
 
