@@ -64,7 +64,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                 Solutions
                             </span>
                             <h1 className="mb-8 text-5xl leading-tight font-black tracking-tighter text-theme uppercase md:text-8xl">
-                                Expert{' '}
+                                Experts{' '}
                                 <span className="bg-gradient-to-r from-cyan-500 to-violet-600 bg-clip-text text-transparent">
                                     On Demand
                                 </span>
