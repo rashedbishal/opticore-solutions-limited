@@ -49,8 +49,8 @@ const items: NebulaEntry[] = [
         description:
             'Dynamic motion graphics and animation sequences that captivate audiences and bring brand stories to life across every platform and format.',
         src: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=900',
-        left: '11%',
-        top: '17%',
+        left: '23%',
+        top: '26%',
         depth: 1.8,
         isCenter: false,
         href: '/portfolio/video-editing',
@@ -62,8 +62,8 @@ const items: NebulaEntry[] = [
         description:
             'Clean, data-rich interfaces that surface insights at a glance — designed for clarity, speed, and delightful interactions across all devices.',
         src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900',
-        left: '88%',
-        top: '27%',
+        left: '77%',
+        top: '26%',
         depth: 2.0,
         isCenter: false,
         href: '/portfolio/web-development',
@@ -75,8 +75,8 @@ const items: NebulaEntry[] = [
         description:
             'Photorealistic 3D visuals and art direction that elevate product launches, campaigns, and immersive brand experiences.',
         src: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=900',
-        left: '14%',
-        top: '82%',
+        left: '23%',
+        top: '73%',
         depth: 2.2,
         isCenter: false,
         href: '/portfolio/3d-production',
@@ -88,8 +88,8 @@ const items: NebulaEntry[] = [
         description:
             'High-impact social content and campaign visuals designed to stop the scroll, drive engagement, and grow your audience organically.',
         src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=900',
-        left: '83%',
-        top: '70%',
+        left: '77%',
+        top: '72%',
         depth: 2.4,
         isCenter: false,
         href: '/portfolio/digital-marketing',
@@ -241,11 +241,7 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                 <div style={{ perspective: '1000px' }}>
                     <motion.button
                         style={{ x, y, rotateX, rotateY }}
-                        className={`group preserve-3d relative cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl ${
-                            item.isCenter
-                                ? 'w-[min(380px,42vw)]'
-                                : 'w-[min(290px,32vw)]'
-                        } aspect-[4/3]`}
+                        className="group preserve-3d relative w-[min(300px,28vw)] cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl aspect-[4/3]"
                         whileHover={{ scale: 1.07 }}
                         onClick={onSelect}
                     >
@@ -257,23 +253,21 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                             className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
                             draggable={false}
                         />
-                        <motion.div
-                            className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4"
-                            initial={{ opacity: 0 }}
-                            whileHover={{ opacity: 1 }}
-                            transition={{ duration: 0.2 }}
-                        >
+                        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/30 to-transparent p-4">
                             <p className="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">
                                 {item.category}
                             </p>
                             <p className="mt-0.5 text-sm leading-tight font-bold text-white">
                                 {item.title}
                             </p>
-                            <div className="mt-2 flex items-center gap-1 text-xs text-zinc-300">
+                            <p className="mt-1.5 line-clamp-2 max-h-0 overflow-hidden text-xs leading-snug text-zinc-300 opacity-0 transition-all duration-300 group-hover:max-h-16 group-hover:opacity-100">
+                                {item.description}
+                            </p>
+                            <div className="mt-1.5 flex max-h-0 items-center gap-1 overflow-hidden text-xs text-zinc-300 opacity-0 transition-all duration-300 group-hover:max-h-8 group-hover:opacity-100">
                                 <span>View details</span>
                                 <ArrowUpRight className="h-3 w-3" />
                             </div>
-                        </motion.div>
+                        </div>
                         {item.isCenter && (
                             <div className="pointer-events-none absolute inset-0 rounded-3xl ring-2 ring-violet-500/60 ring-inset" />
                         )}
