@@ -83,6 +83,18 @@ Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer con
 - `resources/js/components/UI` holds shared/shadcn-derived primitives (see `components.json`); check there before adding a new component.
 - Heavy/animated homepage sections are `React.lazy()`-loaded with `<Suspense>` to keep initial bundle small — follow this pattern for similarly heavy new sections (see `PERFORMANCE.md`).
 
+### Task workflow & payment → task pipeline
+`TaskGenerator::createFromTransaction()` is called after a successful payment and auto-provisions a `Task` record linked to the `Transaction`. It's idempotent (checks for a duplicate `transaction_id` first) and silently skips if there's no matching `User` for the transaction email. The generated task name is built from `Category::configShape()` — don't call `Category` directly inside `TaskGenerator`.
+
+### Redis dependency
+`SESSION_DRIVER`, `CACHE_STORE`, and `QUEUE_CONNECTION` all point to Redis. The dev stack (`composer dev`) won't behave correctly without a running Redis instance. The contact form (`ContactController::store`) dispatches `ProcessContactMessage` to the queue — this mail is never sent synchronously.
+
+### Mother admin recovery
+`php artisan admin:reset-mother-admin-credentials` — interactive "break glass" command that creates or resets the mother admin account and enforces the one-mother-admin invariant. Use it when the mother admin is locked out. Only one `is_super_admin` account is expected to exist; the command offers to demote any others.
+
+### Known open bug
+`PortfolioSubCategoryController::update` throws `Undefined array key "slug"` when the payload omits the slug field (slug is auto-generated on create but not on update). Work around by always including slug in update payloads. See `docs/qa-bugs.md` for details.
+
 ### Testing conventions
 - Pest tests live in `tests/Feature` (mirrors `Admin/`, `Auth/`, `Console/`, `Support/` areas) and `tests/Unit`. There's heavy coverage of authorization edge cases — see `tests/Feature/Admin/AdminAuthorizationTest.php`, `AuthorizationGapsTest.php`, `BroadcastChannelAuthorizationTest.php`, and `AdminSessionInvalidationTest.php` as the reference pattern when adding any new permission-gated route or channel.
 - Two PHPUnit configs exist: `phpunit.xml` (default — this is what GitHub Actions CI runs, DB names `opticoresolutions_test`/`opticoresolutions_admin_test`) and `phpunit.pgsql.xml` (alternate local config, `APP_ENV=testing_pgsql`, different DB names `opticore_test`/`opticore_admin_test`). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.

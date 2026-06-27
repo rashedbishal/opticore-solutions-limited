@@ -198,7 +198,7 @@ export default function Footer() {
         <>
             <footer className="relative z-10 border-t border-theme bg-theme-surface">
                 <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
-                <div className="section-shell pt-14 pb-32 md:pt-18 md:pb-36 lg:pt-20 lg:pb-40">
+                <div className="section-shell pt-8 pb-6 md:pt-10 md:pb-8 lg:pt-12 lg:pb-10">
                     <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                         <div className="space-y-5">
                             <Link
