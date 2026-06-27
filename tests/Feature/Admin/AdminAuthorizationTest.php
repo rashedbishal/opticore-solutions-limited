@@ -205,6 +205,13 @@ it('rejects GET rather than crashing when an admin opens a direct link to a reso
     fn () => '/admin/portfolios/'.Portfolio::factory()->create()->id,
     fn () => '/admin/categories/'.Category::factory()->create()->id,
     fn () => '/admin/sub-categories/'.PortfolioSubCategory::factory()->create()->id,
-    fn () => '/admin/tasks/'.Task::factory()->create()->id,
     fn () => '/admin/users/'.Admin::factory()->create()->id,
 ]);
+
+it('allows GET to admin task show since a show view exists', function () {
+    $task = Task::factory()->create();
+
+    $this->actingAs($this->admin, 'admin')
+        ->get('/admin/tasks/'.$task->id)
+        ->assertStatus(200);
+});
