@@ -149,6 +149,12 @@ export default function Contact() {
         });
     };
 
+    const inputCn = (error?: string) =>
+        cn(
+            'w-full rounded-xl border bg-theme-surface px-4 py-4 text-foreground transition-all duration-300 outline-none placeholder:text-theme-subtle [box-shadow:var(--neo-shadow-inset)] focus:border-violet-500/60 focus:[box-shadow:var(--neo-shadow-inset-focus)]',
+            error ? 'border-rose-500' : 'border-theme',
+        );
+
     return (
         <>
             <Head>
@@ -181,7 +187,7 @@ export default function Contact() {
                     {/* Header Section */}
                     <div className="mb-12 max-w-4xl lg:mb-20">
                         <GlowingKicker>Get in touch</GlowingKicker>
-                        <h1 className="mt-6 text-4xl leading-[1.1] font-extrabold tracking-tight text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="mt-6 text-4xl leading-[1.1] font-extrabold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
                             <HandwritingText
                                 text="Always Ready to Help"
                                 className="inline-block"
@@ -199,16 +205,16 @@ export default function Contact() {
                             transition={{ duration: 0.8 }}
                             className="lg:col-span-7"
                         >
-                            <div className="h-full rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl sm:p-8 md:p-12">
+                            <div className="h-full rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04] sm:p-8 md:p-12">
                                 <div className="mb-10 flex items-center gap-4">
                                     <div className="rounded-2xl bg-violet-500/10 p-3">
-                                        <MessageSquare className="h-6 w-6 text-violet-400" />
+                                        <MessageSquare className="h-6 w-6 text-violet-500 dark:text-violet-400" />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white">
+                                        <h3 className="text-2xl font-bold text-theme">
                                             Send a Message
                                         </h3>
-                                        <p className="mt-1 text-sm text-zinc-400">
+                                        <p className="mt-1 text-sm text-theme-muted">
                                             Our team typically responds within
                                             24 hours.
                                         </p>
@@ -226,14 +232,14 @@ export default function Contact() {
                                             animate={{ opacity: 1, scale: 1 }}
                                             className="flex flex-col items-center justify-center space-y-6 py-12 text-center"
                                         >
-                                            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+                                            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 dark:text-emerald-400">
                                                 <CheckCircle2 className="h-10 w-10" />
                                             </div>
                                             <div className="space-y-2">
-                                                <h2 className="text-3xl font-bold text-white">
+                                                <h2 className="text-3xl font-bold text-theme">
                                                     Message Received
                                                 </h2>
-                                                <p className="mx-auto max-w-sm leading-relaxed text-zinc-400">
+                                                <p className="mx-auto max-w-sm leading-relaxed text-theme-muted">
                                                     Thank you for reaching out.
                                                     A specialist will review
                                                     your inquiry and contact you
@@ -244,7 +250,7 @@ export default function Contact() {
                                                 onClick={() =>
                                                     setSubmitted(false)
                                                 }
-                                                className="text-sm font-semibold text-violet-400 underline underline-offset-4 transition-colors hover:text-violet-300"
+                                                className="text-sm font-semibold text-violet-600 underline underline-offset-4 transition-colors hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"
                                             >
                                                 Send another message
                                             </button>
@@ -256,7 +262,7 @@ export default function Contact() {
                                         >
                                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                                                 <div className="space-y-2">
-                                                    <label className="ml-1 text-sm font-semibold text-zinc-300">
+                                                    <label className="ml-1 text-sm font-semibold text-theme-muted">
                                                         Full Name
                                                     </label>
                                                     <input
@@ -276,21 +282,17 @@ export default function Contact() {
                                                                 val,
                                                             );
                                                         }}
-                                                        className={cn(
-                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
-                                                            form.errors.name &&
-                                                                'border-rose-500',
-                                                        )}
+                                                        className={inputCn(form.errors.name)}
                                                     />
                                                     {form.errors.name && (
-                                                        <p className="ml-1 text-xs text-rose-400">
+                                                        <p className="ml-1 text-xs text-rose-500">
                                                             {form.errors.name}
                                                         </p>
                                                     )}
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <label className="ml-1 text-sm font-semibold text-zinc-300">
+                                                    <label className="ml-1 text-sm font-semibold text-theme-muted">
                                                         Email Address
                                                     </label>
                                                     <input
@@ -304,14 +306,10 @@ export default function Contact() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className={cn(
-                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
-                                                            form.errors.email &&
-                                                                'border-rose-500',
-                                                        )}
+                                                        className={inputCn(form.errors.email)}
                                                     />
                                                     {form.errors.email && (
-                                                        <p className="ml-1 text-xs text-rose-400">
+                                                        <p className="ml-1 text-xs text-rose-500">
                                                             {form.errors.email}
                                                         </p>
                                                     )}
@@ -320,7 +318,7 @@ export default function Contact() {
 
                                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                                                 <div className="space-y-2">
-                                                    <label className="ml-1 text-sm font-semibold text-zinc-300">
+                                                    <label className="ml-1 text-sm font-semibold text-theme-muted">
                                                         Phone (Optional)
                                                     </label>
                                                     <input
@@ -344,21 +342,17 @@ export default function Contact() {
                                                                 val,
                                                             );
                                                         }}
-                                                        className={cn(
-                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
-                                                            form.errors.phone &&
-                                                                'border-rose-500',
-                                                        )}
+                                                        className={inputCn(form.errors.phone)}
                                                     />
                                                     {form.errors.phone && (
-                                                        <p className="ml-1 text-xs text-rose-400">
+                                                        <p className="ml-1 text-xs text-rose-500">
                                                             {form.errors.phone}
                                                         </p>
                                                     )}
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <label className="ml-1 text-sm font-semibold text-zinc-300">
+                                                    <label className="ml-1 text-sm font-semibold text-theme-muted">
                                                         Subject
                                                     </label>
                                                     <input
@@ -375,15 +369,10 @@ export default function Contact() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className={cn(
-                                                            'w-full rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
-                                                            form.errors
-                                                                .subject &&
-                                                                'border-rose-500',
-                                                        )}
+                                                        className={inputCn(form.errors.subject)}
                                                     />
                                                     {form.errors.subject && (
-                                                        <p className="ml-1 text-xs text-rose-400">
+                                                        <p className="ml-1 text-xs text-rose-500">
                                                             {
                                                                 form.errors
                                                                     .subject
@@ -394,7 +383,7 @@ export default function Contact() {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <label className="ml-1 text-sm font-semibold text-zinc-300">
+                                                <label className="ml-1 text-sm font-semibold text-theme-muted">
                                                     Your Message
                                                 </label>
                                                 <textarea
@@ -409,17 +398,13 @@ export default function Contact() {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className={cn(
-                                                        'w-full resize-none rounded-xl border-b border-white/10 bg-white/[0.03] px-4 py-4 text-white transition-all duration-300 outline-none focus:border-violet-500 focus:bg-white/[0.05]',
-                                                        form.errors.message &&
-                                                            'border-rose-500',
-                                                    )}
+                                                    className={cn(inputCn(form.errors.message), 'resize-none')}
                                                 />
                                                 <div className="flex items-start justify-between">
                                                     <div>
                                                         {form.errors
                                                             .message && (
-                                                            <p className="mt-1 ml-1 text-xs text-rose-400">
+                                                            <p className="mt-1 ml-1 text-xs text-rose-500">
                                                                 {
                                                                     form.errors
                                                                         .message
@@ -427,7 +412,7 @@ export default function Contact() {
                                                             </p>
                                                         )}
                                                     </div>
-                                                    <span className="mt-1 text-xs text-zinc-500">
+                                                    <span className="mt-1 text-xs text-theme-subtle">
                                                         {
                                                             form.data.message
                                                                 .length
@@ -472,13 +457,13 @@ export default function Contact() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8 }}
-                                className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl sm:p-8 md:p-10"
+                                className="rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04] sm:p-8 md:p-10"
                             >
                                 <div className="mb-8 flex items-center gap-3">
                                     <div className="rounded-xl bg-cyan-500/10 p-2.5">
-                                        <Info className="h-5 w-5 text-cyan-400" />
+                                        <Info className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-white">
+                                    <h3 className="text-xl font-bold text-theme">
                                         Contact Details
                                     </h3>
                                 </div>
@@ -491,21 +476,21 @@ export default function Contact() {
                                         >
                                             <div
                                                 className={cn(
-                                                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 transition-transform duration-300 group-hover:scale-110',
+                                                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-theme-surface transition-transform duration-300 group-hover:scale-110 [box-shadow:var(--neo-shadow-sm)]',
                                                     item.iconColor,
                                                 )}
                                             >
                                                 <item.icon className="h-6 w-6" />
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+                                                <p className="text-xs font-semibold tracking-wider text-theme-subtle uppercase">
                                                     {item.label}
                                                 </p>
-                                                <p className="mt-1 text-lg font-bold break-words text-white">
+                                                <p className="mt-1 text-lg font-bold break-words text-theme">
                                                     {item.value}
                                                 </p>
                                                 {item.subValue && (
-                                                    <p className="mt-1 text-sm text-zinc-400">
+                                                    <p className="mt-1 text-sm text-theme-muted">
                                                         {item.subValue}
                                                     </p>
                                                 )}
@@ -514,12 +499,12 @@ export default function Contact() {
                                     ))}
                                 </div>
 
-                                <div className="mt-10 border-t border-white/5 pt-8">
+                                <div className="mt-10 border-t border-theme pt-8">
                                     <div className="mb-6 flex items-center gap-3">
                                         <div className="rounded-xl bg-violet-500/10 p-2.5">
-                                            <Share2 className="h-5 w-5 text-violet-400" />
+                                            <Share2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         </div>
-                                        <h3 className="text-lg font-bold text-white">
+                                        <h3 className="text-lg font-bold text-theme">
                                             Social Media
                                         </h3>
                                     </div>
@@ -531,7 +516,7 @@ export default function Contact() {
                                                     href={href}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-all duration-300 hover:scale-105 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-white"
+                                                    className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-theme-muted transition-all duration-300 hover:scale-105 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-violet-600 [box-shadow:var(--neo-shadow-sm)] dark:hover:text-violet-300"
                                                     aria-label={label}
                                                 >
                                                     <Icon className="h-6 w-6 transition-transform duration-500 group-hover:rotate-12" />
@@ -548,12 +533,12 @@ export default function Contact() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8, delay: 0.1 }}
-                                className="group relative h-[300px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-2"
+                                className="group relative h-[300px] overflow-hidden rounded-[2rem] border border-theme bg-white p-2 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04]"
                             >
                                 <div className="pointer-events-none absolute top-6 left-6 z-20">
-                                    <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/60 px-4 py-2 backdrop-blur-md">
+                                    <div className="flex items-center gap-2 rounded-xl border border-theme bg-background/80 px-4 py-2 backdrop-blur-md [box-shadow:var(--neo-shadow-sm)]">
                                         <MapPin className="h-4 w-4 text-rose-500" />
-                                        <span className="text-xs font-bold tracking-wide text-balance text-white">
+                                        <span className="text-xs font-bold tracking-wide text-balance text-foreground">
                                             East Monipur, Mirpur, Dhaka
                                         </span>
                                     </div>
@@ -561,7 +546,7 @@ export default function Contact() {
                                 <iframe
                                     title="Opticore Solutions Ltd. location"
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.4890191049462!2d90.36899679999999!3d23.801203700000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c711e66e7703%3A0x6262d3b99b8ae3d4!2sOpticore%20solutions%20Ltd!5e0!3m2!1sen!2sbd!4v1776248482450!5m2!1sen!2sbd"
-                                    className="h-full w-full rounded-[1.75rem] opacity-30 grayscale invert transition-all duration-1000 ease-out group-hover:opacity-100 group-hover:grayscale-0 group-hover:invert-0"
+                                    className="h-full w-full rounded-[1.75rem] opacity-40 grayscale transition-all duration-1000 ease-out group-hover:opacity-100 group-hover:grayscale-0 dark:invert dark:group-hover:invert-0"
                                     loading="lazy"
                                 />
                             </motion.div>

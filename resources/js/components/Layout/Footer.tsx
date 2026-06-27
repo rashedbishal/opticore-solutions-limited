@@ -196,7 +196,7 @@ export default function Footer() {
 
     return (
         <>
-            <footer className="relative z-10 border-t border-theme bg-theme-surface">
+            <footer className="relative z-10 border-t border-theme bg-zinc-100 dark:bg-zinc-900/60">
                 <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
                 <div className="section-shell pt-8 pb-6 md:pt-10 md:pb-8 lg:pt-12 lg:pb-10">
                     <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -253,7 +253,7 @@ export default function Footer() {
                                         value={email}
                                         onChange={handleEmailChange}
                                         placeholder="your@email.com"
-                                        className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white placeholder-white/25 transition-all outline-none focus:border-violet-500/40 focus:bg-violet-500/5"
+                                        className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-xs text-zinc-800 placeholder-zinc-400 transition-all outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:placeholder-white/25 dark:focus:border-violet-500/40 dark:focus:ring-0"
                                     />
                                     <button
                                         type="button"
@@ -261,8 +261,8 @@ export default function Footer() {
                                         disabled={loading || checking || !email}
                                         className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                                             isSubscribed
-                                                ? 'border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
-                                                : 'border border-violet-500/30 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20'
+                                                ? 'border border-rose-400 bg-rose-50 text-rose-600 hover:bg-rose-100 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20'
+                                                : 'border border-violet-400 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20'
                                         }`}
                                     >
                                         {loading || checking ? (
