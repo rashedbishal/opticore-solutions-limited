@@ -561,11 +561,9 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                         Loading sections...
                     </div>
                 }
-            >
-            </Suspense>
+            ></Suspense>
 
             <div className="relative z-10">
-
                 {/* Nebula Cluster */}
                 <div className="relative overflow-hidden">
                     <GradientOrb
@@ -581,7 +579,6 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                     </LazySection>
                 </div>
 
-
                 {/* Spotlight Carousel */}
                 <div className="relative overflow-hidden">
                     <GradientOrb
@@ -592,12 +589,11 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                         className="right-0 bottom-0 h-[480px] w-[480px] translate-x-1/3 translate-y-1/3"
                         color="rgb(6 182 212 / 0.12)"
                     />
-                    
+
                     <LazySection minHeightClassName="min-h-[70vh]">
                         <SpotlightCarousel testimonials={testimonials} />
                     </LazySection>
                 </div>
-
             </div>
 
             {/* Marquee */}
