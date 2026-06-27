@@ -597,9 +597,9 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
             </div>
 
             {/* Marquee */}
-            <section className="section-shell pt-0 pb-16">
+            <section className="section-shell pt-0 pb-6">
                 <div className="section-inner flex flex-col items-center">
-                    <span className="neo-btn-ghost mb-10 inline-block rounded-full px-5 py-2 text-[10px] font-black tracking-widest text-theme-muted uppercase sm:text-[11px]">
+                    <span className="neo-btn-ghost mb-4 inline-block rounded-full px-5 py-2 text-[10px] font-black tracking-widest text-theme-muted uppercase sm:text-[11px]">
                         Trusted by Industry Leaders
                     </span>
                     <div className="w-full">

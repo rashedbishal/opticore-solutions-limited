@@ -51,7 +51,7 @@ export default function Marquee({ items }: MarqueeProps) {
     const repeated = [...baseSet, ...baseSet];
 
     return (
-        <div className="overflow-hidden py-12 md:py-16">
+        <div className="overflow-hidden py-4 md:py-6">
             <div className="marquee-track flex min-w-max items-center hover:[animation-play-state:paused]">
                 {repeated.map((item, index) => {
                     const Icon = item.icon ? IconMap[item.icon] : null;
@@ -59,7 +59,7 @@ export default function Marquee({ items }: MarqueeProps) {
                     return (
                         <div
                             key={`${item.name}-${index}`}
-                            className="group mx-12 flex h-24 cursor-pointer items-center justify-center transition-all duration-500 hover:scale-110 sm:mx-20 sm:h-32 md:h-40"
+                            className="group mx-6 flex h-10 cursor-pointer items-center justify-center transition-all duration-500 hover:scale-110 sm:mx-10 sm:h-12 md:h-14"
                         >
                             {item.logo_path ? (
                                 <img
@@ -67,7 +67,7 @@ export default function Marquee({ items }: MarqueeProps) {
                                     alt={item.name}
                                     loading="lazy"
                                     decoding="async"
-                                    className="h-full w-auto max-w-[200px] object-contain opacity-50 grayscale transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]"
+                                    className="h-full w-auto max-w-[120px] object-contain opacity-50 grayscale transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]"
                                 />
                             ) : Icon ? (
                                 <Icon className="h-full w-auto max-w-[120px] text-zinc-500/60 transition-all duration-500 group-hover:scale-110 group-hover:text-violet-400 group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]" />
