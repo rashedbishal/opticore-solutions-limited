@@ -33,9 +33,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CurrentOrdersModal from '@/components/Admin/CurrentOrdersModal';
 import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { resolveCategoryLabel } from '@/lib/offerCategory';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
+import { resolveCategoryLabel } from '@/lib/offerCategory';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
