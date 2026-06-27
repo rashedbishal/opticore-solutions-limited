@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\OrderCreated;
+use App\Models\CheckoutMetadata;
 use App\Models\Offer;
 use App\Models\PortfolioSubCategory;
 use App\Models\Transaction;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Google Pay checkout, via SSLCommerz's "Merchant Hosted Payment API".
@@ -86,6 +88,8 @@ class GooglePayCheckoutController extends Controller
             'service' => ['nullable', 'string'],
             'delivery' => ['nullable', 'string'],
             'subcategory' => ['nullable', 'string'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'upload_token' => ['nullable', 'string', 'max:36'],
         ]);
 
         $user = $request->user();
@@ -108,6 +112,13 @@ class GooglePayCheckoutController extends Controller
         $tranId = IdGenerator::transactionId();
 
         $this->createPendingRecords($tranId, $user, $totalAmount, $categorySlug, $subcategoryId, $checkoutUrl);
+
+        $this->storeCheckoutMetadata(
+            $tranId,
+            $user->id,
+            $validated['notes'] ?? null,
+            $validated['upload_token'] ?? null,
+        );
 
         OrderCreated::dispatch();
 
@@ -260,6 +271,54 @@ class GooglePayCheckoutController extends Controller
     {
         DB::table('orders')->where('transaction_id', $tranId)->update(['status' => 'Failed']);
         Transaction::where('transaction_id', $tranId)->update(['status' => 'Failed']);
+        $this->cleanupCheckoutMetadata($tranId);
+    }
+
+    /**
+     * Store or update checkout metadata (notes + pre-uploaded files) keyed by
+     * transaction_id. Mirrors the same method in SslCommerzPaymentController.
+     */
+    private function storeCheckoutMetadata(string $transactionId, int $userId, ?string $notes, ?string $uploadToken): void
+    {
+        if ($uploadToken) {
+            CheckoutMetadata::where('upload_token', $uploadToken)
+                ->where('user_id', $userId)
+                ->update([
+                    'transaction_id' => $transactionId,
+                    'notes' => $notes ?: null,
+                ]);
+
+            return;
+        }
+
+        if ($notes) {
+            CheckoutMetadata::create([
+                'transaction_id' => $transactionId,
+                'user_id' => $userId,
+                'notes' => $notes,
+            ]);
+        }
+    }
+
+    /**
+     * Delete any temp files and the metadata row when a Google Pay charge
+     * fails before completing.
+     */
+    private function cleanupCheckoutMetadata(string $transactionId): void
+    {
+        $metadata = CheckoutMetadata::where('transaction_id', $transactionId)->first();
+
+        if (! $metadata) {
+            return;
+        }
+
+        if ($metadata->attachment_paths) {
+            foreach ($metadata->attachment_paths as $file) {
+                Storage::disk('local')->delete($file['path']);
+            }
+        }
+
+        $metadata->delete();
     }
 
     private function todayCallCountKey(): string

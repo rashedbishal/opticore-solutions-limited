@@ -23,6 +23,7 @@ const tasks = {
             task_name: 'Brand refresh',
             date: '2026-06-01',
             state: 'pending' as const,
+            order_number: null,
         },
         {
             id: 2,
@@ -33,6 +34,7 @@ const tasks = {
             task_name: 'Landing page',
             date: '2026-06-03',
             state: 'in progress' as const,
+            order_number: 'ORD-0002',
         },
         {
             id: 3,
@@ -43,6 +45,7 @@ const tasks = {
             task_name: 'Promo video',
             date: '2026-06-05',
             state: 'delivered' as const,
+            order_number: 'ORD-0003',
         },
     ],
     links: [],
@@ -50,9 +53,11 @@ const tasks = {
 
 const emptyTasks = { data: [], links: [] };
 
+const defaultFilters = { search: '', state: '' };
+
 describe('Admin Task Index', () => {
     it('renders without crashing', () => {
-        render(<TaskIndex tasks={tasks} />);
+        render(<TaskIndex tasks={tasks} filters={defaultFilters} />);
 
         expect(
             screen.getByRole('heading', { name: 'Client Workflow Management' }),
@@ -62,18 +67,21 @@ describe('Admin Task Index', () => {
     });
 
     it('displays the correct status option selected for each task state', () => {
-        render(<TaskIndex tasks={tasks} />);
+        render(<TaskIndex tasks={tasks} filters={defaultFilters} />);
 
+        // The filter bar adds one state filter combobox before the per-row selects
         const statusSelects = screen.getAllByRole('combobox');
 
-        expect(statusSelects).toHaveLength(3);
-        expect(statusSelects[0]).toHaveValue('pending');
-        expect(statusSelects[1]).toHaveValue('in progress');
-        expect(statusSelects[2]).toHaveValue('delivered');
+        expect(statusSelects).toHaveLength(4);
+        // First combobox is the filter bar's state filter (empty = all states)
+        expect(statusSelects[0]).toHaveValue('');
+        expect(statusSelects[1]).toHaveValue('pending');
+        expect(statusSelects[2]).toHaveValue('in progress');
+        expect(statusSelects[3]).toHaveValue('delivered');
     });
 
     it('shows an empty state message when there are no tasks', () => {
-        render(<TaskIndex tasks={emptyTasks} />);
+        render(<TaskIndex tasks={emptyTasks} filters={defaultFilters} />);
 
         expect(screen.getByText('No tasks found')).toBeInTheDocument();
     });

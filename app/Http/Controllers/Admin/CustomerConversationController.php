@@ -10,6 +10,7 @@ use App\Mail\ChatMessageReceivedMail;
 use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -159,6 +160,29 @@ class CustomerConversationController extends Controller
         broadcast(new ConversationDeleted($conversationId));
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Return active (non-delivered) tasks for the conversation's user,
+     * newest first, including their associated order number.
+     */
+    public function currentOrders(Conversation $conversation): JsonResponse
+    {
+        $tasks = Task::with('transaction')
+            ->where('user_id', $conversation->user_id)
+            ->where('state', '!=', 'delivered')
+            ->latest()
+            ->get()
+            ->map(fn (Task $t) => [
+                'id' => $t->id,
+                'task_name' => $t->task_name,
+                'order_number' => $t->transaction?->order_number,
+                'state' => $t->state,
+                'date' => $t->date?->format('Y-m-d'),
+            ])
+            ->values();
+
+        return response()->json($tasks);
     }
 
     /**

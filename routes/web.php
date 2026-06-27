@@ -136,6 +136,7 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::get('/checkout/exchange-rate', [CheckoutController::class, 'exchangeRate'])->name('checkout.exchange-rate');
+        Route::post('/checkout/upload-attachments', [CheckoutController::class, 'uploadAttachments'])->name('checkout.upload-attachments');
 
         // Google Pay (SSLCommerz Merchant Hosted Payment API)
         Route::get('/gpay/config', [GooglePayCheckoutController::class, 'config'])->name('gpay.config');
@@ -171,6 +172,10 @@ Route::get('/subscription/confirm-unsubscribe', [SubscriptionController::class, 
 
 Route::get('/chat/attachments/{message}/download', [ConversationController::class, 'downloadAttachment'])
     ->name('chat.attachment.download')
+    ->middleware('auth:web,admin');
+
+Route::get('/tasks/attachments/{taskAttachment}/download', [CheckoutController::class, 'downloadTaskAttachment'])
+    ->name('task.attachment.download')
     ->middleware('auth:web,admin');
 
 // Offer view — accessible by the offer's client (web) or any admin
@@ -226,8 +231,9 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::resource('contacts', AdminContactController::class)->only(['index', 'destroy']);
     Route::resource('users', UserController::class)->except(['show']);
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('clients/{user}', [ClientController::class, 'show'])->name('clients.show')->withTrashed();
     Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy')->withTrashed();
-    Route::resource('tasks', TaskController::class)->except(['show']);
+    Route::resource('tasks', TaskController::class);
 
     // Customer Support Chat Routes
     Route::get('/customer-conversations', [CustomerConversationController::class, 'index'])->name('customer-conversations.index');
@@ -238,6 +244,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::post('/api/customer-conversations/ping', [CustomerConversationController::class, 'pingOnline'])->name('customer-conversations.ping');
     Route::post('/api/customer-conversations/{conversation}/offer', [AdminOfferController::class, 'store'])->name('customer-conversations.offer.store');
     Route::delete('/api/customer-conversations/{conversation}/offer/{message}', [AdminOfferController::class, 'destroy'])->name('customer-conversations.offer.destroy');
+    Route::get('/api/customer-conversations/{conversation}/current-orders', [CustomerConversationController::class, 'currentOrders'])->name('customer-conversations.current-orders');
     Route::get('/api/customer-conversations/{conversation}/pending-payments', [PendingPaymentController::class, 'index'])->name('customer-conversations.pending-payments.index');
     Route::delete('/api/customer-conversations/{conversation}/pending-payments/{pendingPayment}', [PendingPaymentController::class, 'destroy'])->name('customer-conversations.pending-payments.destroy');
     Route::delete('/api/customer-conversations/{conversation}', [CustomerConversationController::class, 'destroy'])->name('customer-conversations.destroy');

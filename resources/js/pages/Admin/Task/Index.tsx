@@ -11,6 +11,7 @@ import {
     Loader2,
     Plus,
     Radio,
+    Search,
     Trash2,
     X,
 } from 'lucide-react';
@@ -22,6 +23,7 @@ import adminRoutes from '@/routes/admin';
 
 interface Task {
     id: number;
+    order_number: string | null;
     client_name: string;
     client_email: string | null;
     category: string;
@@ -40,19 +42,63 @@ interface PaginationLink {
     active: boolean;
 }
 
+interface Filters {
+    search?: string;
+    state?: string;
+}
+
 interface Props {
     tasks: {
         data: Task[];
         links: PaginationLink[];
     };
+    filters: Filters;
 }
 
 function decodePaginationLabel(label: string): string {
     return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
-export default function TaskIndex({ tasks }: Props) {
+export default function TaskIndex({ tasks, filters }: Props) {
     const echoReady = useEchoReady();
+
+    const [search, setSearch] = useState(filters.search ?? '');
+    const [stateFilter, setStateFilter] = useState(filters.state ?? '');
+    const hasActiveFilters = Boolean(filters.search || filters.state);
+
+    function applyFilters(e: FormEvent) {
+        e.preventDefault();
+        const params: Record<string, string> = {};
+
+        if (search.trim()) {
+            params.search = search.trim();
+        }
+
+        if (stateFilter) {
+            params.state = stateFilter;
+        }
+
+        router.get(adminRoutes.tasks.index.url(), params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    }
+
+    function resetFilters() {
+        setSearch('');
+        setStateFilter('');
+        router.get(
+            adminRoutes.tasks.index.url(),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    }
+
     const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [deliveryTarget, setDeliveryTarget] = useState<number | null>(null);
@@ -157,11 +203,73 @@ export default function TaskIndex({ tasks }: Props) {
                 </Link>
             </div>
 
+            {/* Search & Filter bar */}
+            <div className="rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-3 backdrop-blur-sm sm:p-4">
+                <form
+                    onSubmit={applyFilters}
+                    className="flex flex-wrap items-end gap-2"
+                >
+                    <div className="w-28">
+                        <label className="mb-0.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                            Status
+                        </label>
+                        <select
+                            value={stateFilter}
+                            onChange={(e) => setStateFilter(e.target.value)}
+                            className="block w-full rounded-lg border border-white/8 bg-[#0a1224] px-2.5 py-1.5 text-xs text-white outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="in progress">In Progress</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+
+                    <div className="min-w-48 flex-1">
+                        <label className="mb-0.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                            Search
+                        </label>
+                        <div className="relative">
+                            <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Client name, task name, email, order #"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 py-1.5 pr-3 pl-8 text-xs text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                        <button
+                            type="submit"
+                            className="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition-colors hover:bg-violet-500/20"
+                        >
+                            Apply
+                        </button>
+                        {hasActiveFilters && (
+                            <button
+                                type="button"
+                                onClick={resetFilters}
+                                title="Reset filters"
+                                className="flex items-center justify-center rounded-lg border border-white/8 bg-white/4 p-1.5 text-zinc-400 transition-colors hover:bg-white/8 hover:text-white"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
+                        )}
+                    </div>
+                </form>
+            </div>
+
             <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <table className="min-w-full">
                     <thead>
                         <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
+                                Order #
+                            </th>
                             <th className="px-6 py-3 text-left font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/60 uppercase">
                                 Client
                             </th>
@@ -188,6 +296,11 @@ export default function TaskIndex({ tasks }: Props) {
                                 key={task.id}
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className="font-mono text-sm font-semibold text-violet-400">
+                                        {task.order_number ?? '—'}
+                                    </span>
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium text-white">
@@ -261,6 +374,17 @@ export default function TaskIndex({ tasks }: Props) {
                                 <td className="px-6 py-4 text-right text-sm whitespace-nowrap">
                                     <div className="flex items-center justify-end gap-3">
                                         <Link
+                                            href={adminRoutes.tasks.show.url(
+                                                task.id,
+                                            )}
+                                            className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-violet-400/70 transition-colors hover:text-violet-300"
+                                        >
+                                            <Eye className="h-3.5 w-3.5" />
+                                            <span className="hidden sm:inline">
+                                                View
+                                            </span>
+                                        </Link>
+                                        <Link
                                             href={adminRoutes.tasks.edit.url(
                                                 task.id,
                                             )}
@@ -287,7 +411,7 @@ export default function TaskIndex({ tasks }: Props) {
                         {tasks.data.length === 0 && (
                             <tr>
                                 <td
-                                    colSpan={6}
+                                    colSpan={7}
                                     className="px-6 py-16 text-center"
                                 >
                                     <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">

@@ -9,8 +9,11 @@ use App\Events\TaskCreated;
 use App\Events\TransactionUpdated;
 use App\Library\SslCommerz\SslCommerzNotification;
 use App\Mail\PaymentSuccessMail;
+use App\Models\CheckoutMetadata;
 use App\Models\Offer;
 use App\Models\PortfolioSubCategory;
+use App\Models\Task;
+use App\Models\TaskAttachment;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Support\IdGenerator;
@@ -24,6 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -164,6 +168,14 @@ class SslCommerzPaymentController extends Controller
             'status' => 'Pending',
         ]);
 
+        // Link any client-provided notes and pre-uploaded files to this transaction.
+        $this->storeCheckoutMetadata(
+            $post_data['tran_id'],
+            $user->id,
+            $cartData->notes ?? null,
+            $cartData->upload_token ?? null,
+        );
+
         OrderCreated::dispatch();
 
         $sslc = new SslCommerzNotification;
@@ -284,6 +296,8 @@ class SslCommerzPaymentController extends Controller
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
 
+        $this->cleanupCheckoutMetadata($tran_id);
+
         if ($signatureValid && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
             $this->loginUserFromTransaction($request, $tran_id);
         }
@@ -312,6 +326,8 @@ class SslCommerzPaymentController extends Controller
         TransactionUpdated::dispatch();
 
         $checkoutUrl = Transaction::where('transaction_id', $tran_id)->value('checkout_url');
+
+        $this->cleanupCheckoutMetadata($tran_id);
 
         if ($signatureValid && PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
             $this->loginUserFromTransaction($request, $tran_id);
@@ -464,7 +480,93 @@ class SslCommerzPaymentController extends Controller
         $task = TaskGenerator::createFromTransaction($transaction);
 
         if ($task) {
+            $this->applyCheckoutMetadata($task, $transaction->transaction_id);
             TaskCreated::dispatch();
         }
+    }
+
+    /**
+     * Store or update checkout metadata (notes + pre-uploaded files) keyed by
+     * transaction_id. Called just after the orders/transactions records are
+     * written, so it's always in place by the time success/ipn fires.
+     */
+    private function storeCheckoutMetadata(string $transactionId, int $userId, ?string $notes, ?string $uploadToken): void
+    {
+        if ($uploadToken) {
+            // Associate the pre-uploaded files with this transaction.
+            CheckoutMetadata::where('upload_token', $uploadToken)
+                ->where('user_id', $userId)
+                ->update([
+                    'transaction_id' => $transactionId,
+                    'notes' => $notes ?: null,
+                ]);
+
+            return;
+        }
+
+        if ($notes) {
+            // Notes only — no file upload took place.
+            CheckoutMetadata::create([
+                'transaction_id' => $transactionId,
+                'user_id' => $userId,
+                'notes' => $notes,
+            ]);
+        }
+    }
+
+    /**
+     * Move pre-uploaded temp files to their permanent location under the task
+     * and create TaskAttachment records. The checkout_metadata row is removed
+     * once consumed.
+     */
+    private function applyCheckoutMetadata(Task $task, string $transactionId): void
+    {
+        $metadata = CheckoutMetadata::where('transaction_id', $transactionId)->first();
+
+        if (! $metadata) {
+            return;
+        }
+
+        if ($metadata->notes) {
+            $task->update(['notes' => $metadata->notes]);
+        }
+
+        if ($metadata->attachment_paths) {
+            foreach ($metadata->attachment_paths as $file) {
+                $destination = 'task_uploads/tasks/'.$task->id.'/'.basename($file['path']);
+                Storage::disk('local')->move($file['path'], $destination);
+
+                TaskAttachment::create([
+                    'task_id' => $task->id,
+                    'file_path' => $destination,
+                    'original_name' => $file['original_name'],
+                    'mime_type' => $file['mime_type'],
+                    'size' => $file['size'],
+                ]);
+            }
+        }
+
+        $metadata->delete();
+    }
+
+    /**
+     * Delete any temp files and the metadata row when a payment fails or is
+     * cancelled, so orphaned uploads don't accumulate indefinitely.
+     */
+    private function cleanupCheckoutMetadata(string $transactionId): void
+    {
+        $metadata = CheckoutMetadata::where('transaction_id', $transactionId)->first();
+
+        if (! $metadata) {
+            return;
+        }
+
+        if ($metadata->attachment_paths) {
+            foreach ($metadata->attachment_paths as $file) {
+                Storage::disk('local')->delete($file['path']);
+            }
+        }
+
+        $metadata->delete();
     }
 }

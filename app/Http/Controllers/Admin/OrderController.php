@@ -40,7 +40,8 @@ class OrderController extends Controller
                 $query->where(function ($query) use ($search) {
                     $query->where('orders.name', 'like', "%{$search}%")
                         ->orWhere('orders.email', 'like', "%{$search}%")
-                        ->orWhere('orders.transaction_id', 'like', "%{$search}%");
+                        ->orWhere('orders.transaction_id', 'like', "%{$search}%")
+                        ->orWhere('transactions.order_number', 'like', "%{$search}%");
                 });
             })
             ->when($request->filled('customer'), function ($query) use ($request) {

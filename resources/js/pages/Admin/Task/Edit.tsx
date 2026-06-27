@@ -1,6 +1,12 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { ChevronLeft, Loader2 } from 'lucide-react';
+import {
+    ChevronLeft,
+    Download,
+    FileText,
+    Loader2,
+    Paperclip,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -18,6 +24,14 @@ interface SubCategory {
     slug: string;
 }
 
+interface TaskAttachment {
+    id: number;
+    original_name: string;
+    mime_type: string | null;
+    size: number;
+    download_url: string;
+}
+
 interface Task {
     id: number;
     client_name: string;
@@ -28,6 +42,8 @@ interface Task {
     date: string | null;
     state: 'pending' | 'in progress' | 'delivered';
     image_url: string | null;
+    notes: string | null;
+    attachments: TaskAttachment[];
 }
 
 interface Props {
@@ -337,6 +353,60 @@ export default function EditTask({
                                 )}
                             </div>
                         )}
+
+                    {/* Client-submitted notes — read-only */}
+                    {task.notes && (
+                        <div>
+                            <label className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                <FileText className="h-3 w-3" />
+                                Client Notes
+                                <span className="ml-1 font-normal text-zinc-500 normal-case">
+                                    (submitted at checkout)
+                                </span>
+                            </label>
+                            <div className="rounded-lg border border-white/8 bg-white/4 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-zinc-300">
+                                {task.notes}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Client-submitted attachments — read-only */}
+                    {task.attachments.length > 0 && (
+                        <div>
+                            <label className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                <Paperclip className="h-3 w-3" />
+                                Client Attachments
+                                <span className="ml-1 font-normal text-zinc-500 normal-case">
+                                    (submitted at checkout)
+                                </span>
+                            </label>
+                            <ul className="space-y-1.5">
+                                {task.attachments.map((a) => (
+                                    <li
+                                        key={a.id}
+                                        className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5"
+                                    >
+                                        <Paperclip className="h-3.5 w-3.5 shrink-0 text-violet-400/60" />
+                                        <span className="flex-1 truncate text-sm text-zinc-300">
+                                            {a.original_name}
+                                        </span>
+                                        <span className="shrink-0 text-xs text-zinc-500">
+                                            {a.size < 1024 * 1024
+                                                ? `${(a.size / 1024).toFixed(1)} KB`
+                                                : `${(a.size / (1024 * 1024)).toFixed(1)} MB`}
+                                        </span>
+                                        <a
+                                            href={a.download_url}
+                                            download
+                                            className="shrink-0 rounded-md p-1 text-violet-400/60 transition-colors hover:bg-violet-500/10 hover:text-violet-400"
+                                        >
+                                            <Download className="h-3.5 w-3.5" />
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <div className="space-y-3">
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">

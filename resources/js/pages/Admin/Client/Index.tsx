@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
@@ -304,17 +304,30 @@ export default function ClientIndex({ clients }: Props) {
 
                                     {/* Actions */}
                                     <td className="px-6 py-4 text-right whitespace-nowrap">
-                                        <button
-                                            onClick={() =>
-                                                openDeleteFlow(client)
-                                            }
-                                            className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
-                                        >
-                                            <Trash2 className="h-3.5 w-3.5" />
-                                            <span className="hidden sm:inline">
-                                                Delete
-                                            </span>
-                                        </button>
+                                        <div className="flex items-center justify-end gap-3">
+                                            <Link
+                                                href={adminRoutes.clients.show.url(
+                                                    client.id,
+                                                )}
+                                                className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-violet-400/70 transition-colors hover:text-violet-300"
+                                            >
+                                                <Eye className="h-3.5 w-3.5" />
+                                                <span className="hidden sm:inline">
+                                                    View
+                                                </span>
+                                            </Link>
+                                            <button
+                                                onClick={() =>
+                                                    openDeleteFlow(client)
+                                                }
+                                                className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5" />
+                                                <span className="hidden sm:inline">
+                                                    Delete
+                                                </span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

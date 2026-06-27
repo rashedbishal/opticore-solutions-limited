@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Task extends Model
@@ -20,6 +21,7 @@ class Task extends Model
         'date',
         'state',
         'image_path',
+        'notes',
         'review_eligible_until',
         'transaction_id',
     ];
@@ -69,5 +71,13 @@ class Task extends Model
     public function review(): HasOne
     {
         return $this->hasOne(ClientReview::class);
+    }
+
+    /**
+     * Get the file attachments submitted by the client at checkout.
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(TaskAttachment::class);
     }
 }

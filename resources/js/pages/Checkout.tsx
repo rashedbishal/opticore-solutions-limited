@@ -6,10 +6,14 @@ import {
     ArrowRight,
     Clock,
     CreditCard,
+    FileText,
     Lock,
+    Paperclip,
     RefreshCw,
     Settings,
     Shield,
+    Trash2,
+    UploadCloud,
     X,
     Zap,
 } from 'lucide-react';
@@ -44,6 +48,12 @@ interface GooglePayConfig {
     environment: 'TEST' | 'PRODUCTION';
 }
 
+interface UploadedFile {
+    original_name: string;
+    mime_type: string;
+    size: number;
+}
+
 const REQUIRED_FIELDS: { key: keyof User; label: string }[] = [
     { key: 'name', label: 'Full Name' },
     { key: 'email', label: 'Email Address' },
@@ -58,6 +68,22 @@ const REQUIRED_FIELDS: { key: keyof User; label: string }[] = [
 // re-enabling the button before that finishes is exactly what let a second
 // click queue up a second, fully independent transaction + popup.
 const POPUP_OPEN_GRACE_MS = 2500;
+
+const MAX_TOTAL_BYTES = 300 * 1024 * 1024; // 300 MB
+const ACCEPT_TYPES =
+    'image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm,video/mpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv';
+
+function formatBytes(bytes: number): string {
+    if (bytes < 1024) {
+        return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
     const { auth } = usePage<SharedPageProps>().props;
@@ -74,6 +100,16 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
     const [gpayProcessing, setGpayProcessing] = useState(false);
     const [gpayError, setGpayError] = useState<string | null>(null);
     const gpayContainerRef = useRef<HTMLDivElement>(null);
+
+    // Notes and file upload state
+    const [notes, setNotes] = useState('');
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [fileSizeError, setFileSizeError] = useState<string | null>(null);
+    const [uploadToken, setUploadToken] = useState<string | null>(null);
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const getMissingFields = useCallback(
         () =>
@@ -103,6 +139,93 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
             .catch(() => {})
             .finally(() => setRateLoading(false));
     }, []);
+
+    const totalSelectedBytes = selectedFiles.reduce((s, f) => s + f.size, 0);
+
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const incoming = Array.from(e.target.files ?? []);
+
+        if (!incoming.length) {
+            return;
+        }
+
+        const combined = [...selectedFiles, ...incoming];
+        const totalBytes = combined.reduce((s, f) => s + f.size, 0);
+
+        if (totalBytes > MAX_TOTAL_BYTES) {
+            setFileSizeError(
+                `Total size (${formatBytes(totalBytes)}) exceeds the 300 MB limit.`,
+            );
+        } else {
+            setFileSizeError(null);
+        }
+
+        setSelectedFiles(combined);
+        // Reset upload state whenever the selection changes
+        setUploadToken(null);
+        setUploadedFiles([]);
+        setUploadError(null);
+
+        // Clear the input so the same file can be re-selected after removal
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
+
+    function removeFile(index: number) {
+        const next = selectedFiles.filter((_, i) => i !== index);
+        setSelectedFiles(next);
+        setUploadToken(null);
+        setUploadedFiles([]);
+        setUploadError(null);
+
+        const totalBytes = next.reduce((s, f) => s + f.size, 0);
+        setFileSizeError(
+            totalBytes > MAX_TOTAL_BYTES
+                ? `Total size (${formatBytes(totalBytes)}) exceeds the 300 MB limit.`
+                : null,
+        );
+    }
+
+    async function handleUpload() {
+        if (!selectedFiles.length || fileSizeError) {
+            return;
+        }
+
+        setIsUploading(true);
+        setUploadError(null);
+
+        const formData = new FormData();
+        selectedFiles.forEach((f) => formData.append('files[]', f));
+
+        try {
+            const res = await fetch('/checkout/upload-attachments', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setUploadError(
+                    data.message ?? 'Upload failed. Please try again.',
+                );
+            } else {
+                setUploadToken(data.upload_token);
+                setUploadedFiles(data.files);
+            }
+        } catch {
+            setUploadError(
+                'Upload failed. Please check your connection and try again.',
+            );
+        } finally {
+            setIsUploading(false);
+        }
+    }
 
     const handlePay = () => {
         // Guards against any re-entrant call while a previous attempt's
@@ -135,6 +258,8 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                 ...(item.milestone_id
                     ? { milestone_id: item.milestone_id }
                     : {}),
+                ...(notes.trim() ? { notes: notes.trim() } : {}),
+                ...(uploadToken ? { upload_token: uploadToken } : {}),
             };
         }
 
@@ -233,6 +358,10 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                             ...(item.milestone_id
                                 ? { milestone_id: item.milestone_id }
                                 : {}),
+                            ...(notes.trim() ? { notes: notes.trim() } : {}),
+                            ...(uploadToken
+                                ? { upload_token: uploadToken }
+                                : {}),
                         }),
                     });
                 })
@@ -267,7 +396,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                     setGpayProcessing(false);
                 });
         },
-        [getMissingFields, item],
+        [getMissingFields, item, notes, uploadToken],
     );
 
     useEffect(() => {
@@ -341,6 +470,10 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
             ? `৳${(usdAmount * bdtRate).toLocaleString('en-BD', { maximumFractionDigits: 0 })}`
             : item.price;
 
+    const hasUnuploadedFiles =
+        selectedFiles.length > 0 && !uploadToken && !isUploading;
+    const canPay = !fileSizeError && !isUploading && !hasUnuploadedFiles;
+
     return (
         <>
             <Head title="Checkout — Opticore" />
@@ -371,104 +504,315 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                     </motion.div>
 
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
-                        {/* Payment Method */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                                duration: 0.5,
-                                delay: 0.1,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="space-y-6"
-                        >
-                            <div className="neo-panel-elevated p-8">
-                                <h2 className="drop-icon-subtle dark:drop-icon-md mb-6 text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                                    Payment Method
-                                </h2>
+                        {/* Left column: payment method + optional brief */}
+                        <div className="space-y-6">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: 0.1,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                            >
+                                <div className="neo-panel-elevated p-8">
+                                    <h2 className="drop-icon-subtle dark:drop-icon-md mb-6 text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                                        Payment Method
+                                    </h2>
 
-                                {/* SSLCommerz — always selected */}
-                                <div className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-b from-cyan-50/50 to-white p-5 shadow-[0_0_32px_rgba(34,211,238,0.2),0_8px_24px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:from-cyan-950/30 dark:to-zinc-900 dark:shadow-[0_0_32px_rgba(34,211,238,0.15),0_8px_24px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.15)]">
-                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] dark:bg-cyan-500/20 dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
-                                        <CreditCard className="drop-icon-sm h-5 w-5 text-cyan-500" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-bold text-zinc-900 dark:text-white">
-                                                SSLCommerz
-                                            </span>
-                                            <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400">
-                                                Coming Soon
-                                            </span>
+                                    {/* SSLCommerz — always selected */}
+                                    <div className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-b from-cyan-50/50 to-white p-5 shadow-[0_0_32px_rgba(34,211,238,0.2),0_8px_24px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_2px_4px_rgba(255,255,255,0.8)] dark:from-cyan-950/30 dark:to-zinc-900 dark:shadow-[0_0_32px_rgba(34,211,238,0.15),0_8px_24px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.15)]">
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] dark:bg-cyan-500/20 dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
+                                            <CreditCard className="drop-icon-sm h-5 w-5 text-cyan-500" />
                                         </div>
-                                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                                            Bangladesh's leading secure payment
-                                            gateway
-                                        </div>
-                                    </div>
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-[0_2px_8px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_2px_8px_rgba(34,211,238,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
-                                        <div className="h-2 w-2 rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)]" />
-                                    </div>
-                                </div>
-
-                                {/* SSLCommerz info */}
-                                <div className="mt-5 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
-                                    <div className="mb-3 flex items-center gap-2">
-                                        <Shield className="h-4 w-4 text-cyan-500" />
-                                        <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                                            About SSLCommerz
-                                        </span>
-                                    </div>
-                                    <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                                        SSLCommerz is Bangladesh's largest and
-                                        most trusted payment gateway, processing
-                                        transactions for thousands of merchants.
-                                        It supports{' '}
-                                        <span className="font-semibold text-zinc-700 dark:text-zinc-300">
-                                            bKash, Nagad, Rocket, Visa,
-                                            Mastercard, DBBL Nexus, and 20+ more
-                                        </span>{' '}
-                                        payment options — all under a single,
-                                        PCI-DSS compliant, SSL-encrypted
-                                        checkout.
-                                    </p>
-                                    <div className="mt-4 grid grid-cols-3 gap-2">
-                                        {(
-                                            [
-                                                {
-                                                    label: 'SSL Encrypted',
-                                                    icon: Lock,
-                                                },
-                                                {
-                                                    label: 'PCI-DSS Compliant',
-                                                    icon: Shield,
-                                                },
-                                                {
-                                                    label: '20+ Methods',
-                                                    icon: CreditCard,
-                                                },
-                                            ] as const
-                                        ).map(({ label, icon: Icon }) => (
-                                            <div
-                                                key={label}
-                                                className="flex flex-col items-center gap-1.5 rounded-xl bg-white p-3 text-center shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.04)] dark:bg-zinc-800 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]"
-                                            >
-                                                <Icon className="h-4 w-4 text-cyan-500" />
-                                                <span className="text-[10px] leading-tight font-semibold text-zinc-600 dark:text-zinc-300">
-                                                    {label}
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                                                    SSLCommerz
+                                                </span>
+                                                <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400">
+                                                    Coming Soon
                                                 </span>
                                             </div>
-                                        ))}
+                                            <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                                                Bangladesh's leading secure
+                                                payment gateway
+                                            </div>
+                                        </div>
+                                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-[0_2px_8px_rgba(34,211,238,0.4),inset_0_1px_2px_rgba(255,255,255,0.4)] dark:from-cyan-500 dark:to-cyan-700 dark:shadow-[0_2px_8px_rgba(34,211,238,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
+                                            <div className="h-2 w-2 rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)]" />
+                                        </div>
+                                    </div>
+
+                                    {/* SSLCommerz info */}
+                                    <div className="mt-5 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+                                        <div className="mb-3 flex items-center gap-2">
+                                            <Shield className="h-4 w-4 text-cyan-500" />
+                                            <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                                                About SSLCommerz
+                                            </span>
+                                        </div>
+                                        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                                            SSLCommerz is Bangladesh's largest
+                                            and most trusted payment gateway,
+                                            processing transactions for
+                                            thousands of merchants. It supports{' '}
+                                            <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+                                                bKash, Nagad, Rocket, Visa,
+                                                Mastercard, DBBL Nexus, and 20+
+                                                more
+                                            </span>{' '}
+                                            payment options — all under a
+                                            single, PCI-DSS compliant,
+                                            SSL-encrypted checkout.
+                                        </p>
+                                        <div className="mt-4 grid grid-cols-3 gap-2">
+                                            {(
+                                                [
+                                                    {
+                                                        label: 'SSL Encrypted',
+                                                        icon: Lock,
+                                                    },
+                                                    {
+                                                        label: 'PCI-DSS Compliant',
+                                                        icon: Shield,
+                                                    },
+                                                    {
+                                                        label: '20+ Methods',
+                                                        icon: CreditCard,
+                                                    },
+                                                ] as const
+                                            ).map(({ label, icon: Icon }) => (
+                                                <div
+                                                    key={label}
+                                                    className="flex flex-col items-center gap-1.5 rounded-xl bg-white p-3 text-center shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.04)] dark:bg-zinc-800 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]"
+                                                >
+                                                    <Icon className="h-4 w-4 text-cyan-500" />
+                                                    <span className="text-[10px] leading-tight font-semibold text-zinc-600 dark:text-zinc-300">
+                                                        {label}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <p className="mt-5 flex items-center gap-2 text-xs text-theme-subtle">
+                                        <Lock className="h-3.5 w-3.5" />{' '}
+                                        SSLCommerz integration coming soon —
+                                        your order will be confirmed shortly.
+                                    </p>
+                                </div>
+                            </motion.div>
+
+                            {/* Project Brief — optional */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: 0.18,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                            >
+                                <div className="neo-panel-elevated p-8">
+                                    <h2 className="drop-icon-subtle dark:drop-icon-md mb-1.5 text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                                        Project Brief{' '}
+                                        <span className="text-sm font-normal text-zinc-400 dark:text-zinc-500">
+                                            (optional)
+                                        </span>
+                                    </h2>
+                                    <p className="mb-6 text-xs text-zinc-500 dark:text-zinc-400">
+                                        Share any details, references, or files
+                                        that will help us understand your
+                                        requirements. These are attached to your
+                                        workflow after payment.
+                                    </p>
+
+                                    {/* Notes */}
+                                    <div className="mb-6">
+                                        <label
+                                            htmlFor="checkout-notes"
+                                            className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300"
+                                        >
+                                            <FileText className="h-3.5 w-3.5 text-cyan-500" />
+                                            Notes
+                                        </label>
+                                        <textarea
+                                            id="checkout-notes"
+                                            value={notes}
+                                            onChange={(e) =>
+                                                setNotes(e.target.value)
+                                            }
+                                            rows={4}
+                                            maxLength={5000}
+                                            placeholder="Describe your project, desired style, target audience, color preferences, references…"
+                                            className="block w-full resize-y rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 transition-all outline-none focus:border-cyan-400 focus:bg-white focus:ring-2 focus:ring-cyan-400/20 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-200 dark:placeholder-zinc-600 dark:focus:border-cyan-600 dark:focus:bg-zinc-900"
+                                        />
+                                        {notes.length > 0 && (
+                                            <p className="mt-1 text-right text-[10px] text-zinc-400">
+                                                {notes.length}/5000
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* File upload */}
+                                    <div>
+                                        <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                                            <Paperclip className="h-3.5 w-3.5 text-cyan-500" />
+                                            Attachments
+                                            <span className="ml-auto font-normal text-zinc-400 dark:text-zinc-500">
+                                                Max 300 MB total · up to 10
+                                                files
+                                            </span>
+                                        </label>
+
+                                        {/* Drop zone */}
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                            className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 py-8 text-center transition-colors hover:border-cyan-400/60 hover:bg-cyan-50/30 dark:border-zinc-800 dark:bg-zinc-900/30 dark:hover:border-cyan-700/60 dark:hover:bg-cyan-950/20"
+                                        >
+                                            <UploadCloud className="h-7 w-7 text-zinc-400 dark:text-zinc-600" />
+                                            <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
+                                                Click to choose files
+                                            </span>
+                                            <span className="text-xs text-zinc-400 dark:text-zinc-600">
+                                                Images, videos, PDFs, Word,
+                                                Excel, PowerPoint, text files
+                                            </span>
+                                        </button>
+
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            accept={ACCEPT_TYPES}
+                                            className="hidden"
+                                            onChange={handleFileChange}
+                                        />
+
+                                        {/* Size error */}
+                                        {fileSizeError && (
+                                            <p className="mt-2 flex items-center gap-1.5 text-xs text-red-500">
+                                                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                                                {fileSizeError}
+                                            </p>
+                                        )}
+
+                                        {/* File list */}
+                                        {selectedFiles.length > 0 && (
+                                            <ul className="mt-3 space-y-1.5">
+                                                {selectedFiles.map(
+                                                    (file, idx) => (
+                                                        <li
+                                                            key={idx}
+                                                            className="flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900/60"
+                                                        >
+                                                            <Paperclip className="h-3.5 w-3.5 shrink-0 text-zinc-400" />
+                                                            <span className="flex-1 truncate text-xs text-zinc-700 dark:text-zinc-300">
+                                                                {file.name}
+                                                            </span>
+                                                            <span className="shrink-0 text-[10px] text-zinc-400">
+                                                                {formatBytes(
+                                                                    file.size,
+                                                                )}
+                                                            </span>
+                                                            {!uploadToken && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        removeFile(
+                                                                            idx,
+                                                                        )
+                                                                    }
+                                                                    className="shrink-0 text-zinc-400 transition-colors hover:text-red-500"
+                                                                >
+                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                </button>
+                                                            )}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        )}
+
+                                        {/* Total size summary */}
+                                        {selectedFiles.length > 0 && (
+                                            <p className="mt-1.5 text-right text-[10px] text-zinc-400">
+                                                Total:{' '}
+                                                {formatBytes(
+                                                    totalSelectedBytes,
+                                                )}
+                                                {' / 300 MB'}
+                                            </p>
+                                        )}
+
+                                        {/* Upload / status */}
+                                        {selectedFiles.length > 0 &&
+                                            !fileSizeError && (
+                                                <div className="mt-3">
+                                                    {uploadToken ? (
+                                                        <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                                            <Shield className="h-3.5 w-3.5" />
+                                                            {
+                                                                uploadedFiles.length
+                                                            }{' '}
+                                                            file
+                                                            {uploadedFiles.length !==
+                                                            1
+                                                                ? 's'
+                                                                : ''}{' '}
+                                                            uploaded and ready
+                                                        </p>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={
+                                                                handleUpload
+                                                            }
+                                                            disabled={
+                                                                isUploading
+                                                            }
+                                                            className="flex items-center gap-2 rounded-xl border border-cyan-400/40 bg-cyan-50/60 px-4 py-2 text-xs font-bold text-cyan-600 transition-colors hover:bg-cyan-100/80 disabled:opacity-60 dark:border-cyan-700/40 dark:bg-cyan-950/30 dark:text-cyan-400 dark:hover:bg-cyan-950/60"
+                                                        >
+                                                            {isUploading ? (
+                                                                <>
+                                                                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                                                                    Uploading…
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <UploadCloud className="h-3.5 w-3.5" />
+                                                                    Upload files
+                                                                    before
+                                                                    paying
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    )}
+                                                    {uploadError && (
+                                                        <p className="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+                                                            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                                                            {uploadError}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                        {/* Warn if files selected but not yet uploaded */}
+                                        {hasUnuploadedFiles && (
+                                            <p className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+                                                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                                                Please upload your files before
+                                                proceeding to payment.
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
-
-                                <p className="mt-5 flex items-center gap-2 text-xs text-theme-subtle">
-                                    <Lock className="h-3.5 w-3.5" /> SSLCommerz
-                                    integration coming soon — your order will be
-                                    confirmed shortly.
-                                </p>
-                            </div>
-                        </motion.div>
+                            </motion.div>
+                        </div>
 
                         {/* Order Summary */}
                         <motion.div
@@ -561,7 +905,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                 <button
                                     type="button"
                                     onClick={handlePay}
-                                    disabled={isProcessing}
+                                    disabled={isProcessing || !canPay}
                                     className="neo-btn-accent group relative mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 text-sm font-black tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
                                 >
                                     {isProcessing ? (
@@ -603,7 +947,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                         <div
                                             ref={gpayContainerRef}
                                             className={
-                                                gpayProcessing
+                                                gpayProcessing || !canPay
                                                     ? 'pointer-events-none opacity-60'
                                                     : ''
                                             }

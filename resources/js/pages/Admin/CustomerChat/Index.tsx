@@ -24,28 +24,18 @@ import {
     Paperclip,
     Search,
     Send,
+    ShoppingBag,
     Trash2,
     Wallet,
     X,
 } from 'lucide-react';
-import React, {
-    lazy,
-    Suspense,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import CurrentOrdersModal from '@/components/Admin/CurrentOrdersModal';
+import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
 import AdminLayout from '@/components/Layout/AdminLayout';
+import { resolveCategoryLabel } from '@/components/Offer/CreateOfferModal';
+import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
-import { resolveCategoryLabel } from '@/lib/offerCategory';
-
-const PendingPaymentsModal = lazy(
-    () => import('@/components/Admin/PendingPaymentsModal'),
-);
-const CreateOfferModal = lazy(
-    () => import('@/components/Offer/CreateOfferModal'),
-);
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 
@@ -336,6 +326,7 @@ export default function Index() {
     const [attachmentError, setAttachmentError] = useState<string | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
+    const [showCurrentOrdersModal, setShowCurrentOrdersModal] = useState(false);
     const [showPendingPaymentsModal, setShowPendingPaymentsModal] =
         useState(false);
     const [isUserTyping, setIsUserTyping] = useState(false);
@@ -748,27 +739,34 @@ export default function Index() {
             {/* Offer Modal */}
             <AnimatePresence>
                 {showOfferModal && activeConv && (
-                    <Suspense fallback={null}>
-                        <CreateOfferModal
-                            conversationId={activeConv.id}
-                            userName={activeConv.user.name}
-                            onOfferSent={handleOfferSent}
-                            onClose={() => setShowOfferModal(false)}
-                        />
-                    </Suspense>
+                    <CreateOfferModal
+                        conversationId={activeConv.id}
+                        userName={activeConv.user.name}
+                        onOfferSent={handleOfferSent}
+                        onClose={() => setShowOfferModal(false)}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Current Orders Modal */}
+            <AnimatePresence>
+                {showCurrentOrdersModal && activeConv && (
+                    <CurrentOrdersModal
+                        conversationId={activeConv.id}
+                        userName={activeConv.user.name}
+                        onClose={() => setShowCurrentOrdersModal(false)}
+                    />
                 )}
             </AnimatePresence>
 
             {/* Pending Payments Modal */}
             <AnimatePresence>
                 {showPendingPaymentsModal && activeConv && (
-                    <Suspense fallback={null}>
-                        <PendingPaymentsModal
-                            conversationId={activeConv.id}
-                            userName={activeConv.user.name}
-                            onClose={() => setShowPendingPaymentsModal(false)}
-                        />
-                    </Suspense>
+                    <PendingPaymentsModal
+                        conversationId={activeConv.id}
+                        userName={activeConv.user.name}
+                        onClose={() => setShowPendingPaymentsModal(false)}
+                    />
                 )}
             </AnimatePresence>
 
@@ -967,22 +965,40 @@ export default function Index() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex shrink-0 items-center gap-2">
+                            <div className="flex shrink-0 items-center gap-1.5">
+                                <button
+                                    onClick={() =>
+                                        setShowCurrentOrdersModal(true)
+                                    }
+                                    title="Current Orders"
+                                    className="flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2 py-1.5 text-xs font-medium text-emerald-300 transition hover:border-emerald-500/50 hover:bg-emerald-500/20 sm:gap-2 sm:px-3"
+                                >
+                                    <ShoppingBag size={13} />
+                                    <span className="hidden sm:inline">
+                                        Current Orders
+                                    </span>
+                                </button>
                                 <button
                                     onClick={() =>
                                         setShowPendingPaymentsModal(true)
                                     }
-                                    className="flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 transition hover:border-cyan-500/50 hover:bg-cyan-500/20"
+                                    title="Pending Payments"
+                                    className="flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2 py-1.5 text-xs font-medium text-cyan-300 transition hover:border-cyan-500/50 hover:bg-cyan-500/20 sm:gap-2 sm:px-3"
                                 >
                                     <Wallet size={13} />
-                                    Pending Payments
+                                    <span className="hidden sm:inline">
+                                        Pending Payments
+                                    </span>
                                 </button>
                                 <button
                                     onClick={() => setShowOfferModal(true)}
-                                    className="flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition hover:border-violet-500/50 hover:bg-violet-500/20"
+                                    title="Create an Offer"
+                                    className="flex items-center gap-1.5 rounded-xl border border-violet-500/30 bg-violet-500/10 px-2 py-1.5 text-xs font-medium text-violet-300 transition hover:border-violet-500/50 hover:bg-violet-500/20 sm:gap-2 sm:px-3"
                                 >
                                     <Package size={13} />
-                                    Create an Offer
+                                    <span className="hidden sm:inline">
+                                        Create an Offer
+                                    </span>
                                 </button>
                             </div>
                         </div>
