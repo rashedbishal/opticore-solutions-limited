@@ -13,9 +13,32 @@ const SupportWidget = lazy(() => import('@/components/chat/SupportWidget'));
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
     const [openWidget, setOpenWidget] = useState<'ai' | 'support' | null>(null);
+    const [widgetsMounted, setWidgetsMounted] = useState(false);
+
+    useEffect(() => {
+        // Defer widget mounting until after first user interaction so their
+        // Reverb subscriptions and polling don't block the initial render.
+        const mount = () => setWidgetsMounted(true);
+        window.addEventListener('mousemove', mount, { once: true });
+        window.addEventListener('touchstart', mount, {
+            once: true,
+            passive: true,
+        });
+        window.addEventListener('keydown', mount, { once: true });
+        // Fallback: mount after 4 s even without interaction.
+        const t = setTimeout(mount, 4000);
+
+        return () => {
+            window.removeEventListener('mousemove', mount);
+            window.removeEventListener('touchstart', mount);
+            window.removeEventListener('keydown', mount);
+            clearTimeout(t);
+        };
+    }, []);
 
     useEffect(() => {
         const handler = () => {
+            setWidgetsMounted(true);
             setOpenWidget((current) =>
                 current === 'support' ? current : 'support',
             );
@@ -47,22 +70,26 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
                     <Footer />
                 </div>
-                <Suspense fallback={null}>
-                    <ChatWidget
-                        isOpen={openWidget === 'ai'}
-                        onOpenChange={(open) =>
-                            setOpenWidget(open ? 'ai' : null)
-                        }
-                    />
-                </Suspense>
-                <Suspense fallback={null}>
-                    <SupportWidget
-                        isOpen={openWidget === 'support'}
-                        onOpenChange={(open) =>
-                            setOpenWidget(open ? 'support' : null)
-                        }
-                    />
-                </Suspense>
+                {widgetsMounted && (
+                    <>
+                        <Suspense fallback={null}>
+                            <ChatWidget
+                                isOpen={openWidget === 'ai'}
+                                onOpenChange={(open) =>
+                                    setOpenWidget(open ? 'ai' : null)
+                                }
+                            />
+                        </Suspense>
+                        <Suspense fallback={null}>
+                            <SupportWidget
+                                isOpen={openWidget === 'support'}
+                                onOpenChange={(open) =>
+                                    setOpenWidget(open ? 'support' : null)
+                                }
+                            />
+                        </Suspense>
+                    </>
+                )}
             </SmoothScroll>
         </LazyMotion>
     );

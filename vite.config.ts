@@ -42,7 +42,8 @@ export default defineConfig({
                     if (
                         id.includes('node_modules/framer-motion/') ||
                         id.includes('node_modules/motion-dom/') ||
-                        id.includes('node_modules/motion-utils/')
+                        id.includes('node_modules/motion-utils/') ||
+                        id.includes('node_modules/@motionone/')
                     ) {
                         return 'vendor-framer';
                     }
@@ -54,12 +55,18 @@ export default defineConfig({
                         return 'vendor-three';
                     }
 
-                    if (
-                        id.includes('node_modules/gsap/') ||
-                        id.includes('node_modules/animejs/') ||
-                        id.includes('node_modules/@studio-freight/lenis/')
-                    ) {
-                        return 'vendor-anim-misc';
+                    if (id.includes('node_modules/gsap/')) {
+                        return 'vendor-gsap';
+                    }
+
+                    // Split lenis (loaded on every page via SmoothScroll/AppLayout)
+                    // from animejs (only needed when SectionHeader renders).
+                    if (id.includes('node_modules/@studio-freight/lenis/')) {
+                        return 'vendor-lenis';
+                    }
+
+                    if (id.includes('node_modules/animejs/')) {
+                        return 'vendor-animejs';
                     }
 
                     if (id.includes('node_modules/recharts/')) {
