@@ -416,7 +416,7 @@ log "Restarting Reverb..."
 sudo supervisorctl restart laravel-reverb
 
 log "Restarting SSR server..."
-sudo supervisorctl restart laravel-ssr
+sudo supervisorctl restart laravel-ssr 2>/dev/null || log "WARNING: laravel-ssr restart failed — SSR disabled, site still live (client-side rendering active)."
 
 log "Signalling queue workers to restart gracefully..."
 "$PHP" "$CURRENT_LINK/artisan" queue:restart
