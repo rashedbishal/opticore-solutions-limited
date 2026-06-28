@@ -3,7 +3,6 @@ import type { SharedPageProps } from '@/types';
 import type { ReactNode } from 'react';
 import { usePage } from '@inertiajs/react';
 import { echo, useEcho } from '@laravel/echo-react';
-import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertTriangle,
@@ -35,6 +34,7 @@ import PendingPaymentsModal from '@/components/Admin/PendingPaymentsModal';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import CreateOfferModal from '@/components/Offer/CreateOfferModal';
 import useEchoReady from '@/hooks/useEchoReady';
+import { api } from '@/lib/apiFetch';
 import { resolveCategoryLabel } from '@/lib/offerCategory';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
@@ -216,7 +216,7 @@ function OfferCard({
         setIsDeleting(true);
 
         try {
-            await axios.delete(
+            await api.delete(
                 `/admin/api/customer-conversations/${conversationId}/offer/${messageId}`,
             );
             onDeleted(messageId);
@@ -352,9 +352,7 @@ export default function Index() {
     // Ping admin online every 60 seconds
     useEffect(() => {
         const ping = () =>
-            axios
-                .post('/admin/api/customer-conversations/ping')
-                .catch(() => {});
+            api.post('/admin/api/customer-conversations/ping').catch(() => {});
         ping();
         const interval = setInterval(ping, 60_000);
 
@@ -363,7 +361,9 @@ export default function Index() {
 
     // Fetch initial conversations list and seed online status from server
     useEffect(() => {
-        axios.get('/admin/api/customer-conversations').then((res) => {
+        api.get<{ data: Conversation[] }>(
+            '/admin/api/customer-conversations',
+        ).then((res) => {
             const data: Conversation[] = res.data.data;
             setConversations(data);
             setFilteredConversations(data);
@@ -421,27 +421,25 @@ export default function Index() {
     // Fetch messages for active conversation
     useEffect(() => {
         if (activeConv) {
-            axios
-                .get(
-                    `/admin/api/customer-conversations/${activeConv.id}/messages`,
-                )
-                .then((res) => {
-                    setMessages(res.data.data.reverse());
-                    scrollToBottom();
+            api.get<{ data: Message[] }>(
+                `/admin/api/customer-conversations/${activeConv.id}/messages`,
+            ).then((res) => {
+                setMessages(res.data.data.reverse());
+                scrollToBottom();
 
-                    if (activeConv.unread_count > 0) {
-                        axios.post(
-                            `/admin/api/customer-conversations/${activeConv.id}/read`,
-                        );
-                        setConversations((prev) =>
-                            prev.map((c) =>
-                                c.id === activeConv.id
-                                    ? { ...c, unread_count: 0 }
-                                    : c,
-                            ),
-                        );
-                    }
-                });
+                if (activeConv.unread_count > 0) {
+                    api.post(
+                        `/admin/api/customer-conversations/${activeConv.id}/read`,
+                    );
+                    setConversations((prev) =>
+                        prev.map((c) =>
+                            c.id === activeConv.id
+                                ? { ...c, unread_count: 0 }
+                                : c,
+                        ),
+                    );
+                }
+            });
         }
     }, [activeConv]);
 
@@ -526,9 +524,9 @@ export default function Index() {
         setDeleteError(null);
 
         try {
-            await axios.delete(
+            await api.delete(
                 `/admin/api/customer-conversations/${deleteTarget.id}`,
-                { data: { password: deletePassword } },
+                { password: deletePassword },
             );
 
             setConversations((prev) =>
@@ -606,12 +604,9 @@ export default function Index() {
         setIsSending(true);
 
         try {
-            const res = await axios.post(
+            const res = await api.post<Message>(
                 `/admin/api/customer-conversations/${activeConv.id}/message`,
                 formData,
-                {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                },
             );
             // Admin's own message: add immediately (broadcast is toOthers)
             setMessages((prev) => {
@@ -1538,12 +1533,12 @@ function AdminConversationEchoListener({
                         const convData = (incoming as any).conversation;
 
                         if (!convData) {
-                            axios
-                                .get('/admin/api/customer-conversations')
-                                .then((res) => {
-                                    setConversations(res.data.data);
-                                    setFilteredConversations(res.data.data);
-                                });
+                            api.get<{ data: Conversation[] }>(
+                                '/admin/api/customer-conversations',
+                            ).then((res) => {
+                                setConversations(res.data.data);
+                                setFilteredConversations(res.data.data);
+                            });
 
                             return prev;
                         }
@@ -1591,7 +1586,7 @@ function AdminConversationEchoListener({
                     if (incoming.sender_type === 'user') {
                         setIsUserTyping(false);
 
-                        axios.post(
+                        api.post(
                             `/admin/api/customer-conversations/${currentConv!.id}/read`,
                         );
                     }

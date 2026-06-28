@@ -2,7 +2,6 @@ import type { SharedPageProps } from '@/types';
 import type { LucideIcon } from 'lucide-react';
 import { Head, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import axios from 'axios';
 import {
     Box,
     Calendar,
@@ -29,6 +28,7 @@ import { useCallback, useState } from 'react';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import AppLayout from '@/components/Layout/AppLayout';
 import useEchoReady from '@/hooks/useEchoReady';
+import { api } from '@/lib/apiFetch';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -740,7 +740,7 @@ function AdminView({ offer }: { offer: Offer }) {
                 }));
             }
 
-            const { data: fresh } = await axios.put<Offer>(
+            const { data: fresh } = await api.put<Offer>(
                 `/offer/${offer.offer_token}`,
                 payload,
             );
@@ -1295,7 +1295,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
         setIsAccepting(true);
 
         try {
-            await axios.post(`/offer/${offer.offer_token}/accept`);
+            await api.post(`/offer/${offer.offer_token}/accept`);
         } catch {
             setIsAccepting(false);
         }
@@ -1305,7 +1305,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
         setIsDeclining(true);
 
         try {
-            await axios.post(`/offer/${offer.offer_token}/decline`);
+            await api.post(`/offer/${offer.offer_token}/decline`);
             setIsDeclining(false);
         } catch {
             setIsDeclining(false);

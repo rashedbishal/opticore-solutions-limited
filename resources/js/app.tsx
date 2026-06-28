@@ -27,12 +27,10 @@ const initializeRealtime = async () => {
 
     realtimeInitialized = true;
 
-    const [{ configureEcho, echo }, { default: axios }, { default: Pusher }] =
-        await Promise.all([
-            import('@laravel/echo-react'),
-            import('axios'),
-            import('pusher-js'),
-        ]);
+    const [{ configureEcho, echo }, { default: Pusher }] = await Promise.all([
+        import('@laravel/echo-react'),
+        import('pusher-js'),
+    ]);
 
     (window as any).Pusher = Pusher;
 
@@ -45,44 +43,39 @@ const initializeRealtime = async () => {
         forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
         disableStats: true,
         enabledTransports: ['ws', 'wss'],
-        authorizer: (channel: any) => {
-            return {
-                authorize: (
-                    socketId: string,
-                    callback: (error: any, data?: any) => void,
-                ) => {
-                    axios
-                        .post('/broadcasting/auth', {
-                            socket_id: socketId,
-                            channel_name: channel.name,
-                        })
-                        .then((response) => {
-                            callback(null, response.data);
-                        })
-                        .catch((error) => {
-                            callback(error);
-                        });
-                },
-            };
-        },
+        authorizer: (channel: any) => ({
+            authorize: (
+                socketId: string,
+                callback: (error: any, data?: any) => void,
+            ) => {
+                fetch('/broadcasting/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN':
+                            document.querySelector<HTMLMetaElement>(
+                                'meta[name="csrf-token"]',
+                            )?.content ?? '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({
+                        socket_id: socketId,
+                        channel_name: channel.name,
+                    }),
+                })
+                    .then((r) => r.json())
+                    .then((data) => callback(null, data))
+                    .catch((error) => callback(error));
+            },
+        }),
     });
+
+    // Expose echo instance so apiFetch can attach X-Socket-ID to requests.
+    (window as any).__echoInstance = echo();
 
     window.__echoConfigured = true;
     window.dispatchEvent(new Event('echo:configured'));
-
-    axios.interceptors.request.use((config) => {
-        try {
-            const socketId = echo().socketId();
-
-            if (socketId) {
-                config.headers['X-Socket-ID'] = socketId;
-            }
-        } catch {
-            // Echo not yet connected — no socket ID available.
-        }
-
-        return config;
-    });
 };
 
 createInertiaApp({

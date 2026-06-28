@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { api } from '@/lib/apiFetch';
 
 interface PendingPayment {
     id: string;
@@ -52,9 +52,9 @@ function DeleteConfirmation({
         setError(null);
 
         try {
-            await axios.delete(
+            await api.delete(
                 `/admin/api/customer-conversations/${conversationId}/pending-payments/${payment.id}`,
-                { data: { password } },
+                { password },
             );
             onDeleted(payment.id);
         } catch (err: unknown) {
@@ -277,10 +277,9 @@ export default function PendingPaymentsModal({
     useEffect(() => {
         let active = true;
 
-        axios
-            .get<PendingPayment[]>(
-                `/admin/api/customer-conversations/${conversationId}/pending-payments`,
-            )
+        api.get<PendingPayment[]>(
+            `/admin/api/customer-conversations/${conversationId}/pending-payments`,
+        )
             .then((res) => {
                 if (active) {
                     setPayments(res.data);

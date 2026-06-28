@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { m as motion } from 'framer-motion';
 import {
     Briefcase,
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { api } from '@/lib/apiFetch';
 
 interface CurrentOrder {
     id: number;
@@ -41,10 +41,9 @@ export default function CurrentOrdersModal({
     useEffect(() => {
         let active = true;
 
-        axios
-            .get<CurrentOrder[]>(
-                `/admin/api/customer-conversations/${conversationId}/current-orders`,
-            )
+        api.get<CurrentOrder[]>(
+            `/admin/api/customer-conversations/${conversationId}/current-orders`,
+        )
             .then((res) => {
                 if (active) {
                     setOrders(res.data);

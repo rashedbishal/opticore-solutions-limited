@@ -2,7 +2,6 @@ import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
 import { usePage } from '@inertiajs/react';
 import { echo, useEcho } from '@laravel/echo-react';
-import axios from 'axios';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     Clock,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useEchoReady from '@/hooks/useEchoReady';
+import { api } from '@/lib/apiFetch';
 import { resolveCategoryLabel } from '@/lib/offerCategory';
 import { cn } from '@/lib/utils';
 
@@ -341,8 +341,9 @@ export default function SupportWidget({
     // is correct even for messages received while the user was offline.
     useEffect(() => {
         if (auth.user) {
-            axios
-                .post('/user-chat/init')
+            api.post<{ conversation: Conversation; unread_count: number }>(
+                '/user-chat/init',
+            )
                 .then((res) => {
                     setConversation(res.data.conversation);
                     setUnread(res.data.unread_count ?? 0);
@@ -355,14 +356,14 @@ export default function SupportWidget({
     // regardless of whether the local unread counter was tracking those messages.
     useEffect(() => {
         if (isOpen && conversation) {
-            axios.get(`/user-chat/${conversation.id}/messages`).then((res) => {
+            api.get<{ data: Message[] }>(
+                `/user-chat/${conversation.id}/messages`,
+            ).then((res) => {
                 setMessages(res.data.data.reverse());
                 setUnread(0);
                 scrollToBottom();
                 // Always call markAsRead; server is idempotent (no-ops if nothing to mark).
-                axios
-                    .post(`/user-chat/${conversation.id}/read`)
-                    .catch(() => {});
+                api.post(`/user-chat/${conversation.id}/read`).catch(() => {});
             });
         }
     }, [isOpen, conversation, scrollToBottom]);
@@ -374,7 +375,7 @@ export default function SupportWidget({
             return;
         }
 
-        const ping = () => axios.post('/user-chat/ping').catch(() => {});
+        const ping = () => api.post('/user-chat/ping').catch(() => {});
         ping();
         const interval = setInterval(ping, 60_000);
 
@@ -496,12 +497,9 @@ export default function SupportWidget({
         setIsSending(true);
 
         try {
-            const res = await axios.post(
+            const res = await api.post<Message>(
                 `/user-chat/${conversation.id}/message`,
                 formData,
-                {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                },
             );
             setMessages((prev) => {
                 if (prev.some((m) => m.id === res.data.id)) {
@@ -1064,7 +1062,7 @@ function SupportWidgetEchoListener({
                     if (!isOpenRef.current) {
                         setUnread((u) => u + 1);
                     } else {
-                        axios.post(`/user-chat/${conversation.id}/read`);
+                        api.post(`/user-chat/${conversation.id}/read`);
                     }
                 }
 
@@ -1160,8 +1158,7 @@ function SupportWidgetEchoListener({
                 setMessages([]);
                 setUnread(0);
 
-                axios
-                    .post('/user-chat/init')
+                api.post<{ conversation: Conversation }>('/user-chat/init')
                     .then((res) => {
                         setConversation(res.data.conversation);
                     })

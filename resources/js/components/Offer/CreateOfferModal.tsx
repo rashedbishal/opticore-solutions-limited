@@ -1,7 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import type { LucideIcon } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
-import axios from 'axios';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     Box,
@@ -25,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { api } from '@/lib/apiFetch';
 
 // Cosmetic-only: a dedicated icon for the categories this agency originally
 // shipped with. This must never be the source of truth for which
@@ -279,7 +279,7 @@ export default function CreateOfferModal({
                 }));
             }
 
-            const res = await axios.post<OfferMessage>(
+            const res = await api.post<OfferMessage>(
                 `/admin/api/customer-conversations/${conversationId}/offer`,
                 payload,
             );
