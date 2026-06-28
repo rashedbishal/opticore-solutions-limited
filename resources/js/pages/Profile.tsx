@@ -177,10 +177,10 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
 
     const formattedDate = task.date
         ? new Date(task.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-          })
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        })
         : null;
 
     return (
@@ -242,10 +242,10 @@ function WorkflowTaskCard({ task }: { task: WorkflowTask }) {
 function OrderCard({ order }: { order: Order }) {
     const formattedDate = order.date
         ? new Date(order.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-          })
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        })
         : null;
 
     const serviceName =
@@ -316,10 +316,10 @@ function OrderCard({ order }: { order: Order }) {
 function PendingOrderCard({ order }: { order: PendingOrder }) {
     const formattedDate = order.date
         ? new Date(order.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-          })
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        })
         : null;
 
     return (
@@ -577,11 +577,10 @@ export default function Profile() {
                         )}
 
                         <Tabs defaultValue={initialTab} className="w-full">
-                            <div className="relative">
-                                <div className="mb-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <div className="relative mb-8">
+                                <div className="overflow-x-auto overflow-y-hidden py-4 -my-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                                     <TabsList
-                                        variant="line"
-                                        className="h-auto w-full gap-1 py-3"
+                                        className="flex h-auto w-full min-w-max gap-2 bg-transparent p-1"
                                     >
                                         {/* L3 — Tab triggers: 3D buttons atop the bar */}
                                         {(
@@ -629,12 +628,12 @@ export default function Profile() {
                                                     <TabsTrigger
                                                         key={value}
                                                         value={value}
-                                                        className="profile-tab flex h-auto flex-1 items-center justify-center gap-2 rounded-full border-0 bg-transparent px-1 py-2 text-[10px] font-bold text-zinc-500 after:!hidden hover:text-zinc-800 sm:px-5 sm:py-2.5 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100 data-active:bg-transparent"
+                                                        className="profile-tab group relative flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-2.5 text-xs font-semibold transition-all duration-300 active:scale-95 sm:px-6 sm:py-3.5 sm:text-sm neo-btn-ghost text-zinc-600 dark:text-zinc-400 hover:-translate-y-0.5 hover:text-zinc-900 dark:hover:text-white data-[state=active]:bg-gradient-to-b data-[state=active]:from-cyan-400 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] data-[state=active]:border-transparent data-[state=active]:hover:translate-y-0 after:!hidden"
                                                     >
-                                                        <Icon className="drop-icon-sm hidden h-4 w-4 shrink-0 sm:inline sm:h-4 sm:w-4" />
+                                                        <Icon className="h-4 w-4 shrink-0" />
                                                         <span>
                                                             {value ===
-                                                            'settings' ? (
+                                                                'settings' ? (
                                                                 <>
                                                                     <span className="sm:hidden">
                                                                         Settings
