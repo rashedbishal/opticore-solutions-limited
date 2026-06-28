@@ -1117,8 +1117,12 @@ export default function SubCategoryShow({
 
     const [selectedPlan, setSelectedPlan] = useState<PlanId>('standard');
     const openSupportChat = useCallback(() => {
+        if (!auth.user) {
+            router.visit('/login');
+            return;
+        }
         window.dispatchEvent(new CustomEvent('open-support-chat'));
-    }, []);
+    }, [auth.user]);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     // const [reviewPage, setReviewPage] = useState(1);
@@ -1369,10 +1373,6 @@ export default function SubCategoryShow({
                                     ({mappedReviews.length * 41} reviews)
                                 </span>
                             </div>
-                            <span className="text-theme-subtle">·</span>
-                            <span className="text-theme-muted">
-                                10 Orders in Queue
-                            </span>
                             <span className="text-theme-subtle">·</span>
                             <button
                                 type="button"

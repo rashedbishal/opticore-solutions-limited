@@ -4,16 +4,7 @@ import type { ReactNode } from 'react';
 
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import {
-    AlertCircle,
-    ArrowRight,
-    Box,
-    Film,
-    Code2,
-    Globe,
-    PenTool,
-    Sparkles,
-} from 'lucide-react';
+import { AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { lazy, useEffect, useRef, useState, Suspense } from 'react';
 
 const NebulaCluster = lazy(
@@ -27,6 +18,10 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
 import Modal from '@/components/UI/Modal';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import {
+    resolveCategoryColor,
+    resolveCategoryIcon,
+} from '@/lib/categoryVisuals';
 import { clientLogos } from '@/lib/site';
 import { portfolio } from '@/routes';
 
@@ -49,37 +44,40 @@ const blurReveal: Variants = {
     },
 };
 
-const floatingIcons = [
+const FLOATING_POSITIONS = [
+    // Positions strictly alternate left/right so any number of categories stays balanced.
     {
-        icon: PenTool,
         className: 'top-[10%] left-[4%]',
         animation: { x: [0, 8, 0], y: [0, -12, 0], rotate: [0, 4, 0] },
-        times: [0, 0.5, 1],
-    },
+    }, // 1 L
     {
-        icon: Globe,
         className: 'top-[14%] right-[5%]',
         animation: { x: [0, -10, 0], y: [0, 10, 0], rotate: [0, -4, 0] },
-        times: [0, 0.5, 1],
-    },
+    }, // 2 R
     {
-        icon: Film,
         className: 'bottom-[24%] left-[6%]',
         animation: { x: [0, 12, 0], y: [0, -8, 0], rotate: [0, 5, 0] },
-        times: [0, 0.5, 1],
-    },
+    }, // 3 L
     {
-        icon: Box,
         className: 'right-[8%] bottom-[20%]',
         animation: { x: [0, -12, 0], y: [0, 8, 0], rotate: [0, -5, 0] },
-        times: [0, 0.5, 1],
-    },
+    }, // 4 R
     {
-        icon: Code2,
+        className: 'top-[42%] left-[3%]',
+        animation: { x: [0, 6, 0], y: [0, -10, 0], rotate: [0, -3, 0] },
+    }, // 5 L
+    {
+        className: 'top-[42%] right-[3%]',
+        animation: { x: [0, -8, 0], y: [0, 8, 0], rotate: [0, 4, 0] },
+    }, // 6 R
+    {
         className: 'bottom-[8%] left-[14%]',
         animation: { x: [0, 10, 0], y: [0, -6, 0], rotate: [0, 3, 0] },
-        times: [0, 0.5, 1],
-    },
+    }, // 7 L
+    {
+        className: 'bottom-[8%] right-[14%]',
+        animation: { x: [0, -6, 0], y: [0, -6, 0], rotate: [0, -3, 0] },
+    }, // 8 R
 ];
 
 // duplicatedServices removed due to being unused
@@ -299,11 +297,19 @@ interface HomeIndexProps {
 }
 
 export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
-    const { flash } = usePage<SharedPageProps>().props;
+    const { flash, categories } = usePage<SharedPageProps>().props;
     const [errorModalOpen, setErrorModalOpen] = useState(
         !!flash?.payment_error,
     );
     const desktop = useMediaQuery('(min-width: 1024px)');
+
+    const heroIcons = Object.values(categories)
+        .slice(0, FLOATING_POSITIONS.length)
+        .map((cat, index) => ({
+            Icon: resolveCategoryIcon(cat.icon),
+            colorClass: resolveCategoryColor(cat.color).text,
+            ...FLOATING_POSITIONS[index],
+        }));
 
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
@@ -515,22 +521,22 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
 
                     {desktop ? (
                         <div className="pointer-events-none absolute inset-0 hidden xl:block">
-                            {floatingIcons.map(
+                            {heroIcons.map(
                                 ({
-                                    icon: Icon,
+                                    Icon,
                                     className,
                                     animation,
-                                    times,
+                                    colorClass,
                                 }) => (
                                     <motion.div
                                         key={className}
-                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-violet-500/80 backdrop-blur-md dark:text-violet-300/80`}
+                                        className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-theme bg-theme-surface ${colorClass} backdrop-blur-md`}
                                         animate={animation}
                                         transition={{
                                             duration: 6,
                                             repeat: Number.POSITIVE_INFINITY,
                                             ease: 'easeInOut',
-                                            times: times,
+                                            times: [0, 0.5, 1],
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />

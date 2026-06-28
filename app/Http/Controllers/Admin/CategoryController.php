@@ -26,11 +26,20 @@ class CategoryController extends Controller
      * can never pick an icon the public page doesn't know how to render.
      */
     public const ALLOWED_ICONS = [
-        'Palette', 'PenTool', 'Paintbrush',
-        'Clapperboard', 'Video', 'Film', 'MonitorPlay', 'Camera', 'ScanLine',
-        'Megaphone', 'Globe', 'Smartphone',
-        'Box', 'Layers', 'BoxSelect', 'Cpu',
-        'Code2', 'Terminal',
+        // Design & creative
+        'Palette', 'PenTool', 'Paintbrush', 'Brush', 'Pencil', 'PenLine', 'Wand2', 'Type',
+        // Video & media
+        'Clapperboard', 'Video', 'Film', 'MonitorPlay', 'Camera', 'ScanLine', 'Play', 'Mic', 'Headphones', 'Radio',
+        // Marketing & growth
+        'Megaphone', 'Globe', 'Rocket', 'TrendingUp', 'Target', 'BarChart2',
+        // Web & digital
+        'Smartphone', 'Laptop', 'Monitor', 'Layout', 'AppWindow',
+        // 3D & structure
+        'Box', 'Layers', 'Layers3', 'BoxSelect', 'Package',
+        // Tech
+        'Cpu', 'Code2', 'Terminal',
+        // General accents
+        'Gem', 'Zap', 'Star', 'Lightbulb',
     ];
 
     /**
@@ -40,6 +49,8 @@ class CategoryController extends Controller
     public const ALLOWED_COLORS = [
         'pink', 'violet', 'emerald', 'orange', 'cyan',
         'blue', 'amber', 'rose', 'teal', 'slate',
+        'indigo', 'purple', 'fuchsia', 'red', 'green',
+        'sky', 'lime', 'yellow',
     ];
 
     public function index(): Response

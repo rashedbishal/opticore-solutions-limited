@@ -209,9 +209,7 @@ function AnimatedTitle({
             const anime =
                 (await import('animejs')).default ?? (await import('animejs'));
 
-            // If it's a pool, we handle looping manually through state
-            // If it's a single title, we use native animejs looping for maximum stability
-            timelineRef.current = (anime as any)
+            const tl = (anime as any)
                 .timeline({
                     loop: isPool,
                     complete: () => {
@@ -228,17 +226,21 @@ function AnimatedTitle({
                     easing: 'easeOutExpo',
                     duration: 1200,
                     delay: (_el: Element, i: number) => 500 + 30 * i,
-                })
-                .add({
+                });
+
+            // Exit animation only for cycling pools — single titles stay visible.
+            if (isPool) {
+                tl.add({
                     targets: `.${letterClass}`,
                     translateX: [0, -30],
                     opacity: [1, 0],
                     easing: 'easeInExpo',
                     duration: 1100,
-                    // Pool uses a longer individual sentence dwell time
-                    delay: (_el: Element, i: number) =>
-                        (isPool ? 3000 : 100) + 30 * i,
+                    delay: (_el: Element, i: number) => 3000 + 30 * i,
                 });
+            }
+
+            timelineRef.current = tl;
         };
 
         run();

@@ -77,6 +77,17 @@ Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer con
 ### Security headers & rate limiting
 `app/Http/Middleware/SecurityHeaders.php` sets a strict CSP in production only (disabled locally so Vite HMR over plain HTTP still works). It allowlists each third-party origin actually in use (Google Pay, SSLCommerz embedded checkout/3DS redirect, Google Fonts, the Reverb websocket, Google Maps) and computes a `sha256` hash of Inertia's inline `data-page` JSON payload per-response rather than using `'unsafe-inline'`. Named rate limiters live in `app/Providers/AppServiceProvider.php::configureRateLimiters()` (`login`, `admin-login`, `register`, `password-reset`, `payment-callback`) — auth limiters deliberately cap by `email+ip` *and* by account-alone, so an attacker rotating source IPs can't get a fresh allowance against one target.
 
+### Shared Inertia props & SSR exclusions
+`HandleInertiaRequests::share()` pushes these props to every page: `name`, `auth.user`, `categories` (`Category::configShape()`), `footerServices` (`Category::servicePageLinks()`), `siteSettings` (`SiteSetting::current()->toPublicArray()`), and a `flash` bag with keys `success`, `error`, `invoice`, `payment_success`, `payment_error`, `checkout_url`, `subscription`. Use these exact key names when reading flash from the frontend.
+
+SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`, `gpay/*`, `offer/*`, and `orders/*` via `HandleInertiaRequests::$withoutSsr`. If a page in those paths appears to hydrate differently from public pages, that's why.
+
+### SiteSetting singleton
+`SiteSetting::current()` returns the single settings row, cached **permanently** (`Cache::rememberForever`). After any write to `SiteSetting`, call `SiteSetting::forgetCache()` or the stale values will persist in cache. `Admin/ConfigurationController` already does this — follow that pattern.
+
+### Post-payment task provisioning
+`TaskGenerator::createFromTransaction(Transaction $transaction)` is called after a successful SSLCommerz payment to auto-create a `Task` record for the order (keyed by `transaction_id`, idempotent). It looks up the `User` by email from the transaction, derives the category from `Category::configShape()`, and sends `TaskStatusMail`. If you modify the `Transaction` → `Task` pipeline, verify idempotency (it guards on existing `task.transaction_id`). `CheckoutMetadata` stores buyer notes and file attachment paths (keyed by `upload_token` / `transaction_id`) from the checkout form; read it inside `PendingOrderResolver` when building the pending order.
+
 ### Frontend structure
 - Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.
 - `resources/js/actions` and `resources/js/routes` are **Wayfinder-generated** — don't hand-edit; run `php artisan wayfinder:generate` instead.
