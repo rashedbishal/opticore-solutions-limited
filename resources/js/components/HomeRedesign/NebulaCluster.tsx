@@ -241,7 +241,7 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                 <div style={{ perspective: '1000px' }}>
                     <motion.button
                         style={{ x, y, rotateX, rotateY }}
-                        className="group preserve-3d relative w-[min(300px,28vw)] cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl aspect-[4/3]"
+                        className="group preserve-3d relative aspect-[4/3] w-[min(300px,28vw)] cursor-pointer overflow-hidden rounded-3xl border border-theme shadow-2xl"
                         whileHover={{ scale: 1.07 }}
                         onClick={onSelect}
                     >

@@ -151,7 +151,7 @@ export default function Contact() {
 
     const inputCn = (error?: string) =>
         cn(
-            'w-full rounded-xl border bg-theme-surface px-4 py-4 text-foreground transition-all duration-300 outline-none placeholder:text-theme-subtle [box-shadow:var(--neo-shadow-inset)] focus:border-violet-500/60 focus:[box-shadow:var(--neo-shadow-inset-focus)]',
+            'w-full rounded-xl border bg-theme-surface px-4 py-4 text-foreground [box-shadow:var(--neo-shadow-inset)] transition-all duration-300 outline-none placeholder:text-theme-subtle focus:border-violet-500/60 focus:[box-shadow:var(--neo-shadow-inset-focus)]',
             error ? 'border-rose-500' : 'border-theme',
         );
 
@@ -205,7 +205,7 @@ export default function Contact() {
                             transition={{ duration: 0.8 }}
                             className="lg:col-span-7"
                         >
-                            <div className="h-full rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04] sm:p-8 md:p-12">
+                            <div className="h-full rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] sm:p-8 md:p-12 dark:bg-white/[0.04]">
                                 <div className="mb-10 flex items-center gap-4">
                                     <div className="rounded-2xl bg-violet-500/10 p-3">
                                         <MessageSquare className="h-6 w-6 text-violet-500 dark:text-violet-400" />
@@ -282,7 +282,9 @@ export default function Contact() {
                                                                 val,
                                                             );
                                                         }}
-                                                        className={inputCn(form.errors.name)}
+                                                        className={inputCn(
+                                                            form.errors.name,
+                                                        )}
                                                     />
                                                     {form.errors.name && (
                                                         <p className="ml-1 text-xs text-rose-500">
@@ -306,7 +308,9 @@ export default function Contact() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className={inputCn(form.errors.email)}
+                                                        className={inputCn(
+                                                            form.errors.email,
+                                                        )}
                                                     />
                                                     {form.errors.email && (
                                                         <p className="ml-1 text-xs text-rose-500">
@@ -342,7 +346,9 @@ export default function Contact() {
                                                                 val,
                                                             );
                                                         }}
-                                                        className={inputCn(form.errors.phone)}
+                                                        className={inputCn(
+                                                            form.errors.phone,
+                                                        )}
                                                     />
                                                     {form.errors.phone && (
                                                         <p className="ml-1 text-xs text-rose-500">
@@ -369,7 +375,9 @@ export default function Contact() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className={inputCn(form.errors.subject)}
+                                                        className={inputCn(
+                                                            form.errors.subject,
+                                                        )}
                                                     />
                                                     {form.errors.subject && (
                                                         <p className="ml-1 text-xs text-rose-500">
@@ -398,7 +406,12 @@ export default function Contact() {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className={cn(inputCn(form.errors.message), 'resize-none')}
+                                                    className={cn(
+                                                        inputCn(
+                                                            form.errors.message,
+                                                        ),
+                                                        'resize-none',
+                                                    )}
                                                 />
                                                 <div className="flex items-start justify-between">
                                                     <div>
@@ -457,7 +470,7 @@ export default function Contact() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8 }}
-                                className="rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04] sm:p-8 md:p-10"
+                                className="rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] sm:p-8 md:p-10 dark:bg-white/[0.04]"
                             >
                                 <div className="mb-8 flex items-center gap-3">
                                     <div className="rounded-xl bg-cyan-500/10 p-2.5">
@@ -476,7 +489,7 @@ export default function Contact() {
                                         >
                                             <div
                                                 className={cn(
-                                                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-theme-surface transition-transform duration-300 group-hover:scale-110 [box-shadow:var(--neo-shadow-sm)]',
+                                                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-theme-surface [box-shadow:var(--neo-shadow-sm)] transition-transform duration-300 group-hover:scale-110',
                                                     item.iconColor,
                                                 )}
                                             >
@@ -516,7 +529,7 @@ export default function Contact() {
                                                     href={href}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-theme-muted transition-all duration-300 hover:scale-105 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-violet-600 [box-shadow:var(--neo-shadow-sm)] dark:hover:text-violet-300"
+                                                    className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-theme bg-theme-surface text-theme-muted [box-shadow:var(--neo-shadow-sm)] transition-all duration-300 hover:scale-105 hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-300"
                                                     aria-label={label}
                                                 >
                                                     <Icon className="h-6 w-6 transition-transform duration-500 group-hover:rotate-12" />
@@ -536,7 +549,7 @@ export default function Contact() {
                                 className="group relative h-[300px] overflow-hidden rounded-[2rem] border border-theme bg-white p-2 [box-shadow:var(--neo-shadow-panel)] dark:bg-white/[0.04]"
                             >
                                 <div className="pointer-events-none absolute top-6 left-6 z-20">
-                                    <div className="flex items-center gap-2 rounded-xl border border-theme bg-background/80 px-4 py-2 backdrop-blur-md [box-shadow:var(--neo-shadow-sm)]">
+                                    <div className="flex items-center gap-2 rounded-xl border border-theme bg-background/80 px-4 py-2 [box-shadow:var(--neo-shadow-sm)] backdrop-blur-md">
                                         <MapPin className="h-4 w-4 text-rose-500" />
                                         <span className="text-xs font-bold tracking-wide text-balance text-foreground">
                                             East Monipur, Mirpur, Dhaka
