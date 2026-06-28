@@ -1,7 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ChevronDown, Layers, Star, Users, Zap } from 'lucide-react';
+import { ArrowRight, ChevronDown, Star, Users, Zap } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import {
@@ -22,35 +22,19 @@ interface Props {
     subCategories: Record<string, HireUsSubCategory[]>;
 }
 
-type DisplayItem = HireUsSubCategory & { categorySlug: string };
-
-const ALL_TAB_ID = 'all';
-
 const HireUsPage = ({ subCategories = {} }: Props) => {
     const { categories } = usePage<SharedPageProps>().props;
 
-    const allTab = {
-        id: ALL_TAB_ID,
-        name: 'All Services',
-        icon: Layers,
-        text: 'text-violet-500',
-        bg: 'bg-violet-500/10',
-        swatch: 'bg-violet-500',
-    };
-
     // Tabs are fully CMS-driven: name, icon, and color all come from the
     // category's admin-managed fields, not a hardcoded list.
-    const tabs = [
-        allTab,
-        ...Object.entries(categories).map(([slug, category]) => ({
-            id: slug,
-            name: category.label,
-            icon: resolveCategoryIcon(category.icon),
-            ...resolveCategoryColor(category.color),
-        })),
-    ];
+    const tabs = Object.entries(categories).map(([slug, category]) => ({
+        id: slug,
+        name: category.label,
+        icon: resolveCategoryIcon(category.icon),
+        ...resolveCategoryColor(category.color),
+    }));
 
-    const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? ALL_TAB_ID);
+    const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? '');
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -69,19 +53,9 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
     }, []);
 
     const activeTabData = tabs.find((t) => t.id === activeTab) ?? tabs[0];
-    const ActiveIcon = activeTabData?.icon ?? Layers;
+    const ActiveIcon = activeTabData?.icon;
 
-    // When "All" is active, flatten every category's items and attach their
-    // real category slug so the card links remain correct.
-    const displayItems: DisplayItem[] =
-        activeTab === ALL_TAB_ID
-            ? Object.entries(subCategories).flatMap(([catSlug, items]) =>
-                  items.map((item) => ({ ...item, categorySlug: catSlug })),
-              )
-            : (subCategories[activeTab] ?? []).map((item) => ({
-                  ...item,
-                  categorySlug: activeTab,
-              }));
+    const displayItems = subCategories[activeTab] ?? [];
 
     const handleTabSelect = (id: string) => {
         setActiveTab(id);
@@ -105,7 +79,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
 
                 <div className="relative z-10 mx-auto max-w-7xl">
                     {/* Hero Section */}
-                    <section className="mb-24 text-center">
+                    <section className="mb-10 text-center md:mb-24">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -130,7 +104,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     </section>
 
                     {/* Services Tabs */}
-                    <section className="mb-20">
+                    <section className="mb-6 md:mb-20">
                         {/* ── Mobile dropdown (hidden on md+) ── */}
                         <div
                             ref={dropdownRef}
@@ -147,7 +121,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                     <div
                                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${activeTabData.bg} ${activeTabData.text}`}
                                     >
-                                        <ActiveIcon className="h-4 w-4" />
+                                        {ActiveIcon && <ActiveIcon className="h-4 w-4" />}
                                     </div>
                                     <span>{activeTabData.name}</span>
                                 </div>
@@ -267,7 +241,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                         </div>
 
                         {/* Divider */}
-                        <div className="mt-8 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent dark:via-zinc-800" />
+                        <div className="mt-3 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent md:mt-8 dark:via-zinc-800" />
                     </section>
 
                     {/* Marketplace Grid */}
@@ -282,14 +256,14 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                         >
                             {displayItems.map((item, idx) => (
                                 <motion.div
-                                    key={`${item.categorySlug}-${item.slug}`}
+                                    key={item.slug}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="group glass-panel overflow-hidden rounded-[2.5rem] border border-theme transition-all duration-500 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10"
+                                    className="group overflow-hidden rounded-[2.5rem] border border-theme bg-white shadow-lg transition-all duration-500 hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-500/15 dark:bg-zinc-900 dark:shadow-zinc-950/60"
                                 >
                                     <Link
-                                        href={`/hire-us/${item.categorySlug}/${item.slug}`}
+                                        href={`/hire-us/${activeTab}/${item.slug}`}
                                     >
                                         {/* Image */}
                                         <div className="relative h-64 overflow-hidden">

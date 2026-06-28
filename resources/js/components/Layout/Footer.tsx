@@ -199,8 +199,8 @@ export default function Footer() {
             <footer className="relative z-10 border-t border-theme bg-zinc-100 dark:bg-zinc-900/60">
                 <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
                 <div className="section-shell pt-8 pb-6 md:pt-10 md:pb-8 lg:pt-12 lg:pb-10">
-                    <div className="section-inner grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-                        <div className="space-y-5">
+                    <div className="section-inner grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
+                        <div className="col-span-2 space-y-5 sm:col-span-1">
                             <Link
                                 href="/"
                                 className="inline-flex items-center text-theme"
@@ -311,7 +311,7 @@ export default function Footer() {
                             </div>
                         </div>
 
-                        <div className="lg:col-span-1">
+                        <div className="col-span-2 sm:col-span-1 lg:col-span-1">
                             <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                                 Contact
                             </h3>
