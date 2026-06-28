@@ -27,6 +27,10 @@ export default defineConfig({
         host: 'localhost',
     },
 
+    ssr: {
+        noExternal: true,
+    },
+
     build: {
         rollupOptions: {
             output: {
