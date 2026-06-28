@@ -79,8 +79,8 @@ jobs:
       - name: Run Type Check
         run: npm run types:check
 
-      - name: Build frontend
-        run: npm run build
+      - name: Build frontend + SSR
+        run: npm run build:ssr
         env:
           VITE_REVERB_APP_KEY: ${{ secrets.VITE_REVERB_APP_KEY }}
           VITE_REVERB_HOST: ${{ secrets.VITE_REVERB_HOST }}
@@ -93,7 +93,7 @@ jobs:
       - name: Run tests
         run: ./vendor/bin/pest --ci
 
-      # Upload the verified build so the deploy job uses the exact same artifact.
+      # Upload the verified builds so the deploy job uses the exact same artifacts.
       # This guarantees production runs the same frontend that passed all checks.
       - name: Upload frontend build artifact
         uses: actions/upload-artifact@v7
@@ -101,4 +101,12 @@ jobs:
         with:
           name: frontend-build-${{ github.sha }}
           path: public/build
+          retention-days: 7
+
+      - name: Upload SSR build artifact
+        uses: actions/upload-artifact@v7
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          name: ssr-build-${{ github.sha }}
+          path: bootstrap/ssr
           retention-days: 7

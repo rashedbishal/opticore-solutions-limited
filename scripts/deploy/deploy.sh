@@ -221,6 +221,7 @@ on_exit() {
     if [ "$SYMLINK_SWAPPED" = "true" ]; then
         sudo systemctl restart php8.3-fpm                  2>/dev/null || err "php-fpm restart failed."
         sudo supervisorctl restart laravel-reverb           2>/dev/null || err "reverb restart failed."
+        sudo supervisorctl restart laravel-ssr              2>/dev/null || err "laravel-ssr restart failed."
         $PHP "$CURRENT_LINK/artisan" queue:restart          2>/dev/null || err "queue:restart failed."
         err "Services restarted for rolled-back release."
     fi
@@ -319,7 +320,7 @@ composer install \
     --working-dir="$RELEASE_DIR"
 
 # =========================================================================
-# PHASE 3 — Place pre-built frontend (downloaded from CI artifact)
+# PHASE 3 — Place pre-built frontend and SSR bundle (from CI artifacts)
 # =========================================================================
 if [ -n "${FRONTEND_BUILD_DIR:-}" ] && [ -d "$FRONTEND_BUILD_DIR" ]; then
     log "Placing pre-built frontend..."
@@ -327,6 +328,15 @@ if [ -n "${FRONTEND_BUILD_DIR:-}" ] && [ -d "$FRONTEND_BUILD_DIR" ]; then
     cp -r "$FRONTEND_BUILD_DIR/." "$RELEASE_DIR/public/build/"
 else
     err "FRONTEND_BUILD_DIR is not set or does not exist. CI artifact must be downloaded first."
+    exit 1
+fi
+
+if [ -n "${SSR_BUILD_DIR:-}" ] && [ -d "$SSR_BUILD_DIR" ]; then
+    log "Placing pre-built SSR bundle..."
+    mkdir -p "$RELEASE_DIR/bootstrap/ssr"
+    cp -r "$SSR_BUILD_DIR/." "$RELEASE_DIR/bootstrap/ssr/"
+else
+    err "SSR_BUILD_DIR is not set or does not exist. CI artifact must be downloaded first."
     exit 1
 fi
 
@@ -404,6 +414,9 @@ sudo systemctl reload php8.3-fpm
 
 log "Restarting Reverb..."
 sudo supervisorctl restart laravel-reverb
+
+log "Restarting SSR server..."
+sudo supervisorctl restart laravel-ssr
 
 log "Signalling queue workers to restart gracefully..."
 "$PHP" "$CURRENT_LINK/artisan" queue:restart

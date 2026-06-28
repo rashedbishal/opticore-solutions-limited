@@ -45,7 +45,7 @@ jobs:
           path: _checkout
 
       # -----------------------------------------------------------------
-      # 2. Download the frontend artifact verified by CI.
+      # 2. Download the frontend and SSR artifacts verified by CI.
       #    Production runs the exact same compiled assets that passed all
       #    lint, type-check, and bundle-budget checks in CI.
       # -----------------------------------------------------------------
@@ -54,6 +54,14 @@ jobs:
         with:
           name: frontend-build-${{ github.event.workflow_run.head_sha }}
           path: _frontend_build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Download verified SSR build from CI
+        uses: actions/download-artifact@v8
+        with:
+          name: ssr-build-${{ github.event.workflow_run.head_sha }}
+          path: _ssr_build
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
@@ -79,6 +87,7 @@ jobs:
         run: |
           echo "DEPLOY_SOURCE_DIR=$(pwd)/_checkout" >> "$GITHUB_ENV"
           echo "FRONTEND_BUILD_DIR=$(pwd)/_frontend_build" >> "$GITHUB_ENV"
+          echo "SSR_BUILD_DIR=$(pwd)/_ssr_build" >> "$GITHUB_ENV"
 
       # -----------------------------------------------------------------
       # 5. Run the atomic deployment script. It:
@@ -114,7 +123,7 @@ jobs:
       # -----------------------------------------------------------------
       - name: Clean up workspace
         if: always()
-        run: rm -rf _checkout _frontend_build
+        run: rm -rf _checkout _frontend_build _ssr_build
 
       # -----------------------------------------------------------------
       # 7. GitHub Actions UI summary for quick reference.
