@@ -1730,25 +1730,23 @@ export default function SubCategoryShow({
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-4">
-                                        <p className="mb-3 text-[10px] font-bold tracking-widest text-theme-muted uppercase">
-                                            Supported Languages
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {[
-                                                { name: 'English', flag: '🇺🇸' },
-                                                { name: 'Bangla', flag: '🇧🇩' },
-                                                { name: 'Hindi', flag: '🇮🇳' },
-                                            ].map((lang) => (
-                                                <span
-                                                    key={lang.name}
-                                                    className="flex items-center gap-2 rounded-xl border border-theme bg-theme-surface px-4 py-2 text-xs font-bold text-theme shadow-[0_3px_10px_rgba(0,0,0,0.38),0_1px_3px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.09)] transition-all hover:-translate-y-0.5 hover:border-cyan-500/30 hover:bg-theme-surface-hover hover:shadow-[0_6px_18px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.12)]"
-                                                >
-                                                    <span>{lang.flag}</span>
-                                                    {lang.name}
-                                                </span>
-                                            ))}
-                                        </div>
+                                    <div className="mt-auto flex flex-wrap items-center gap-6 pt-4">
+                                        <button
+                                            type="button"
+                                            onClick={scrollToPricing}
+                                            className="neo-btn-cta group flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-4 text-sm font-black tracking-widest uppercase md:w-auto"
+                                        >
+                                            Start Project
+                                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={openSupportChat}
+                                            className="neo-btn-outline group flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold"
+                                        >
+                                            <MessageSquare className="h-4 w-4" />
+                                            Need a Custom Quote?
+                                        </button>
                                     </div>
                                 </div>
 
@@ -1771,24 +1769,6 @@ export default function SubCategoryShow({
                                         design, and scalable web solutions that
                                         leave a lasting impact.
                                     </p>
-                                    <div className="mt-auto flex flex-wrap items-center gap-6 pt-8">
-                                        <button
-                                            type="button"
-                                            onClick={scrollToPricing}
-                                            className="neo-btn-cta group flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-4 text-sm font-black tracking-widest uppercase md:w-auto"
-                                        >
-                                            Start Project
-                                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={openSupportChat}
-                                            className="neo-btn-outline group flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold"
-                                        >
-                                            <MessageSquare className="h-4 w-4" />
-                                            Need a Custom Quote?
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
