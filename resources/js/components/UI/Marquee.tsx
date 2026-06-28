@@ -65,6 +65,8 @@ export default function Marquee({ items }: MarqueeProps) {
                                 <img
                                     src={item.logo_path}
                                     alt={item.name}
+                                    width={120}
+                                    height={48}
                                     loading="lazy"
                                     decoding="async"
                                     className="h-full w-auto max-w-[120px] object-contain opacity-50 grayscale transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]"
