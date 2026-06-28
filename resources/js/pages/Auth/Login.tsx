@@ -21,7 +21,7 @@ export default function Login({ status }: { status?: string }) {
 
             <div className="mb-[min(3vh,1.5rem)] text-center [@media(max-height:400px)]:mb-2">
                 <h1 className="mb-[min(1vh,0.375rem)] text-[clamp(1.25rem,4vh,2.5rem)] font-black tracking-tighter text-foreground uppercase">
-                    Welcome Back
+                    Welcome
                 </h1>
                 <p className="text-sm font-medium text-theme-muted sm:text-base [@media(max-height:500px)]:hidden">
                     Enter your credentials to access your dashboard.
