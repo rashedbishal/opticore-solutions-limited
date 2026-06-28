@@ -47,7 +47,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
 
     if (!post) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-6 text-white">
+            <div className="flex min-h-screen flex-col items-center justify-center p-6 text-zinc-900 dark:text-white">
                 <h1 className="mb-4 text-4xl font-bold">Post Not Found</h1>
                 <Link href="/blogs" className="text-primary hover:underline">
                     Return to Blog
@@ -112,7 +112,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                 <span className="mb-4 inline-block rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[9px] font-bold tracking-widest text-primary uppercase md:mb-6 md:text-[10px]">
                                     {post.category}
                                 </span>
-                                <h1 className="mb-6 text-3xl leading-[1.2] font-extrabold tracking-tight text-white sm:text-4xl md:mb-8 md:text-5xl lg:text-7xl lg:leading-[1.1]">
+                                <h1 className="mb-6 text-3xl leading-[1.2] font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-4xl md:mb-8 md:text-5xl lg:text-7xl lg:leading-[1.1]">
                                     {post.title}
                                 </h1>
                             </motion.div>
@@ -121,15 +121,15 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="flex flex-wrap items-center gap-4 border-b border-white/5 pb-8 text-[10px] font-medium tracking-widest text-zinc-500 uppercase md:gap-10 md:pb-12 md:text-xs"
+                                className="flex flex-wrap items-center gap-4 border-b border-zinc-200 dark:border-white/5 pb-8 text-[10px] font-medium tracking-widest text-zinc-500 dark:text-zinc-400 uppercase md:gap-10 md:pb-12 md:text-xs"
                             >
                                 <div className="flex items-center gap-2 md:gap-2.5">
                                     <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary to-secondary p-px md:h-8 md:w-8">
-                                        <div className="flex h-full w-full items-center justify-center rounded-full bg-dark">
-                                            <User className="h-3.5 w-3.5 text-white md:h-4 md:w-4" />
+                                        <div className="flex h-full w-full items-center justify-center rounded-full bg-white dark:bg-dark">
+                                            <User className="h-3.5 w-3.5 text-zinc-900 dark:text-white md:h-4 md:w-4" />
                                         </div>
                                     </div>
-                                    <span className="text-white">
+                                    <span className="text-zinc-900 dark:text-white">
                                         {post.author}
                                     </span>
                                 </div>
@@ -149,7 +149,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.8 }}
-                            className="glass-panel my-10 aspect-16/10 overflow-hidden rounded-2xl border-white/10 sm:aspect-21/9 md:my-16 md:rounded-[2.5rem]"
+                            className="glass-panel my-10 aspect-16/10 overflow-hidden rounded-2xl bg-white shadow-xl shadow-zinc-200/50 dark:bg-transparent dark:shadow-none border border-zinc-200 dark:border-white/10 sm:aspect-21/9 md:my-16 md:rounded-[2.5rem]"
                         >
                             <img
                                 src={post.image}
@@ -166,9 +166,9 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3 }}
-                                    className="prose prose-invert prose-sm sm:prose-base md:prose-lg prose-headings:font-extrabold prose-headings:tracking-tight prose-p:text-zinc-400 prose-p:leading-relaxed prose-strong:text-white max-w-none"
+                                    className="prose prose-invert prose-sm sm:prose-base md:prose-lg prose-headings:font-extrabold prose-headings:tracking-tight prose-p:text-zinc-600 dark:prose-p:text-zinc-400 prose-p:leading-relaxed prose-strong:text-zinc-900 dark:prose-strong:text-white max-w-none"
                                 >
-                                    <p className="mb-8 text-lg leading-relaxed font-light text-white md:mb-12 md:text-xl">
+                                    <p className="mb-8 text-lg leading-relaxed font-light text-zinc-800 dark:text-white md:mb-12 md:text-xl">
                                         {post.excerpt}
                                     </p>
 
@@ -222,8 +222,8 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                             {/* Sidebar */}
                             <aside className="lg:col-span-4">
                                 <div className="space-y-6 md:space-y-8 lg:sticky lg:top-32">
-                                    <div className="glass-panel rounded-2xl border-white/5 p-6 md:rounded-3xl md:p-8">
-                                        <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white uppercase md:mb-6 md:text-sm">
+                                    <div className="glass-panel rounded-2xl bg-white shadow-xl shadow-zinc-200/50 dark:bg-transparent dark:shadow-none border border-zinc-200 dark:border-white/5 p-6 md:rounded-3xl md:p-8">
+                                        <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-zinc-900 dark:text-white uppercase md:mb-6 md:text-sm">
                                             <Share2 className="h-3.5 w-3.5 text-primary md:h-4 md:w-4" />
                                             Share Insight
                                         </h4>
@@ -232,7 +232,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                                 onClick={() =>
                                                     handleShare('facebook')
                                                 }
-                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-zinc-400 transition-all hover:border-[#1877F2]/30 hover:bg-[#1877F2]/10 hover:text-[#1877F2] md:h-10 md:w-10 md:rounded-xl"
+                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-white/5 bg-zinc-100 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 transition-all hover:border-[#1877F2]/30 hover:bg-[#1877F2]/10 hover:text-[#1877F2] md:h-10 md:w-10 md:rounded-xl"
                                                 aria-label="Share on Facebook"
                                             >
                                                 <svg
@@ -254,7 +254,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                                 onClick={() =>
                                                     handleShare('twitter')
                                                 }
-                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-zinc-400 transition-all hover:border-white/30 hover:bg-white/10 hover:text-white md:h-10 md:w-10 md:rounded-xl"
+                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-white/5 bg-zinc-100 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 transition-all hover:border-zinc-300 dark:hover:border-white/30 hover:bg-zinc-200 dark:hover:bg-white/10 hover:text-zinc-900 dark:hover:text-white md:h-10 md:w-10 md:rounded-xl"
                                                 aria-label="Share on X (Twitter)"
                                             >
                                                 <svg
@@ -276,11 +276,11 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                                         </div>
                                     </div>
 
-                                    <div className="glass-panel rounded-2xl border-white/5 bg-linear-to-br from-primary/10 to-transparent p-6 md:rounded-3xl md:p-8">
-                                        <h4 className="mb-3 text-lg font-bold text-white md:mb-4 md:text-xl">
+                                    <div className="glass-panel rounded-2xl bg-white shadow-xl shadow-zinc-200/50 dark:bg-transparent dark:shadow-none border border-zinc-200 dark:border-white/5 bg-linear-to-br from-primary/10 to-transparent p-6 md:rounded-3xl md:p-8">
+                                        <h4 className="mb-3 text-lg font-bold text-zinc-900 dark:text-white md:mb-4 md:text-xl">
                                             Start your journey with us
                                         </h4>
-                                        <p className="mb-6 text-xs leading-relaxed text-zinc-400 md:mb-8 md:text-sm">
+                                        <p className="mb-6 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400 md:mb-8 md:text-sm">
                                             If you're ready to build a brand
                                             that balances technical precision
                                             with creative ambition, let's talk.

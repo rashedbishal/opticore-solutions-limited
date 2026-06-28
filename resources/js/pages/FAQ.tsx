@@ -38,12 +38,19 @@ export default function FAQ({ faqs = [] }: Props) {
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="mx-auto w-full max-w-3xl px-4">
-                    <SectionHeader
-                        eyebrow="FAQ"
-                        title="Frequently Asked Questions"
-                        description="Everything clients usually want to know before the first brief, call, or kickoff."
-                        align="center"
-                    />
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mx-auto max-w-4xl text-center"
+                    >
+                        <span className="section-kicker mx-auto mb-6">FAQ</span>
+                        <h1 className="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl md:text-6xl">
+                            Frequently Asked Questions
+                        </h1>
+                        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
+                            Everything clients usually want to know before the first brief, call, or kickoff.
+                        </p>
+                    </motion.div>
 
                     <div className="mt-10 space-y-4">
                         {visibleFaqs.map((item, index) => {
@@ -52,7 +59,7 @@ export default function FAQ({ faqs = [] }: Props) {
                             return (
                                 <div
                                     key={item.question}
-                                    className="glass-panel overflow-hidden rounded-[1.75rem]"
+                                    className="glass-panel overflow-hidden rounded-[1.75rem] bg-white shadow-xl shadow-zinc-200/50 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20"
                                 >
                                     <button
                                         type="button"
@@ -62,7 +69,7 @@ export default function FAQ({ faqs = [] }: Props) {
                                             setOpenIndex(open ? null : index)
                                         }
                                     >
-                                        <span className="text-base font-semibold text-white sm:text-lg">
+                                        <span className="text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">
                                             {item.question}
                                         </span>
                                         <motion.span
@@ -87,7 +94,7 @@ export default function FAQ({ faqs = [] }: Props) {
                                                 transition={{ duration: 0.25 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="border-t border-white/10 px-5 py-5 text-sm leading-7 text-zinc-400 sm:px-6">
+                                                <div className="border-t border-zinc-200 px-5 py-5 text-sm leading-7 text-zinc-600 dark:border-white/10 dark:text-zinc-400 sm:px-6">
                                                     {item.answer}
                                                 </div>
                                             </motion.div>

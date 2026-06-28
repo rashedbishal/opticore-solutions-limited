@@ -66,7 +66,7 @@ export default function BlogIndex({
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-zinc-400"
+                            className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400"
                         >
                             Exploring the intersection of premium design,
                             technical excellence, and strategic growth.
@@ -100,7 +100,7 @@ export default function BlogIndex({
                             animate={{ opacity: 1 }}
                             className="py-20 text-center"
                         >
-                            <p className="text-lg text-zinc-500">
+                            <p className="text-lg text-zinc-500 dark:text-zinc-400">
                                 No posts found in this category.
                             </p>
                         </motion.div>
