@@ -21,6 +21,7 @@ interface NebulaEntry {
     title: string;
     description: string;
     src: string;
+    thumb: string;
     left: string;
     top: string;
     depth: number;
@@ -35,7 +36,8 @@ const items: NebulaEntry[] = [
         title: 'Visual Branding System',
         description:
             'A holistic brand identity crafted for modern businesses — from logo systems and colour palettes to typography and comprehensive brand guidelines that stand the test of time.',
-        src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=900',
+        src: '/images/portfolio/nebula/branding.webp',
+        thumb: '/images/portfolio/nebula/branding-sm.webp',
         left: '50%',
         top: '50%',
         depth: 0.8,
@@ -48,7 +50,8 @@ const items: NebulaEntry[] = [
         title: 'Motion Graphics Reel',
         description:
             'Dynamic motion graphics and animation sequences that captivate audiences and bring brand stories to life across every platform and format.',
-        src: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=900',
+        src: '/images/portfolio/nebula/motion.webp',
+        thumb: '/images/portfolio/nebula/motion-sm.webp',
         left: '23%',
         top: '26%',
         depth: 1.8,
@@ -61,7 +64,8 @@ const items: NebulaEntry[] = [
         title: 'Analytics Dashboard',
         description:
             'Clean, data-rich interfaces that surface insights at a glance — designed for clarity, speed, and delightful interactions across all devices.',
-        src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900',
+        src: '/images/portfolio/nebula/analytics.webp',
+        thumb: '/images/portfolio/nebula/analytics-sm.webp',
         left: '77%',
         top: '26%',
         depth: 2.0,
@@ -74,7 +78,8 @@ const items: NebulaEntry[] = [
         title: '3D Visual Direction',
         description:
             'Photorealistic 3D visuals and art direction that elevate product launches, campaigns, and immersive brand experiences.',
-        src: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=900',
+        src: '/images/portfolio/nebula/3d-visual.webp',
+        thumb: '/images/portfolio/nebula/3d-visual-sm.webp',
         left: '23%',
         top: '73%',
         depth: 2.2,
@@ -87,7 +92,8 @@ const items: NebulaEntry[] = [
         title: 'Campaign Creative',
         description:
             'High-impact social content and campaign visuals designed to stop the scroll, drive engagement, and grow your audience organically.',
-        src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=900',
+        src: '/images/portfolio/nebula/campaign.webp',
+        thumb: '/images/portfolio/nebula/campaign-sm.webp',
         left: '77%',
         top: '72%',
         depth: 2.4,
@@ -95,12 +101,6 @@ const items: NebulaEntry[] = [
         href: '/portfolio/digital-marketing',
     },
 ];
-
-// The grid/scatter thumbnails render at well under 400px; request a smaller
-// variant than the modal's full-size `item.src` to cut transfer bytes.
-function unsplashThumb(src: string, width: number): string {
-    return src.replace(/([?&])w=\d+/, `$1w=${width}`) + '&q=60&auto=format';
-}
 
 // ── Expand modal (portal, highest z-index, scroll-locked) ─────────────────────
 
@@ -246,7 +246,7 @@ function NebulaCard({ item, dx, dy, onSelect, intensity }: NebulaCardProps) {
                         onClick={onSelect}
                     >
                         <img
-                            src={unsplashThumb(item.src, 380)}
+                            src={item.thumb}
                             alt={item.title}
                             loading="lazy"
                             decoding="async"
@@ -407,7 +407,7 @@ export default function NebulaCluster() {
                             }`}
                         >
                             <img
-                                src={unsplashThumb(item.src, 380)}
+                                src={item.thumb}
                                 alt={item.title}
                                 loading="lazy"
                                 decoding="async"
