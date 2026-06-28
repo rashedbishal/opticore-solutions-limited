@@ -7,10 +7,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="icon" href="/favicon.ico" sizes="any">
 
-        {{-- Preload both logos immediately so they're ready before React paints the navbar.
-             media queries mirror the theme-detection script below: dark logo for dark preference, light otherwise. --}}
-        <link rel="preload" as="image" href="/images/logo/opticore.webp" media="(prefers-color-scheme: light)" fetchpriority="high">
-        <link rel="preload" as="image" href="/images/logo/opticore-white.webp" media="(prefers-color-scheme: dark)" fetchpriority="high">
+        {{-- Preload both logos so they're ready before React paints the navbar.
+             Both are ~7 KB so the cost of fetching both is negligible, and
+             media-query-conditioned preloads are poorly supported and cause
+             console warnings when the query doesn't match. --}}
+        <link rel="preload" as="image" href="/images/logo/opticore.webp" fetchpriority="high">
+        <link rel="preload" as="image" href="/images/logo/opticore-white.webp" fetchpriority="high">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
