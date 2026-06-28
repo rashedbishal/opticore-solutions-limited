@@ -964,7 +964,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                     {/* Currency + total */}
                                     <div className="mb-4 flex items-center justify-between">
                                         <div>
-                                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                            <p className="text-sm text-zinc-700 dark:text-zinc-200">
                                                 Total Due
                                             </p>
                                             {rateLoading &&
@@ -981,14 +981,14 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                                     {currency === 'BDT' &&
                                                         bdtRate !== null && (
                                                             <>
-                                                                <p className="text-[10px] text-zinc-400">
+                                                                <p className="text-[10px] text-zinc-500">
                                                                     1 USD = ৳
                                                                     {bdtRate.toFixed(
                                                                         2,
-                                                                    )}
+                                                                    )}*
                                                                 </p>
-                                                                <p className="mt-1 max-w-[160px] text-[10px] leading-relaxed text-zinc-400/70 dark:text-zinc-500">
-                                                                    Indicative
+                                                                <p className="mt-2 max-w-[220px] text-[10px] leading-relaxed text-zinc-400/90 dark:text-zinc-500">
+                                                                    *Indicative
                                                                     rate only.
                                                                     The final
                                                                     amount
