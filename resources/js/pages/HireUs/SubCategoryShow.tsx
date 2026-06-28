@@ -1119,10 +1119,13 @@ export default function SubCategoryShow({
     const openSupportChat = useCallback(() => {
         if (!auth.user) {
             router.visit('/login');
+
             return;
         }
+
         window.dispatchEvent(new CustomEvent('open-support-chat'));
     }, [auth.user]);
+
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [hasFilesFilter, setHasFilesFilter] = useState(false);
     // const [reviewPage, setReviewPage] = useState(1);
