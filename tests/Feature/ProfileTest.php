@@ -80,14 +80,14 @@ it('renders the profile page with the user\'s workflow tasks and processing orde
         ->get(route('profile'))
         ->assertInertia(fn (Assert $page) => $page
             ->component('Profile')
-            ->has('tasks', 1)
-            ->where('tasks.0.id', $task->id)
-            ->where('tasks.0.task_name', 'My Task')
-            ->where('tasks.0.sub_category', 'Logo Design')
-            ->where('tasks.0.order_number', $processingOrder->order_number)
-            ->has('orders', 1)
-            ->where('orders.0.id', $processingOrder->id)
-            ->where('orders.0.order_number', $processingOrder->order_number)
+            ->has('tasks.data', 1)
+            ->where('tasks.data.0.id', $task->id)
+            ->where('tasks.data.0.task_name', 'My Task')
+            ->where('tasks.data.0.sub_category', 'Logo Design')
+            ->where('tasks.data.0.order_number', $processingOrder->order_number)
+            ->has('orders.data', 1)
+            ->where('orders.data.0.id', $processingOrder->id)
+            ->where('orders.data.0.order_number', $processingOrder->order_number)
         );
 });
 

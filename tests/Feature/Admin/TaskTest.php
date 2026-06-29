@@ -19,7 +19,6 @@ it('displays the task creation page with required props', function () {
             ->component('Admin/Task/Create')
             ->has('categories')
             ->has('subCategoriesByCategory')
-            ->has('users')
         );
 });
 
@@ -72,7 +71,6 @@ it('displays the task edit page with required props', function () {
             ->has('task')
             ->has('categories')
             ->has('subCategoriesByCategory')
-            ->has('users')
         );
 });
 

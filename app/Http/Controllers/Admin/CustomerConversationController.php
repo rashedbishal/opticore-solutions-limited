@@ -46,8 +46,14 @@ class CustomerConversationController extends Controller
             ->orderByRaw('last_message_at DESC NULLS LAST')
             ->paginate(50);
 
-        $conversations->getCollection()->transform(function (Conversation $conversation) {
-            $conversation->setAttribute('is_online', Cache::has("user_chat_online_{$conversation->user_id}"));
+        $collection = $conversations->getCollection();
+
+        $onlineStatuses = Cache::many(
+            $collection->map(fn (Conversation $c) => "user_chat_online_{$c->user_id}")->all()
+        );
+
+        $collection->transform(function (Conversation $conversation) use ($onlineStatuses) {
+            $conversation->setAttribute('is_online', $onlineStatuses["user_chat_online_{$conversation->user_id}"] !== null);
 
             return $conversation;
         });
@@ -220,11 +226,15 @@ class CustomerConversationController extends Controller
 
         $messages = Message::whereKey($messageIds)->get(['id', 'conversation_id', 'delivered_at', 'read_at']);
 
-        foreach ($messages->groupBy('conversation_id') as $conversationId => $group) {
-            $this->broadcastMessageStatuses(
-                Conversation::find($conversationId),
-                $group,
-            );
+        $grouped = $messages->groupBy('conversation_id');
+
+        $conversations = Conversation::whereIn('id', $grouped->keys())->get()->keyBy('id');
+
+        foreach ($grouped as $conversationId => $group) {
+            $conversation = $conversations->get($conversationId);
+            if ($conversation) {
+                $this->broadcastMessageStatuses($conversation, $group);
+            }
         }
     }
 

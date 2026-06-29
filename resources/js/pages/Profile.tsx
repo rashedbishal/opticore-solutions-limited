@@ -77,9 +77,17 @@ interface PendingOrder {
     checkout_url: string;
 }
 
+interface Paginated<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    per_page: number;
+}
+
 interface Props {
-    tasks: WorkflowTask[];
-    orders: Order[];
+    tasks: Paginated<WorkflowTask>;
+    orders: Paginated<Order>;
     pendingOrders: PendingOrder[];
     notifyOrderUpdates: boolean;
     notifySecurityAlerts: boolean;
@@ -129,8 +137,6 @@ const stagger = {
     visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const TASKS_PER_PAGE = 4;
-const ORDERS_PER_PAGE = 3;
 const PENDING_ORDERS_PER_PAGE = 3;
 
 function Pagination({
@@ -381,8 +387,8 @@ export default function Profile() {
     const {
         auth,
         flash,
-        tasks = [],
-        orders = [],
+        tasks,
+        orders,
         pendingOrders = [],
         notifyOrderUpdates = true,
         notifySecurityAlerts = true,
@@ -420,30 +426,8 @@ export default function Profile() {
         errors: deleteErrors,
         reset: deleteReset,
     } = useForm({ password: '' });
-    const [taskPage, setTaskPage] = useState(1);
-    const [orderPage, setOrderPage] = useState(1);
     const [pendingOrderPage, setPendingOrderPage] = useState(1);
     const echoReady = useEchoReady();
-
-    const taskTotalPages = Math.max(
-        1,
-        Math.ceil(tasks.length / TASKS_PER_PAGE),
-    );
-    const currentTaskPage = Math.min(taskPage, taskTotalPages);
-    const paginatedTasks = tasks.slice(
-        (currentTaskPage - 1) * TASKS_PER_PAGE,
-        currentTaskPage * TASKS_PER_PAGE,
-    );
-
-    const orderTotalPages = Math.max(
-        1,
-        Math.ceil(orders.length / ORDERS_PER_PAGE),
-    );
-    const currentOrderPage = Math.min(orderPage, orderTotalPages);
-    const paginatedOrders = orders.slice(
-        (currentOrderPage - 1) * ORDERS_PER_PAGE,
-        currentOrderPage * ORDERS_PER_PAGE,
-    );
 
     const pendingOrderTotalPages = Math.max(
         1,
@@ -457,6 +441,26 @@ export default function Profile() {
         (currentPendingOrderPage - 1) * PENDING_ORDERS_PER_PAGE,
         currentPendingOrderPage * PENDING_ORDERS_PER_PAGE,
     );
+
+    function navigateTasks(page: number) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('tasks_page', String(page));
+        router.get('/profile', Object.fromEntries(params), {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['tasks'],
+        });
+    }
+
+    function navigateOrders(page: number) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('orders_page', String(page));
+        router.get('/profile', Object.fromEntries(params), {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['orders'],
+        });
+    }
 
     const { data, setData, put, processing, wasSuccessful } = useForm({
         name: auth.user?.name ?? '',
@@ -694,7 +698,7 @@ export default function Profile() {
                                     <div className="flex flex-row gap-4 sm:flex-col sm:items-end">
                                         <div className="text-center">
                                             <div className="text-2xl font-black text-theme">
-                                                {tasks.length}
+                                                {tasks?.total ?? 0}
                                             </div>
                                             <div className="text-xs font-bold text-theme-muted">
                                                 Orders
@@ -719,8 +723,8 @@ export default function Profile() {
                                                     My Workflow
                                                 </h2>
                                                 <p className="text-xs text-theme-muted">
-                                                    {tasks.length} task
-                                                    {tasks.length !== 1
+                                                    {tasks?.total ?? 0} task
+                                                    {(tasks?.total ?? 0) !== 1
                                                         ? 's'
                                                         : ''}
                                                 </p>
@@ -738,7 +742,7 @@ export default function Profile() {
                                         </Link>
                                     </motion.div>
 
-                                    {tasks.length === 0 ? (
+                                    {(tasks?.total ?? 0) === 0 ? (
                                         <motion.div
                                             variants={fadeUp}
                                             className="neo-panel flex flex-col items-center gap-3 rounded-3xl p-10 text-center"
@@ -758,17 +762,21 @@ export default function Profile() {
                                                 animate="visible"
                                                 className="space-y-3"
                                             >
-                                                {paginatedTasks.map((task) => (
-                                                    <WorkflowTaskCard
-                                                        key={task.id}
-                                                        task={task}
-                                                    />
-                                                ))}
+                                                {(tasks?.data ?? []).map(
+                                                    (task) => (
+                                                        <WorkflowTaskCard
+                                                            key={task.id}
+                                                            task={task}
+                                                        />
+                                                    ),
+                                                )}
                                             </motion.div>
                                             <Pagination
-                                                page={currentTaskPage}
-                                                totalPages={taskTotalPages}
-                                                onPageChange={setTaskPage}
+                                                page={tasks?.current_page ?? 1}
+                                                totalPages={
+                                                    tasks?.last_page ?? 1
+                                                }
+                                                onPageChange={navigateTasks}
                                             />
                                         </>
                                     )}
@@ -839,8 +847,8 @@ export default function Profile() {
                                                 My Orders
                                             </h2>
                                             <p className="text-xs text-theme-muted">
-                                                {orders.length} order
-                                                {orders.length !== 1
+                                                {orders?.total ?? 0} order
+                                                {(orders?.total ?? 0) !== 1
                                                     ? 's'
                                                     : ''}{' '}
                                                 in progress
@@ -848,7 +856,7 @@ export default function Profile() {
                                         </div>
                                     </motion.div>
 
-                                    {orders.length === 0 ? (
+                                    {(orders?.total ?? 0) === 0 ? (
                                         <motion.div
                                             variants={fadeUp}
                                             className="neo-panel flex flex-col items-center gap-3 rounded-3xl p-10 text-center"
@@ -867,7 +875,7 @@ export default function Profile() {
                                                 animate="visible"
                                                 className="space-y-3"
                                             >
-                                                {paginatedOrders.map(
+                                                {(orders?.data ?? []).map(
                                                     (order) => (
                                                         <OrderCard
                                                             key={order.id}
@@ -877,9 +885,11 @@ export default function Profile() {
                                                 )}
                                             </motion.div>
                                             <Pagination
-                                                page={currentOrderPage}
-                                                totalPages={orderTotalPages}
-                                                onPageChange={setOrderPage}
+                                                page={orders?.current_page ?? 1}
+                                                totalPages={
+                                                    orders?.last_page ?? 1
+                                                }
+                                                onPageChange={navigateOrders}
                                             />
                                         </>
                                     )}

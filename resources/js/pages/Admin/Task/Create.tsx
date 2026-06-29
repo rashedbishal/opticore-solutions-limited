@@ -9,14 +9,9 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import UserSearchCombobox from '@/components/Admin/UserSearchCombobox';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
 
 interface SubCategory {
     id: number;
@@ -27,7 +22,6 @@ interface SubCategory {
 interface Props {
     categories: Record<string, string>;
     subCategoriesByCategory: Record<string, SubCategory[]>;
-    users: User[];
 }
 
 const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
@@ -45,7 +39,6 @@ function formatBytes(bytes: number): string {
 export default function CreateTask({
     categories,
     subCategoriesByCategory,
-    users,
 }: Props) {
     const { data, setData, post, processing } = useForm<{
         client_name: string;
@@ -197,30 +190,11 @@ export default function CreateTask({
                             <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Client Email (User)
                             </label>
-                            <select
-                                name="user_id"
-                                value={data.user_id}
-                                onChange={(e) =>
-                                    setData(
-                                        'user_id',
-                                        parseInt(e.target.value, 10),
-                                    )
+                            <UserSearchCombobox
+                                onChange={(userId) =>
+                                    setData('user_id', userId)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            >
-                                <option value="" className="bg-[#060c1a]">
-                                    Select a user
-                                </option>
-                                {users.map((user) => (
-                                    <option
-                                        key={user.id}
-                                        value={user.id}
-                                        className="bg-[#060c1a]"
-                                    >
-                                        {user.name} ({user.email})
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div>

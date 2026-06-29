@@ -12,6 +12,7 @@ use App\Support\InvoicePdfBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -99,13 +100,15 @@ class TransactionController extends Controller
                 'card_type', 'card_issuer', 'card_issuer_country', 'currency_type', 'risk_title',
                 'amount_min', 'amount_max', 'store_amount_min', 'store_amount_max',
             ]),
-            'filterOptions' => [
-                'cardTypes' => Transaction::query()->whereNotNull('card_type')->distinct()->orderBy('card_type')->pluck('card_type'),
-                'cardIssuers' => Transaction::query()->whereNotNull('card_issuer')->distinct()->orderBy('card_issuer')->pluck('card_issuer'),
-                'cardIssuerCountries' => Transaction::query()->whereNotNull('card_issuer_country')->distinct()->orderBy('card_issuer_country')->pluck('card_issuer_country'),
-                'currencyTypes' => Transaction::query()->whereNotNull('currency_type')->distinct()->orderBy('currency_type')->pluck('currency_type'),
-                'riskTitles' => Transaction::query()->whereNotNull('risk_title')->distinct()->orderBy('risk_title')->pluck('risk_title'),
-            ],
+            'filterOptions' => Cache::remember('admin.transactions.filter-options', now()->addMinutes(10), function () {
+                return [
+                    'cardTypes' => Transaction::query()->whereNotNull('card_type')->distinct()->orderBy('card_type')->pluck('card_type'),
+                    'cardIssuers' => Transaction::query()->whereNotNull('card_issuer')->distinct()->orderBy('card_issuer')->pluck('card_issuer'),
+                    'cardIssuerCountries' => Transaction::query()->whereNotNull('card_issuer_country')->distinct()->orderBy('card_issuer_country')->pluck('card_issuer_country'),
+                    'currencyTypes' => Transaction::query()->whereNotNull('currency_type')->distinct()->orderBy('currency_type')->pluck('currency_type'),
+                    'riskTitles' => Transaction::query()->whereNotNull('risk_title')->distinct()->orderBy('risk_title')->pluck('risk_title'),
+                ];
+            }),
         ]);
     }
 

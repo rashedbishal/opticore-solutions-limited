@@ -244,6 +244,7 @@ class SslCommerzPaymentController extends Controller
                     PaymentReceived::dispatch($transaction);
                 }
 
+                Cache::forget('admin.transactions.filter-options');
                 TransactionUpdated::dispatch();
                 OrderUpdated::dispatch();
 
@@ -398,6 +399,7 @@ class SslCommerzPaymentController extends Controller
                     $this->provisionWorkflowTask($transaction);
                 }
 
+                Cache::forget('admin.transactions.filter-options');
                 OrderUpdated::dispatch();
 
                 return response('IPN OK', 200);

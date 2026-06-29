@@ -12,6 +12,7 @@ use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\TaskAttachment;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,23 +31,26 @@ class TaskController extends Controller
      *
      * @return array<string, array<int, array{id: int, name: string, slug: string}>>
      */
+    /** @return array<string, array<int, array{id: int, name: string, slug: string}>> */
     private function subCategoryOptionsByCategory(): array
     {
-        $result = [];
+        return Cache::remember('admin.task.sub-category-options', now()->addHour(), function () {
+            $result = [];
 
-        PortfolioSubCategory::orderBy('category_slug')
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get()
-            ->each(function (PortfolioSubCategory $s) use (&$result) {
-                $result[$s->category_slug][] = [
-                    'id' => $s->id,
-                    'name' => $s->name,
-                    'slug' => $s->slug,
-                ];
-            });
+            PortfolioSubCategory::orderBy('category_slug')
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get()
+                ->each(function (PortfolioSubCategory $s) use (&$result) {
+                    $result[$s->category_slug][] = [
+                        'id' => $s->id,
+                        'name' => $s->name,
+                        'slug' => $s->slug,
+                    ];
+                });
 
-        return $result;
+            return $result;
+        });
     }
 
     /** @return array<string, string> */
@@ -89,12 +93,27 @@ class TaskController extends Controller
         ]);
     }
 
+    public function userSearch(Request $request): JsonResponse
+    {
+        $q = $request->string('q')->trim()->toString();
+
+        return response()->json(
+            User::query()
+                ->where(function ($query) use ($q) {
+                    $query->where('name', 'ilike', "%{$q}%")
+                        ->orWhere('email', 'ilike', "%{$q}%");
+                })
+                ->orderBy('name')
+                ->limit(10)
+                ->get(['id', 'name', 'email'])
+        );
+    }
+
     public function create(): Response
     {
         return Inertia::render('Admin/Task/Create', [
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
-            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 
@@ -195,13 +214,18 @@ class TaskController extends Controller
 
     public function edit(Task $task): Response
     {
-        $task->loadMissing('attachments');
+        $task->loadMissing(['attachments', 'user']);
+
+        $currentUser = $task->user
+            ? ['id' => $task->user->id, 'name' => $task->user->name, 'email' => $task->user->email]
+            : null;
 
         return Inertia::render('Admin/Task/Edit', [
             'task' => [
                 'id' => $task->id,
                 'client_name' => $task->client_name,
                 'user_id' => $task->user_id,
+                'current_user' => $currentUser,
                 'category' => $task->category,
                 'sub_category_id' => $task->sub_category_id,
                 'task_name' => $task->task_name,
@@ -219,7 +243,6 @@ class TaskController extends Controller
             ],
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
-            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 

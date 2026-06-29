@@ -31,8 +31,8 @@ class ProfileController extends Controller
             'tasks' => Task::with(['subCategory', 'transaction'])
                 ->where('user_id', $user->id)
                 ->latest()
-                ->get()
-                ->map(fn (Task $task) => [
+                ->paginate(4, ['*'], 'tasks_page')
+                ->through(fn (Task $task) => [
                     'id' => $task->id,
                     'task_name' => $task->task_name,
                     'category' => $task->category,
@@ -46,8 +46,8 @@ class ProfileController extends Controller
                 ->where('email', $user->email)
                 ->where('status', 'Processing')
                 ->latest()
-                ->get()
-                ->map(fn (Transaction $transaction) => [
+                ->paginate(3, ['*'], 'orders_page')
+                ->through(fn (Transaction $transaction) => [
                     'id' => $transaction->id,
                     'order_number' => $transaction->order_number,
                     'invoice_number' => $transaction->invoice_number,

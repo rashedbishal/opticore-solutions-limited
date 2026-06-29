@@ -1,3 +1,4 @@
+import type { UserOption } from '@/components/Admin/UserSearchCombobox';
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import {
@@ -9,14 +10,9 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import UserSearchCombobox from '@/components/Admin/UserSearchCombobox';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
 
 interface SubCategory {
     id: number;
@@ -36,6 +32,7 @@ interface Task {
     id: number;
     client_name: string;
     user_id: number;
+    current_user: UserOption | null;
     category: string;
     sub_category_id: number | null;
     task_name: string;
@@ -50,14 +47,12 @@ interface Props {
     task: Task;
     categories: Record<string, string>;
     subCategoriesByCategory: Record<string, SubCategory[]>;
-    users: User[];
 }
 
 export default function EditTask({
     task,
     categories,
     subCategoriesByCategory,
-    users,
 }: Props) {
     const { data, setData, post, processing, errors } = useForm<{
         client_name: string;
@@ -168,30 +163,12 @@ export default function EditTask({
                             <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                                 Client Email (User)
                             </label>
-                            <select
-                                name="user_id"
-                                value={data.user_id}
-                                onChange={(e) =>
-                                    setData(
-                                        'user_id',
-                                        parseInt(e.target.value, 10),
-                                    )
+                            <UserSearchCombobox
+                                initialUser={task.current_user}
+                                onChange={(userId) =>
+                                    setData('user_id', userId)
                                 }
-                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
-                            >
-                                <option value="" className="bg-[#060c1a]">
-                                    Select a user
-                                </option>
-                                {users.map((user) => (
-                                    <option
-                                        key={user.id}
-                                        value={user.id}
-                                        className="bg-[#060c1a]"
-                                    >
-                                        {user.name} ({user.email})
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div>

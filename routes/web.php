@@ -235,6 +235,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('clients/{user}', [ClientController::class, 'show'])->name('clients.show')->withTrashed();
     Route::delete('clients/{user}', [ClientController::class, 'destroy'])->name('clients.destroy')->withTrashed();
+    Route::get('tasks/user-search', [TaskController::class, 'userSearch'])->name('tasks.user-search');
     Route::resource('tasks', TaskController::class);
 
     // Customer Support Chat Routes

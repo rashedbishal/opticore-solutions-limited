@@ -116,7 +116,7 @@ it('hides a single-payment offer from pending orders once it has been paid for',
         ->assertInertia(fn (Assert $page) => $page
             ->component('Profile')
             ->has('pendingOrders', 0)
-            ->has('orders', 1)
+            ->has('orders.data', 1)
         );
 });
 
@@ -136,7 +136,7 @@ it('hides a single-payment offer when the gateway charged a converted currency a
         ->assertInertia(fn (Assert $page) => $page
             ->component('Profile')
             ->has('pendingOrders', 0)
-            ->has('orders', 1)
+            ->has('orders.data', 1)
         );
 });
 
