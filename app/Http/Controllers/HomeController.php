@@ -66,6 +66,7 @@ class HomeController extends Controller
             'featuredPortfolios' => $featuredPortfolios,
             'brands' => $brands,
             'testimonials' => $testimonials,
+            'floatingCards' => Category::floatingCards(),
             'meta' => [
                 'title' => 'Opticore Solutions Ltd. — Premium Digital Agency',
                 'description' => 'We build brands that leave a lasting impression.',

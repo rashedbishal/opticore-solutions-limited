@@ -24,6 +24,12 @@ class Category extends Model
         'reasons',
         'process',
         'is_active',
+        'floating_card_enabled',
+        'floating_card_title',
+        'floating_card_description',
+        'floating_card_image',
+        'floating_card_thumb',
+        'floating_card_sort_order',
     ];
 
     /**
@@ -40,6 +46,8 @@ class Category extends Model
             'reasons' => 'array',
             'process' => 'array',
             'is_active' => 'boolean',
+            'floating_card_enabled' => 'boolean',
+            'floating_card_sort_order' => 'integer',
         ];
     }
 
@@ -70,6 +78,38 @@ class Category extends Model
                         'color' => $category->color,
                     ],
                 ])
+                ->toArray();
+        });
+    }
+
+    /**
+     * Cached list of categories enabled as homepage floating cards, ordered
+     * by `floating_card_sort_order` then `id`. Returns only categories that
+     * have both the enabled flag set and an image uploaded.
+     *
+     * @return array<int, array{id: int, category: string, title: string, description: string, image: string, thumb: string, href: string}>
+     */
+    public static function floatingCards(): array
+    {
+        return Cache::remember('categories.floating-cards', now()->addMinutes(60), function () {
+            return self::query()
+                ->where('floating_card_enabled', true)
+                ->whereNotNull('floating_card_image')
+                ->orderBy('floating_card_sort_order')
+                ->orderBy('id')
+                ->get()
+                ->map(fn (Category $category) => [
+                    'id' => $category->id,
+                    'category' => $category->label,
+                    'title' => $category->floating_card_title ?? $category->label,
+                    'description' => $category->floating_card_description ?? $category->description ?? '',
+                    'image' => asset('storage/'.$category->floating_card_image),
+                    'thumb' => $category->floating_card_thumb
+                        ? asset('storage/'.$category->floating_card_thumb)
+                        : asset('storage/'.$category->floating_card_image),
+                    'href' => '/portfolio/'.$category->slug,
+                ])
+                ->values()
                 ->toArray();
         });
     }

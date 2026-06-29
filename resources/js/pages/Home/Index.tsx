@@ -291,12 +291,27 @@ interface HomeTestimonial {
     image?: string | null;
 }
 
+interface FloatingCardData {
+    id: number;
+    category: string;
+    title: string;
+    description: string;
+    image: string;
+    thumb: string;
+    href: string;
+}
+
 interface HomeIndexProps {
     brands?: string[];
     testimonials?: HomeTestimonial[];
+    floatingCards?: FloatingCardData[];
 }
 
-export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
+export default function HomeIndex({
+    brands,
+    testimonials,
+    floatingCards,
+}: HomeIndexProps) {
     const { flash, categories } = usePage<SharedPageProps>().props;
     const [errorModalOpen, setErrorModalOpen] = useState(
         !!flash?.payment_error,
@@ -581,7 +596,7 @@ export default function HomeIndex({ brands, testimonials }: HomeIndexProps) {
                         color="rgb(6 182 212 / 0.14)"
                     />
                     <LazySection minHeightClassName="min-h-[90vh]">
-                        <NebulaCluster />
+                        <NebulaCluster cards={floatingCards} />
                     </LazySection>
                 </div>
 

@@ -56,6 +56,11 @@ class UpdateCategoryRequest extends FormRequest
             'process' => ['nullable', 'array'],
             'process.*.title' => ['required', 'string', 'max:100'],
             'process.*.description' => ['required', 'string', 'max:500'],
+
+            'floating_card_enabled' => ['boolean'],
+            'floating_card_title' => ['nullable', 'string', 'max:100'],
+            'floating_card_description' => ['nullable', 'string', 'max:600'],
+            'floating_card_sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ];
     }
 }

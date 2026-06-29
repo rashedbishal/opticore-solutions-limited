@@ -218,6 +218,8 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::post('categories/{category}/gallery', [AdminCategoryController::class, 'galleryStore'])->name('categories.gallery.store');
     Route::delete('categories/{category}/gallery/{item}', [AdminCategoryController::class, 'galleryDestroy'])->name('categories.gallery.destroy');
+    Route::post('categories/{category}/floating-card-images', [AdminCategoryController::class, 'floatingCardImagesStore'])->name('categories.floating-card-images.store');
+    Route::delete('categories/{category}/floating-card-images', [AdminCategoryController::class, 'floatingCardImagesDestroy'])->name('categories.floating-card-images.destroy');
     Route::resource('sub-categories', PortfolioSubCategoryController::class)->except(['show']);
     Route::post('sub-categories/{sub_category}/gallery', [PortfolioSubCategoryController::class, 'galleryStore'])->name('sub-categories.gallery.store');
     Route::delete('sub-categories/{sub_category}/gallery/{portfolio}', [PortfolioSubCategoryController::class, 'galleryDestroy'])->name('sub-categories.gallery.destroy');

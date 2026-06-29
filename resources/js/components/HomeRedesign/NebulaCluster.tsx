@@ -15,6 +15,16 @@ import { useLenis } from '@/hooks/useLenis';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTheme } from '@/hooks/useTheme';
 
+export interface FloatingCardData {
+    id: number;
+    category: string;
+    title: string;
+    description: string;
+    image: string;
+    thumb: string;
+    href: string;
+}
+
 interface NebulaEntry {
     id: number;
     category: string;
@@ -29,80 +39,113 @@ interface NebulaEntry {
     href: string;
 }
 
-const items: NebulaEntry[] = [
-    {
-        id: 1,
-        category: 'Brand Identity',
-        title: 'Visual Branding System',
-        description:
-            'A holistic brand identity crafted for modern businesses — from logo systems and colour palettes to typography and comprehensive brand guidelines that stand the test of time.',
-        src: '/images/portfolio/nebula/branding.webp',
-        thumb: '/images/portfolio/nebula/branding-sm.webp',
-        left: '50%',
-        top: '50%',
-        depth: 0.8,
-        isCenter: true,
-        href: '/portfolio/graphic-design',
-    },
-    {
-        id: 2,
-        category: 'Motion Design',
-        title: 'Motion Graphics Reel',
-        description:
-            'Dynamic motion graphics and animation sequences that captivate audiences and bring brand stories to life across every platform and format.',
-        src: '/images/portfolio/nebula/motion.webp',
-        thumb: '/images/portfolio/nebula/motion-sm.webp',
-        left: '23%',
-        top: '26%',
-        depth: 1.8,
-        isCenter: false,
-        href: '/portfolio/video-editing',
-    },
-    {
-        id: 3,
-        category: 'Web Design',
-        title: 'Analytics Dashboard',
-        description:
-            'Clean, data-rich interfaces that surface insights at a glance — designed for clarity, speed, and delightful interactions across all devices.',
-        src: '/images/portfolio/nebula/analytics.webp',
-        thumb: '/images/portfolio/nebula/analytics-sm.webp',
-        left: '77%',
-        top: '26%',
-        depth: 2.0,
-        isCenter: false,
-        href: '/portfolio/web-development',
-    },
-    {
-        id: 4,
-        category: '3D Production',
-        title: '3D Visual Direction',
-        description:
-            'Photorealistic 3D visuals and art direction that elevate product launches, campaigns, and immersive brand experiences.',
-        src: '/images/portfolio/nebula/3d-visual.webp',
-        thumb: '/images/portfolio/nebula/3d-visual-sm.webp',
-        left: '23%',
-        top: '73%',
-        depth: 2.2,
-        isCenter: false,
-        href: '/portfolio/3d-production',
-    },
-    {
-        id: 5,
-        category: 'Social Media',
-        title: 'Campaign Creative',
-        description:
-            'High-impact social content and campaign visuals designed to stop the scroll, drive engagement, and grow your audience organically.',
-        src: '/images/portfolio/nebula/campaign.webp',
-        thumb: '/images/portfolio/nebula/campaign-sm.webp',
-        left: '77%',
-        top: '72%',
-        depth: 2.4,
-        isCenter: false,
-        href: '/portfolio/digital-marketing',
-    },
-];
+interface CardPosition {
+    left: string;
+    top: string;
+    depth: number;
+    isCenter: boolean;
+}
+
+function computeCardPositions(n: number): CardPosition[] {
+    if (n === 0) {
+        return [];
+    }
+
+    if (n === 1) {
+        return [{ left: '50%', top: '50%', depth: 0.8, isCenter: true }];
+    }
+
+    if (n === 2) {
+        return [
+            { left: '30%', top: '50%', depth: 1.6, isCenter: false },
+            { left: '70%', top: '50%', depth: 1.8, isCenter: false },
+        ];
+    }
+
+    if (n === 3) {
+        return [
+            { left: '50%', top: '28%', depth: 1.6, isCenter: false },
+            { left: '25%', top: '68%', depth: 1.8, isCenter: false },
+            { left: '75%', top: '68%', depth: 2.0, isCenter: false },
+        ];
+    }
+
+    if (n === 4) {
+        return [
+            { left: '27%', top: '27%', depth: 1.6, isCenter: false },
+            { left: '73%', top: '27%', depth: 1.8, isCenter: false },
+            { left: '27%', top: '73%', depth: 2.0, isCenter: false },
+            { left: '73%', top: '73%', depth: 2.2, isCenter: false },
+        ];
+    }
+
+    if (n === 5) {
+        // Original 5-card layout preserved exactly
+        return [
+            { left: '50%', top: '50%', depth: 0.8, isCenter: true },
+            { left: '23%', top: '26%', depth: 1.8, isCenter: false },
+            { left: '77%', top: '26%', depth: 2.0, isCenter: false },
+            { left: '23%', top: '73%', depth: 2.2, isCenter: false },
+            { left: '77%', top: '72%', depth: 2.4, isCenter: false },
+        ];
+    }
+
+    if (n === 6) {
+        return [
+            { left: '50%', top: '50%', depth: 0.8, isCenter: true },
+            { left: '20%', top: '22%', depth: 1.8, isCenter: false },
+            { left: '80%', top: '22%', depth: 2.0, isCenter: false },
+            { left: '14%', top: '57%', depth: 2.1, isCenter: false },
+            { left: '86%', top: '57%', depth: 2.2, isCenter: false },
+            { left: '50%', top: '80%', depth: 2.3, isCenter: false },
+        ];
+    }
+
+    // 7+ cards: center + surrounding on an ellipse
+    const positions: CardPosition[] = [
+        { left: '50%', top: '50%', depth: 0.8, isCenter: true },
+    ];
+    const surrounding = n - 1;
+    const rx = 30;
+    const ry = 27;
+
+    for (let i = 0; i < surrounding; i++) {
+        const angle = (i / surrounding) * 2 * Math.PI - Math.PI / 2;
+        const left = 50 + rx * Math.cos(angle);
+        const top = 50 + ry * Math.sin(angle);
+        positions.push({
+            left: `${left.toFixed(1)}%`,
+            top: `${top.toFixed(1)}%`,
+            depth: 1.8 + i * 0.1,
+            isCenter: false,
+        });
+    }
+
+    return positions;
+}
 
 // ── Expand modal (portal, highest z-index, scroll-locked) ─────────────────────
+
+// Stagger variants for content lines inside the modal
+const modalContentVariants = {
+    hidden: {},
+    visible: {
+        transition: { staggerChildren: 0.08, delayChildren: 0.22 },
+    },
+    exit: {
+        transition: { staggerChildren: 0.04, staggerDirection: -1 },
+    },
+};
+
+const modalLineVariants = {
+    hidden: { opacity: 0, y: 18 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: 'spring' as const, damping: 22, stiffness: 260 },
+    },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.12 } },
+};
 
 function ExpandModal({
     item,
@@ -114,29 +157,74 @@ function ExpandModal({
     return createPortal(
         <AnimatePresence>
             {item && (
+                // Scrim — fades in independently so the iris and blur aren't coupled
                 <motion.div
-                    key="nebula-modal"
+                    key="nebula-modal-scrim"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     style={{ zIndex: 99999 }}
                     className="fixed inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
                     onPointerDown={onClose}
                 >
+                    {/* Ambient violet glow behind the card */}
                     <motion.div
-                        initial={{ scale: 0.88, opacity: 0, y: 20 }}
-                        animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.88, opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.4 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.4 }}
+                        transition={{
+                            duration: 0.55,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="pointer-events-none absolute h-[520px] w-[520px] rounded-full bg-violet-500/20 blur-3xl"
+                    />
+
+                    {/* Modal card — iris expand from center */}
+                    <motion.div
+                        key="nebula-modal-card"
+                        initial={{
+                            clipPath: 'inset(50% 50% 50% 50% round 24px)',
+                            scale: 0.9,
+                        }}
+                        animate={{
+                            clipPath: 'inset(0% 0% 0% 0% round 24px)',
+                            scale: 1,
+                        }}
+                        exit={{
+                            clipPath: 'inset(50% 50% 50% 50% round 24px)',
+                            scale: 0.9,
+                        }}
                         transition={{
                             type: 'spring',
-                            damping: 28,
-                            stiffness: 320,
+                            damping: 26,
+                            stiffness: 240,
                         }}
-                        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
+                        className="relative z-10 w-full max-w-lg overflow-hidden rounded-3xl border border-white/[0.08] bg-zinc-950"
+                        style={{
+                            boxShadow:
+                                '0 24px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.06), 0 0 80px rgba(124,58,237,0.18)',
+                        }}
                         onPointerDown={(e) => e.stopPropagation()}
                     >
-                        <div className="aspect-video w-full overflow-hidden">
+                        {/* Brand gradient top-edge line */}
+                        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-violet-500 via-cyan-400 to-violet-500" />
+
+                        {/* Decorative corner glows */}
+                        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-violet-500/10 blur-2xl" />
+                        <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-cyan-400/10 blur-2xl" />
+
+                        {/* Image — zooms from 110% to natural size as modal opens */}
+                        <motion.div
+                            className="relative aspect-video w-full overflow-hidden"
+                            initial={{ scale: 1.12 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 1.06 }}
+                            transition={{
+                                duration: 0.55,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                        >
                             <img
                                 src={item.src}
                                 alt={item.title}
@@ -145,38 +233,84 @@ function ExpandModal({
                                 className="h-full w-full object-cover"
                                 draggable={false}
                             />
-                        </div>
-                        <div className="p-6">
-                            <p className="text-xs font-bold tracking-widest text-cyan-600 uppercase dark:text-cyan-400">
-                                {item.category}
-                            </p>
-                            <h3 className="mt-2 text-2xl font-extrabold text-zinc-900 dark:text-zinc-100">
-                                {item.title}
-                            </h3>
-                            <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-400">
-                                {item.description}
-                            </p>
+                            {/* Gradient that fades the image into the card body */}
+                            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+                        </motion.div>
 
-                            <div className="mt-6 flex justify-end">
+                        {/* Staggered text content */}
+                        <motion.div
+                            className="relative z-10 -mt-8 px-7 pb-7"
+                            variants={modalContentVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                        >
+                            {/* Category pill badge */}
+                            <motion.span
+                                variants={modalLineVariants}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[10px] font-semibold tracking-[0.18em] text-violet-400 uppercase"
+                            >
+                                {item.category}
+                            </motion.span>
+
+                            <motion.h3
+                                variants={modalLineVariants}
+                                className="mt-3 text-2xl font-black tracking-tight text-white"
+                            >
+                                {item.title}
+                            </motion.h3>
+
+                            <motion.p
+                                variants={modalLineVariants}
+                                className="mt-3 text-sm leading-relaxed text-zinc-400"
+                            >
+                                {item.description}
+                            </motion.p>
+
+                            {/* Divider */}
+                            <motion.div
+                                variants={modalLineVariants}
+                                className="my-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                            />
+
+                            {/* CTA */}
+                            <motion.div
+                                variants={modalLineVariants}
+                                className="flex items-center justify-between"
+                            >
+                                <p className="text-xs text-zinc-600">
+                                    Click outside to close
+                                </p>
                                 <Link
                                     href={item.href}
-                                    className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 hover:bg-violet-700"
+                                    className="neo-btn-primary inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-white transition-transform hover:scale-105"
                                 >
                                     Explore Portfolio
                                     <ArrowUpRight className="h-4 w-4" />
                                 </Link>
-                            </div>
-                        </div>
-                        <button
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Close button — spins in with a delay */}
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.4, rotate: -45 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.4, rotate: 45 }}
+                            transition={{
+                                delay: 0.25,
+                                type: 'spring',
+                                damping: 18,
+                                stiffness: 280,
+                            }}
                             onPointerDown={(e) => {
                                 e.stopPropagation();
                                 onClose();
                             }}
                             aria-label="Close"
-                            className="absolute top-4 right-4 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+                            className="absolute top-4 right-4 z-30 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.08] text-zinc-400 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/15 hover:text-white"
                         >
-                            <X className="h-5 w-5" />
-                        </button>
+                            <X className="h-4 w-4" />
+                        </motion.button>
                     </motion.div>
                 </motion.div>
             )}
@@ -344,7 +478,11 @@ const WATERMARK = 'THE REAL OPTICORE';
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export default function NebulaCluster() {
+interface NebulaClusterProps {
+    cards?: FloatingCardData[];
+}
+
+export default function NebulaCluster({ cards = [] }: NebulaClusterProps) {
     const lenis = useLenis();
     const isMobile = useMediaQuery('(max-width: 767px)');
     const isTablet = useMediaQuery(
@@ -352,6 +490,19 @@ export default function NebulaCluster() {
     );
 
     const [selected, setSelected] = useState<number | null>(null);
+
+    const positions = computeCardPositions(cards.length);
+    const items: NebulaEntry[] = cards.map((card, index) => ({
+        id: card.id,
+        category: card.category,
+        title: card.title,
+        description: card.description,
+        src: card.image,
+        thumb: card.thumb,
+        href: card.href,
+        ...positions[index],
+    }));
+
     const selectedItem = items.find((i) => i.id === selected) ?? null;
 
     const mouseX = useMotionValue(0);
@@ -362,7 +513,6 @@ export default function NebulaCluster() {
 
     const watermarkX = useTransform(dx, [-0.5, 0.5], [-24, 24]);
     const watermarkY = useTransform(dy, [-0.5, 0.5], [-12, 12]);
-
 
     const intensity = isTablet ? 0.45 : 1.0;
 
@@ -398,6 +548,10 @@ export default function NebulaCluster() {
     const modal = (
         <ExpandModal item={selectedItem} onClose={() => setSelected(null)} />
     );
+
+    if (items.length === 0) {
+        return null;
+    }
 
     // ── Mobile: 2-col grid ────────────────────────────────────────────────────
     if (isMobile) {
@@ -455,7 +609,7 @@ export default function NebulaCluster() {
 
                     <motion.h2
                         style={{ x: watermarkX, y: watermarkY }}
-                        className="relative z-10 select-none text-7xl font-black tracking-tighter text-foreground uppercase md:text-9xl"
+                        className="relative z-10 text-7xl font-black tracking-tighter text-foreground uppercase select-none md:text-9xl"
                     >
                         {WATERMARK.split('').map((char, i) => (
                             <motion.span
@@ -476,7 +630,10 @@ export default function NebulaCluster() {
                                     delay: i * 0.09,
                                 }}
                                 style={{
-                                    display: char === ' ' ? 'inline' : 'inline-block',
+                                    display:
+                                        char === ' '
+                                            ? 'inline'
+                                            : 'inline-block',
                                 }}
                             >
                                 {char}

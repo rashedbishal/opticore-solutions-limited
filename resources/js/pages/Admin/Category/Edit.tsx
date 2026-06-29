@@ -2,6 +2,7 @@ import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import {
     ImageIcon,
+    Layers,
     Loader2,
     Minus,
     Plus,
@@ -63,6 +64,12 @@ interface CategoryData {
     reasons: TitledItem[];
     process: TitledItem[];
     portfolio_items: PortfolioItem[];
+    floating_card_enabled: boolean;
+    floating_card_title: string | null;
+    floating_card_description: string | null;
+    floating_card_image_url: string | null;
+    floating_card_thumb_url: string | null;
+    floating_card_sort_order: number;
 }
 
 interface Props {
@@ -105,6 +112,10 @@ export default function CategoryEdit({
         sub_services: category.sub_services,
         reasons: category.reasons,
         process: category.process,
+        floating_card_enabled: category.floating_card_enabled,
+        floating_card_title: category.floating_card_title ?? '',
+        floating_card_description: category.floating_card_description ?? '',
+        floating_card_sort_order: category.floating_card_sort_order,
     });
 
     const updateHeading = (
@@ -155,6 +166,20 @@ export default function CategoryEdit({
 
     const { delete: destroyItem, processing: destroyProcessing } = useForm();
 
+    const [floatingImgKey, setFloatingImgKey] = useState(0);
+    const {
+        data: floatingImgData,
+        setData: setFloatingImgData,
+        post: postFloatingImg,
+        processing: floatingImgProcessing,
+        reset: resetFloatingImg,
+    } = useForm({ image: null as File | null, thumb: null as File | null });
+
+    const {
+        delete: destroyFloatingImg,
+        processing: destroyFloatingImgProcessing,
+    } = useForm();
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -194,6 +219,34 @@ export default function CategoryEdit({
                     category: category.id,
                     item: itemId,
                 }),
+            );
+        });
+    };
+
+    const uploadFloatingImages: FormEventHandler = (e) => {
+        e.preventDefault();
+        postFloatingImg(
+            adminRoutes.categories.floatingCardImages.store.url(category.id),
+            {
+                forceFormData: true,
+                onSuccess: () => {
+                    resetFloatingImg();
+                    setFloatingImgKey((k) => k + 1);
+                },
+                onError: (errs) =>
+                    setErrorMessages(
+                        Object.values(errs).filter(Boolean) as string[],
+                    ),
+            },
+        );
+    };
+
+    const removeFloatingImages = () => {
+        requestDelete(() => {
+            destroyFloatingImg(
+                adminRoutes.categories.floatingCardImages.destroy.url(
+                    category.id,
+                ),
             );
         });
     };
@@ -640,6 +693,270 @@ export default function CategoryEdit({
                         </button>
                     </div>
                 </form>
+            </div>
+
+            {/* Floating Cards */}
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                <div className="mb-5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Layers className="h-4 w-4 text-violet-400" />
+                        <div>
+                            <h2 className="mb-0.5 text-base font-semibold tracking-wide text-white">
+                                Floating Cards
+                            </h2>
+                            <p className="text-sm text-zinc-400">
+                                Controls this category's card on the homepage
+                                NebulaCluster section.
+                            </p>
+                        </div>
+                    </div>
+                    <span
+                        className={`rounded-full border px-3 py-1 font-mono text-[10px] tracking-wide ${
+                            data.floating_card_enabled
+                                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                                : 'border-zinc-700 bg-zinc-800/50 text-zinc-500'
+                        }`}
+                    >
+                        {data.floating_card_enabled ? 'Enabled' : 'Disabled'}
+                    </span>
+                </div>
+
+                {/* Non-image fields go into the main category form */}
+                <form onSubmit={submit} className="space-y-4">
+                    <input type="hidden" name="_method" value="PUT" />
+
+                    <div className="flex items-center gap-3">
+                        <input
+                            id="floating_card_enabled"
+                            type="checkbox"
+                            checked={data.floating_card_enabled}
+                            onChange={(e) =>
+                                setData(
+                                    'floating_card_enabled',
+                                    e.target.checked,
+                                )
+                            }
+                            className="h-4 w-4 rounded border-white/20 bg-white/5 accent-violet-500"
+                        />
+                        <label
+                            htmlFor="floating_card_enabled"
+                            className="text-sm text-zinc-300"
+                        >
+                            Show this category as a floating card on the
+                            homepage
+                        </label>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label className={LABEL}>Card Title</label>
+                            <input
+                                type="text"
+                                value={data.floating_card_title}
+                                onChange={(e) =>
+                                    setData(
+                                        'floating_card_title',
+                                        e.target.value,
+                                    )
+                                }
+                                placeholder={`e.g. ${category.label} Showcase`}
+                                className={INPUT}
+                            />
+                        </div>
+                        <div>
+                            <label className={LABEL}>
+                                Sort Order{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (position among floating cards)
+                                </span>
+                            </label>
+                            <input
+                                type="number"
+                                min={0}
+                                value={data.floating_card_sort_order}
+                                onChange={(e) =>
+                                    setData(
+                                        'floating_card_sort_order',
+                                        Number(e.target.value),
+                                    )
+                                }
+                                className={INPUT}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className={LABEL}>Card Description</label>
+                        <textarea
+                            value={data.floating_card_description}
+                            onChange={(e) =>
+                                setData(
+                                    'floating_card_description',
+                                    e.target.value,
+                                )
+                            }
+                            rows={3}
+                            placeholder="Short description shown in the modal when the card is clicked."
+                            className={INPUT}
+                        />
+                    </div>
+
+                    <button
+                        disabled={processing}
+                        type="submit"
+                        className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
+                    >
+                        {processing ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                Saving...
+                            </>
+                        ) : (
+                            <>
+                                <Save className="h-4 w-4" /> Save Card Settings
+                            </>
+                        )}
+                    </button>
+                </form>
+
+                {/* Image upload — separate form because images can't travel with PUT */}
+                <div className="mt-6 space-y-4 border-t border-violet-500/10 pt-5">
+                    <p className="text-sm font-medium text-zinc-300">
+                        Card Images
+                    </p>
+
+                    {(category.floating_card_image_url ||
+                        category.floating_card_thumb_url) && (
+                        <div className="flex items-start gap-4">
+                            <div className="space-y-1">
+                                <p className="font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                    Full Image
+                                </p>
+                                <div className="aspect-[4/3] w-32 overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
+                                    <img
+                                        src={category.floating_card_image_url!}
+                                        alt="Floating card image"
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+                            </div>
+                            {category.floating_card_thumb_url &&
+                                category.floating_card_thumb_url !==
+                                    category.floating_card_image_url && (
+                                    <div className="space-y-1">
+                                        <p className="font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                            Thumbnail
+                                        </p>
+                                        <div className="aspect-[4/3] w-32 overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
+                                            <img
+                                                src={
+                                                    category.floating_card_thumb_url
+                                                }
+                                                alt="Floating card thumbnail"
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            <div className="pt-6">
+                                <button
+                                    type="button"
+                                    onClick={removeFloatingImages}
+                                    disabled={destroyFloatingImgProcessing}
+                                    className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    Remove images
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {!category.floating_card_image_url && (
+                        <div className="rounded-lg border border-dashed border-white/10 py-8 text-center">
+                            <ImageIcon className="mx-auto mb-2 h-8 w-8 text-zinc-600" />
+                            <p className="font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase">
+                                No images uploaded yet
+                            </p>
+                        </div>
+                    )}
+
+                    <form
+                        onSubmit={uploadFloatingImages}
+                        className="space-y-3 border-t border-violet-500/10 pt-4"
+                    >
+                        <p className="text-xs font-medium text-zinc-400">
+                            {category.floating_card_image_url
+                                ? 'Replace images'
+                                : 'Upload images'}
+                        </p>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                    Full Image{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (shown in modal — max 4MB)
+                                    </span>
+                                </label>
+                                <input
+                                    key={`img-${floatingImgKey}`}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={(e) =>
+                                        setFloatingImgData(
+                                            'image',
+                                            e.target.files?.[0] ?? null,
+                                        )
+                                    }
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                    Thumbnail{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (card preview — optional, max 2MB)
+                                    </span>
+                                </label>
+                                <input
+                                    key={`thumb-${floatingImgKey}`}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={(e) =>
+                                        setFloatingImgData(
+                                            'thumb',
+                                            e.target.files?.[0] ?? null,
+                                        )
+                                    }
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
+                                />
+                            </div>
+                        </div>
+                        <p className="text-xs text-zinc-500">
+                            If no thumbnail is uploaded, the full image is used
+                            for both.
+                        </p>
+                        <button
+                            type="submit"
+                            disabled={
+                                floatingImgProcessing || !floatingImgData.image
+                            }
+                            className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all before:pointer-events-none before:absolute before:inset-0 before:-translate-x-full before:-skew-x-12 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:transition-transform before:duration-500 hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 hover:shadow-[0_0_38px_rgba(124,58,237,0.65),inset_0_1px_0_rgba(255,255,255,0.2)] hover:before:translate-x-full disabled:opacity-50"
+                        >
+                            {floatingImgProcessing ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                                    Uploading…
+                                </>
+                            ) : (
+                                <>
+                                    <Upload className="h-4 w-4" /> Upload
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );

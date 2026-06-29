@@ -130,6 +130,16 @@ class CategoryController extends Controller
                 'sub_services' => $category->sub_services ?? [],
                 'reasons' => $category->reasons ?? [],
                 'process' => $category->process ?? [],
+                'floating_card_enabled' => $category->floating_card_enabled,
+                'floating_card_title' => $category->floating_card_title,
+                'floating_card_description' => $category->floating_card_description,
+                'floating_card_image_url' => $category->floating_card_image
+                    ? asset('storage/'.$category->floating_card_image)
+                    : null,
+                'floating_card_thumb_url' => $category->floating_card_thumb
+                    ? asset('storage/'.$category->floating_card_thumb)
+                    : null,
+                'floating_card_sort_order' => $category->floating_card_sort_order,
                 'portfolio_items' => $category->portfolioItems->map(fn (CategoryPortfolioItem $item) => [
                     'id' => $item->id,
                     'title' => $item->title,
@@ -183,13 +193,85 @@ class CategoryController extends Controller
             ->pluck('image')
             ->all();
 
+        $floatingImage = $category->floating_card_image;
+        $floatingThumb = $category->floating_card_thumb !== $category->floating_card_image
+            ? $category->floating_card_thumb
+            : null;
+
         $category->delete();
 
         Storage::disk('public')->delete($imagePaths);
 
+        if ($floatingImage) {
+            Storage::disk('public')->delete($floatingImage);
+        }
+        if ($floatingThumb) {
+            Storage::disk('public')->delete($floatingThumb);
+        }
+
         $this->flushCategoryCaches();
 
         return back()->with('success', 'Category deleted.');
+    }
+
+    public function floatingCardImagesStore(Request $request, Category $category): RedirectResponse
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'thumb' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $imagePath = $request->file('image')->store('categories/floating', 'public');
+
+        try {
+            $thumbPath = $request->hasFile('thumb')
+                ? $request->file('thumb')->store('categories/floating', 'public')
+                : null;
+
+            // Delete old images before replacing
+            if ($category->floating_card_image) {
+                Storage::disk('public')->delete($category->floating_card_image);
+            }
+            if ($category->floating_card_thumb && $category->floating_card_thumb !== $category->floating_card_image) {
+                Storage::disk('public')->delete($category->floating_card_thumb);
+            }
+
+            $category->update([
+                'floating_card_image' => $imagePath,
+                'floating_card_thumb' => $thumbPath,
+            ]);
+
+            Cache::forget('categories.floating-cards');
+        } catch (\Throwable $e) {
+            Storage::disk('public')->delete($imagePath);
+            if (isset($thumbPath)) {
+                Storage::disk('public')->delete($thumbPath);
+            }
+
+            throw $e;
+        }
+
+        return back()->with('success', 'Floating card images updated.');
+    }
+
+    public function floatingCardImagesDestroy(Category $category): RedirectResponse
+    {
+        if ($category->floating_card_image) {
+            Storage::disk('public')->delete($category->floating_card_image);
+        }
+        if ($category->floating_card_thumb && $category->floating_card_thumb !== $category->floating_card_image) {
+            Storage::disk('public')->delete($category->floating_card_thumb);
+        }
+
+        $category->update([
+            'floating_card_enabled' => false,
+            'floating_card_image' => null,
+            'floating_card_thumb' => null,
+        ]);
+
+        Cache::forget('categories.floating-cards');
+
+        return back()->with('success', 'Floating card images removed.');
     }
 
     public function galleryStore(Request $request, Category $category): RedirectResponse
@@ -239,6 +321,7 @@ class CategoryController extends Controller
     {
         Cache::forget('categories.config-shape');
         Cache::forget('categories.service-page-links');
+        Cache::forget('categories.floating-cards');
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget('hire-us.subcategories');
