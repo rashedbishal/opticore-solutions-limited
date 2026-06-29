@@ -1,6 +1,14 @@
 import type { BlogCategory } from '@/types/blog';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Layers, PenTool, Code2, Megaphone, Sparkles, Box } from 'lucide-react';
+import {
+    ChevronDown,
+    Layers,
+    PenTool,
+    Code2,
+    Megaphone,
+    Sparkles,
+    Box,
+} from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface FilterBarProps {
@@ -12,18 +20,38 @@ interface FilterBarProps {
 const getCategoryVisuals = (category: string) => {
     switch (category.toLowerCase()) {
         case 'design':
-            return { icon: PenTool, text: 'text-pink-500', bg: 'bg-pink-500/10' };
+            return {
+                icon: PenTool,
+                text: 'text-pink-500',
+                bg: 'bg-pink-500/10',
+            };
         case 'engineering':
         case 'tech':
             return { icon: Code2, text: 'text-cyan-500', bg: 'bg-cyan-500/10' };
         case 'marketing':
-            return { icon: Megaphone, text: 'text-orange-500', bg: 'bg-orange-500/10' };
+            return {
+                icon: Megaphone,
+                text: 'text-orange-500',
+                bg: 'bg-orange-500/10',
+            };
         case 'product':
-            return { icon: Box, text: 'text-emerald-500', bg: 'bg-emerald-500/10' };
+            return {
+                icon: Box,
+                text: 'text-emerald-500',
+                bg: 'bg-emerald-500/10',
+            };
         case 'all':
-            return { icon: Layers, text: 'text-violet-500', bg: 'bg-violet-500/10' };
+            return {
+                icon: Layers,
+                text: 'text-violet-500',
+                bg: 'bg-violet-500/10',
+            };
         default:
-            return { icon: Sparkles, text: 'text-blue-500', bg: 'bg-blue-500/10' };
+            return {
+                icon: Sparkles,
+                text: 'text-blue-500',
+                bg: 'bg-blue-500/10',
+            };
     }
 };
 
@@ -45,6 +73,7 @@ export default function FilterBar({
             }
         };
         document.addEventListener('mousedown', handleOutsideClick);
+
         return () =>
             document.removeEventListener('mousedown', handleOutsideClick);
     }, []);
@@ -60,11 +89,14 @@ export default function FilterBar({
     return (
         <div className="mb-12 md:mb-16">
             {/* ── Mobile dropdown (hidden on md+) ── */}
-            <div ref={dropdownRef} className="relative mx-auto max-w-sm md:hidden">
+            <div
+                ref={dropdownRef}
+                className="relative mx-auto max-w-sm md:hidden"
+            >
                 <button
                     type="button"
                     onClick={() => setDropdownOpen((prev) => !prev)}
-                    className="group flex w-full select-none items-center justify-between gap-3 rounded-2xl bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 px-5 py-3.5 text-sm font-semibold text-zinc-900 dark:text-white transition-all duration-200 active:scale-[0.98] shadow-sm"
+                    className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white px-5 py-3.5 text-sm font-semibold text-zinc-900 shadow-sm transition-all duration-200 select-none active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white"
                 >
                     <div className="flex items-center gap-3">
                         <div
@@ -86,21 +118,24 @@ export default function FilterBar({
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -6, scale: 0.97 }}
                             transition={{ duration: 0.18 }}
-                            className="absolute top-full left-0 right-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 p-1.5 shadow-xl"
+                            className="absolute top-full right-0 left-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
                         >
                             {categories.map((category) => {
                                 const visuals = getCategoryVisuals(category);
                                 const Icon = visuals.icon;
                                 const isActive = activeCategory === category;
+
                                 return (
                                     <button
                                         key={category}
                                         type="button"
-                                        onClick={() => handleTabSelect(category)}
-                                        className={`group flex w-full select-none items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 active:scale-[0.98] ${
+                                        onClick={() =>
+                                            handleTabSelect(category)
+                                        }
+                                        className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 select-none active:scale-[0.98] ${
                                             isActive
                                                 ? 'neo-btn-primary text-white'
-                                                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white'
+                                                : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white'
                                         }`}
                                     >
                                         <div
@@ -134,17 +169,17 @@ export default function FilterBar({
                                 key={category}
                                 type="button"
                                 onClick={() => handleTabSelect(category)}
-                                className={`group relative flex shrink-0 select-none items-center gap-2.5 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 ${
+                                className={`group relative flex shrink-0 items-center gap-2.5 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-300 select-none active:scale-95 ${
                                     isActive
                                         ? 'text-white'
-                                        : 'neo-btn-ghost text-zinc-600 dark:text-zinc-400 hover:-translate-y-0.5 hover:text-zinc-900 dark:hover:text-white'
+                                        : 'neo-btn-ghost text-zinc-600 hover:-translate-y-0.5 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
                                 }`}
                             >
                                 {/* Sliding primary pill */}
                                 {isActive && (
                                     <motion.div
                                         layoutId="blog-tab-active-bg"
-                                        className="absolute inset-0 neo-btn-primary"
+                                        className="neo-btn-primary absolute inset-0"
                                         transition={{
                                             type: 'spring',
                                             bounce: 0.18,
@@ -173,7 +208,7 @@ export default function FilterBar({
                     })}
                 </div>
             </div>
-            
+
             {/* Divider */}
             <div className="mt-8 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent dark:via-zinc-800" />
         </div>

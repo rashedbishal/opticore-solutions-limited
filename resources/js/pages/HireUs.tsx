@@ -48,6 +48,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
             }
         };
         document.addEventListener('mousedown', handleOutsideClick);
+
         return () =>
             document.removeEventListener('mousedown', handleOutsideClick);
     }, []);
@@ -106,22 +107,19 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     {/* Services Tabs */}
                     <section className="mb-6 md:mb-20">
                         {/* ── Mobile dropdown (hidden on md+) ── */}
-                        <div
-                            ref={dropdownRef}
-                            className="relative md:hidden"
-                        >
+                        <div ref={dropdownRef} className="relative md:hidden">
                             <button
                                 type="button"
-                                onClick={() =>
-                                    setDropdownOpen((prev) => !prev)
-                                }
-                                className="neo-btn-ghost group flex w-full select-none items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-sm font-semibold text-theme transition-all duration-200 active:scale-[0.98]"
+                                onClick={() => setDropdownOpen((prev) => !prev)}
+                                className="neo-btn-ghost group flex w-full items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-sm font-semibold text-theme transition-all duration-200 select-none active:scale-[0.98]"
                             >
                                 <div className="flex items-center gap-3">
                                     <div
                                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${activeTabData.bg} ${activeTabData.text}`}
                                     >
-                                        {ActiveIcon && <ActiveIcon className="h-4 w-4" />}
+                                        {ActiveIcon && (
+                                            <ActiveIcon className="h-4 w-4" />
+                                        )}
                                     </div>
                                     <span>{activeTabData.name}</span>
                                 </div>
@@ -149,12 +147,13 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                             scale: 0.97,
                                         }}
                                         transition={{ duration: 0.18 }}
-                                        className="neo-panel-elevated absolute top-full left-0 right-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl p-1.5"
+                                        className="neo-panel-elevated absolute top-full right-0 left-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl p-1.5"
                                     >
                                         {tabs.map((tab) => {
                                             const Icon = tab.icon;
                                             const isActive =
                                                 activeTab === tab.id;
+
                                             return (
                                                 <button
                                                     key={tab.id}
@@ -162,7 +161,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                                     onClick={() =>
                                                         handleTabSelect(tab.id)
                                                     }
-                                                    className={`group flex w-full select-none items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 active:scale-[0.98] ${
+                                                    className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 select-none active:scale-[0.98] ${
                                                         isActive
                                                             ? 'neo-btn-primary text-white'
                                                             : 'text-theme-muted hover:bg-theme-surface-hover hover:text-theme'
@@ -200,7 +199,7 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                             onClick={() =>
                                                 handleTabSelect(service.id)
                                             }
-                                            className={`group relative flex shrink-0 select-none items-center gap-2.5 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 ${
+                                            className={`group relative flex shrink-0 items-center gap-2.5 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-300 select-none active:scale-95 ${
                                                 isActive
                                                     ? 'text-white'
                                                     : 'neo-btn-ghost text-theme-muted hover:-translate-y-0.5 hover:text-theme'

@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import SectionHeader from '@/components/UI/SectionHeader';
 import { faqItems } from '@/lib/site';
 
 interface FaqItem {
@@ -44,11 +43,12 @@ export default function FAQ({ faqs = [] }: Props) {
                         className="mx-auto max-w-4xl text-center"
                     >
                         <span className="section-kicker mx-auto mb-6">FAQ</span>
-                        <h1 className="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl md:text-6xl">
+                        <h1 className="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-zinc-900 sm:text-5xl md:text-6xl dark:text-white">
                             Frequently Asked Questions
                         </h1>
                         <p className="mx-auto max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-                            Everything clients usually want to know before the first brief, call, or kickoff.
+                            Everything clients usually want to know before the
+                            first brief, call, or kickoff.
                         </p>
                     </motion.div>
 
@@ -69,7 +69,7 @@ export default function FAQ({ faqs = [] }: Props) {
                                             setOpenIndex(open ? null : index)
                                         }
                                     >
-                                        <span className="text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">
+                                        <span className="text-base font-semibold text-zinc-900 sm:text-lg dark:text-white">
                                             {item.question}
                                         </span>
                                         <motion.span
@@ -94,7 +94,7 @@ export default function FAQ({ faqs = [] }: Props) {
                                                 transition={{ duration: 0.25 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="border-t border-zinc-200 px-5 py-5 text-sm leading-7 text-zinc-600 dark:border-white/10 dark:text-zinc-400 sm:px-6">
+                                                <div className="border-t border-zinc-200 px-5 py-5 text-sm leading-7 text-zinc-600 sm:px-6 dark:border-white/10 dark:text-zinc-400">
                                                     {item.answer}
                                                 </div>
                                             </motion.div>

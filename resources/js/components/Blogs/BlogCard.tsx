@@ -16,7 +16,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
-            className="group glass-panel bg-white shadow-xl shadow-zinc-200/50 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 dark:border-white/5 transition-colors hover:border-primary/30 dark:hover:border-primary/30"
+            className="group glass-panel flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/50 transition-colors hover:border-primary/30 dark:border-white/5 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-primary/30"
         >
             <Link
                 href={`/blog/${post.slug}`}
@@ -38,7 +38,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
             </Link>
 
             <div className="flex flex-grow flex-col p-6 md:p-8">
-                <div className="mb-4 flex items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 dark:text-zinc-400 uppercase">
+                <div className="mb-4 flex items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
                     <span className="flex items-center gap-1.5">
                         <Clock className="h-3 w-3" />
                         {post.readTime}
@@ -48,7 +48,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
                 </div>
 
                 <Link href={`/blog/${post.slug}`}>
-                    <h3 className="mb-3 line-clamp-2 text-xl leading-tight font-bold text-zinc-900 dark:text-white transition-colors group-hover:text-primary dark:group-hover:text-primary">
+                    <h3 className="mb-3 line-clamp-2 text-xl leading-tight font-bold text-zinc-900 transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-primary">
                         {post.title}
                     </h3>
                 </Link>
@@ -59,7 +59,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
 
                 <Link
                     href={`/blog/${post.slug}`}
-                    className="group/btn mt-auto inline-flex items-center gap-2 text-xs font-bold tracking-widest text-zinc-900 dark:text-white uppercase"
+                    className="group/btn mt-auto inline-flex items-center gap-2 text-xs font-bold tracking-widest text-zinc-900 uppercase dark:text-white"
                 >
                     Read More
                     <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover/btn:translate-x-1" />

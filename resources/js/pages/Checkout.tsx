@@ -125,7 +125,7 @@ function MethodCard({ method }: { method: PaymentMethod }) {
                 className="h-7 w-auto max-w-[48px] object-contain"
                 draggable={false}
             />
-            <span className="text-[10px] font-semibold leading-tight text-zinc-500 dark:text-zinc-400">
+            <span className="text-[10px] leading-tight font-semibold text-zinc-500 dark:text-zinc-400">
                 {method.name}
             </span>
         </div>
@@ -528,7 +528,13 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
 
         container.innerHTML = '';
         container.appendChild(button);
-    }, [gpayScriptLoaded, gpayConfig, bdtRate, usdAmount, handleGooglePayClick]);
+    }, [
+        gpayScriptLoaded,
+        gpayConfig,
+        bdtRate,
+        usdAmount,
+        handleGooglePayClick,
+    ]);
 
     const displayPrice =
         currency === 'BDT' && bdtRate !== null
@@ -605,7 +611,6 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                         This gives mobile order: Order Details → Your Order → Payment Method
                     */}
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px] lg:grid-rows-[auto_auto]">
-
                         {/* ════════════════════════════════════════
                             01  ORDER DETAILS  (col 1, row 1)
                         ════════════════════════════════════════ */}
@@ -730,7 +735,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                 delay: 0.22,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="space-y-4 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24 lg:self-start"
+                            className="space-y-4 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start"
                         >
                             {/* ── UNIFIED CHECKOUT CARD ── */}
                             <div className={card3d}>
@@ -985,7 +990,8 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                                                     1 USD = ৳
                                                                     {bdtRate.toFixed(
                                                                         2,
-                                                                    )}*
+                                                                    )}
+                                                                    *
                                                                 </p>
                                                                 <p className="mt-2 max-w-[220px] text-[10px] leading-relaxed text-zinc-400/90 dark:text-zinc-500">
                                                                     *Indicative
@@ -1006,24 +1012,24 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                             )}
                                         </div>
                                         <div className="flex items-center gap-1 rounded-xl bg-zinc-100 p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.07)] dark:bg-zinc-800">
-                                            {(
-                                                ['USD', 'BDT'] as Currency[]
-                                            ).map((c) => (
-                                                <button
-                                                    key={c}
-                                                    type="button"
-                                                    onClick={() =>
-                                                        setCurrency(c)
-                                                    }
-                                                    className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition-all ${
-                                                        currency === c
-                                                            ? 'bg-white text-zinc-900 shadow-[0_1px_4px_rgba(0,0,0,0.1)] dark:bg-zinc-700 dark:text-white'
-                                                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                                                    }`}
-                                                >
-                                                    {c}
-                                                </button>
-                                            ))}
+                                            {(['USD', 'BDT'] as Currency[]).map(
+                                                (c) => (
+                                                    <button
+                                                        key={c}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setCurrency(c)
+                                                        }
+                                                        className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition-all ${
+                                                            currency === c
+                                                                ? 'bg-white text-zinc-900 shadow-[0_1px_4px_rgba(0,0,0,0.1)] dark:bg-zinc-700 dark:text-white'
+                                                                : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                                                        }`}
+                                                    >
+                                                        {c}
+                                                    </button>
+                                                ),
+                                            )}
                                         </div>
                                     </div>
 
@@ -1209,7 +1215,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                                 />
                                             ))}
                                             <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-violet-200 bg-violet-50/40 p-3 text-center dark:border-violet-800/40 dark:bg-violet-950/20">
-                                                <span className="text-[11px] font-bold leading-tight text-violet-400 dark:text-violet-500">
+                                                <span className="text-[11px] leading-tight font-bold text-violet-400 dark:text-violet-500">
                                                     & more
                                                 </span>
                                                 <span className="text-[9px] leading-tight text-violet-300 dark:text-violet-600">
@@ -1283,7 +1289,7 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
                                                 className="flex flex-col items-center gap-1.5 rounded-xl bg-white p-3 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,1),inset_0_0_0_1px_rgba(0,0,0,0.04)] dark:bg-zinc-800/60 dark:shadow-[0_2px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]"
                                             >
                                                 <Icon className="h-4 w-4 text-cyan-500" />
-                                                <span className="text-[10px] font-semibold leading-tight text-zinc-500 dark:text-zinc-400">
+                                                <span className="text-[10px] leading-tight font-semibold text-zinc-500 dark:text-zinc-400">
                                                     {label}
                                                 </span>
                                             </div>
