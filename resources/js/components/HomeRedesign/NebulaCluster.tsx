@@ -340,6 +340,8 @@ function StarField({
     );
 }
 
+const WATERMARK = 'THE REAL OPTICORE';
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function NebulaCluster() {
@@ -357,6 +359,10 @@ export default function NebulaCluster() {
     const springConfig = { damping: 25, stiffness: 150 };
     const dx = useSpring(mouseX, springConfig);
     const dy = useSpring(mouseY, springConfig);
+
+    const watermarkX = useTransform(dx, [-0.5, 0.5], [-24, 24]);
+    const watermarkY = useTransform(dy, [-0.5, 0.5], [-12, 12]);
+
 
     const intensity = isTablet ? 0.45 : 1.0;
 
@@ -447,9 +453,36 @@ export default function NebulaCluster() {
                         color="rgb(6 182 212 / 0.15)"
                     />
 
-                    <h2 className="relative z-10 text-7xl font-black tracking-tighter text-foreground uppercase opacity-[0.04] md:text-9xl">
-                        The Nebula
-                    </h2>
+                    <motion.h2
+                        style={{ x: watermarkX, y: watermarkY }}
+                        className="relative z-10 select-none text-7xl font-black tracking-tighter text-foreground uppercase md:text-9xl"
+                    >
+                        {WATERMARK.split('').map((char, i) => (
+                            <motion.span
+                                key={i}
+                                animate={{
+                                    opacity: [0.04, 0.55, 0.04],
+                                    textShadow: [
+                                        '0 0 0px transparent',
+                                        '0 0 16px rgba(139,92,246,0.95), 0 0 32px rgba(139,92,246,0.5), 0 0 60px rgba(99,102,241,0.3)',
+                                        '0 0 0px transparent',
+                                    ],
+                                }}
+                                transition={{
+                                    duration: 0.6,
+                                    repeat: Infinity,
+                                    repeatDelay: WATERMARK.length * 0.09 + 1.2,
+                                    ease: 'easeInOut',
+                                    delay: i * 0.09,
+                                }}
+                                style={{
+                                    display: char === ' ' ? 'inline' : 'inline-block',
+                                }}
+                            >
+                                {char}
+                            </motion.span>
+                        ))}
+                    </motion.h2>
                 </div>
 
                 <StarField dx={dx} dy={dy} intensity={intensity} />
