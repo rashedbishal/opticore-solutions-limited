@@ -110,6 +110,16 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 - Pest tests live in `tests/Feature` (mirrors `Admin/`, `Auth/`, `Console/`, `Support/` areas) and `tests/Unit`. There's heavy coverage of authorization edge cases — see `tests/Feature/Admin/AdminAuthorizationTest.php`, `AuthorizationGapsTest.php`, `BroadcastChannelAuthorizationTest.php`, and `AdminSessionInvalidationTest.php` as the reference pattern when adding any new permission-gated route or channel.
 - Two PHPUnit configs exist: `phpunit.xml` (default — this is what GitHub Actions CI runs, DB names `opticoresolutions_test`/`opticoresolutions_admin_test`) and `phpunit.pgsql.xml` (alternate local config, `APP_ENV=testing_pgsql`, different DB names `opticore_test`/`opticore_admin_test`). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.
 - Playwright e2e specs live in `e2e/` (numbered, e.g. `01-admin-login.spec.ts`) with shared helpers in `e2e/utils/`.
+- E2E tests require `APP_URL`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` env vars set locally. Admin journeys gracefully skip when these are missing. Contact form journey (`e2e/` Journey 6) is rate-limited at 5/min — don't run it in rapid succession.
+
+### SiteSetting singleton
+`SiteSetting` (`app/Models/SiteSetting.php`) is a single-row table for contact info, addresses, and social links. Always access it via `SiteSetting::current()` (cached indefinitely via `Cache::rememberForever`). `SiteSetting::forgetCache()` invalidates it. Edited from the admin `configuration` section. The `toPublicArray()` shape is what gets injected into shared Inertia props for the footer and contact page — don't read the model attributes directly on the frontend.
+
+### Career / Job listings
+`JobListing` and `JobApplication` are independent CMS-managed models. `CareerController` serves the public careers page (`/careers`). `Admin/JobListingController` and `Admin/JobApplicationController` manage listings and applications from the CMS. Both require the `job-listings` / `job-applications` permission keys respectively.
+
+### Vite bundle chunking
+`vite.config.ts` defines `manualChunks` that split vendor libraries into named chunks: `vendor-react` (react/react-dom/scheduler), `vendor-framer` (framer-motion), `vendor-three` (three.js/@react-three), `vendor-anim-misc` (gsap/animejs/lenis), `vendor-charts` (recharts), `vendor-radix` (radix-ui). When adding a new heavy library, add it to `manualChunks` and verify with `npm run perf:bundle-check` — the script fails the build on bundle size regression.
 
 <laravel-boost-guidelines>
 === foundation rules ===

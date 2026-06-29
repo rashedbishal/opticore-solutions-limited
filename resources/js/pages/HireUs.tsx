@@ -1,8 +1,8 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Star, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, ChevronDown, Layers, Star, Users, Zap } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import {
     resolveCategoryColor,
@@ -22,19 +22,71 @@ interface Props {
     subCategories: Record<string, HireUsSubCategory[]>;
 }
 
+type DisplayItem = HireUsSubCategory & { categorySlug: string };
+
+const ALL_TAB_ID = 'all';
+
 const HireUsPage = ({ subCategories = {} }: Props) => {
     const { categories } = usePage<SharedPageProps>().props;
 
+    const allTab = {
+        id: ALL_TAB_ID,
+        name: 'All Services',
+        icon: Layers,
+        text: 'text-violet-500',
+        bg: 'bg-violet-500/10',
+        swatch: 'bg-violet-500',
+    };
+
     // Tabs are fully CMS-driven: name, icon, and color all come from the
     // category's admin-managed fields, not a hardcoded list.
-    const tabs = Object.entries(categories).map(([slug, category]) => ({
-        id: slug,
-        name: category.label,
-        icon: resolveCategoryIcon(category.icon),
-        ...resolveCategoryColor(category.color),
-    }));
+    const tabs = [
+        allTab,
+        ...Object.entries(categories).map(([slug, category]) => ({
+            id: slug,
+            name: category.label,
+            icon: resolveCategoryIcon(category.icon),
+            ...resolveCategoryColor(category.color),
+        })),
+    ];
 
-    const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? '');
+    const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? ALL_TAB_ID);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () =>
+            document.removeEventListener('mousedown', handleOutsideClick);
+    }, []);
+
+    const activeTabData = tabs.find((t) => t.id === activeTab) ?? tabs[0];
+    const ActiveIcon = activeTabData?.icon ?? Layers;
+
+    // When "All" is active, flatten every category's items and attach their
+    // real category slug so the card links remain correct.
+    const displayItems: DisplayItem[] =
+        activeTab === ALL_TAB_ID
+            ? Object.entries(subCategories).flatMap(([catSlug, items]) =>
+                  items.map((item) => ({ ...item, categorySlug: catSlug })),
+              )
+            : (subCategories[activeTab] ?? []).map((item) => ({
+                  ...item,
+                  categorySlug: activeTab,
+              }));
+
+    const handleTabSelect = (id: string) => {
+        setActiveTab(id);
+        setDropdownOpen(false);
+    };
 
     return (
         <>
@@ -78,9 +130,91 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                     </section>
 
                     {/* Services Tabs */}
-                    <section className="mb-20 px-4">
-                        <div className="neo-panel-elevated mx-auto max-w-full rounded-[2.5rem] p-2 sm:w-max">
-                            <div className="flex w-full flex-wrap items-center justify-center gap-3 px-2 py-2">
+                    <section className="mb-20">
+                        {/* ── Mobile dropdown (hidden on md+) ── */}
+                        <div
+                            ref={dropdownRef}
+                            className="relative md:hidden"
+                        >
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setDropdownOpen((prev) => !prev)
+                                }
+                                className="neo-btn-ghost group flex w-full select-none items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-sm font-semibold text-theme transition-all duration-200 active:scale-[0.98]"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${activeTabData.bg} ${activeTabData.text}`}
+                                    >
+                                        <ActiveIcon className="h-4 w-4" />
+                                    </div>
+                                    <span>{activeTabData.name}</span>
+                                </div>
+                                <ChevronDown
+                                    className={`h-4 w-4 shrink-0 text-theme-muted transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
+                                />
+                            </button>
+
+                            <AnimatePresence>
+                                {dropdownOpen && (
+                                    <motion.div
+                                        initial={{
+                                            opacity: 0,
+                                            y: -6,
+                                            scale: 0.97,
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: 1,
+                                        }}
+                                        exit={{
+                                            opacity: 0,
+                                            y: -6,
+                                            scale: 0.97,
+                                        }}
+                                        transition={{ duration: 0.18 }}
+                                        className="neo-panel-elevated absolute top-full left-0 right-0 z-50 mt-2 max-h-[60vh] overflow-y-auto rounded-2xl p-1.5"
+                                    >
+                                        {tabs.map((tab) => {
+                                            const Icon = tab.icon;
+                                            const isActive =
+                                                activeTab === tab.id;
+                                            return (
+                                                <button
+                                                    key={tab.id}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleTabSelect(tab.id)
+                                                    }
+                                                    className={`group flex w-full select-none items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 active:scale-[0.98] ${
+                                                        isActive
+                                                            ? 'neo-btn-primary text-white'
+                                                            : 'text-theme-muted hover:bg-theme-surface-hover hover:text-theme'
+                                                    }`}
+                                                >
+                                                    <div
+                                                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-150 ${
+                                                            isActive
+                                                                ? 'bg-white/20 text-white'
+                                                                : `${tab.bg} ${tab.text} group-hover:scale-110`
+                                                        }`}
+                                                    >
+                                                        <Icon className="h-3.5 w-3.5" />
+                                                    </div>
+                                                    {tab.name}
+                                                </button>
+                                            );
+                                        })}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* ── Desktop pill tabs (hidden on mobile) ── */}
+                        <div className="hidden md:block">
+                            <div className="flex flex-wrap items-center justify-center gap-2">
                                 {tabs.map((service) => {
                                     const Icon = service.icon;
                                     const isActive = activeTab === service.id;
@@ -90,33 +224,40 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                             key={service.id}
                                             type="button"
                                             onClick={() =>
-                                                setActiveTab(service.id)
+                                                handleTabSelect(service.id)
                                             }
-                                            className={`group relative flex shrink-0 items-center gap-3 rounded-2xl px-6 py-4 transition-all duration-500 active:scale-95 ${
+                                            className={`group relative flex shrink-0 select-none items-center gap-2.5 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold transition-all duration-300 active:scale-95 ${
                                                 isActive
-                                                    ? 'neo-btn-primary z-10'
-                                                    : 'neo-btn-ghost hover:z-10 hover:-translate-y-1'
+                                                    ? 'text-white'
+                                                    : 'neo-btn-ghost text-theme-muted hover:-translate-y-0.5 hover:text-theme'
                                             }`}
                                         >
-                                            {/* Icon Container */}
+                                            {/* Sliding violet pill */}
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="hire-tab-active-bg"
+                                                    className="neo-btn-primary absolute inset-0"
+                                                    transition={{
+                                                        type: 'spring',
+                                                        bounce: 0.18,
+                                                        duration: 0.45,
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Icon badge — always shows category color */}
                                             <div
-                                                className={`drop-icon relative flex items-center justify-center rounded-xl p-2 transition-all duration-500 ${
+                                                className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-all duration-300 ${
                                                     isActive
-                                                        ? 'bg-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_-1px_2px_rgba(0,0,0,0.2)]'
-                                                        : `${service.bg} ${service.text} group-hover:scale-110 group-hover:bg-theme-surface`
+                                                        ? 'bg-white/20 text-white'
+                                                        : `${service.bg} ${service.text} group-hover:scale-110`
                                                 }`}
                                             >
-                                                <Icon className="h-5 w-5" />
+                                                <Icon className="h-4 w-4" />
                                             </div>
 
                                             {/* Label */}
-                                            <span
-                                                className={`font-bold whitespace-nowrap transition-all duration-500 ${
-                                                    isActive
-                                                        ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]'
-                                                        : 'text-theme-muted group-hover:text-theme'
-                                                }`}
-                                            >
+                                            <span className="relative z-10 whitespace-nowrap">
                                                 {service.name}
                                             </span>
                                         </button>
@@ -124,6 +265,9 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                                 })}
                             </div>
                         </div>
+
+                        {/* Divider */}
+                        <div className="mt-8 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent dark:via-zinc-800" />
                     </section>
 
                     {/* Marketplace Grid */}
@@ -136,62 +280,66 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
                             transition={{ duration: 0.4 }}
                             className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
                         >
-                            {(subCategories[activeTab] || []).map(
-                                (item, idx) => (
-                                    <motion.div
-                                        key={item.slug}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
-                                        className="group glass-panel overflow-hidden rounded-[2.5rem] border border-theme transition-all duration-500 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10"
+                            {displayItems.map((item, idx) => (
+                                <motion.div
+                                    key={`${item.categorySlug}-${item.slug}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="group glass-panel overflow-hidden rounded-[2.5rem] border border-theme transition-all duration-500 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10"
+                                >
+                                    <Link
+                                        href={`/hire-us/${item.categorySlug}/${item.slug}`}
                                     >
-                                        <Link
-                                            href={`/hire-us/${activeTab}/${item.slug}`}
-                                        >
-                                            {/* Image */}
-                                            <div className="relative h-64 overflow-hidden">
-                                                <img
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                />
-                                                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
-                                                <div className="absolute top-4 right-4 rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white shadow-lg">
-                                                    Starts at {item.price}
-                                                </div>
+                                        {/* Image */}
+                                        <div className="relative h-64 overflow-hidden">
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            />
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                                            <div className="absolute top-4 right-4 rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white shadow-lg">
+                                                Starts at {item.price}
                                             </div>
+                                        </div>
 
-                                            {/* Info */}
-                                            <div className="p-8">
-                                                <div className="mb-4 flex items-center justify-between">
-                                                    <div className="flex items-center gap-1 text-amber-400">
-                                                        <Star className="h-4 w-4 fill-current" />
-                                                        <span className="text-sm font-bold text-theme">
-                                                            {item.rating}
-                                                        </span>
-                                                        <span className="text-xs text-theme-muted">
-                                                            ({item.reviews})
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <h3 className="mb-6 text-2xl font-black tracking-tight text-theme transition-colors group-hover:text-violet-500">
-                                                    {item.name}
-                                                </h3>
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-sm font-bold text-theme-muted transition-colors group-hover:text-theme">
-                                                        View Marketplace
+                                        {/* Info */}
+                                        <div className="p-8">
+                                            <div className="mb-4 flex items-center justify-between">
+                                                <div className="flex items-center gap-1 text-amber-400">
+                                                    <Star className="h-4 w-4 fill-current" />
+                                                    <span className="text-sm font-bold text-theme">
+                                                        {item.rating}
                                                     </span>
-                                                    <div className="rounded-full bg-theme-surface p-3 text-theme transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white">
-                                                        <ArrowRight className="h-5 w-5" />
-                                                    </div>
+                                                    <span className="text-xs text-theme-muted">
+                                                        ({item.reviews})
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-theme-muted">
+                                                    <Users className="h-4 w-4" />
+                                                    <span className="text-xs">
+                                                        24 Active
+                                                    </span>
                                                 </div>
                                             </div>
-                                        </Link>
-                                    </motion.div>
-                                ),
-                            )}
+                                            <h3 className="mb-6 text-2xl font-black tracking-tight text-theme transition-colors group-hover:text-violet-500">
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-bold text-theme-muted transition-colors group-hover:text-theme">
+                                                    View Marketplace
+                                                </span>
+                                                <div className="rounded-full bg-theme-surface p-3 text-theme transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white">
+                                                    <ArrowRight className="h-5 w-5" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            ))}
                         </motion.section>
                     </AnimatePresence>
                 </div>
