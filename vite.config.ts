@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
@@ -27,9 +27,11 @@ export default defineConfig({
         host: 'localhost',
     },
 
-    ssr: {
-        noExternal: true,
-    },
+    // noExternal bundles all deps into the SSR output for deployment
+    // environments without node_modules, but breaks Vite 8's Rolldown-based
+    // module runner in dev (CJS globals like `module` aren't shimmed in the
+    // ESM eval context). Omit entirely in dev so Vite resolves deps natively.
+    ...(command === 'build' && { ssr: { noExternal: true } }),
 
     build: {
         rollupOptions: {
@@ -90,4 +92,4 @@ export default defineConfig({
         globals: true,
         setupFiles: ['./resources/js/test-setup.js'],
     },
-});
+}));

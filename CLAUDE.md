@@ -93,6 +93,8 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 - `resources/js/actions` and `resources/js/routes` are **Wayfinder-generated** — don't hand-edit; run `php artisan wayfinder:generate` instead.
 - `resources/js/components/UI` holds shared/shadcn-derived primitives (see `components.json`); check there before adding a new component.
 - Heavy/animated homepage sections are `React.lazy()`-loaded with `<Suspense>` to keep initial bundle small — follow this pattern for similarly heavy new sections (see `PERFORMANCE.md`).
+- **React Compiler** (`babel-plugin-react-compiler`) is enabled globally in `vite.config.ts`. Do **not** add manual `useMemo`, `useCallback`, or `React.memo` — the compiler handles all memoization automatically.
+- `vite.config.ts` defines explicit `manualChunks` splitting heavy libraries into named vendor chunks (`vendor-react`, `vendor-framer`, `vendor-three`, `vendor-gsap`, `vendor-lenis`, `vendor-animejs`, `vendor-charts`, `vendor-radix`). Add a new entry if you introduce a comparably heavy dependency.
 
 ### Task workflow & payment → task pipeline
 `TaskGenerator::createFromTransaction()` is called after a successful payment and auto-provisions a `Task` record linked to the `Transaction`. It's idempotent (checks for a duplicate `transaction_id` first) and silently skips if there's no matching `User` for the transaction email. The generated task name is built from `Category::configShape()` — don't call `Category` directly inside `TaskGenerator`.
@@ -102,6 +104,15 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 
 ### Mother admin recovery
 `php artisan admin:reset-mother-admin-credentials` — interactive "break glass" command that creates or resets the mother admin account and enforces the one-mother-admin invariant. Use it when the mother admin is locked out. Only one `is_super_admin` account is expected to exist; the command offers to demote any others.
+
+### Blog
+`Blog` model stores `category` as a plain string (no FK to `Category`). `BlogController` caches the listing and individual post pages (`blog.index`, `blog.show.{slug}` keys, 60 min). `Admin/BlogController` busts `blog.index` on every write and also `blog.show.{slug}` on update/delete — follow this same dual-forget pattern if you add any new blog-derived cache.
+
+### Career & job applications
+`JobListing` (has `is_active`, `sort_order`) drives the public career page. `CareerController::apply()` uploads résumés to the `local` disk under `resumes/` — intentionally not publicly accessible. `Admin/JobApplicationController` provides staff download access to résumés; `Admin/JobListingController` manages the listings.
+
+### Other CMS-managed homepage content
+`Brand` (logo marquee), `Testimonial`, `Faq`, and `ClientReview` are each managed by a corresponding `Admin/*Controller`. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
 
 ### Known open bug
 `PortfolioSubCategoryController::update` throws `Undefined array key "slug"` when the payload omits the slug field (slug is auto-generated on create but not on update). Work around by always including slug in update payloads. See `docs/qa-bugs.md` for details.
