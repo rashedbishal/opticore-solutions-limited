@@ -184,7 +184,9 @@ class ConversationController extends Controller
             abort(401);
         }
 
-        if (! $admin) {
+        if ($admin) {
+            abort_unless($admin->canAccess('customer-conversations'), 403);
+        } else {
             if ($message->conversation->user_id !== $user->id) {
                 abort(403);
             }

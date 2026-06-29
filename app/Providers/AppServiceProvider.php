@@ -93,6 +93,24 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('payment-callback', function (Request $request) {
             return Limit::perMinute(60)->by($request->ip());
         });
+
+        // Authenticated user↔admin conversation chat.
+        // Keyed by user ID rather than IP — these routes are behind `auth`,
+        // so the user is always resolved, and per-user caps are fairer than
+        // per-IP caps on shared networks (e.g. a company using a single NAT).
+        //
+        // user-chat-message: send-message endpoint — 20/min is comfortable
+        //   for real conversation but blocks any flood attempt.
+        // user-chat-presence: background heartbeat calls (ping, offline, read,
+        //   init, messages fetch) — 30/min allows normal polling cadence (~1
+        //   ping per 30 s = 2/min) with headroom for rapid UI interactions.
+        RateLimiter::for('user-chat-message', function (Request $request) {
+            return Limit::perMinute(20)->by('ucm:'.$request->user()?->getAuthIdentifier());
+        });
+
+        RateLimiter::for('user-chat-presence', function (Request $request) {
+            return Limit::perMinute(30)->by('ucp:'.$request->user()?->getAuthIdentifier());
+        });
     }
 
     /**

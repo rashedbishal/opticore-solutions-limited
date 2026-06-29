@@ -146,12 +146,12 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::post('/reviews', [ClientReviewController::class, 'store'])->name('reviews.store')->middleware('throttle:5,1');
 
         // User Chat Routes
-        Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init');
-        Route::get('/user-chat/{conversation}/messages', [ConversationController::class, 'fetchMessages'])->name('user.chat.messages');
-        Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send');
-        Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read');
-        Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping');
-        Route::post('/user-chat/offline', [ConversationController::class, 'goOffline'])->name('user.chat.offline');
+        Route::post('/user-chat/init', [ConversationController::class, 'init'])->name('user.chat.init')->middleware('throttle:user-chat-presence');
+        Route::get('/user-chat/{conversation}/messages', [ConversationController::class, 'fetchMessages'])->name('user.chat.messages')->middleware('throttle:user-chat-presence');
+        Route::post('/user-chat/{conversation}/message', [ConversationController::class, 'sendMessage'])->name('user.chat.send')->middleware('throttle:user-chat-message');
+        Route::post('/user-chat/{conversation}/read', [ConversationController::class, 'markAsRead'])->name('user.chat.read')->middleware('throttle:user-chat-presence');
+        Route::post('/user-chat/ping', [ConversationController::class, 'pingOnline'])->name('user.chat.ping')->middleware('throttle:user-chat-presence');
+        Route::post('/user-chat/offline', [ConversationController::class, 'goOffline'])->name('user.chat.offline')->middleware('throttle:user-chat-presence');
     });
 });
 
