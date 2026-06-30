@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\Offer;
+use App\Models\OfferMilestone;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
@@ -154,14 +158,22 @@ class ClientController extends Controller
         }
 
         DB::transaction(function () use ($user) {
-            foreach ($user->conversations as $conversation) {
-                foreach ($conversation->offers as $offer) {
-                    $offer->milestones()->delete();
+            $user->load('conversations');
+
+            $conversationIds = $user->conversations->pluck('id');
+
+            if ($conversationIds->isNotEmpty()) {
+                $offerIds = Offer::whereIn('conversation_id', $conversationIds)->pluck('id');
+
+                if ($offerIds->isNotEmpty()) {
+                    OfferMilestone::whereIn('offer_id', $offerIds)->delete();
+                    Offer::whereIn('id', $offerIds)->delete();
                 }
-                $conversation->offers()->delete();
-                $conversation->messages()->delete();
+
+                Message::whereIn('conversation_id', $conversationIds)->delete();
+                Conversation::whereIn('id', $conversationIds)->delete();
             }
-            $user->conversations()->delete();
+
             $user->tasks()->delete();
             $user->forceDelete();
         });

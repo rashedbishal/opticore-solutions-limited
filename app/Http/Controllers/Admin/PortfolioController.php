@@ -24,19 +24,23 @@ class PortfolioController extends Controller
      */
     private function subCategoryOptionsByCategory(): array
     {
-        $result = [];
+        $result = Cache::remember('admin.task.sub-category-options', now()->addHour(), function () {
+            $data = [];
 
-        PortfolioSubCategory::orderBy('category_slug')
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get()
-            ->each(function (PortfolioSubCategory $s) use (&$result) {
-                $result[$s->category_slug][] = [
-                    'id' => $s->id,
-                    'name' => $s->name,
-                    'slug' => $s->slug,
-                ];
-            });
+            PortfolioSubCategory::orderBy('category_slug')
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get()
+                ->each(function (PortfolioSubCategory $s) use (&$data) {
+                    $data[$s->category_slug][] = [
+                        'id' => $s->id,
+                        'name' => $s->name,
+                        'slug' => $s->slug,
+                    ];
+                });
+
+            return $data;
+        });
 
         return $result;
     }
