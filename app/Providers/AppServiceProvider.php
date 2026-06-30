@@ -104,6 +104,15 @@ class AppServiceProvider extends ServiceProvider
         // user-chat-presence: background heartbeat calls (ping, offline, read,
         //   init, messages fetch) — 30/min allows normal polling cadence (~1
         //   ping per 30 s = 2/min) with headroom for rapid UI interactions.
+        RateLimiter::for('subscription', function (Request $request) {
+            $email = Str::lower($request->string('email'));
+
+            return [
+                Limit::perMinute(3)->by($request->ip()),
+                Limit::perHour(2)->by('subscription:'.$email),
+            ];
+        });
+
         RateLimiter::for('user-chat-message', function (Request $request) {
             return Limit::perMinute(20)->by('ucm:'.$request->user()?->getAuthIdentifier());
         });

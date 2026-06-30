@@ -157,8 +157,8 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
 
 // Subscription (public)
 Route::get('/subscription/check', [SubscriptionController::class, 'check'])->name('subscription.check')->middleware('throttle:5,1');
-Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe')->middleware('throttle:5,1');
-Route::post('/subscription/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('subscription.unsubscribe')->middleware('throttle:5,1');
+Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe')->middleware('throttle:subscription');
+Route::post('/subscription/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('subscription.unsubscribe')->middleware('throttle:subscription');
 
 // Subscription confirmation links — clicked from the emailed confirm link,
 // never called by frontend JS, so only the signed signature (not a request
