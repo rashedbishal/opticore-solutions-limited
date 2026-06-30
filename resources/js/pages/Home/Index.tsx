@@ -470,10 +470,7 @@ export default function HomeIndex({
                 <GradientOrb
                     className="top-20 left-[-4rem] h-64 w-64 md:h-80 md:w-80"
                     color="rgb(124 58 237 / 0.55)"
-                    direction="d
-                        From stunning visuals to powerful digital strategies —
-                        Opticore Solutions Ltd. turns your vision into results.
-                    </motion.p>own"
+                    direction="down"
                 />
                 <GradientOrb
                     className="top-[20%] right-[-2rem] h-60 w-60 md:h-72 md:w-72"
