@@ -123,7 +123,12 @@ interface TestimonialCardProps {
     compact?: boolean;
 }
 
-function TestimonialCard({ item, colorIndex, isActive, compact = false }: TestimonialCardProps) {
+function TestimonialCard({
+    item,
+    colorIndex,
+    isActive,
+    compact = false,
+}: TestimonialCardProps) {
     const initials = item.name
         .split(' ')
         .map((n) => n[0])
@@ -170,7 +175,9 @@ function TestimonialCard({ item, colorIndex, isActive, compact = false }: Testim
 
             <div className="relative z-0 flex h-full flex-col">
                 {/* Header row */}
-                <div className={`${compact ? 'mb-3' : 'mb-4'} flex items-start justify-between gap-2`}>
+                <div
+                    className={`${compact ? 'mb-3' : 'mb-4'} flex items-start justify-between gap-2`}
+                >
                     {/* Elevated quote icon */}
                     <Quote className="drop-icon dark:drop-icon h-7 w-7 flex-shrink-0 text-violet-500/80 dark:text-violet-400/80" />
                     {/* Elevated stars */}
@@ -198,7 +205,9 @@ function TestimonialCard({ item, colorIndex, isActive, compact = false }: Testim
                 </p>
 
                 {/* Author (Elevated content) */}
-                <div className={`${compact ? 'mt-4' : 'mt-6'} flex items-center gap-4`}>
+                <div
+                    className={`${compact ? 'mt-4' : 'mt-6'} flex items-center gap-4`}
+                >
                     {item.image ? (
                         <div className="neo-btn-ghost relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full p-1">
                             <img

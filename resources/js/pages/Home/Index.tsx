@@ -563,7 +563,6 @@ export default function HomeIndex({
                             )}
                         </div>
                     ) : null}
-
                 </div>
             </section>
 
