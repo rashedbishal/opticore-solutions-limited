@@ -470,7 +470,10 @@ export default function HomeIndex({
                 <GradientOrb
                     className="top-20 left-[-4rem] h-64 w-64 md:h-80 md:w-80"
                     color="rgb(124 58 237 / 0.55)"
-                    direction="down"
+                    direction="d
+                        From stunning visuals to powerful digital strategies —
+                        Opticore Solutions Ltd. turns your vision into results.
+                    </motion.p>own"
                 />
                 <GradientOrb
                     className="top-[20%] right-[-2rem] h-60 w-60 md:h-72 md:w-72"
@@ -561,18 +564,6 @@ export default function HomeIndex({
                         </div>
                     ) : null}
 
-                    {/*<motion.div*/}
-                    {/*    variants={fadeUp}*/}
-                    {/*    initial="hidden"*/}
-                    {/*    animate="visible"*/}
-                    {/*    transition={{ delay: 0.75 }}*/}
-                    {/*    className="mt-16 flex flex-col items-center gap-2 text-zinc-400"*/}
-                    {/*>*/}
-                    {/*    <span className="text-xs font-semibold tracking-[0.24em] uppercase">*/}
-                    {/*        Scroll*/}
-                    {/*    </span>*/}
-                    {/*    <ArrowDown className="h-5 w-5 animate-bounce text-cyan-300" />*/}
-                    {/*</motion.div>*/}
                 </div>
             </section>
 

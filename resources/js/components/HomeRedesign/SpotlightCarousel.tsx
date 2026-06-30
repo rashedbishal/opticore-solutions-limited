@@ -120,9 +120,10 @@ interface TestimonialCardProps {
     item: Testimonial;
     colorIndex: number;
     isActive: boolean;
+    compact?: boolean;
 }
 
-function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
+function TestimonialCard({ item, colorIndex, isActive, compact = false }: TestimonialCardProps) {
     const initials = item.name
         .split(' ')
         .map((n) => n[0])
@@ -147,7 +148,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
 
     return (
         <div
-            className={`relative flex h-full flex-col overflow-hidden rounded-3xl p-7 transition-all duration-[1.4s] ease-[cubic-bezier(0.8,0,0.2,1)] ${
+            className={`relative flex h-full flex-col overflow-hidden rounded-3xl transition-all duration-[1.4s] ease-[cubic-bezier(0.8,0,0.2,1)] ${compact ? 'p-5' : 'p-7'} ${
                 isActive
                     ? `${activeBg} ${activeShadowLight} ${activeShadowDark}`
                     : `${inactiveBg} ${inactiveShadowLight} ${inactiveShadowDark}`
@@ -169,7 +170,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
 
             <div className="relative z-0 flex h-full flex-col">
                 {/* Header row */}
-                <div className="mb-4 flex items-start justify-between gap-2">
+                <div className={`${compact ? 'mb-3' : 'mb-4'} flex items-start justify-between gap-2`}>
                     {/* Elevated quote icon */}
                     <Quote className="drop-icon dark:drop-icon h-7 w-7 flex-shrink-0 text-violet-500/80 dark:text-violet-400/80" />
                     {/* Elevated stars */}
@@ -197,7 +198,7 @@ function TestimonialCard({ item, colorIndex, isActive }: TestimonialCardProps) {
                 </p>
 
                 {/* Author (Elevated content) */}
-                <div className="mt-6 flex items-center gap-4">
+                <div className={`${compact ? 'mt-4' : 'mt-6'} flex items-center gap-4`}>
                     {item.image ? (
                         <div className="neo-btn-ghost relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full p-1">
                             <img
@@ -270,13 +271,21 @@ export default function SpotlightCarousel({
         return () => ro.disconnect();
     }, []);
 
+    const isExtraSmall = containerWidth < 375;
+
     const cardWidth = useMemo(
-        () => Math.min(containerWidth * 0.52, 440),
+        () =>
+            containerWidth < 375
+                ? containerWidth * 0.84
+                : Math.min(containerWidth * 0.52, 440),
         [containerWidth],
     );
 
     const sideOffset = useMemo(
-        () => Math.min(containerWidth * 0.34, 350),
+        () =>
+            containerWidth < 375
+                ? containerWidth * 0.86
+                : Math.min(containerWidth * 0.34, 350),
         [containerWidth],
     );
 
@@ -345,13 +354,24 @@ export default function SpotlightCarousel({
 
     const getAnimate = useCallback(
         (pos: CardPosition) => {
+            const sideScale = isExtraSmall ? 0.7 : 0.83;
+            const sideOpacity = isExtraSmall ? 0.28 : 0.58;
+
             switch (pos) {
                 case 'center':
                     return { x: 0, scale: 1, opacity: 1 };
                 case 'left':
-                    return { x: -sideOffset, scale: 0.83, opacity: 0.58 };
+                    return {
+                        x: -sideOffset,
+                        scale: sideScale,
+                        opacity: sideOpacity,
+                    };
                 case 'right':
-                    return { x: sideOffset, scale: 0.83, opacity: 0.58 };
+                    return {
+                        x: sideOffset,
+                        scale: sideScale,
+                        opacity: sideOpacity,
+                    };
                 case 'hidden-left':
                     return {
                         x: -(containerWidth * 0.78),
@@ -366,7 +386,7 @@ export default function SpotlightCarousel({
                     };
             }
         },
-        [sideOffset, containerWidth],
+        [sideOffset, containerWidth, isExtraSmall],
     );
 
     // Drag / swipe handlers (pointer events at container level)
@@ -420,11 +440,13 @@ export default function SpotlightCarousel({
                 <div
                     className="relative flex items-center justify-center overflow-visible"
                     style={{
-                        height: STAGE_HEIGHT,
-                        maskImage:
-                            'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
-                        WebkitMaskImage:
-                            'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
+                        height: isExtraSmall ? 380 : STAGE_HEIGHT,
+                        maskImage: isExtraSmall
+                            ? 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
+                            : 'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
+                        WebkitMaskImage: isExtraSmall
+                            ? 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
+                            : 'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
                     }}
                 >
                     {items.map((item, i) => {
@@ -448,7 +470,7 @@ export default function SpotlightCarousel({
                                 className="absolute"
                                 style={{
                                     width: cardWidth,
-                                    height: CARD_HEIGHT,
+                                    height: isExtraSmall ? 360 : CARD_HEIGHT,
                                     left: '50%',
                                     marginLeft: -cardWidth / 2,
                                     zIndex,
@@ -492,6 +514,7 @@ export default function SpotlightCarousel({
                                     item={item}
                                     colorIndex={i}
                                     isActive={isCenter}
+                                    compact={isExtraSmall}
                                 />
                             </motion.div>
                         );

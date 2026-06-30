@@ -56,7 +56,6 @@ Routes under `admin.permission` derive the required key from the route name auto
 - `app/Library/SslCommerz/` wraps the SSLCommerz gateway SDK; `SslCommerzPaymentController` exposes `/pay-via-ajax`, `/success`, `/fail`, `/cancel`, `/ipn` (all under `throttle:payment-callback`, CSRF-exempt since the gateway POSTs directly).
 - `GooglePayCheckoutController` + `app/Support/GooglePaySslCommerz.php` implement Google Pay via SSLCommerz's Merchant-Hosted Payment API (`/gpay/config`, `/gpay/charge`).
 - `app/Support/PendingOrderResolver.php`, `PaymentReturnToken.php`, and `IdGenerator.php` support the checkout/offer-acceptance → pending-order → transaction pipeline. `InvoicePdfBuilder.php` (with `spatie/laravel-pdf`) generates downloadable/verifiable invoices (`orders/{transaction}/invoice`, signed verify link).
-- See `[[project_sslcommerz_instructions]]`-style context in memory for the gateway setup sequence; don't re-derive it from scratch.
 
 ### Offers & customer conversations
 Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer conversation thread (`Conversation`/`Message`); the client views/accepts/declines via a signed-token URL (`/offer/{token}`). Accepting an offer feeds the checkout/payment pipeline. `app/Events/` has granular broadcast events for offers, orders, transactions, tasks, and conversations — check for an existing event before adding ad hoc broadcasting.
@@ -83,25 +82,40 @@ Admins build line-itemed `Offer`s (with `OfferMilestone`s) inside a customer con
 SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`, `gpay/*`, `offer/*`, and `orders/*` via `HandleInertiaRequests::$withoutSsr`. If a page in those paths appears to hydrate differently from public pages, that's why.
 
 ### SiteSetting singleton
-`SiteSetting::current()` returns the single settings row, cached **permanently** (`Cache::rememberForever`). After any write to `SiteSetting`, call `SiteSetting::forgetCache()` or the stale values will persist in cache. `Admin/ConfigurationController` already does this — follow that pattern.
+`SiteSetting` (`app/Models/SiteSetting.php`) is a single-row table for contact info, addresses, and social links. Always access it via `SiteSetting::current()` (cached indefinitely via `Cache::rememberForever`). `SiteSetting::forgetCache()` invalidates it. Edited from the admin `configuration` section. The `toPublicArray()` shape is what gets injected into shared Inertia props for the footer and contact page — don't read the model attributes directly on the frontend. `Admin/ConfigurationController` already calls `forgetCache()` on write — follow that pattern.
 
 ### Post-payment task provisioning
 `TaskGenerator::createFromTransaction(Transaction $transaction)` is called after a successful SSLCommerz payment to auto-create a `Task` record for the order (keyed by `transaction_id`, idempotent). It looks up the `User` by email from the transaction, derives the category from `Category::configShape()`, and sends `TaskStatusMail`. If you modify the `Transaction` → `Task` pipeline, verify idempotency (it guards on existing `task.transaction_id`). `CheckoutMetadata` stores buyer notes and file attachment paths (keyed by `upload_token` / `transaction_id`) from the checkout form; read it inside `PendingOrderResolver` when building the pending order.
+
+### Blog system
+`Blog` (`app/Models/Blog.php`) is a standalone CMS model for editorial posts. `BlogController` serves the public listing (`/blogs`) and single-post (`/blogs/{slug}`) pages, both cached for 60 minutes (`blog.index`, `blog.show.{slug}`). `Admin/BlogController` manages CRUD from the CMS. Blog posts are not linked to `Category` at the model level — the listing page passes category labels from `Category::configShape()` purely for frontend filtering. If you add any cache derived from blog data, bust it inside `Admin/BlogController`.
+
+### Other CMS-managed content models
+These simpler models are managed through the admin CMS and are largely independent of the core business logic:
+- `Portfolio` / `PortfolioSubCategory` — `Admin/PortfolioController` / `Admin/PortfolioSubCategoryController`. See Known open bug below for the SubCategory update issue.
+- `Brand`, `Testimonial`, `ClientReview`, `Faq` — each has a corresponding `Admin/*Controller`; content is surfaced on public pages via shared or per-page props.
 
 ### Frontend structure
 - Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.
 - `resources/js/actions` and `resources/js/routes` are **Wayfinder-generated** — don't hand-edit; run `php artisan wayfinder:generate` instead.
 - `resources/js/components/UI` holds shared/shadcn-derived primitives (see `components.json`); check there before adding a new component.
 - Heavy/animated homepage sections are `React.lazy()`-loaded with `<Suspense>` to keep initial bundle small — follow this pattern for similarly heavy new sections (see `PERFORMANCE.md`).
+<<<<<<< HEAD
 - **React Compiler** (`babel-plugin-react-compiler`) is enabled globally in `vite.config.ts`. Do **not** add manual `useMemo`, `useCallback`, or `React.memo` — the compiler handles all memoization automatically.
 - `vite.config.ts` defines explicit `manualChunks` splitting heavy libraries into named vendor chunks (`vendor-react`, `vendor-framer`, `vendor-three`, `vendor-gsap`, `vendor-lenis`, `vendor-animejs`, `vendor-charts`, `vendor-radix`). Add a new entry if you introduce a comparably heavy dependency.
+=======
+>>>>>>> ecc1f39 (made the testimonial section responsive to very small width mobile devices)
 
 ### Redis dependency
 `SESSION_DRIVER`, `CACHE_STORE`, and `QUEUE_CONNECTION` all point to Redis. The dev stack (`composer dev`) won't behave correctly without a running Redis instance. The contact form (`ContactController::store`) dispatches `ProcessContactMessage` to the queue — this mail is never sent synchronously.
 
+### Vite bundle chunking
+`vite.config.ts` defines `manualChunks` that split vendor libraries into named chunks: `vendor-react` (react/react-dom/scheduler), `vendor-framer` (framer-motion), `vendor-three` (three.js/@react-three), `vendor-anim-misc` (gsap/animejs/lenis), `vendor-charts` (recharts), `vendor-radix` (radix-ui). When adding a new heavy library, add it to `manualChunks` and verify with `npm run perf:bundle-check` — the script fails the build on bundle size regression.
+
 ### Mother admin recovery
 `php artisan admin:reset-mother-admin-credentials` — interactive "break glass" command that creates or resets the mother admin account and enforces the one-mother-admin invariant. Use it when the mother admin is locked out. Only one `is_super_admin` account is expected to exist; the command offers to demote any others.
 
+<<<<<<< HEAD
 ### Blog
 `Blog` model stores `category` as a plain string (no FK to `Category`). `BlogController` caches the listing and individual post pages (`blog.index`, `blog.show.{slug}` keys, 60 min). `Admin/BlogController` busts `blog.index` on every write and also `blog.show.{slug}` on update/delete — follow this same dual-forget pattern if you add any new blog-derived cache.
 
@@ -110,6 +124,10 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 
 ### Other CMS-managed homepage content
 `Brand` (logo marquee), `Testimonial`, `Faq`, and `ClientReview` are each managed by a corresponding `Admin/*Controller`. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
+=======
+### Career / Job listings
+`JobListing` and `JobApplication` are independent CMS-managed models. `CareerController` serves the public careers page (`/careers`). `Admin/JobListingController` and `Admin/JobApplicationController` manage listings and applications from the CMS. Both require the `job-listings` / `job-applications` permission keys respectively.
+>>>>>>> ecc1f39 (made the testimonial section responsive to very small width mobile devices)
 
 ### Known open bug
 `PortfolioSubCategoryController::update` throws `Undefined array key "slug"` when the payload omits the slug field (slug is auto-generated on create but not on update). Work around by always including slug in update payloads. See `docs/qa-bugs.md` for details.
@@ -119,6 +137,7 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 - Two PHPUnit configs exist: `phpunit.xml` (default — this is what GitHub Actions CI runs, DB names `opticoresolutions_test`/`opticoresolutions_admin_test`) and `phpunit.pgsql.xml` (alternate local config, `APP_ENV=testing_pgsql`, different DB names `opticore_test`/`opticore_admin_test`). Both use Postgres for both the default and `admin` connections — there is no SQLite-in-memory shortcut here.
 - Playwright e2e specs live in `e2e/` (numbered, e.g. `01-admin-login.spec.ts`) with shared helpers in `e2e/utils/`.
 - E2E tests require `APP_URL`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` env vars set locally. Admin journeys gracefully skip when these are missing. Contact form journey (`e2e/` Journey 6) is rate-limited at 5/min — don't run it in rapid succession.
+<<<<<<< HEAD
 
 <laravel-boost-guidelines>
 === foundation rules ===
@@ -318,3 +337,5 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 - IMPORTANT: Activate `inertia-react-development` when working with Inertia React client-side patterns.
 
 </laravel-boost-guidelines>
+=======
+>>>>>>> ecc1f39 (made the testimonial section responsive to very small width mobile devices)
