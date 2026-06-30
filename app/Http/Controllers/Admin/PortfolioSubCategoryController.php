@@ -292,6 +292,8 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$subCategory->category_slug}");
+        Cache::forget('hire-us.subcategories');
+        Cache::forget("hire-us.siblings.{$subCategory->category_slug}");
 
         return back()->with('success', 'Media added to gallery.');
     }
@@ -309,6 +311,8 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget("portfolio.subcategories.{$subCategory->category_slug}");
+        Cache::forget('hire-us.subcategories');
+        Cache::forget("hire-us.siblings.{$subCategory->category_slug}");
 
         return back()->with('success', 'Media removed from gallery.');
     }

@@ -9,7 +9,7 @@
 - Workaround in tests: Always supply slug in payload, matching HireUsPageTest.php convention
 - Impact: If the frontend CMS form ever omits slug on edit, the update will crash
 - Priority: High — data loss risk on content edits
-- Status: Open — not fixed (fix is out of QA scope)
+- Status: Fixed — slug is now auto-generated from name in the update method when omitted
 
 ## Known Test Limitations (Phase 4)
 
