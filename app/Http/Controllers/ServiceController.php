@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\CategoryPortfolioItem;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,13 +12,20 @@ class ServiceController extends Controller
 {
     public function show(string $slug): Response
     {
-        $category = Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $serviceData = Cache::remember("categories.service-page.{$slug}", now()->addMinutes(60), function () use ($slug) {
+            $category = Category::where('slug', $slug)
+                ->where('is_active', true)
+                ->with('portfolioItems')
+                ->firstOrFail();
+
+            return $this->present($category);
+        });
 
         return Inertia::render('Services/Show', [
-            'service' => $this->present($category),
+            'service' => $serviceData,
             'meta' => [
-                'title' => "{$category->label} — Opticore Solutions Ltd.",
-                'description' => $category->description,
+                'title' => "{$serviceData['name']} — Opticore Solutions Ltd.",
+                'description' => $serviceData['shortDescription'],
             ],
         ]);
     }

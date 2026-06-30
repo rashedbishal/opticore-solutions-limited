@@ -8,6 +8,7 @@ use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ClientReviewController extends Controller
 {
@@ -61,6 +62,9 @@ class ClientReviewController extends Controller
 
         // Recalculate and persist the subcategory's aggregate rating and review count.
         $this->recalculateSubCategoryStats((int) $task->sub_category_id);
+
+        Cache::forget("hire-us.reviews.{$task->sub_category_id}");
+        Cache::forget('hire-us.recommended-pool');
 
         return back()->with('success', 'Your review has been submitted. Thank you!');
     }

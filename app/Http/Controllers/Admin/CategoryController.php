@@ -83,7 +83,7 @@ class CategoryController extends Controller
         $validated['slug'] = $this->uniqueSlug($base);
 
         Category::create($validated);
-        $this->flushCategoryCaches();
+        $this->flushCategoryCaches($validated['slug']);
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created.');
     }
@@ -170,7 +170,7 @@ class CategoryController extends Controller
         }
 
         $category->update($validated);
-        $this->flushCategoryCaches();
+        $this->flushCategoryCaches($category->slug);
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
     }
@@ -198,6 +198,8 @@ class CategoryController extends Controller
             ? $category->floating_card_thumb
             : null;
 
+        $slug = $category->slug;
+
         $category->delete();
 
         Storage::disk('public')->delete($imagePaths);
@@ -209,7 +211,7 @@ class CategoryController extends Controller
             Storage::disk('public')->delete($floatingThumb);
         }
 
-        $this->flushCategoryCaches();
+        $this->flushCategoryCaches($slug);
 
         return back()->with('success', 'Category deleted.');
     }
@@ -301,6 +303,8 @@ class CategoryController extends Controller
             throw $e;
         }
 
+        Cache::forget("categories.service-page.{$category->slug}");
+
         return back()->with('success', 'Selected Work item added.');
     }
 
@@ -314,10 +318,12 @@ class CategoryController extends Controller
 
         $item->delete();
 
+        Cache::forget("categories.service-page.{$category->slug}");
+
         return back()->with('success', 'Selected Work item removed.');
     }
 
-    private function flushCategoryCaches(): void
+    private function flushCategoryCaches(?string $slug = null): void
     {
         Cache::forget('categories.config-shape');
         Cache::forget('categories.service-page-links');
@@ -325,5 +331,9 @@ class CategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget('hire-us.subcategories');
+        if ($slug !== null) {
+            Cache::forget("portfolio.subcategories.{$slug}");
+            Cache::forget("categories.service-page.{$slug}");
+        }
     }
 }

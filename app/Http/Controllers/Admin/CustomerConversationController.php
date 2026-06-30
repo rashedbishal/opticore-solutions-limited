@@ -35,7 +35,7 @@ class CustomerConversationController extends Controller
     {
         $search = $request->query('search', '');
 
-        $conversations = Conversation::with('user')
+        $conversations = Conversation::with(['user:id,name,email,original_email,deleted_at'])
             ->withCount(['messages as unread_count' => function ($query) {
                 $query->where('sender_type', 'user')
                     ->whereNull('read_at');

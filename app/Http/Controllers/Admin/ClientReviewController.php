@@ -7,6 +7,7 @@ use App\Models\ClientReview;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -88,6 +89,9 @@ class ClientReviewController extends Controller
 
         $this->recalculateSubCategoryStats($subCategoryId);
 
+        Cache::forget("hire-us.reviews.{$subCategoryId}");
+        Cache::forget('hire-us.recommended-pool');
+
         return back()->with('success', 'Review deleted successfully.');
     }
 
@@ -99,9 +103,15 @@ class ClientReviewController extends Controller
             'order.*.sort_order' => ['required', 'integer', 'min:0'],
         ]);
 
+        $affectedSubCategoryIds = ClientReview::whereIn('id', array_column($validated['order'], 'id'))
+            ->distinct()
+            ->pluck('sub_category_id');
+
         foreach ($validated['order'] as $item) {
             ClientReview::where('id', $item['id'])->update(['sort_order' => $item['sort_order']]);
         }
+
+        $affectedSubCategoryIds->each(fn (int $id) => Cache::forget("hire-us.reviews.{$id}"));
 
         return back()->with('success', 'Review order saved.');
     }

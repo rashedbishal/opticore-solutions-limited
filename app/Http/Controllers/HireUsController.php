@@ -8,6 +8,7 @@ use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -34,51 +35,59 @@ class HireUsController extends Controller
             ->values()
             ->toArray();
 
-        $siblingSubCategories = PortfolioSubCategory::query()
-            ->where('category_slug', $category)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get(['name', 'slug'])
-            ->toArray();
+        $siblingSubCategories = Cache::remember("hire-us.siblings.{$category}", now()->addMinutes(60), function () use ($category) {
+            return PortfolioSubCategory::query()
+                ->where('category_slug', $category)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get(['name', 'slug'])
+                ->toArray();
+        });
 
-        $recommendedServices = PortfolioSubCategory::query()
-            ->where('id', '!=', $subcategory->id)
-            ->inRandomOrder()
-            ->limit(4)
-            ->get(['id', 'name', 'slug', 'category_slug', 'description', 'price', 'rating', 'reviews_count', 'image'])
-            ->map(fn (PortfolioSubCategory $s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'slug' => $s->slug,
-                'category_slug' => $s->category_slug,
-                'category_label' => $configCategories[$s->category_slug]['label'] ?? $s->category_slug,
-                'description' => $s->description,
-                'price' => $s->price,
-                'rating' => $s->rating,
-                'reviews_count' => $s->reviews_count,
-                'image' => $s->image ? asset('storage/'.$s->image) : null,
-            ])
-            ->values()
-            ->toArray();
+        $allRecommendable = Cache::remember('hire-us.recommended-pool', now()->addMinutes(10), function () use ($configCategories) {
+            return PortfolioSubCategory::query()
+                ->get(['id', 'name', 'slug', 'category_slug', 'description', 'price', 'rating', 'reviews_count', 'image'])
+                ->map(fn (PortfolioSubCategory $s) => [
+                    'id' => $s->id,
+                    'name' => $s->name,
+                    'slug' => $s->slug,
+                    'category_slug' => $s->category_slug,
+                    'category_label' => $configCategories[$s->category_slug]['label'] ?? $s->category_slug,
+                    'description' => $s->description,
+                    'price' => $s->price,
+                    'rating' => $s->rating,
+                    'reviews_count' => $s->reviews_count,
+                    'image' => $s->image ? asset('storage/'.$s->image) : null,
+                ])
+                ->all();
+        });
 
-        // Load real reviews sorted by admin-defined sort_order then newest first.
-        $reviews = ClientReview::where('sub_category_id', $subcategory->id)
-            ->orderBy('sort_order')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(fn (ClientReview $r) => [
-                'id' => $r->id,
-                'username' => $r->username,
-                'client_type' => $r->client_type,
-                'rating' => $r->rating,
-                'comment' => $r->comment,
-                'image_url' => $r->image_path ? asset('storage/'.$r->image_path) : null,
-                'price_range' => $r->price_range,
-                'work_duration' => $r->work_duration,
-                'created_at' => $r->created_at?->diffForHumans(),
-            ])
+        $recommendedServices = collect($allRecommendable)
+            ->filter(fn ($s) => $s['id'] !== $subcategory->id)
+            ->shuffle()
+            ->take(4)
             ->values()
-            ->toArray();
+            ->all();
+
+        $reviews = Cache::remember("hire-us.reviews.{$subcategory->id}", now()->addMinutes(60), function () use ($subcategory) {
+            return ClientReview::where('sub_category_id', $subcategory->id)
+                ->orderBy('sort_order')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(fn (ClientReview $r) => [
+                    'id' => $r->id,
+                    'username' => $r->username,
+                    'client_type' => $r->client_type,
+                    'rating' => $r->rating,
+                    'comment' => $r->comment,
+                    'image_url' => $r->image_path ? asset('storage/'.$r->image_path) : null,
+                    'price_range' => $r->price_range,
+                    'work_duration' => $r->work_duration,
+                    'created_at' => $r->created_at?->diffForHumans(),
+                ])
+                ->values()
+                ->toArray();
+        });
 
         // Check if the authenticated user has an eligible task for this subcategory.
         $reviewEligibleTask = null;

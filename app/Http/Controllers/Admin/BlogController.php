@@ -58,9 +58,10 @@ class BlogController extends Controller
             $validated['image'] = Storage::url($path);
         }
 
-        Blog::create($validated);
+        $blog = Blog::create($validated);
 
         Cache::forget('blog.index');
+        Cache::forget("blog.show.{$blog->slug}");
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created.');
     }

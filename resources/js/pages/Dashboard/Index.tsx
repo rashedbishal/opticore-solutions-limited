@@ -1,5 +1,5 @@
 import type { FormEventHandler } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Deferred, Head, Link, useForm } from '@inertiajs/react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import {
     Package,
@@ -39,7 +39,7 @@ interface Task {
 }
 
 interface Props {
-    tasks: Task[];
+    tasks?: Task[];
 }
 
 const STATE_LABELS: Record<string, string> = {
@@ -72,7 +72,38 @@ function stateLabel(task: Task): string {
     return STATE_LABELS[task.state] ?? task.state;
 }
 
-export default function UserDashboard({ tasks }: Props) {
+function DashboardSkeleton() {
+    return (
+        <div className="animate-pulse space-y-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[...Array(3)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="h-[118px] rounded-[2rem] border border-white/5 bg-zinc-900/40"
+                    />
+                ))}
+            </div>
+            <div className="overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/20">
+                <div className="border-b border-white/5 p-8">
+                    <div className="h-10 w-56 rounded-xl bg-zinc-800/60" />
+                </div>
+                <div className="divide-y divide-white/5">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="flex gap-6 p-8">
+                            <div className="h-16 w-16 shrink-0 rounded-2xl bg-zinc-800/60" />
+                            <div className="flex-1 space-y-3 py-1">
+                                <div className="h-5 w-56 rounded bg-zinc-800/60" />
+                                <div className="h-3 w-32 rounded bg-zinc-800/40" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function DashboardContent({ tasks }: { tasks: Task[] }) {
     const [activeTab, setActiveTab] = useState('active');
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -134,243 +165,157 @@ export default function UserDashboard({ tasks }: Props) {
 
     return (
         <>
-            <Head title="Client Dashboard | Opticore Solutions Ltd." />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                    {
+                        label: 'Active Orders',
+                        value: activeCount.toString(),
+                        icon: Package,
+                        color: 'text-cyan-400',
+                    },
+                    {
+                        label: 'Awaiting Review',
+                        value: reviewCount.toString(),
+                        icon: Clock,
+                        color: 'text-amber-400',
+                    },
+                    {
+                        label: 'Total Tasks',
+                        value: tasks.length.toString(),
+                        icon: CreditCard,
+                        color: 'text-violet-400',
+                    },
+                ].map((stat, i) => (
+                    <div
+                        key={i}
+                        className="glass-panel rounded-[2rem] border border-white/5 bg-zinc-900/40 p-6"
+                    >
+                        <div className="mb-4 flex items-center justify-between">
+                            <div
+                                className={`rounded-xl bg-white/5 p-3 ${stat.color}`}
+                            >
+                                <stat.icon className="h-5 w-5" />
+                            </div>
+                            <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                                Lifetime
+                            </span>
+                        </div>
+                        <p className="mb-1 text-sm font-medium text-zinc-500">
+                            {stat.label}
+                        </p>
+                        <h3 className="text-2xl font-black text-white">
+                            {stat.value}
+                        </h3>
+                    </div>
+                ))}
+            </div>
 
-            <div className="min-h-screen bg-black px-4 pt-32 pb-24">
-                <div className="mx-auto max-w-7xl">
-                    <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-                        <div>
-                            <h1 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase">
-                                My Workspace
-                            </h1>
-                            <p className="font-medium text-zinc-500">
-                                Track your active projects and manage your
-                                deliveries.
+            <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/20">
+                <div className="flex items-center justify-between border-b border-white/5 p-8">
+                    <div className="flex rounded-xl bg-black/40 p-1">
+                        <button
+                            onClick={() => setActiveTab('active')}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                            Active
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('completed')}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                            Completed
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('all')}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'all' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                            All
+                        </button>
+                    </div>
+                </div>
+
+                <div className="p-0">
+                    {filteredTasks.length > 0 ? (
+                        <div className="divide-y divide-white/5">
+                            {filteredTasks.map((task) => (
+                                <div
+                                    key={task.id}
+                                    className="group p-8 transition-colors hover:bg-white/[0.02]"
+                                >
+                                    <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+                                        <div className="flex gap-6">
+                                            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                                                <Briefcase className="h-6 w-6 text-zinc-500 transition-colors group-hover:text-cyan-400" />
+                                            </div>
+                                            <div>
+                                                <div className="mb-1 flex items-center gap-3">
+                                                    <h4 className="text-lg font-bold text-white">
+                                                        {task.task_name}
+                                                    </h4>
+                                                    <span
+                                                        className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${stateClass(task)}`}
+                                                    >
+                                                        {stateLabel(task)}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs font-medium tracking-widest text-zinc-500 uppercase">
+                                                    {task.sub_category
+                                                        ? task.sub_category.name
+                                                        : task.category}{' '}
+                                                    {task.date &&
+                                                        `• ${task.date}`}
+                                                </p>
+                                                {task.has_review && (
+                                                    <p className="mt-1 flex items-center gap-1 text-xs text-green-500">
+                                                        <CheckCircle className="h-3 w-3" />
+                                                        Review submitted
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-8 md:gap-12">
+                                            {task.service_url && (
+                                                <Link
+                                                    href={task.service_url}
+                                                    className="text-xs text-zinc-500 underline hover:text-cyan-400"
+                                                >
+                                                    View Service
+                                                </Link>
+                                            )}
+                                            <div className="flex items-center gap-3">
+                                                {task.can_review ? (
+                                                    <button
+                                                        onClick={() =>
+                                                            openReview(task)
+                                                        }
+                                                        className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-amber-400"
+                                                    >
+                                                        Review Now{' '}
+                                                        <ArrowRight className="h-4 w-4" />
+                                                    </button>
+                                                ) : (
+                                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-zinc-500">
+                                                        <ChevronRight className="h-5 w-5" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="py-24 text-center">
+                            <Package className="mx-auto mb-6 h-12 w-12 text-zinc-800" />
+                            <h3 className="text-xl font-bold tracking-widest text-zinc-600 uppercase">
+                                No orders found
+                            </h3>
+                            <p className="mt-2 text-zinc-700">
+                                Try switching tabs or start a new project.
                             </p>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white">
-                                <Bell className="h-5 w-5" />
-                                {reviewCount > 0 && (
-                                    <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-amber-500" />
-                                )}
-                            </button>
-                            <Link
-                                href="/hire-us"
-                                className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-cyan-400"
-                            >
-                                <Zap className="h-4 w-4 fill-current" /> New
-                                Project
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_1fr]">
-                        <aside className="space-y-2">
-                            {[
-                                {
-                                    id: 'dashboard',
-                                    label: 'Dashboard',
-                                    icon: LayoutDashboard,
-                                    href: '/dashboard',
-                                },
-                                {
-                                    id: 'messages',
-                                    label: 'Messages',
-                                    icon: MessageSquare,
-                                    href: '#chat',
-                                },
-                                {
-                                    id: 'settings',
-                                    label: 'Settings',
-                                    icon: Settings,
-                                    href: '/profile',
-                                },
-                            ].map((item) => (
-                                <Link
-                                    key={item.id}
-                                    href={item.href}
-                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'dashboard' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
-                                >
-                                    <item.icon className="h-5 w-5" />
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </aside>
-
-                        <main className="space-y-8">
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                {[
-                                    {
-                                        label: 'Active Orders',
-                                        value: activeCount.toString(),
-                                        icon: Package,
-                                        color: 'text-cyan-400',
-                                    },
-                                    {
-                                        label: 'Awaiting Review',
-                                        value: reviewCount.toString(),
-                                        icon: Clock,
-                                        color: 'text-amber-400',
-                                    },
-                                    {
-                                        label: 'Total Tasks',
-                                        value: tasks.length.toString(),
-                                        icon: CreditCard,
-                                        color: 'text-violet-400',
-                                    },
-                                ].map((stat, i) => (
-                                    <div
-                                        key={i}
-                                        className="glass-panel rounded-[2rem] border border-white/5 bg-zinc-900/40 p-6"
-                                    >
-                                        <div className="mb-4 flex items-center justify-between">
-                                            <div
-                                                className={`rounded-xl bg-white/5 p-3 ${stat.color}`}
-                                            >
-                                                <stat.icon className="h-5 w-5" />
-                                            </div>
-                                            <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
-                                                Lifetime
-                                            </span>
-                                        </div>
-                                        <p className="mb-1 text-sm font-medium text-zinc-500">
-                                            {stat.label}
-                                        </p>
-                                        <h3 className="text-2xl font-black text-white">
-                                            {stat.value}
-                                        </h3>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/20">
-                                <div className="flex items-center justify-between border-b border-white/5 p-8">
-                                    <div className="flex rounded-xl bg-black/40 p-1">
-                                        <button
-                                            onClick={() =>
-                                                setActiveTab('active')
-                                            }
-                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
-                                        >
-                                            Active
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setActiveTab('completed')
-                                            }
-                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
-                                        >
-                                            Completed
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('all')}
-                                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'all' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
-                                        >
-                                            All
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="p-0">
-                                    {filteredTasks.length > 0 ? (
-                                        <div className="divide-y divide-white/5">
-                                            {filteredTasks.map((task) => (
-                                                <div
-                                                    key={task.id}
-                                                    className="group p-8 transition-colors hover:bg-white/[0.02]"
-                                                >
-                                                    <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
-                                                        <div className="flex gap-6">
-                                                            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                                                                <Briefcase className="h-6 w-6 text-zinc-500 transition-colors group-hover:text-cyan-400" />
-                                                            </div>
-                                                            <div>
-                                                                <div className="mb-1 flex items-center gap-3">
-                                                                    <h4 className="text-lg font-bold text-white">
-                                                                        {
-                                                                            task.task_name
-                                                                        }
-                                                                    </h4>
-                                                                    <span
-                                                                        className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${stateClass(task)}`}
-                                                                    >
-                                                                        {stateLabel(
-                                                                            task,
-                                                                        )}
-                                                                    </span>
-                                                                </div>
-                                                                <p className="text-xs font-medium tracking-widest text-zinc-500 uppercase">
-                                                                    {task.sub_category
-                                                                        ? task
-                                                                              .sub_category
-                                                                              .name
-                                                                        : task.category}{' '}
-                                                                    {task.date &&
-                                                                        `• ${task.date}`}
-                                                                </p>
-                                                                {task.has_review && (
-                                                                    <p className="mt-1 flex items-center gap-1 text-xs text-green-500">
-                                                                        <CheckCircle className="h-3 w-3" />
-                                                                        Review
-                                                                        submitted
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex flex-wrap items-center gap-8 md:gap-12">
-                                                            {task.service_url && (
-                                                                <Link
-                                                                    href={
-                                                                        task.service_url
-                                                                    }
-                                                                    className="text-xs text-zinc-500 underline hover:text-cyan-400"
-                                                                >
-                                                                    View Service
-                                                                </Link>
-                                                            )}
-                                                            <div className="flex items-center gap-3">
-                                                                {task.can_review ? (
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            openReview(
-                                                                                task,
-                                                                            )
-                                                                        }
-                                                                        className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-amber-400"
-                                                                    >
-                                                                        Review
-                                                                        Now{' '}
-                                                                        <ArrowRight className="h-4 w-4" />
-                                                                    </button>
-                                                                ) : (
-                                                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 text-zinc-500">
-                                                                        <ChevronRight className="h-5 w-5" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="py-24 text-center">
-                                            <Package className="mx-auto mb-6 h-12 w-12 text-zinc-800" />
-                                            <h3 className="text-xl font-bold tracking-widest text-zinc-600 uppercase">
-                                                No orders found
-                                            </h3>
-                                            <p className="mt-2 text-zinc-700">
-                                                Try switching tabs or start a
-                                                new project.
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </main>
-                    </div>
+                    )}
                 </div>
             </div>
 
@@ -572,6 +517,88 @@ export default function UserDashboard({ tasks }: Props) {
                     </div>
                 )}
             </AnimatePresence>
+        </>
+    );
+}
+
+export default function UserDashboard({ tasks }: Props) {
+    return (
+        <>
+            <Head title="Client Dashboard | Opticore Solutions Ltd." />
+
+            <div className="min-h-screen bg-black px-4 pt-32 pb-24">
+                <div className="mx-auto max-w-7xl">
+                    <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+                        <div>
+                            <h1 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase">
+                                My Workspace
+                            </h1>
+                            <p className="font-medium text-zinc-500">
+                                Track your active projects and manage your
+                                deliveries.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white">
+                                <Bell className="h-5 w-5" />
+                                {tasks?.some((t) => t.can_review) && (
+                                    <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-amber-500" />
+                                )}
+                            </button>
+                            <Link
+                                href="/hire-us"
+                                className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-cyan-400"
+                            >
+                                <Zap className="h-4 w-4 fill-current" /> New
+                                Project
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-[280px_1fr]">
+                        <aside className="space-y-2">
+                            {[
+                                {
+                                    id: 'dashboard',
+                                    label: 'Dashboard',
+                                    icon: LayoutDashboard,
+                                    href: '/dashboard',
+                                },
+                                {
+                                    id: 'messages',
+                                    label: 'Messages',
+                                    icon: MessageSquare,
+                                    href: '#chat',
+                                },
+                                {
+                                    id: 'settings',
+                                    label: 'Settings',
+                                    icon: Settings,
+                                    href: '/profile',
+                                },
+                            ].map((item) => (
+                                <Link
+                                    key={item.id}
+                                    href={item.href}
+                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'dashboard' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                >
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </aside>
+
+                        <main className="space-y-8">
+                            <Deferred
+                                data="tasks"
+                                fallback={<DashboardSkeleton />}
+                            >
+                                <DashboardContent tasks={tasks!} />
+                            </Deferred>
+                        </main>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

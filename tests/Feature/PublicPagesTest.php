@@ -163,8 +163,10 @@ it('renders the dashboard for an authenticated user with their tasks', function 
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Dashboard/Index')
-            ->where('tasks.0.id', $task->id)
-            ->where('tasks.0.task_name', 'My Task')
+            ->loadDeferredProps('default', fn (Assert $page) => $page
+                ->where('tasks.0.id', $task->id)
+                ->where('tasks.0.task_name', 'My Task')
+            )
         );
 });
 

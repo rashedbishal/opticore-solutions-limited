@@ -76,6 +76,7 @@ class Category extends Model
                         'description' => $category->description,
                         'icon' => $category->icon,
                         'color' => $category->color,
+                        'is_active' => $category->is_active,
                     ],
                 ])
                 ->toArray();
@@ -122,19 +123,14 @@ class Category extends Model
      */
     public static function servicePageLinks(): array
     {
-        return Cache::remember('categories.service-page-links', now()->addMinutes(60), function () {
-            return self::query()
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->get()
-                ->map(fn (Category $category) => [
-                    'slug' => $category->slug,
-                    'name' => $category->label,
-                    'href' => '/'.$category->slug,
-                ])
-                ->values()
-                ->toArray();
-        });
+        return collect(self::configShape())
+            ->filter(fn (array $cat) => $cat['is_active'] ?? false)
+            ->map(fn (array $cat, string $slug) => [
+                'slug' => $slug,
+                'name' => $cat['label'],
+                'href' => '/'.$slug,
+            ])
+            ->values()
+            ->toArray();
     }
 }

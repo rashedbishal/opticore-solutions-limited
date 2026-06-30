@@ -61,18 +61,22 @@ class TaskController extends Controller
 
     public function index(Request $request): Response
     {
-        $tasks = Task::with(['user', 'subCategory', 'transaction'])
+        $tasks = Task::with(['user:id,email,original_email,deleted_at', 'subCategory:id,name', 'transaction:transaction_id,order_number'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->input('search');
-                $query->where(function ($query) use ($search) {
-                    $query->where('client_name', 'like', "%{$search}%")
-                        ->orWhere('task_name', 'like', "%{$search}%")
-                        ->orWhereHas('user', fn ($q) => $q->where('email', 'like', "%{$search}%"))
-                        ->orWhereHas('transaction', fn ($q) => $q->where('order_number', 'like', "%{$search}%"));
-                });
+                $query
+                    ->leftJoin('users', 'users.id', '=', 'tasks.user_id')
+                    ->leftJoin('transactions', 'transactions.transaction_id', '=', 'tasks.transaction_id')
+                    ->select('tasks.*')
+                    ->where(function ($q) use ($search) {
+                        $q->where('tasks.client_name', 'like', "%{$search}%")
+                            ->orWhere('tasks.task_name', 'like', "%{$search}%")
+                            ->orWhere('users.email', 'like', "%{$search}%")
+                            ->orWhere('transactions.order_number', 'like', "%{$search}%");
+                    });
             })
             ->when($request->filled('state'), fn ($q) => $q->where('state', $request->input('state')))
-            ->latest()
+            ->latest('tasks.created_at')
             ->paginate(10)
             ->withQueryString()
             ->through(fn (Task $t) => [
@@ -351,7 +355,7 @@ class TaskController extends Controller
 
     private function sendDeliveryMessage(Task $task): void
     {
-        $user = User::find($task->user_id);
+        $user = $task->user;
         if (! $user) {
             return;
         }

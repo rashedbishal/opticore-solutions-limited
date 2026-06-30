@@ -42,8 +42,7 @@ class ChatController extends Controller
             'content' => $message,
         ]);
 
-        $knowledgeBase = $this->getWebsiteKnowledge();
-        $reply = $this->getGroundedReply($message, $knowledgeBase);
+        $reply = $this->getGroundedReply($message, self::WEBSITE_KNOWLEDGE);
 
         $session->messages()->create([
             'sender' => 'ai',
@@ -53,94 +52,90 @@ class ChatController extends Controller
         return response()->json(['reply' => $reply, 'session_id' => $sessionId]);
     }
 
-    private function getWebsiteKnowledge(): array
-    {
-        // Combined and structured knowledge base based on provided instructions
-        return [
-            'company' => [
-                'name' => 'Opticore Solutions Ltd.',
-                'description' => 'A modern digital agency offering creative and technical services. We focus on high-quality design, strategic marketing, modern web solutions, and client satisfaction. Our goal is to help businesses grow with creative and digital solutions.',
-                'focus_areas' => ['high-quality design', 'strategic marketing', 'modern web solutions', 'client satisfaction', 'business growth'],
-                'tone' => 'Professional but friendly, clear and confident, not too long, not robotic.',
+    private const WEBSITE_KNOWLEDGE = [
+        'company' => [
+            'name' => 'Opticore Solutions Ltd.',
+            'description' => 'A modern digital agency offering creative and technical services. We focus on high-quality design, strategic marketing, modern web solutions, and client satisfaction. Our goal is to help businesses grow with creative and digital solutions.',
+            'focus_areas' => ['high-quality design', 'strategic marketing', 'modern web solutions', 'client satisfaction', 'business growth'],
+            'tone' => 'Professional but friendly, clear and confident, not too long, not robotic.',
+        ],
+        'services' => [
+            'Graphic Design' => [
+                'description' => 'Brand-led visuals, campaign creative, and print-ready assets that make businesses feel established from the first glance.',
+                'includes' => ['Logo & Brand Identity', 'Social Media Design', 'Print Design', 'Packaging Design'],
+                'benefits' => ['Strong branding', 'Professional appearance', 'Better audience engagement'],
+                'handling_user_asks' => 'Focus on branding & visual impact. Suggest portfolio viewing.',
             ],
-            'services' => [
-                'Graphic Design' => [
-                    'description' => 'Brand-led visuals, campaign creative, and print-ready assets that make businesses feel established from the first glance.',
-                    'includes' => ['Logo & Brand Identity', 'Social Media Design', 'Print Design', 'Packaging Design'],
-                    'benefits' => ['Strong branding', 'Professional appearance', 'Better audience engagement'],
-                    'handling_user_asks' => 'Focus on branding & visual impact. Suggest portfolio viewing.',
-                ],
-                'Digital Marketing' => [
-                    'description' => 'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
-                    'includes' => ['Social media marketing', 'Paid advertising', 'Strategy planning'],
-                    'benefits' => ['More reach', 'More leads', 'Business growth'],
-                    'handling_user_asks' => 'Focus on ROI & growth. Ask about their business type.',
-                ],
-                'Video Editing' => [
-                    'description' => 'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
-                    'includes' => ['Promotional videos', 'Social media videos', 'Advertisement videos'],
-                    'benefits' => ['High engagement', 'Better storytelling', 'Professional presentation'],
-                    'handling_user_asks' => 'Emphasize engagement & branding.',
-                ],
-                '3D Production' => [
-                    'description' => 'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
-                    'includes' => ['Product visualization', '3D animation', 'Realistic rendering'],
-                    'benefits' => ['Premium presentation', 'High-end visuals', 'Better product showcase'],
-                    'handling_user_asks' => 'Highlight realism & premium quality.',
-                ],
-                'Web Development' => [
-                    'description' => 'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
-                    'includes' => ['Business websites', 'Custom web solutions', 'Responsive design'],
-                    'benefits' => ['Strong online presence', 'Better user experience', 'Increased credibility'],
-                    'handling_user_asks' => 'Focus on business growth & trust.',
-                ],
+            'Digital Marketing' => [
+                'description' => 'Performance-minded campaigns that connect strategy, messaging, creative, and conversion into one system.',
+                'includes' => ['Social media marketing', 'Paid advertising', 'Strategy planning'],
+                'benefits' => ['More reach', 'More leads', 'Business growth'],
+                'handling_user_asks' => 'Focus on ROI & growth. Ask about their business type.',
             ],
-            'portfolio' => [
-                'summary' => 'We have proven experience in logo design, packaging design, social media graphics, print design, and Photoshop editing. You can explore our work to see how we bring brands to life.',
-                'call_to_action' => 'Encourage them to explore portfolio.',
+            'Video Editing' => [
+                'description' => 'Crisp, kinetic edits that turn raw footage into modern brand stories built for retention.',
+                'includes' => ['Promotional videos', 'Social media videos', 'Advertisement videos'],
+                'benefits' => ['High engagement', 'Better storytelling', 'Professional presentation'],
+                'handling_user_asks' => 'Emphasize engagement & branding.',
             ],
-            'faq' => [
-                'handling' => 'Answer clearly and simply. Avoid complexity.',
-                'topics' => ['Pricing', 'Timeline', 'Process', 'Services', 'Revisions', 'Payments', 'NDAs', 'Jobs'],
+            '3D Production' => [
+                'description' => 'Immersive renders and animation that give ideas volume, realism, and premium presentation value.',
+                'includes' => ['Product visualization', '3D animation', 'Realistic rendering'],
+                'benefits' => ['Premium presentation', 'High-end visuals', 'Better product showcase'],
+                'handling_user_asks' => 'Highlight realism & premium quality.',
             ],
-            'lead_conversion' => [
-                'encouragement_phrases' => ['Let’s discuss your project', 'I’d be happy to guide you'],
-                'user_needs_service' => [
-                    'Ask 1–2 simple questions',
-                    'Guide to contact',
-                    'Example question: "That sounds great! Can you tell me a bit about your project?"',
-                ],
+            'Web Development' => [
+                'description' => 'High-performance websites and products designed to convert, scale, and stay unmistakably on-brand.',
+                'includes' => ['Business websites', 'Custom web solutions', 'Responsive design'],
+                'benefits' => ['Strong online presence', 'Better user experience', 'Increased credibility'],
+                'handling_user_asks' => 'Focus on business growth & trust.',
             ],
-            'smart_behavior' => [
-                'always' => ['Keep answers short and clear', 'Ask follow-up questions', 'Guide users toward taking action'],
-                'never' => ['Give long boring paragraphs', 'Be robotic', 'Say "I don\'t know"'],
-                'instead_say' => ['Let me guide you'],
+        ],
+        'portfolio' => [
+            'summary' => 'We have proven experience in logo design, packaging design, social media graphics, print design, and Photoshop editing. You can explore our work to see how we bring brands to life.',
+            'call_to_action' => 'Encourage them to explore portfolio.',
+        ],
+        'faq' => [
+            'handling' => 'Answer clearly and simply. Avoid complexity.',
+            'topics' => ['Pricing', 'Timeline', 'Process', 'Services', 'Revisions', 'Payments', 'NDAs', 'Jobs'],
+        ],
+        'lead_conversion' => [
+            'encouragement_phrases' => ['Let’s discuss your project', 'I’d be happy to guide you'],
+            'user_needs_service' => [
+                'Ask 1–2 simple questions',
+                'Guide to contact',
+                'Example question: "That sounds great! Can you tell me a bit about your project?"',
             ],
-            'user_intent' => [
-                'confused' => 'Suggest the best service',
-                'exploring' => 'Educate briefly',
-                'ready' => 'Push toward contact',
-            ],
-            'contact_info' => [
-                ['label' => 'Phone', 'value' => '+88-01896204400', 'subValue' => '+1 (575) 303-6925'],
-                ['label' => 'Email', 'value' => 'hello@opticoresolutions.com'],
-                ['label' => 'Location', 'value' => 'Dhaka, Bangladesh'],
-            ],
-            'navigation' => [
-                ['label' => 'Graphic Design', 'href' => '/graphic-design'],
-                ['label' => 'Digital Marketing', 'href' => '/digital-marketing'],
-                ['label' => 'Video Editing', 'href' => '/video-editing'],
-                ['label' => '3D Production', 'href' => '/3d-production'],
-                ['label' => 'Web Development', 'href' => '/web-development'],
-                ['label' => 'Contact', 'href' => '/contact'],
-            ],
-            'testimonials' => [
-                ['name' => 'Sarah Bennett', 'role' => 'Founder', 'company' => 'North Peak Studio', 'quote' => 'Opticore gave our rebrand the kind of presence that usually takes years to earn. The visuals felt premium, strategic, and immediately credible.'],
-                ['name' => 'Imran Hossain', 'role' => 'Marketing Lead', 'company' => 'Velocity Commerce', 'quote' => 'Their team connected design, paid ads, and landing page execution into one coherent growth system.'],
-            ],
-            'final_goal' => 'Convert website visitors into potential clients through helpful, clear, and engaging conversation.',
-        ];
-    }
+        ],
+        'smart_behavior' => [
+            'always' => ['Keep answers short and clear', 'Ask follow-up questions', 'Guide users toward taking action'],
+            'never' => ['Give long boring paragraphs', 'Be robotic', 'Say "I don\'t know"'],
+            'instead_say' => ['Let me guide you'],
+        ],
+        'user_intent' => [
+            'confused' => 'Suggest the best service',
+            'exploring' => 'Educate briefly',
+            'ready' => 'Push toward contact',
+        ],
+        'contact_info' => [
+            ['label' => 'Phone', 'value' => '+88-01896204400', 'subValue' => '+1 (575) 303-6925'],
+            ['label' => 'Email', 'value' => 'hello@opticoresolutions.com'],
+            ['label' => 'Location', 'value' => 'Dhaka, Bangladesh'],
+        ],
+        'navigation' => [
+            ['label' => 'Graphic Design', 'href' => '/graphic-design'],
+            ['label' => 'Digital Marketing', 'href' => '/digital-marketing'],
+            ['label' => 'Video Editing', 'href' => '/video-editing'],
+            ['label' => '3D Production', 'href' => '/3d-production'],
+            ['label' => 'Web Development', 'href' => '/web-development'],
+            ['label' => 'Contact', 'href' => '/contact'],
+        ],
+        'testimonials' => [
+            ['name' => 'Sarah Bennett', 'role' => 'Founder', 'company' => 'North Peak Studio', 'quote' => 'Opticore gave our rebrand the kind of presence that usually takes years to earn. The visuals felt premium, strategic, and immediately credible.'],
+            ['name' => 'Imran Hossain', 'role' => 'Marketing Lead', 'company' => 'Velocity Commerce', 'quote' => 'Their team connected design, paid ads, and landing page execution into one coherent growth system.'],
+        ],
+        'final_goal' => 'Convert website visitors into potential clients through helpful, clear, and engaging conversation.',
+    ];
 
     private function getGroundedReply(string $message, array $knowledgeBase): string
     {

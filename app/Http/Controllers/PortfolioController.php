@@ -160,6 +160,7 @@ class PortfolioController extends Controller
             $portfolios = Portfolio::query()
                 ->where('sub_category_id', $selectedSubCategory['id'])
                 ->latest()
+                ->take(50)
                 ->get()
                 ->map(fn (Portfolio $portfolio) => [
                     'id' => $portfolio->id,

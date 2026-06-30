@@ -206,12 +206,16 @@ it('shows can_review as true within the review window and false once it expires'
         'review_eligible_until' => now()->subHour(),
     ]);
 
-    $response = $this->actingAs($this->user)->get(route('dashboard'))->assertSuccessful();
-
-    $tasks = collect($response->original->getData()['page']['props']['tasks']);
-
-    expect($tasks->firstWhere('id', $stillEligible->id)['can_review'])->toBeTrue();
-    expect($tasks->firstWhere('id', $expired->id)['can_review'])->toBeFalse();
+    $this->actingAs($this->user)
+        ->get(route('dashboard'))
+        ->assertSuccessful()
+        ->assertInertia(function ($page) use ($stillEligible, $expired) {
+            $page->loadDeferredProps('default', function ($deferredPage) use ($stillEligible, $expired) {
+                $tasks = collect($deferredPage->toArray()['props']['tasks'] ?? [] ?? []);
+                expect($tasks->firstWhere('id', $stillEligible->id)['can_review'])->toBeTrue();
+                expect($tasks->firstWhere('id', $expired->id)['can_review'])->toBeFalse();
+            });
+        });
 });
 
 it('shows can_review as false for a task that is not yet delivered', function () {
@@ -221,9 +225,13 @@ it('shows can_review as false for a task that is not yet delivered', function ()
         'review_eligible_until' => null,
     ]);
 
-    $response = $this->actingAs($this->user)->get(route('dashboard'))->assertSuccessful();
-
-    $tasks = collect($response->original->getData()['page']['props']['tasks']);
-
-    expect($tasks->firstWhere('id', $task->id)['can_review'])->toBeFalse();
+    $this->actingAs($this->user)
+        ->get(route('dashboard'))
+        ->assertSuccessful()
+        ->assertInertia(function ($page) use ($task) {
+            $page->loadDeferredProps('default', function ($deferredPage) use ($task) {
+                $tasks = collect($deferredPage->toArray()['props']['tasks'] ?? [] ?? []);
+                expect($tasks->firstWhere('id', $task->id)['can_review'])->toBeFalse();
+            });
+        });
 });

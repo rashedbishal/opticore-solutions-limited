@@ -83,10 +83,9 @@ class ConversationController extends Controller
             if ($conversation) {
                 $this->markIncomingMessagesAsDelivered($conversation, 'admin');
             }
-        }
 
-        // Always broadcast so the admin sidebar green dot stays current
-        broadcast(new UserPresenceUpdated(userId: $user->id, online: true));
+            broadcast(new UserPresenceUpdated(userId: $user->id, online: true));
+        }
 
         return response()->json(['ok' => true]);
     }
@@ -155,7 +154,7 @@ class ConversationController extends Controller
         broadcast(new MessageSent($message))->toOthers();
 
         if (! $anyAdminOnline) {
-            Admin::all()->each(function (Admin $admin) use ($message) {
+            Admin::select(['email'])->get()->each(function (Admin $admin) use ($message) {
                 Mail::to($admin->email)->queue(new AdminChatMessageReceivedMail($message));
             });
         }

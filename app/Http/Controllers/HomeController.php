@@ -17,25 +17,25 @@ class HomeController extends Controller
         $categories = array_keys(Category::configShape());
 
         $featuredPortfolios = Cache::remember('home.featuredPortfolios', now()->addMinutes(60), function () use ($categories) {
+            $grouped = Portfolio::whereIn('category', $categories)
+                ->latest()
+                ->get(['id', 'title', 'category', 'media_path', 'media_type', 'alt'])
+                ->groupBy('category');
+
             $portfolios = [];
             foreach ($categories as $category) {
-                $items = Portfolio::where('category', $category)
-                    ->latest()
+                $portfolios[$category] = ($grouped->get($category) ?? collect())
                     ->take(3)
-                    ->get();
-
-                if ($items->isNotEmpty()) {
-                    $portfolios[$category] = $items->map(fn ($item) => [
+                    ->map(fn ($item) => [
                         'id' => $item->id,
                         'title' => $item->title,
                         'category' => $item->category,
                         'media_path' => $item->media_path ? asset('storage/'.$item->media_path) : null,
                         'media_type' => $item->media_type ?? 'image',
                         'alt' => $item->alt ?? $item->title,
-                    ])->toArray();
-                } else {
-                    $portfolios[$category] = [];
-                }
+                    ])
+                    ->values()
+                    ->toArray();
             }
 
             return $portfolios;
