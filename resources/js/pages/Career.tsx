@@ -18,6 +18,7 @@ import MagneticButton from '@/components/UI/MagneticButton';
 import Modal from '@/components/UI/Modal';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { culturePerks } from '@/lib/site';
+import { cn } from '@/lib/utils';
 
 const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 
@@ -103,6 +104,12 @@ export default function Career({ jobListings }: Props) {
         });
     };
 
+    const inputCn = (error?: string) =>
+        cn(
+            'w-full rounded-xl border bg-theme-surface px-4 py-3 pl-11 text-foreground [box-shadow:var(--neo-shadow-inset)] transition-all duration-300 outline-none placeholder:text-theme-subtle focus:border-violet-500/60 focus:[box-shadow:var(--neo-shadow-inset-focus)]',
+            error ? 'border-rose-500' : 'border-theme',
+        );
+
     return (
         <>
             <Head>
@@ -123,12 +130,12 @@ export default function Career({ jobListings }: Props) {
 
             <section className="section-shell pt-32 md:pt-36 lg:pt-40">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] p-8 sm:p-10 lg:p-14">
+                    <div className="rounded-[2rem] border border-theme bg-card-surface p-8 [box-shadow:var(--neo-shadow-panel)] sm:p-10 lg:p-14">
                         <span className="section-kicker">Career</span>
-                        <h1 className="text-4xl font-extrabold text-balance text-white sm:text-5xl md:text-6xl">
+                        <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">Join Our Team</span>
                         </h1>
-                        <p className="mt-6 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">
+                        <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
                             We are building a lean, high-standard team that
                             cares about craft, momentum, and digital work that
                             actually feels premium.
@@ -168,12 +175,12 @@ export default function Career({ jobListings }: Props) {
                                         },
                                     },
                                 }}
-                                className="glass-panel rounded-[2rem] p-6"
+                                className="rounded-[2rem] border border-theme bg-card-surface p-6 [box-shadow:var(--neo-shadow-panel)]"
                             >
-                                <h3 className="text-xl font-semibold text-white">
+                                <h3 className="text-xl font-semibold text-theme">
                                     {perk.title}
                                 </h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">
+                                <p className="mt-3 text-sm leading-7 text-theme-muted">
                                     {perk.description}
                                 </p>
                             </motion.article>
@@ -213,20 +220,20 @@ export default function Career({ jobListings }: Props) {
                                         },
                                     },
                                 }}
-                                className="glass-panel rounded-[2rem] p-6"
+                                className="rounded-[2rem] border border-theme bg-card-surface p-6 [box-shadow:var(--neo-shadow-panel)]"
                             >
                                 <div className="flex items-center justify-between gap-4">
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">
+                                    <span className="rounded-full border border-theme bg-theme-surface px-3 py-1 text-xs font-semibold text-theme-muted">
                                         {job.location}
                                     </span>
-                                    <span className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
+                                    <span className="text-xs font-semibold tracking-[0.24em] text-cyan-600 uppercase dark:text-cyan-300">
                                         {job.type}
                                     </span>
                                 </div>
-                                <h3 className="mt-6 text-2xl font-semibold text-white">
+                                <h3 className="mt-6 text-2xl font-semibold text-theme">
                                     {job.title}
                                 </h3>
-                                <p className="mt-4 text-sm leading-7 text-zinc-400">
+                                <p className="mt-4 text-sm leading-7 text-theme-muted">
                                     {job.description}
                                 </p>
                                 <button
@@ -254,11 +261,13 @@ export default function Career({ jobListings }: Props) {
             >
                 {submitted ? (
                     <div className="flex min-h-[18rem] flex-col items-center justify-center text-center">
-                        <CheckCircle2 className="h-16 w-16 text-cyan-300" />
-                        <h3 className="mt-6 text-2xl font-semibold text-white">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
+                            <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <h3 className="mt-6 text-2xl font-semibold text-theme">
                             Application received
                         </h3>
-                        <p className="mt-3 text-sm leading-7 text-zinc-400">
+                        <p className="mt-3 text-sm leading-7 text-theme-muted">
                             Thanks for applying. Our team will review your
                             submission and follow up if there is a strong fit.
                         </p>
@@ -272,15 +281,15 @@ export default function Career({ jobListings }: Props) {
                         }}
                     >
                         {/* Role recap */}
-                        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-linear-to-r from-violet-500/10 to-cyan-400/10 px-4 py-3">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-cyan-300">
-                                <Briefcase className="h-4 w-4" />
+                        <div className="flex items-center gap-3 rounded-2xl border border-theme bg-linear-to-r from-violet-500/10 to-cyan-400/10 px-4 py-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-theme-surface">
+                                <Briefcase className="h-4 w-4 text-violet-600 dark:text-violet-400" />
                             </span>
                             <span className="min-w-0">
-                                <span className="block text-[11px] font-semibold tracking-[0.2em] text-zinc-400 uppercase">
+                                <span className="block text-[11px] font-semibold tracking-[0.2em] text-theme-subtle uppercase">
                                     Applying for
                                 </span>
-                                <span className="block truncate text-sm font-semibold text-white">
+                                <span className="block truncate text-sm font-semibold text-theme">
                                     {form.data.role}
                                 </span>
                             </span>
@@ -297,23 +306,23 @@ export default function Career({ jobListings }: Props) {
                                         key={field.key}
                                         className={`block ${field.full ? 'sm:col-span-2' : ''}`}
                                     >
-                                        <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-zinc-200">
+                                        <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
                                             {field.label}
                                             {field.required ? (
                                                 <span
-                                                    className="text-rose-400"
+                                                    className="text-rose-500"
                                                     aria-hidden="true"
                                                 >
                                                     *
                                                 </span>
                                             ) : (
-                                                <span className="text-xs font-normal text-zinc-500">
+                                                <span className="text-xs font-normal text-theme-subtle">
                                                     (optional)
                                                 </span>
                                             )}
                                         </span>
                                         <div className="relative">
-                                            <Icon className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                                            <Icon className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-theme-subtle" />
                                             <input
                                                 type={field.type}
                                                 value={form.data[field.key]}
@@ -323,11 +332,11 @@ export default function Career({ jobListings }: Props) {
                                                         event.target.value,
                                                     )
                                                 }
-                                                className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pr-4 pl-11 text-white transition outline-none focus:border-violet-400/50"
+                                                className={inputCn(error)}
                                             />
                                         </div>
                                         {error ? (
-                                            <p className="mt-2 text-sm text-rose-300">
+                                            <p className="mt-2 text-sm text-rose-500">
                                                 {error}
                                             </p>
                                         ) : null}
@@ -338,10 +347,10 @@ export default function Career({ jobListings }: Props) {
 
                         {/* Resume upload */}
                         <div className="block">
-                            <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-zinc-200">
+                            <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
                                 Resume / CV
                                 <span
-                                    className="text-rose-400"
+                                    className="text-rose-500"
                                     aria-hidden="true"
                                 >
                                     *
@@ -349,22 +358,22 @@ export default function Career({ jobListings }: Props) {
                             </span>
                             <label
                                 htmlFor="resume-upload"
-                                className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-white/15 bg-white/5 px-4 py-4 transition hover:border-violet-400/50"
+                                className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-theme bg-theme-surface px-4 py-4 transition hover:border-violet-500/50"
                             >
-                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-violet-500/20 to-cyan-400/20 text-cyan-300">
+                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-violet-500/10 to-cyan-400/10">
                                     {form.data.resume ? (
-                                        <FileCheck2 className="h-5 w-5" />
+                                        <FileCheck2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                     ) : (
-                                        <UploadCloud className="h-5 w-5" />
+                                        <UploadCloud className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                                     )}
                                 </span>
                                 <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-medium text-white">
+                                    <span className="block truncate text-sm font-medium text-theme">
                                         {form.data.resume
                                             ? form.data.resume.name
                                             : 'Choose a PDF file to upload'}
                                     </span>
-                                    <span className="mt-0.5 block text-xs text-zinc-400">
+                                    <span className="mt-0.5 block text-xs text-theme-muted">
                                         {form.data.resume
                                             ? formatFileSize(
                                                   form.data.resume.size,
@@ -386,7 +395,7 @@ export default function Career({ jobListings }: Props) {
                                                     '';
                                             }
                                         }}
-                                        className="touch-target shrink-0 rounded-full p-2 text-zinc-500 transition hover:bg-white/10 hover:text-white"
+                                        className="touch-target shrink-0 rounded-full p-2 text-theme-subtle transition hover:bg-theme-surface hover:text-theme"
                                     >
                                         <X className="h-4 w-4" />
                                     </button>
@@ -431,7 +440,7 @@ export default function Career({ jobListings }: Props) {
                                 }}
                             />
                             {form.errors.resume ? (
-                                <p className="mt-2 text-sm text-rose-300">
+                                <p className="mt-2 text-sm text-rose-500">
                                     {form.errors.resume}
                                 </p>
                             ) : null}

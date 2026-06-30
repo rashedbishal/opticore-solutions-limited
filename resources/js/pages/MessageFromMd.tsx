@@ -36,15 +36,15 @@ export default function MessageFromMd() {
 
             <section className="section-shell relative overflow-hidden pt-32 md:pt-40 lg:pt-48">
                 {/* Background Decorations */}
-                <div className="pointer-events-none absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 opacity-20">
+                <div className="pointer-events-none absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 opacity-10">
                     <GradientOrb
                         color="var(--color-primary)"
                         className="h-150 w-150"
                     />
                 </div>
-                <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 opacity-10">
+                <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 opacity-[0.06]">
                     <GradientOrb
-                        color="var(--color-secondary)"
+                        color="var(--color-accent)"
                         className="h-125 w-125"
                     />
                 </div>
@@ -65,7 +65,7 @@ export default function MessageFromMd() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl leading-[1.1] font-extrabold tracking-tight text-white sm:text-5xl lg:text-7xl"
+                            className="text-4xl leading-[1.1] font-extrabold tracking-tight text-theme sm:text-5xl lg:text-7xl"
                         >
                             Vision for{' '}
                             <span className="gradient-text">Excellence</span>,
@@ -89,21 +89,21 @@ export default function MessageFromMd() {
                                 className="group relative mx-auto flex max-w-md justify-center lg:mx-0 lg:max-w-none"
                             >
                                 {/* Decorative elements */}
-                                <div className="absolute -inset-4 -rotate-2 rounded-[2.5rem] border border-white/5 transition-transform duration-700 group-hover:rotate-0" />
-                                <div className="absolute -inset-4 rotate-2 rounded-[2.5rem] border border-primary/20 transition-transform duration-700 group-hover:rotate-0" />
+                                <div className="absolute -inset-4 -rotate-2 rounded-[2.5rem] border border-theme transition-transform duration-700 group-hover:rotate-0" />
+                                <div className="absolute -inset-4 rotate-2 rounded-[2.5rem] border border-violet-500/20 transition-transform duration-700 group-hover:rotate-0" />
 
-                                <div className="glass-panel relative aspect-[4/5] h-[60vh] max-h-[700px] min-h-[400px] overflow-hidden rounded-[2rem] border-white/10 shadow-2xl sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
+                                <div className="relative aspect-[4/5] h-[60vh] max-h-[700px] min-h-[400px] overflow-hidden rounded-[2rem] border border-theme [box-shadow:var(--neo-shadow-panel)] sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
                                     <img
                                         src={mdImage}
                                         alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
                                         decoding="async"
-                                        className="h-full w-full scale-105 object-cover filter transition-all duration-700 group-hover:scale-100 group-hover:grayscale-0"
+                                        className="h-full w-full scale-105 object-cover transition-all duration-700 group-hover:scale-100"
                                     />
 
-                                    {/* Overlay Gradient */}
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-40" />
+                                    {/* Overlay Gradient — keeps text readable on the photo */}
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-50" />
 
-                                    <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/80 to-transparent p-6 pt-20 sm:p-8">
+                                    <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/70 to-transparent p-6 pt-20 sm:p-8">
                                         <motion.div
                                             initial={{ opacity: 0, y: 20 }}
                                             whileInView={{ opacity: 1, y: 0 }}
@@ -113,7 +113,7 @@ export default function MessageFromMd() {
                                             <h3 className="text-xl font-bold tracking-tight whitespace-nowrap text-white sm:text-2xl">
                                                 Md. Asaduzzaman
                                             </h3>
-                                            <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-primary uppercase sm:text-sm">
+                                            <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-violet-300 uppercase sm:text-sm">
                                                 Managing Director
                                             </p>
                                         </motion.div>
@@ -121,9 +121,9 @@ export default function MessageFromMd() {
                                 </div>
 
                                 {/* Status Badge */}
-                                <div className="absolute -top-4 -right-4 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 shadow-xl backdrop-blur-xl">
+                                <div className="absolute -top-4 -right-4 flex items-center gap-2 rounded-full border border-theme bg-white px-4 py-2 [box-shadow:var(--neo-shadow-sm)] dark:bg-white/5">
                                     <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-                                    <span className="text-[10px] font-bold tracking-widest text-white/70 uppercase">
+                                    <span className="text-[10px] font-bold tracking-widest text-theme-muted uppercase">
                                         Founder
                                     </span>
                                 </div>
@@ -140,7 +140,7 @@ export default function MessageFromMd() {
                                     (tag) => (
                                         <span
                                             key={tag}
-                                            className="rounded-full border border-white/5 bg-white/[0.02] px-4 py-1.5 text-[10px] font-bold tracking-widest text-zinc-400 uppercase"
+                                            className="rounded-full border border-theme bg-white px-4 py-1.5 text-[10px] font-bold tracking-widest text-theme-muted [box-shadow:var(--neo-shadow-btn)] uppercase dark:bg-white/[0.04]"
                                         >
                                             {tag}
                                         </span>
@@ -157,15 +157,15 @@ export default function MessageFromMd() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: 0.1 * index }}
-                                        className="glass-panel group rounded-3xl border-white/5 p-6 transition-colors hover:border-primary/30"
+                                        className="group rounded-3xl border border-theme bg-card-surface p-6 [box-shadow:var(--neo-shadow-panel)] transition-colors hover:border-violet-500/30"
                                     >
-                                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 transition-transform group-hover:scale-110">
-                                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 transition-transform group-hover:scale-110">
+                                            <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         </div>
-                                        <h4 className="mb-2 font-bold text-white">
+                                        <h4 className="mb-2 font-bold text-theme">
                                             {item.title}
                                         </h4>
-                                        <p className="text-xs leading-relaxed text-zinc-400">
+                                        <p className="text-xs leading-relaxed text-theme-muted">
                                             {item.description}
                                         </p>
                                     </motion.div>
@@ -180,31 +180,31 @@ export default function MessageFromMd() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8 }}
-                                className="glass-panel relative overflow-hidden rounded-[2.5rem] p-8 md:p-12 lg:p-16"
+                                className="relative overflow-hidden rounded-[2.5rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] md:p-12 lg:p-16 dark:bg-white/[0.04]"
                             >
                                 {/* Decorative Quote Icon */}
-                                <Quote className="pointer-events-none absolute top-12 right-12 h-24 w-24 -rotate-12 text-white/[0.03]" />
+                                <Quote className="pointer-events-none absolute top-12 right-12 h-24 w-24 -rotate-12 text-black/[0.04] dark:text-white/[0.03]" />
 
                                 <div className="prose prose-invert relative z-10 max-w-none">
-                                    <p className="mb-8 border-l-4 border-primary pl-8 text-xl leading-relaxed font-light text-white italic md:text-2xl">
+                                    <p className="mb-8 border-l-4 border-violet-500 pl-8 text-xl leading-relaxed font-light text-theme italic md:text-2xl">
                                         "Digital transformation is not merely a
                                         technical shift, but a strategic
                                         imperative that defines the future of
                                         every brand."
                                     </p>
 
-                                    <div className="space-y-6 text-lg leading-relaxed font-light text-zinc-300">
+                                    <div className="space-y-6 text-lg leading-relaxed font-light text-theme-muted">
                                         <p>
                                             Opticore Solutions Ltd. was
                                             established on a simple yet powerful
                                             conviction: that in an increasingly
                                             crowded digital landscape, only
                                             those who combine{' '}
-                                            <span className="font-medium text-white">
+                                            <span className="font-medium text-theme">
                                                 creative ambition
                                             </span>{' '}
                                             with{' '}
-                                            <span className="font-medium text-white">
+                                            <span className="font-medium text-theme">
                                                 operational discipline
                                             </span>{' '}
                                             will truly stand out.
@@ -226,7 +226,7 @@ export default function MessageFromMd() {
                                             of code, and every interaction is a
                                             brand asset that must work toward a
                                             singular objective:{' '}
-                                            <span className="font-medium text-primary">
+                                            <span className="font-medium text-violet-600 dark:text-violet-400">
                                                 building trust and momentum
                                             </span>
                                             .
@@ -252,23 +252,23 @@ export default function MessageFromMd() {
                                         </p>
                                     </div>
 
-                                    <div className="mt-16 border-t border-white/5 pt-12">
+                                    <div className="mt-16 border-t border-theme pt-12">
                                         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end lg:flex-col lg:items-start xl:flex-row xl:items-end">
                                             <div className="shrink-0">
-                                                <p className="font-serif text-4xl leading-none whitespace-nowrap text-white italic">
+                                                <p className="font-serif text-4xl leading-none whitespace-nowrap text-foreground italic">
                                                     Md. Asaduzzaman
                                                 </p>
-                                                <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-primary to-transparent" />
-                                                <p className="mt-4 text-xs font-bold tracking-[0.3em] text-primary uppercase">
+                                                <div className="mt-4 h-0.5 w-32 bg-linear-to-r from-violet-500 to-transparent" />
+                                                <p className="mt-4 text-xs font-bold tracking-[0.3em] text-violet-600 uppercase dark:text-violet-400">
                                                     Managing Director
                                                 </p>
                                             </div>
 
-                                            <div className="flex flex-wrap items-center gap-4 text-[10px] font-medium tracking-widest text-zinc-500 uppercase">
+                                            <div className="flex flex-wrap items-center gap-4 text-[10px] font-medium tracking-widest text-theme-subtle uppercase">
                                                 <span className="whitespace-nowrap">
                                                     EST. 2015
                                                 </span>
-                                                <span className="h-1 w-1 rounded-full bg-zinc-700" />
+                                                <span className="h-1 w-1 rounded-full bg-black/20 dark:bg-white/20" />
                                                 <span className="whitespace-nowrap">
                                                     OPTICORE SOLUTIONS LTD.
                                                 </span>
@@ -278,7 +278,7 @@ export default function MessageFromMd() {
                                 </div>
                             </motion.div>
 
-                            {/* Commitments Grid */}
+                            {/* Commitments Grid (mobile) */}
                             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3 lg:hidden">
                                 {commitments.map((item, index) => (
                                     <motion.div
@@ -287,15 +287,15 @@ export default function MessageFromMd() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: 0.1 * index }}
-                                        className="glass-panel group rounded-3xl border-white/5 p-6 transition-colors hover:border-primary/30"
+                                        className="group rounded-3xl border border-theme bg-card-surface p-6 [box-shadow:var(--neo-shadow-panel)] transition-colors hover:border-violet-500/30"
                                     >
-                                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 transition-transform group-hover:scale-110">
-                                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 transition-transform group-hover:scale-110">
+                                            <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         </div>
-                                        <h4 className="mb-2 font-bold text-white">
+                                        <h4 className="mb-2 font-bold text-theme">
                                             {item.title}
                                         </h4>
-                                        <p className="text-xs leading-relaxed text-zinc-400">
+                                        <p className="text-xs leading-relaxed text-theme-muted">
                                             {item.description}
                                         </p>
                                     </motion.div>
@@ -307,14 +307,14 @@ export default function MessageFromMd() {
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="group relative mt-12 overflow-hidden rounded-[2.5rem] border border-white/5 bg-linear-to-br from-primary/20 via-primary/5 to-transparent p-6 md:p-10"
+                                className="group relative mt-12 overflow-hidden rounded-[2.5rem] border border-theme bg-linear-to-br from-violet-500/10 via-violet-500/5 to-transparent p-6 [box-shadow:var(--neo-shadow-panel)] md:p-10"
                             >
                                 <div className="relative z-10 flex flex-col items-center justify-between gap-8 text-center sm:flex-row sm:text-left xl:flex-row">
                                     <div className="max-w-md">
-                                        <h3 className="mb-3 text-2xl font-bold text-white">
+                                        <h3 className="mb-3 text-2xl font-bold text-theme">
                                             Ready to transform your brand?
                                         </h3>
-                                        <p className="text-sm text-zinc-400">
+                                        <p className="text-sm text-theme-muted">
                                             Join the ranks of ambitious
                                             businesses that trust Opticore for
                                             their digital excellence.
@@ -335,7 +335,7 @@ export default function MessageFromMd() {
                                 </div>
 
                                 {/* Background Glow */}
-                                <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 bg-radial from-primary/20 to-transparent" />
+                                <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 bg-radial from-violet-500/10 to-transparent" />
                             </motion.div>
                         </div>
                     </div>
