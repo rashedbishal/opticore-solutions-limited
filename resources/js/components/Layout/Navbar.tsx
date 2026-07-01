@@ -1,8 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { AnimatePresence } from 'framer-motion';
 import {
-    Menu,
-    X,
     PenTool,
     Globe,
     Film,
@@ -15,6 +14,8 @@ import {
     Home,
     Briefcase,
     Loader2,
+    Menu,
+    X,
 } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState, useRef } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
@@ -74,9 +75,7 @@ function NavLink({
                 scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                 className={cn(
                     'font-[family-name:var(--font-geist-mono)] text-[13px] font-semibold tracking-normal transition-colors md:text-[13.5px] md:tracking-wide',
-                    active
-                        ? 'drop-icon text-white'
-                        : 'text-zinc-700 dark:text-zinc-300',
+                    active ? 'drop-icon text-white' : 'text-zinc-700 dark:text-zinc-300',
                 )}
                 trigger={hovered}
             >
@@ -101,10 +100,7 @@ export default function Navbar() {
             // Headroom logic
             if (currentScrollY < 50) {
                 setVisible(true);
-            } else if (
-                currentScrollY > lastScrollY.current &&
-                currentScrollY > 120
-            ) {
+            } else if (currentScrollY > lastScrollY.current && currentScrollY > 120) {
                 // Scrolling down - hide
                 setVisible(false);
             } else if (currentScrollY < lastScrollY.current) {
@@ -212,17 +208,11 @@ export default function Navbar() {
                                             href="/logout"
                                             method="post"
                                             as="button"
-                                            onStart={() =>
-                                                setIsLoggingOut(true)
-                                            }
-                                            onFinish={() =>
-                                                setIsLoggingOut(false)
-                                            }
+                                            onStart={() => setIsLoggingOut(true)}
+                                            onFinish={() => setIsLoggingOut(false)}
                                             onClick={() =>
                                                 window.dispatchEvent(
-                                                    new CustomEvent(
-                                                        'logout:start',
-                                                    ),
+                                                    new CustomEvent('logout:start'),
                                                 )
                                             }
                                             disabled={isLoggingOut}
@@ -253,11 +243,7 @@ export default function Navbar() {
                             <ThemeSwitcher className="[&>svg]:drop-icon dark:[&>svg]:drop-icon h-8 w-8 !border-0 bg-gradient-to-b from-white to-slate-50 shadow-[0_3px_8px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06),inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] dark:hover:shadow-[0_6px_12px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.2)]" />
                             <button
                                 type="button"
-                                aria-label={
-                                    open
-                                        ? 'Close navigation menu'
-                                        : 'Open navigation menu'
-                                }
+                                aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
                                 className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
                                 onClick={() => setOpen((current) => !current)}
                             >
@@ -272,11 +258,14 @@ export default function Navbar() {
                 </nav>
             </header>
 
-            {open && (
-                <Suspense fallback={null}>
-                    <MobileMenu url={url} onClose={() => setOpen(false)} />
-                </Suspense>
-            )}
+            {/* AnimatePresence here so the rail's exit animation plays before unmount */}
+            <AnimatePresence>
+                {open && (
+                    <Suspense key="mobile-menu" fallback={null}>
+                        <MobileMenu url={url} onClose={() => setOpen(false)} />
+                    </Suspense>
+                )}
+            </AnimatePresence>
         </>
     );
 }

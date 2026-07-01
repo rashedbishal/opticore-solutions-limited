@@ -27,6 +27,7 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 
 ### Combined CI check
 - `composer ci:check` — regenerates Wayfinder, then runs `lint:check`, `format:check`, `types:check`, and the test suite. Run this (or the equivalent individual commands) before considering backend+frontend work done.
+- GitHub Actions CI (`ci.yml`) additionally runs `npm run build:ssr` and `npm run perf:bundle-check` — make sure both pass locally before pushing to `main`.
 
 ## Architecture
 
@@ -92,8 +93,8 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 
 ### Other CMS-managed content models
 These simpler models are managed through the admin CMS and are largely independent of the core business logic:
-- `Portfolio` / `PortfolioSubCategory` — `Admin/PortfolioController` / `Admin/PortfolioSubCategoryController`. See Known open bug below for the SubCategory update issue.
-- `Brand` (logo marquee), `Testimonial`, `ClientReview`, `Faq` — each has a corresponding `Admin/*Controller`; content is surfaced on public pages via shared or per-page props. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
+- `Portfolio` / `PortfolioSubCategory` — `Admin/PortfolioController` / `Admin/PortfolioSubCategoryController`. The update method auto-generates slug from `name` when the payload omits it.
+- `Brand`, `Testimonial`, `ClientReview`, `Faq` — each has a corresponding `Admin/*Controller`; content is surfaced on public pages via shared or per-page props.
 
 ### Frontend structure
 - Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.
@@ -114,8 +115,11 @@ These simpler models are managed through the admin CMS and are largely independe
 ### Career & job applications
 `JobListing` (has `is_active`, `sort_order`) drives the public career page (`/careers`). `CareerController::apply()` uploads résumés to the `local` disk under `resumes/` — intentionally not publicly accessible. `Admin/JobApplicationController` provides staff download access to résumés; `Admin/JobListingController` manages the listings. Both require the `job-listings` / `job-applications` permission keys respectively.
 
-### Known open bug
-`PortfolioSubCategoryController::update` throws `Undefined array key "slug"` when the payload omits the slug field (slug is auto-generated on create but not on update). Work around by always including slug in update payloads. See `docs/qa-bugs.md` for details.
+### Other CMS-managed homepage content
+`Brand` (logo marquee), `Testimonial`, `Faq`, and `ClientReview` are each managed by a corresponding `Admin/*Controller`. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
+
+### Stack versions
+PHP 8.3, Laravel 13, Inertia v3, React 19, Tailwind v4, Pest v4. These inform which API surface is current — e.g. `Inertia::optional()` replaces the removed `Inertia::lazy()`, and Tailwind v4 class names differ from v3.
 
 ### Testing conventions
 - Pest tests live in `tests/Feature` (mirrors `Admin/`, `Auth/`, `Console/`, `Support/` areas) and `tests/Unit`. There's heavy coverage of authorization edge cases — see `tests/Feature/Admin/AdminAuthorizationTest.php`, `AuthorizationGapsTest.php`, `BroadcastChannelAuthorizationTest.php`, and `AdminSessionInvalidationTest.php` as the reference pattern when adding any new permission-gated route or channel.

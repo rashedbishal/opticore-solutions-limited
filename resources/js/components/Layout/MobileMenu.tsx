@@ -1,6 +1,6 @@
 import type { SharedPageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { AnimatePresence, m as motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import {
     PenTool,
     Globe,
@@ -13,12 +13,10 @@ import {
     LogIn,
     Home,
     Briefcase,
-    X,
+    ArrowRight,
     Loader2,
 } from 'lucide-react';
 import { useState } from 'react';
-import HoverScramble from '@/components/text-animations/hover-scramble';
-import MagneticButton from '@/components/UI/MagneticButton';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +30,8 @@ const IconMap: Record<string, any> = {
     User,
     Home,
     Briefcase,
+    LogOut,
+    LogIn,
 };
 
 interface MobileMenuProps {
@@ -39,191 +39,226 @@ interface MobileMenuProps {
     onClose: () => void;
 }
 
+const springIn = { type: 'spring', damping: 30, stiffness: 320, mass: 0.85 } as const;
+
 export default function MobileMenu({ url, onClose }: MobileMenuProps) {
     const { props } = usePage<SharedPageProps>();
     const { user } = props.auth;
-    const navItems = [...navigationItems];
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+    const navItems = [...navigationItems];
+
+    // Auth items flow into the same list as nav items
+    const authItems = user
+        ? [
+              {
+                  label: 'Profile',
+                  href: '/profile',
+                  icon: 'User',
+                  isPost: false,
+                  isLogout: false,
+              },
+              {
+                  label: 'Sign out',
+                  href: '/logout',
+                  icon: 'LogOut',
+                  isPost: true,
+                  isLogout: true,
+              },
+          ]
+        : [
+              {
+                  label: 'Sign in',
+                  href: '/login',
+                  icon: 'LogIn',
+                  isPost: false,
+                  isLogout: false,
+              },
+          ];
+
+    const allItems = [
+        ...navItems.map((item) => ({ ...item, isPost: false, isLogout: false })),
+        ...authItems,
+    ];
+
     return (
-        <AnimatePresence>
+        <div className="fixed inset-0 z-60 xl:hidden">
+            {/* Backdrop scrim — click to close, fades in/out */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-60 flex flex-col bg-slate-100 xl:hidden dark:bg-zinc-900"
+                transition={{ duration: 0.28 }}
+                className="absolute inset-0 bg-black/50 backdrop-blur-[3px] dark:bg-black/65"
+                onClick={onClose}
+            />
+
+            {/* Rail panel — slides from right */}
+            <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={springIn}
+                className="absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col overflow-hidden
+                    border-l border-slate-200/70 bg-gradient-to-b from-white to-slate-50/98
+                    shadow-[-20px_0_60px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(255,255,255,0.9)]
+                    dark:border-zinc-800 dark:bg-gradient-to-b dark:from-[#1c1c22] dark:to-[#08080c]
+                    dark:shadow-[-24px_0_80px_rgba(0,0,0,0.85),inset_0_0_0_1px_rgba(255,255,255,0.04)]"
             >
-                <div className="flex h-full flex-col">
-                    <div className="px-4 pt-4 sm:px-6">
-                        <div className="mx-auto flex max-w-7xl items-center justify-between">
-                            <Link
-                                href="/"
-                                className="touch-target inline-flex items-center rounded-full border border-transparent bg-transparent p-2"
-                                onClick={onClose}
-                            >
-                                <img
-                                    src="/images/logo/opticore.webp"
-                                    alt="Opticore Solutions"
-                                    decoding="async"
-                                    className="block h-12 w-auto shrink-0 object-contain md:h-20 dark:hidden"
-                                />
-                                <img
-                                    src="/images/logo/opticore-white.webp"
-                                    alt="Opticore Solutions"
-                                    decoding="async"
-                                    className="hidden h-12 w-auto shrink-0 object-contain md:h-20 dark:block"
-                                />
-                            </Link>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 bg-slate-200 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                {/* Left-edge gradient glow stripe */}
+                <motion.div
+                    aria-hidden
+                    initial={{ opacity: 0, scaleY: 0.35 }}
+                    animate={{ opacity: 1, scaleY: 1 }}
+                    exit={{ opacity: 0, scaleY: 0.35 }}
+                    transition={{ delay: 0.12, duration: 0.55, ease: 'easeOut' }}
+                    className="pointer-events-none absolute inset-y-0 left-0 w-[3px]"
+                    style={{
+                        background:
+                            'linear-gradient(to bottom, transparent 0%, #7c3aed 22%, #22d3ee 72%, transparent 100%)',
+                        boxShadow:
+                            '0 0 16px rgba(124,58,237,0.5), 0 0 36px rgba(34,211,238,0.18)',
+                    }}
+                />
 
-                    <div className="hide-scrollbar flex-1 overflow-y-auto overscroll-contain p-4">
-                        <div className="mx-auto w-full max-w-md space-y-2">
-                            {navItems.map((item, index) => (
-                                <motion.div
-                                    key={item.href}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -10 }}
-                                    transition={{
-                                        delay: index * 0.05,
-                                        duration: 0.3,
-                                    }}
-                                >
-                                    <Link
-                                        href={item.href}
-                                        className={cn(
-                                            'flex w-full items-center justify-center rounded-2xl border px-2 py-2.5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] md:px-3 md:py-3 lg:px-4 lg:py-3.5',
-                                            url === item.href
-                                                ? 'neo-btn-primary border-violet-500/40'
-                                                : 'border-slate-300 bg-slate-100 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
-                                        )}
-                                        onClick={onClose}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            {item.icon &&
-                                                IconMap[item.icon] && (
-                                                    <div className="items-center justify-center rounded-xl text-violet-400">
-                                                        {(() => {
-                                                            const Icon =
-                                                                IconMap[
-                                                                    item.icon!
-                                                                ];
+                {/* Subtle interior ambient glow from the stripe (light + dark) */}
+                <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 left-0 w-28
+                        bg-gradient-to-r from-violet-100/40 to-transparent
+                        dark:from-violet-950/30 dark:to-transparent"
+                />
 
-                                                            return (
-                                                                <Icon className="h-5 w-5" />
-                                                            );
-                                                        })()}
-                                                    </div>
-                                                )}
-                                            <HoverScramble
-                                                duration={0.8}
-                                                speed={1}
-                                                scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                                                triggerOnMount={true}
-                                                className="sm:text-md text-sm font-semibold text-zinc-900 dark:text-white"
-                                            >
-                                                {item.label}
-                                            </HoverScramble>
-                                        </div>
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
+                {/* Rail header */}
+                <div className="relative flex shrink-0 items-center justify-between pl-7 pr-5 pt-7 pb-4">
+                    <Link href="/" onClick={onClose} className="inline-flex items-center">
+                        <img
+                            src="/images/logo/opticore.webp"
+                            alt="Opticore Solutions"
+                            decoding="async"
+                            className="block h-9 w-auto dark:hidden"
+                        />
+                        <img
+                            src="/images/logo/opticore-white.webp"
+                            alt="Opticore Solutions"
+                            decoding="async"
+                            className="hidden h-9 w-auto dark:block"
+                        />
+                    </Link>
 
-                    <div className="mt-auto px-4 pt-6 pb-4 sm:px-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ delay: 0.25 }}
-                            className="mx-auto w-full max-w-md"
-                        >
-                            <div className="flex-1">
-                                {user ? (
-                                    <div className="flex flex-col gap-3">
+                    <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="font-[family-name:var(--font-geist-mono)] text-[9px] font-semibold tracking-[0.3em] text-zinc-400 uppercase dark:text-zinc-600"
+                    >
+                        Navigate
+                    </motion.span>
+                </div>
+
+                {/* Unified item list — scrollable */}
+                <div className="hide-scrollbar relative flex-1 overflow-y-auto overscroll-contain pl-6 pr-5 pb-2">
+                    <div className="space-y-2">
+                        {allItems.map((item, index) => {
+                            const Icon = item.icon ? IconMap[item.icon] : null;
+                            const active =
+                                !item.isLogout && url === item.href;
+
+                            const sharedMotion = {
+                                initial: { opacity: 0, x: 28 },
+                                animate: { opacity: 1, x: 0 },
+                                exit: { opacity: 0, x: 20 },
+                                transition: {
+                                    delay: index * 0.055 + 0.1,
+                                    type: 'spring' as const,
+                                    stiffness: 450,
+                                    damping: 30,
+                                },
+                            };
+
+                            // Sign-out: rendered as a POST button
+                            if (item.isLogout) {
+                                return (
+                                    <motion.div key="logout" {...sharedMotion}>
                                         <Link
-                                            href="/profile"
-                                            onClick={onClose}
-                                            className={cn(
-                                                'flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]',
-                                                url === '/profile'
-                                                    ? 'neo-btn-primary'
-                                                    : 'border border-slate-300 bg-slate-100 text-zinc-900 shadow-[0_3px_10px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:shadow-[0_3px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]',
-                                            )}
-                                        >
-                                            <User className="h-5 w-5" />
-                                            Profile
-                                        </Link>
-                                        <Link
-                                            href="/logout"
+                                            href={item.href}
                                             method="post"
                                             as="button"
-                                            onStart={() =>
-                                                setIsLoggingOut(true)
-                                            }
-                                            onFinish={() =>
-                                                setIsLoggingOut(false)
-                                            }
+                                            onStart={() => setIsLoggingOut(true)}
+                                            onFinish={() => setIsLoggingOut(false)}
                                             disabled={isLoggingOut}
-                                            onClick={(e) => {
-                                                if (isLoggingOut) {
-                                                    e.preventDefault();
-
-                                                    return;
-                                                }
-
+                                            onClick={() => {
                                                 window.dispatchEvent(
-                                                    new CustomEvent(
-                                                        'logout:start',
-                                                    ),
+                                                    new CustomEvent('logout:start'),
                                                 );
                                                 onClose();
                                             }}
-                                            className="neo-btn-primary flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-bold tracking-wide text-white uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                                            className="group flex w-full items-center gap-3.5 rounded-2xl border px-4 py-3 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50
+                                                border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)]
+                                                dark:border-zinc-800/80 dark:bg-zinc-800/50 dark:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"
                                         >
                                             {isLoggingOut ? (
-                                                <>
-                                                    <Loader2 className="h-5 w-5 animate-spin" />
-                                                    Signing out...
-                                                </>
+                                                <Loader2 className="h-5 w-5 shrink-0 animate-spin text-violet-500 dark:text-violet-400" />
                                             ) : (
-                                                <>
-                                                    <LogOut className="h-5 w-5" />
-                                                    Sign out
-                                                </>
+                                                Icon && (
+                                                    <Icon className="h-5 w-5 shrink-0 text-violet-500 dark:text-violet-400" />
+                                                )
                                             )}
+                                            <span className="flex-1 text-base font-semibold text-zinc-700 dark:text-zinc-300">
+                                                {isLoggingOut ? 'Signing out…' : item.label}
+                                            </span>
+                                            <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform duration-200 group-hover:translate-x-0.5 dark:text-zinc-700" />
                                         </Link>
-                                    </div>
-                                ) : (
-                                    <MagneticButton
-                                        href="/login"
-                                        fullWidth
-                                        ariaLabel="Sign in to your account"
+                                    </motion.div>
+                                );
+                            }
+
+                            return (
+                                <motion.div key={item.href} {...sharedMotion}>
+                                    <Link
+                                        href={item.href}
                                         onClick={onClose}
-                                        className="neo-btn-primary py-4 text-base font-bold tracking-wide uppercase"
+                                        className={cn(
+                                            'group flex items-center gap-3.5 rounded-2xl border px-4 py-3 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]',
+                                            active
+                                                ? 'neo-btn-primary border-violet-500/40'
+                                                : 'border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] dark:border-zinc-800/80 dark:bg-zinc-800/50 dark:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]',
+                                        )}
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <LogIn className="h-5 w-5" />
-                                            Sign in
-                                        </div>
-                                    </MagneticButton>
-                                )}
-                            </div>
-                        </motion.div>
+                                        {Icon && (
+                                            <Icon
+                                                className={cn(
+                                                    'h-5 w-5 shrink-0 transition-colors',
+                                                    active
+                                                        ? 'text-white'
+                                                        : 'text-violet-500 dark:text-violet-400',
+                                                )}
+                                            />
+                                        )}
+                                        <span
+                                            className={cn(
+                                                'flex-1 text-base font-semibold',
+                                                active
+                                                    ? 'text-white'
+                                                    : 'text-zinc-700 dark:text-zinc-300',
+                                            )}
+                                        >
+                                            {item.label}
+                                        </span>
+                                        {!active && (
+                                            <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform duration-200 group-hover:translate-x-0.5 dark:text-zinc-700" />
+                                        )}
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </div>
                 </div>
+
+                {/* Footer spacer */}
+                <div className="shrink-0 pb-8" />
             </motion.div>
-        </AnimatePresence>
+        </div>
     );
 }
