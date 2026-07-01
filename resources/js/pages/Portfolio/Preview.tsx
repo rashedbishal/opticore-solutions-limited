@@ -40,7 +40,7 @@ export default function PortfolioPreview({ item }: Props) {
         <LazyMotion features={domAnimation}>
             <Head>
                 <title>{item.title}</title>
-                <meta name="description" content={item.alt || item.title} />
+                <meta name="robots" content="noindex, nofollow" />
             </Head>
 
             <motion.div

@@ -65,7 +65,7 @@ class PortfolioController extends Controller
         $subCategories = $this->subCategoriesFor($category);
         $selectedSubCategory = $subCategories[0] ?? null;
 
-        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory);
+        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory, false);
     }
 
     /**
@@ -84,7 +84,7 @@ class PortfolioController extends Controller
 
         abort_unless($selectedSubCategory !== null, 404);
 
-        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory);
+        return $this->renderCategoryPage($category, $categoryData, $subCategories, $selectedSubCategory, true);
     }
 
     /**
@@ -159,6 +159,7 @@ class PortfolioController extends Controller
         array $categoryData,
         array $subCategories,
         ?array $selectedSubCategory,
+        bool $isSubCategoryUrl = false,
     ): Response {
         $portfolios = collect();
 
@@ -187,16 +188,16 @@ class PortfolioController extends Controller
             'selectedSubCategory' => $selectedSubCategory,
             'portfolios' => $portfolios->values()->toArray(),
             'meta' => [
-                'title' => $selectedSubCategory !== null
-                    ? ($selectedSubCategory['meta_title'] ?? $selectedSubCategory['name'].' — '.$categoryData['label'])
+                'title' => $isSubCategoryUrl && $selectedSubCategory !== null
+                    ? ($selectedSubCategory['meta_title'] ?? $selectedSubCategory['name'])
                     : ($categoryData['meta_title'] ?? $categoryData['label']),
-                'ogTitle' => $selectedSubCategory !== null
+                'ogTitle' => $isSubCategoryUrl && $selectedSubCategory !== null
                     ? ($selectedSubCategory['og_title'] ?? null)
                     : ($categoryData['og_title'] ?? null),
-                'description' => $selectedSubCategory !== null
+                'description' => $isSubCategoryUrl && $selectedSubCategory !== null
                     ? ($selectedSubCategory['meta_description'] ?? $selectedSubCategory['description'] ?? $categoryData['description'])
                     : ($categoryData['meta_description'] ?? $categoryData['description']),
-                'ogDescription' => $selectedSubCategory !== null
+                'ogDescription' => $isSubCategoryUrl && $selectedSubCategory !== null
                     ? ($selectedSubCategory['og_description'] ?? null)
                     : ($categoryData['og_description'] ?? null),
             ],
