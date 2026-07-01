@@ -53,7 +53,7 @@ class SecurityHeaders
             "img-src 'self' data: https:",
             "media-src 'self' https:",
             "connect-src 'self' https://pay.google.com {$reverbOrigin} https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
-            "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com",
+            "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://www.googletagmanager.com",
             "form-action 'self' https:",
             "worker-src 'self' blob:",
             "object-src 'none'",
