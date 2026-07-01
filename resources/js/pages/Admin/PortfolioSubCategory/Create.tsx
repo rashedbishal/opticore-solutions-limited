@@ -10,10 +10,19 @@ interface Props {
     categories: Record<string, string>;
 }
 
+function slugify(value: string): string {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
 export default function PortfolioSubCategoryCreate({ categories }: Props) {
     const categoryKeys = Object.keys(categories);
 
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [slugEditedManually, setSlugEditedManually] = useState(false);
     const { data, setData, post, processing } = useForm({
         category_slug: categoryKeys[0] ?? '',
         name: '',
@@ -29,6 +38,14 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
         og_title: '',
         og_description: '',
     });
+
+    const updateName = (value: string) => {
+        setData((current) => ({
+            ...current,
+            name: value,
+            slug: slugEditedManually ? current.slug : slugify(value),
+        }));
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -97,7 +114,7 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         <input
                             type="text"
                             value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
+                            onChange={(e) => updateName(e.target.value)}
                             placeholder="e.g. Logo & Identity"
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
@@ -108,13 +125,16 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                         <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
                             Slug{' '}
                             <span className="font-normal text-zinc-500 normal-case">
-                                (Leave empty to auto-generate)
+                                (auto-generated from name — edit to customize)
                             </span>
                         </label>
                         <input
                             type="text"
                             value={data.slug}
-                            onChange={(e) => setData('slug', e.target.value)}
+                            onChange={(e) => {
+                                setSlugEditedManually(true);
+                                setData('slug', e.target.value);
+                            }}
                             placeholder="e.g. logo-identity"
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />

@@ -67,6 +67,14 @@ const PLAN_TIERS: { id: keyof Plans; label: string; accent: string }[] = [
     { id: 'premium', label: 'Premium', accent: 'text-violet-400' },
 ];
 
+function slugify(value: string): string {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
 export default function PortfolioSubCategoryEdit({
     subCategory,
     categories,
@@ -318,15 +326,30 @@ export default function PortfolioSubCategoryEdit({
 
                     {/* Slug */}
                     <div>
-                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                            Slug
-                        </label>
+                        <div className="mb-1.5 flex items-center justify-between">
+                            <label className="font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                Slug
+                            </label>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setData('slug', slugify(data.name))
+                                }
+                                className="text-[10px] font-medium text-violet-400/60 transition-colors hover:text-violet-300"
+                            >
+                                ↺ Regenerate from name
+                            </button>
+                        </div>
                         <input
                             type="text"
                             value={data.slug}
                             onChange={(e) => setData('slug', e.target.value)}
                             className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 font-mono text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
+                        <p className="mt-1.5 text-xs text-zinc-500">
+                            Changing the slug updates the public URL — update
+                            any existing links.
+                        </p>
                     </div>
 
                     {/* Description */}
