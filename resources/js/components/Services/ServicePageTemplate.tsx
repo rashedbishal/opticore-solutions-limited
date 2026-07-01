@@ -41,6 +41,51 @@ const rotateFade: Variants = {
     },
 };
 
+// Cycled per-card so each capability/reason/step/case-study card reads as its
+// own distinct color instead of one repeated accent down the whole page.
+const CARD_ACCENTS = [
+    {
+        icon: 'text-violet-600 dark:text-violet-400',
+        chip: 'bg-violet-500/10 dark:bg-violet-500/15',
+        ring: 'border-t-violet-500/60',
+        dot: 'bg-violet-500',
+    },
+    {
+        icon: 'text-cyan-600 dark:text-cyan-400',
+        chip: 'bg-cyan-500/10 dark:bg-cyan-500/15',
+        ring: 'border-t-cyan-500/60',
+        dot: 'bg-cyan-500',
+    },
+    {
+        icon: 'text-fuchsia-600 dark:text-fuchsia-400',
+        chip: 'bg-fuchsia-500/10 dark:bg-fuchsia-500/15',
+        ring: 'border-t-fuchsia-500/60',
+        dot: 'bg-fuchsia-500',
+    },
+    {
+        icon: 'text-emerald-600 dark:text-emerald-400',
+        chip: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+        ring: 'border-t-emerald-500/60',
+        dot: 'bg-emerald-500',
+    },
+    {
+        icon: 'text-amber-600 dark:text-amber-400',
+        chip: 'bg-amber-500/10 dark:bg-amber-500/15',
+        ring: 'border-t-amber-500/60',
+        dot: 'bg-amber-500',
+    },
+    {
+        icon: 'text-rose-600 dark:text-rose-400',
+        chip: 'bg-rose-500/10 dark:bg-rose-500/15',
+        ring: 'border-t-rose-500/60',
+        dot: 'bg-rose-500',
+    },
+] as const;
+
+function cardAccent(index: number) {
+    return CARD_ACCENTS[index % CARD_ACCENTS.length];
+}
+
 interface ServicePageTemplateProps {
     service: ServicePageContent;
 }
@@ -90,16 +135,16 @@ export default function ServicePageTemplate({
                         variants={fadeUp}
                         initial="hidden"
                         animate="visible"
-                        className="glass-panel hero-noise relative overflow-hidden rounded-[2rem] p-8 sm:p-10 lg:p-14"
+                        className="neo-panel-elevated hero-noise relative overflow-hidden p-8 sm:p-10 lg:p-14"
                     >
                         <div className="relative z-10 max-w-3xl overflow-visible">
                             <span className="section-kicker">
                                 Premium Service
                             </span>
-                            <h1 className="pb-1 text-4xl leading-[1.2] font-extrabold text-balance text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                            <h1 className="pb-1 text-4xl leading-[1.2] font-extrabold text-balance text-theme sm:text-5xl md:text-6xl lg:text-7xl">
                                 <GradientText text={service.name} neon={true} />
                             </h1>
-                            <p className="mt-6 text-base leading-8 text-zinc-300 sm:text-lg">
+                            <p className="mt-6 text-base leading-8 text-theme-muted sm:text-lg">
                                 {service.longDescription}
                             </p>
                             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -111,13 +156,13 @@ export default function ServicePageTemplate({
                                 </MagneticButton>
                                 <Link
                                     href="/contact"
-                                    className="touch-target inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                                    className="neo-btn-ghost touch-target inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-theme transition-all hover:bg-theme-surface-hover"
                                 >
                                     Talk to the Team
                                 </Link>
                             </div>
                         </div>
-                        <div className="absolute top-10 right-10 hidden h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/5 text-violet-300 lg:flex">
+                        <div className="absolute top-10 right-10 hidden h-24 w-24 items-center justify-center rounded-full border border-theme bg-theme-surface text-violet-600 lg:flex dark:text-violet-400">
                             <ServiceIcon className="h-10 w-10" />
                         </div>
                     </motion.div>
@@ -153,20 +198,29 @@ export default function ServicePageTemplate({
                         }}
                         className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8"
                     >
-                        {service.subServices.map((item) => (
-                            <motion.article
-                                key={item.title}
-                                variants={scaleIn}
-                                className="glass-panel rounded-[2rem] p-6"
-                            >
-                                <h3 className="text-xl font-semibold text-white">
-                                    {item.title}
-                                </h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">
-                                    {item.description}
-                                </p>
-                            </motion.article>
-                        ))}
+                        {service.subServices.map((item, index) => {
+                            const accent = cardAccent(index);
+
+                            return (
+                                <motion.article
+                                    key={item.title}
+                                    variants={scaleIn}
+                                    className={`neo-panel rounded-[2rem] border-t-2 p-6 ${accent.ring}`}
+                                >
+                                    <span
+                                        className={`inline-flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black ${accent.chip} ${accent.icon}`}
+                                    >
+                                        {String(index + 1).padStart(2, '0')}
+                                    </span>
+                                    <h3 className="mt-4 text-xl font-semibold text-theme">
+                                        {item.title}
+                                    </h3>
+                                    <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                        {item.description}
+                                    </p>
+                                </motion.article>
+                            );
+                        })}
                     </motion.div>
                 </div>
             </section>
@@ -186,24 +240,34 @@ export default function ServicePageTemplate({
                         animationType="why-opticore"
                     />
                     <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 lg:gap-8">
-                        {service.reasons.map((reason) => (
-                            <motion.article
-                                key={reason.title}
-                                variants={rotateFade}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: '-80px' }}
-                                className="glass-panel rounded-[2rem] p-6"
-                            >
-                                <Check className="h-10 w-10 text-cyan-300" />
-                                <h3 className="mt-6 text-xl font-semibold text-white">
-                                    {reason.title}
-                                </h3>
-                                <p className="mt-3 text-sm leading-7 text-zinc-400">
-                                    {reason.description}
-                                </p>
-                            </motion.article>
-                        ))}
+                        {service.reasons.map((reason, index) => {
+                            const accent = cardAccent(index);
+
+                            return (
+                                <motion.article
+                                    key={reason.title}
+                                    variants={rotateFade}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true, margin: '-80px' }}
+                                    className={`neo-panel rounded-[2rem] border-t-2 p-6 ${accent.ring}`}
+                                >
+                                    <div
+                                        className={`flex h-14 w-14 items-center justify-center rounded-2xl ${accent.chip}`}
+                                    >
+                                        <Check
+                                            className={`drop-icon-sm h-7 w-7 ${accent.icon}`}
+                                        />
+                                    </div>
+                                    <h3 className="mt-6 text-xl font-semibold text-theme">
+                                        {reason.title}
+                                    </h3>
+                                    <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                        {reason.description}
+                                    </p>
+                                </motion.article>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -223,49 +287,69 @@ export default function ServicePageTemplate({
                     />
                     <div className="mt-10">
                         <div className="hidden gap-6 md:grid md:grid-cols-4">
-                            {service.process.map((step, index) => (
-                                <motion.div
-                                    key={step.title}
-                                    variants={fadeUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, margin: '-80px' }}
-                                    className="glass-panel rounded-[2rem] p-6"
-                                >
-                                    <span className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
-                                        0{index + 1}
-                                    </span>
-                                    <h3 className="mt-4 text-xl font-semibold text-white">
-                                        {step.title}
-                                    </h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
-                                        {step.description}
-                                    </p>
-                                </motion.div>
-                            ))}
+                            {service.process.map((step, index) => {
+                                const accent = cardAccent(index);
+
+                                return (
+                                    <motion.div
+                                        key={step.title}
+                                        variants={fadeUp}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{
+                                            once: true,
+                                            margin: '-80px',
+                                        }}
+                                        className={`neo-panel rounded-[2rem] border-t-2 p-6 ${accent.ring}`}
+                                    >
+                                        <span
+                                            className={`text-sm font-semibold tracking-[0.24em] uppercase ${accent.icon}`}
+                                        >
+                                            0{index + 1}
+                                        </span>
+                                        <h3 className="mt-4 text-xl font-semibold text-theme">
+                                            {step.title}
+                                        </h3>
+                                        <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                            {step.description}
+                                        </p>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
                         <div className="space-y-4 md:hidden">
-                            {service.process.map((step, index) => (
-                                <motion.div
-                                    key={step.title}
-                                    variants={fadeUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, margin: '-80px' }}
-                                    className="glass-panel relative rounded-[2rem] p-6 pl-10"
-                                >
-                                    <span className="absolute top-7 left-5 h-2 w-2 rounded-full bg-cyan-300" />
-                                    <span className="text-sm font-semibold tracking-[0.24em] text-cyan-300 uppercase">
-                                        0{index + 1}
-                                    </span>
-                                    <h3 className="mt-3 text-xl font-semibold text-white">
-                                        {step.title}
-                                    </h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
-                                        {step.description}
-                                    </p>
-                                </motion.div>
-                            ))}
+                            {service.process.map((step, index) => {
+                                const accent = cardAccent(index);
+
+                                return (
+                                    <motion.div
+                                        key={step.title}
+                                        variants={fadeUp}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{
+                                            once: true,
+                                            margin: '-80px',
+                                        }}
+                                        className={`neo-panel relative rounded-[2rem] border-t-2 p-6 pl-10 ${accent.ring}`}
+                                    >
+                                        <span
+                                            className={`absolute top-7 left-5 h-2 w-2 rounded-full ${accent.dot}`}
+                                        />
+                                        <span
+                                            className={`text-sm font-semibold tracking-[0.24em] uppercase ${accent.icon}`}
+                                        >
+                                            0{index + 1}
+                                        </span>
+                                        <h3 className="mt-3 text-xl font-semibold text-theme">
+                                            {step.title}
+                                        </h3>
+                                        <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                            {step.description}
+                                        </p>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -286,50 +370,58 @@ export default function ServicePageTemplate({
                         animationType="selected-work"
                     />
                     <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 lg:gap-8">
-                        {service.portfolio.map((item) => (
-                            <motion.article
-                                key={item.title}
-                                variants={scaleIn}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: '-80px' }}
-                                className="group glass-panel overflow-hidden rounded-[2rem]"
-                            >
-                                <img
-                                    src={item.image ?? item.media_path ?? ''}
-                                    alt={item.alt}
-                                    loading="lazy"
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
-                                    }}
-                                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="p-5">
-                                    <p className="text-xs font-semibold tracking-[0.24em] text-cyan-300 uppercase">
-                                        {item.category}
-                                    </p>
-                                    <h3 className="mt-2 text-xl font-semibold text-white">
-                                        {item.title}
-                                    </h3>
-                                    <p className="mt-3 text-sm leading-7 text-zinc-400">
-                                        {item.description}
-                                    </p>
-                                </div>
-                            </motion.article>
-                        ))}
+                        {service.portfolio.map((item, index) => {
+                            const accent = cardAccent(index);
+
+                            return (
+                                <motion.article
+                                    key={item.title}
+                                    variants={scaleIn}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true, margin: '-80px' }}
+                                    className="neo-panel group overflow-hidden rounded-[2rem]"
+                                >
+                                    <img
+                                        src={
+                                            item.image ?? item.media_path ?? ''
+                                        }
+                                        alt={item.alt}
+                                        loading="lazy"
+                                        onError={(e) => {
+                                            e.currentTarget.src =
+                                                'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
+                                        }}
+                                        className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    <div className="p-5">
+                                        <p
+                                            className={`text-xs font-semibold tracking-[0.24em] uppercase ${accent.icon}`}
+                                        >
+                                            {item.category}
+                                        </p>
+                                        <h3 className="mt-2 text-xl font-semibold text-theme">
+                                            {item.title}
+                                        </h3>
+                                        <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                </motion.article>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
 
             <section className="section-shell pt-0">
                 <div className="section-inner">
-                    <div className="glass-panel rounded-[2rem] border-t border-t-cyan-400/70 p-8 text-center sm:p-10 lg:p-14">
+                    <div className="neo-panel-elevated rounded-[2rem] border-t-2 border-t-cyan-500/70 p-8 text-center sm:p-10 lg:p-14">
                         <p className="section-kicker">Next Step</p>
-                        <h2 className="text-3xl font-extrabold text-balance text-white sm:text-4xl md:text-5xl">
+                        <h2 className="text-3xl font-extrabold text-balance text-theme sm:text-4xl md:text-5xl">
                             Ready to Build Something Amazing?
                         </h2>
-                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-theme-muted sm:text-lg">
                             Bring us your brief, rough idea, launch target, or
                             full roadmap. We will turn it into a premium
                             deliverable with speed and intent.
