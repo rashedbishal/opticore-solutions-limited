@@ -282,7 +282,11 @@ export default function Navbar() {
                 can play exit animations without the tree disappearing mid-flight. */}
             {hasOpenedOnce && (
                 <Suspense fallback={null}>
-                    <MobileMenu url={url} open={open} onClose={() => setOpen(false)} />
+                    <MobileMenu
+                        url={url}
+                        open={open}
+                        onClose={() => setOpen(false)}
+                    />
                 </Suspense>
             )}
         </>
