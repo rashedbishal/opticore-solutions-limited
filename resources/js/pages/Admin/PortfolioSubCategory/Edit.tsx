@@ -471,32 +471,44 @@ export default function PortfolioSubCategoryEdit({
                     SEO
                 </h2>
                 <p className="mb-5 text-sm text-zinc-500">
-                    Overrides the default title and description for search results and social shares. Leave blank to use the sub-category name / description as fallbacks.
+                    Overrides the default title and description for search
+                    results and social shares. Leave blank to use the
+                    sub-category name / description as fallbacks.
                 </p>
                 <div className="grid gap-6">
                     <div className="grid gap-6 sm:grid-cols-2">
                         <div>
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
-                                Meta Title <span className="normal-case text-zinc-600">(max 160)</span>
+                                Meta Title{' '}
+                                <span className="text-zinc-600 normal-case">
+                                    (max 160)
+                                </span>
                             </label>
                             <input
                                 type="text"
                                 maxLength={160}
                                 value={data.meta_title}
-                                onChange={(e) => setData('meta_title', e.target.value)}
+                                onChange={(e) =>
+                                    setData('meta_title', e.target.value)
+                                }
                                 placeholder={subCategory.name}
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                         </div>
                         <div>
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
-                                OG Title <span className="normal-case text-zinc-600">(social, max 160)</span>
+                                OG Title{' '}
+                                <span className="text-zinc-600 normal-case">
+                                    (social, max 160)
+                                </span>
                             </label>
                             <input
                                 type="text"
                                 maxLength={160}
                                 value={data.og_title}
-                                onChange={(e) => setData('og_title', e.target.value)}
+                                onChange={(e) =>
+                                    setData('og_title', e.target.value)
+                                }
                                 placeholder={`${subCategory.name} — Opticore Solutions Ltd.`}
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
@@ -505,26 +517,36 @@ export default function PortfolioSubCategoryEdit({
                     <div className="grid gap-6 sm:grid-cols-2">
                         <div>
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
-                                Meta Description <span className="normal-case text-zinc-600">(max 320)</span>
+                                Meta Description{' '}
+                                <span className="text-zinc-600 normal-case">
+                                    (max 320)
+                                </span>
                             </label>
                             <textarea
                                 maxLength={320}
                                 rows={3}
                                 value={data.meta_description}
-                                onChange={(e) => setData('meta_description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('meta_description', e.target.value)
+                                }
                                 placeholder={subCategory.description ?? ''}
                                 className="block w-full resize-none rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                         </div>
                         <div>
                             <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
-                                OG Description <span className="normal-case text-zinc-600">(social, max 320)</span>
+                                OG Description{' '}
+                                <span className="text-zinc-600 normal-case">
+                                    (social, max 320)
+                                </span>
                             </label>
                             <textarea
                                 maxLength={320}
                                 rows={3}
                                 value={data.og_description}
-                                onChange={(e) => setData('og_description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('og_description', e.target.value)
+                                }
                                 placeholder={subCategory.description ?? ''}
                                 className="block w-full resize-none rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />

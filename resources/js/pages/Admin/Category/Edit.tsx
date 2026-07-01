@@ -362,7 +362,9 @@ export default function CategoryEdit({
                         SEO
                     </h2>
                     <p className="mb-5 text-sm text-zinc-500">
-                        Overrides the default title and description shown in search results and social shares. Leave blank to use the category label / description as fallbacks.
+                        Overrides the default title and description shown in
+                        search results and social shares. Leave blank to use the
+                        category label / description as fallbacks.
                     </p>
                     <div className="grid gap-6">
                         <div className="grid gap-6 sm:grid-cols-2">
@@ -377,7 +379,9 @@ export default function CategoryEdit({
                                     type="text"
                                     maxLength={160}
                                     value={data.meta_title}
-                                    onChange={(e) => setData('meta_title', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('meta_title', e.target.value)
+                                    }
                                     placeholder={category.label}
                                     className={INPUT}
                                 />
@@ -393,7 +397,9 @@ export default function CategoryEdit({
                                     type="text"
                                     maxLength={160}
                                     value={data.og_title}
-                                    onChange={(e) => setData('og_title', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('og_title', e.target.value)
+                                    }
                                     placeholder={`${category.label} — Opticore Solutions Ltd.`}
                                     className={INPUT}
                                 />
@@ -411,7 +417,12 @@ export default function CategoryEdit({
                                     maxLength={320}
                                     rows={3}
                                     value={data.meta_description}
-                                    onChange={(e) => setData('meta_description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'meta_description',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder={category.description ?? ''}
                                     className={INPUT}
                                 />
@@ -420,14 +431,20 @@ export default function CategoryEdit({
                                 <label className={LABEL}>
                                     OG Description{' '}
                                     <span className="font-normal text-zinc-500 normal-case">
-                                        (social share description, max 320 chars)
+                                        (social share description, max 320
+                                        chars)
                                     </span>
                                 </label>
                                 <textarea
                                     maxLength={320}
                                     rows={3}
                                     value={data.og_description}
-                                    onChange={(e) => setData('og_description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'og_description',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder={category.description ?? ''}
                                     className={INPUT}
                                 />

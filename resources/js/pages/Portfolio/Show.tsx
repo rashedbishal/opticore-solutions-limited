@@ -16,7 +16,12 @@ interface Category {
 
 interface Props {
     categories: Category[];
-    meta: { title: string; ogTitle: string | null; description: string; ogDescription: string | null };
+    meta: {
+        title: string;
+        ogTitle: string | null;
+        description: string;
+        ogDescription: string | null;
+    };
 }
 
 const staggerGrid: Variants = {
@@ -42,10 +47,16 @@ export default function PortfolioShow({ categories, meta }: Props) {
                 <meta name="description" content={meta.description} />
                 <meta
                     property="og:title"
-                    content={meta.ogTitle ?? `${meta.title} — Opticore Solutions Ltd.`}
+                    content={
+                        meta.ogTitle ??
+                        `${meta.title} — Opticore Solutions Ltd.`
+                    }
                 />
                 {meta.ogDescription && (
-                    <meta property="og:description" content={meta.ogDescription} />
+                    <meta
+                        property="og:description"
+                        content={meta.ogDescription}
+                    />
                 )}
                 <meta
                     name="viewport"

@@ -1280,7 +1280,11 @@ export default function SubCategoryShow({
                 {(subCategory.metaDescription ?? subCategory.description) && (
                     <meta
                         name="description"
-                        content={subCategory.metaDescription ?? subCategory.description ?? ''}
+                        content={
+                            subCategory.metaDescription ??
+                            subCategory.description ??
+                            ''
+                        }
                     />
                 )}
                 <meta

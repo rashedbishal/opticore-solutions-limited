@@ -34,7 +34,12 @@ interface Props {
     subCategories: SubCategory[];
     selectedSubCategory: SubCategory | null;
     portfolios: PortfolioItem[];
-    meta: { title: string; ogTitle: string | null; description: string; ogDescription: string | null };
+    meta: {
+        title: string;
+        ogTitle: string | null;
+        description: string;
+        ogDescription: string | null;
+    };
 }
 
 const PLACEHOLDER = 'https://placehold.co/600x400/111111/7C3AED?text=Opticore';
@@ -148,10 +153,16 @@ export default function PortfolioCategoryShow({
                 <meta name="description" content={meta.description} />
                 <meta
                     property="og:title"
-                    content={meta.ogTitle ?? `${meta.title} — Opticore Solutions Ltd.`}
+                    content={
+                        meta.ogTitle ??
+                        `${meta.title} — Opticore Solutions Ltd.`
+                    }
                 />
                 {meta.ogDescription && (
-                    <meta property="og:description" content={meta.ogDescription} />
+                    <meta
+                        property="og:description"
+                        content={meta.ogDescription}
+                    />
                 )}
                 <meta
                     name="viewport"

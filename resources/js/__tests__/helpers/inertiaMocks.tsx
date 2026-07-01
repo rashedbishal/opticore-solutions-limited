@@ -161,7 +161,12 @@ export const inertiaMock = {
         rememberedState: {},
         resolvedErrors: {},
     }),
-    Deferred: ({ children }: { children?: ReactNode; data?: string | string[] }) => <>{children}</>,
+    Deferred: ({
+        children,
+    }: {
+        children?: ReactNode;
+        data?: string | string[];
+    }) => <>{children}</>,
     router: {
         get: vi.fn(),
         post: vi.fn(),

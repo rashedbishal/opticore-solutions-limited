@@ -290,7 +290,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                                 <textarea
                                     value={data.og_description}
                                     onChange={(e) =>
-                                        setData('og_description', e.target.value)
+                                        setData(
+                                            'og_description',
+                                            e.target.value,
+                                        )
                                     }
                                     maxLength={320}
                                     rows={3}

@@ -57,7 +57,9 @@ export default function ServicePageTemplate({
                 <title>{service.metaTitle ?? service.name}</title>
                 <meta
                     name="description"
-                    content={service.metaDescription ?? service.shortDescription}
+                    content={
+                        service.metaDescription ?? service.shortDescription
+                    }
                 />
                 <meta
                     property="og:title"
