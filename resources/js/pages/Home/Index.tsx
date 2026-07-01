@@ -509,7 +509,8 @@ export default function HomeIndex({
                         className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl"
                     >
                         From stunning visuals to powerful digital strategies —
-                        Opticore Solutions Limited turns your vision into results.
+                        Opticore Solutions Limited turns your vision into
+                        results.
                     </motion.p>
 
                     <motion.div
