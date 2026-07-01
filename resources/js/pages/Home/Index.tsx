@@ -458,7 +458,7 @@ export default function HomeIndex({
                 />
                 <meta
                     property="og:title"
-                    content="Home — Opticore Solutions Limited"
+                    content="Opticore Solutions Limited — Affordable Services for All"
                 />
                 <meta
                     name="viewport"
