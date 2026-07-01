@@ -285,7 +285,7 @@ export default function SpotlightCarousel({
     const cardWidth = useMemo(
         () =>
             containerWidth < 375
-                ? containerWidth * 0.84
+                ? containerWidth * 0.75
                 : Math.min(containerWidth * 0.52, 440),
         [containerWidth],
     );
@@ -293,7 +293,7 @@ export default function SpotlightCarousel({
     const sideOffset = useMemo(
         () =>
             containerWidth < 375
-                ? containerWidth * 0.86
+                ? containerWidth * 0.61
                 : Math.min(containerWidth * 0.34, 350),
         [containerWidth],
     );
@@ -363,8 +363,8 @@ export default function SpotlightCarousel({
 
     const getAnimate = useCallback(
         (pos: CardPosition) => {
-            const sideScale = isExtraSmall ? 0.7 : 0.83;
-            const sideOpacity = isExtraSmall ? 0.28 : 0.58;
+            const sideScale = isExtraSmall ? 0.78 : 0.83;
+            const sideOpacity = isExtraSmall ? 0.5 : 0.58;
 
             switch (pos) {
                 case 'center':
@@ -451,10 +451,10 @@ export default function SpotlightCarousel({
                     style={{
                         height: isExtraSmall ? 380 : STAGE_HEIGHT,
                         maskImage: isExtraSmall
-                            ? 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
+                            ? 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)'
                             : 'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
                         WebkitMaskImage: isExtraSmall
-                            ? 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
+                            ? 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)'
                             : 'linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%)',
                     }}
                 >
