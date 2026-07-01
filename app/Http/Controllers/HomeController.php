@@ -68,7 +68,7 @@ class HomeController extends Controller
             'testimonials' => $testimonials,
             'floatingCards' => Category::floatingCards(),
             'meta' => [
-                'title' => 'Opticore Solutions Limited — Affordable Services for All',
+                'title' => 'Home — Opticore Solutions Limited',
                 'description' => 'From graphic design to web development, Opticore Solutions Limited creates premium digital experiences that help brands grow.',
             ],
         ]);
