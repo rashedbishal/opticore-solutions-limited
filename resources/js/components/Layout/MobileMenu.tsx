@@ -39,7 +39,12 @@ interface MobileMenuProps {
     onClose: () => void;
 }
 
-const springIn = { type: 'spring', damping: 30, stiffness: 320, mass: 0.85 } as const;
+const springIn = {
+    type: 'spring',
+    damping: 30,
+    stiffness: 320,
+    mass: 0.85,
+} as const;
 
 export default function MobileMenu({ url, onClose }: MobileMenuProps) {
     const { props } = usePage<SharedPageProps>();
@@ -77,7 +82,11 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
           ];
 
     const allItems = [
-        ...navItems.map((item) => ({ ...item, isPost: false, isLogout: false })),
+        ...navItems.map((item) => ({
+            ...item,
+            isPost: false,
+            isLogout: false,
+        })),
         ...authItems,
     ];
 
@@ -99,11 +108,7 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={springIn}
-                className="absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col overflow-hidden
-                    border-l border-slate-200/70 bg-gradient-to-b from-white to-slate-50/98
-                    shadow-[-20px_0_60px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(255,255,255,0.9)]
-                    dark:border-zinc-800 dark:bg-gradient-to-b dark:from-[#1c1c22] dark:to-[#08080c]
-                    dark:shadow-[-24px_0_80px_rgba(0,0,0,0.85),inset_0_0_0_1px_rgba(255,255,255,0.04)]"
+                className="absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col overflow-hidden border-l border-slate-200/70 bg-gradient-to-b from-white to-slate-50/98 shadow-[-20px_0_60px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(255,255,255,0.9)] dark:border-zinc-800 dark:bg-gradient-to-b dark:from-[#1c1c22] dark:to-[#08080c] dark:shadow-[-24px_0_80px_rgba(0,0,0,0.85),inset_0_0_0_1px_rgba(255,255,255,0.04)]"
             >
                 {/* Left-edge gradient glow stripe */}
                 <motion.div
@@ -111,7 +116,11 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                     initial={{ opacity: 0, scaleY: 0.35 }}
                     animate={{ opacity: 1, scaleY: 1 }}
                     exit={{ opacity: 0, scaleY: 0.35 }}
-                    transition={{ delay: 0.12, duration: 0.55, ease: 'easeOut' }}
+                    transition={{
+                        delay: 0.12,
+                        duration: 0.55,
+                        ease: 'easeOut',
+                    }}
                     className="pointer-events-none absolute inset-y-0 left-0 w-[3px]"
                     style={{
                         background:
@@ -124,14 +133,16 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                 {/* Subtle interior ambient glow from the stripe (light + dark) */}
                 <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-y-0 left-0 w-28
-                        bg-gradient-to-r from-violet-100/40 to-transparent
-                        dark:from-violet-950/30 dark:to-transparent"
+                    className="pointer-events-none absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-violet-100/40 to-transparent dark:from-violet-950/30 dark:to-transparent"
                 />
 
                 {/* Rail header */}
-                <div className="relative flex shrink-0 items-center justify-between pl-7 pr-5 pt-7 pb-4">
-                    <Link href="/" onClick={onClose} className="inline-flex items-center">
+                <div className="relative flex shrink-0 items-center justify-between pt-7 pr-5 pb-4 pl-7">
+                    <Link
+                        href="/"
+                        onClick={onClose}
+                        className="inline-flex items-center"
+                    >
                         <img
                             src="/images/logo/opticore.webp"
                             alt="Opticore Solutions"
@@ -158,12 +169,11 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                 </div>
 
                 {/* Unified item list — scrollable */}
-                <div className="hide-scrollbar relative flex-1 overflow-y-auto overscroll-contain pl-6 pr-5 pb-2">
+                <div className="hide-scrollbar relative flex-1 overflow-y-auto overscroll-contain pr-5 pb-2 pl-6">
                     <div className="space-y-2">
                         {allItems.map((item, index) => {
                             const Icon = item.icon ? IconMap[item.icon] : null;
-                            const active =
-                                !item.isLogout && url === item.href;
+                            const active = !item.isLogout && url === item.href;
 
                             const sharedMotion = {
                                 initial: { opacity: 0, x: 28 },
@@ -185,18 +195,22 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                                             href={item.href}
                                             method="post"
                                             as="button"
-                                            onStart={() => setIsLoggingOut(true)}
-                                            onFinish={() => setIsLoggingOut(false)}
+                                            onStart={() =>
+                                                setIsLoggingOut(true)
+                                            }
+                                            onFinish={() =>
+                                                setIsLoggingOut(false)
+                                            }
                                             disabled={isLoggingOut}
                                             onClick={() => {
                                                 window.dispatchEvent(
-                                                    new CustomEvent('logout:start'),
+                                                    new CustomEvent(
+                                                        'logout:start',
+                                                    ),
                                                 );
                                                 onClose();
                                             }}
-                                            className="group flex w-full items-center gap-3.5 rounded-2xl border px-4 py-3 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50
-                                                border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)]
-                                                dark:border-zinc-800/80 dark:bg-zinc-800/50 dark:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"
+                                            className="group flex w-full items-center gap-3.5 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 dark:border-zinc-800/80 dark:bg-zinc-800/50 dark:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"
                                         >
                                             {isLoggingOut ? (
                                                 <Loader2 className="h-5 w-5 shrink-0 animate-spin text-violet-500 dark:text-violet-400" />
@@ -206,7 +220,9 @@ export default function MobileMenu({ url, onClose }: MobileMenuProps) {
                                                 )
                                             )}
                                             <span className="flex-1 text-base font-semibold text-zinc-700 dark:text-zinc-300">
-                                                {isLoggingOut ? 'Signing out…' : item.label}
+                                                {isLoggingOut
+                                                    ? 'Signing out…'
+                                                    : item.label}
                                             </span>
                                             <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform duration-200 group-hover:translate-x-0.5 dark:text-zinc-700" />
                                         </Link>
