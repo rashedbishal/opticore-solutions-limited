@@ -5,6 +5,7 @@ import { m as motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import MagneticButton from '@/components/UI/MagneticButton';
 import SectionHeader from '@/components/UI/SectionHeader';
+import { cardAccent } from '@/lib/cardAccents';
 import {
     CATEGORY_ICON_MAP,
     DEFAULT_CATEGORY_ICON,
@@ -40,51 +41,6 @@ const rotateFade: Variants = {
         transition: { duration: 0.6, ease: easing },
     },
 };
-
-// Cycled per-card so each capability/reason/step/case-study card reads as its
-// own distinct color instead of one repeated accent down the whole page.
-const CARD_ACCENTS = [
-    {
-        icon: 'text-violet-600 dark:text-violet-400',
-        chip: 'bg-violet-500/10 dark:bg-violet-500/15',
-        ring: 'border-t-violet-500/60',
-        dot: 'bg-violet-500',
-    },
-    {
-        icon: 'text-cyan-600 dark:text-cyan-400',
-        chip: 'bg-cyan-500/10 dark:bg-cyan-500/15',
-        ring: 'border-t-cyan-500/60',
-        dot: 'bg-cyan-500',
-    },
-    {
-        icon: 'text-fuchsia-600 dark:text-fuchsia-400',
-        chip: 'bg-fuchsia-500/10 dark:bg-fuchsia-500/15',
-        ring: 'border-t-fuchsia-500/60',
-        dot: 'bg-fuchsia-500',
-    },
-    {
-        icon: 'text-emerald-600 dark:text-emerald-400',
-        chip: 'bg-emerald-500/10 dark:bg-emerald-500/15',
-        ring: 'border-t-emerald-500/60',
-        dot: 'bg-emerald-500',
-    },
-    {
-        icon: 'text-amber-600 dark:text-amber-400',
-        chip: 'bg-amber-500/10 dark:bg-amber-500/15',
-        ring: 'border-t-amber-500/60',
-        dot: 'bg-amber-500',
-    },
-    {
-        icon: 'text-rose-600 dark:text-rose-400',
-        chip: 'bg-rose-500/10 dark:bg-rose-500/15',
-        ring: 'border-t-rose-500/60',
-        dot: 'bg-rose-500',
-    },
-] as const;
-
-function cardAccent(index: number) {
-    return CARD_ACCENTS[index % CARD_ACCENTS.length];
-}
 
 interface ServicePageTemplateProps {
     service: ServicePageContent;
