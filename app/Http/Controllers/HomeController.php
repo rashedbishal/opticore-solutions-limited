@@ -68,8 +68,8 @@ class HomeController extends Controller
             'testimonials' => $testimonials,
             'floatingCards' => Category::floatingCards(),
             'meta' => [
-                'title' => 'Opticore Solutions Ltd. — Premium Digital Agency',
-                'description' => 'We build brands that leave a lasting impression.',
+                'title' => 'Opticore Solutions Limited — Affordable Services for All',
+                'description' => 'From graphic design to web development, Opticore Solutions Limited creates premium digital experiences that help brands grow.',
             ],
         ]);
     }

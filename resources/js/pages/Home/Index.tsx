@@ -451,14 +451,14 @@ export default function HomeIndex({
                 }
             `}</style>
             <Head>
-                <title>Premium Digital Agency</title>
+                <title>Affordable Services for All</title>
                 <meta
                     name="description"
-                    content="From graphic design to web development, Opticore Solutions Ltd. creates premium digital experiences that help brands grow."
+                    content="From graphic design to web development, Opticore Solutions Limited creates premium digital experiences that help brands grow."
                 />
                 <meta
                     property="og:title"
-                    content="Opticore Solutions Ltd. — Premium Digital Agency"
+                    content="Opticore Solutions Limited — Affordable Services for All"
                 />
                 <meta
                     name="viewport"

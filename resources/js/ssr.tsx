@@ -4,7 +4,7 @@ import createServer from '@inertiajs/react/server';
 import ReactDOMServer from 'react-dom/server';
 import AppLayout from '@/components/Layout/AppLayout';
 
-const appName = 'Opticore Solutions Ltd.';
+const appName = 'Opticore Solutions Limited';
 
 type InertiaPageComponent = ComponentType<any> & {
     layout?: (page: ReactNode) => ReactNode;

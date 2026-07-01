@@ -7,7 +7,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import AppLayout from '@/components/Layout/AppLayout';
 import LogoutOverlay from '@/components/UI/LogoutOverlay';
 
-const appName = 'Opticore Solutions Ltd.';
+const appName = 'Opticore Solutions Limited';
 
 type InertiaPageComponent = ComponentType<any> & {
     layout?: (page: ReactNode) => ReactNode;
