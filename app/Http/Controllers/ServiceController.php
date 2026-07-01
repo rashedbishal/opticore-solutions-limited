@@ -56,7 +56,7 @@ class ServiceController extends Controller
                 'image' => str_starts_with($item->image, '/') || str_starts_with($item->image, 'http')
                     ? $item->image
                     : asset('storage/'.$item->image),
-            ])->values(),
+            ])->toArray(),
         ];
     }
 }
