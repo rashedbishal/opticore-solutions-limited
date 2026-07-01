@@ -50,6 +50,15 @@
                 } catch (e) {}
             })();
         </script>
+        {{-- Google Analytics 4 --}}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0DNB66P4E"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Y0DNB66P4E');
+        </script>
+
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
         <x-inertia::head>

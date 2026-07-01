@@ -43,7 +43,7 @@ class SecurityHeaders
 
         $directives = [
             "default-src 'self'",
-            "script-src 'self' 'wasm-unsafe-eval' {$this->scriptHashes($response)}https://pay.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com",
+            "script-src 'self' 'wasm-unsafe-eval' {$this->scriptHashes($response)}https://pay.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://www.googletagmanager.com",
             // Inertia injects the progress-bar/error-modal CSS inline at
             // runtime with no nonce support in the installed package
             // version (added later in the 3.x line) — 'unsafe-inline' here
@@ -52,7 +52,7 @@ class SecurityHeaders
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: https:",
             "media-src 'self' https:",
-            "connect-src 'self' https://pay.google.com {$reverbOrigin}",
+            "connect-src 'self' https://pay.google.com {$reverbOrigin} https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
             "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com",
             "form-action 'self' https:",
             "worker-src 'self' blob:",
