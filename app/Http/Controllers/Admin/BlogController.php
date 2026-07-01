@@ -62,6 +62,7 @@ class BlogController extends Controller
 
         Cache::forget('blog.index');
         Cache::forget("blog.show.{$blog->slug}");
+        Cache::forget('sitemap.xml');
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created.');
     }
@@ -90,6 +91,7 @@ class BlogController extends Controller
 
         Cache::forget('blog.index');
         Cache::forget("blog.show.{$blog->slug}");
+        Cache::forget('sitemap.xml');
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated.');
     }
@@ -103,6 +105,7 @@ class BlogController extends Controller
 
         Cache::forget('blog.index');
         Cache::forget("blog.show.{$blog->slug}");
+        Cache::forget('sitemap.xml');
 
         return back()->with('success', 'Blog deleted.');
     }

@@ -46,6 +46,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\RedirectAdminToPanel;
@@ -65,6 +66,8 @@ Route::post('/broadcasting/auth', function (Request $request) {
 
     return Broadcast::auth($request);
 })->middleware(['web', 'auth:web,admin']);
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // All website (non-admin) routes — admins are redirected to the panel.
 Route::middleware(RedirectAdminToPanel::class)->group(function () {

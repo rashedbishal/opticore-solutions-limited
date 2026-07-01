@@ -1,5 +1,7 @@
 User-agent: *
 
+Sitemap: https://opticoresolutionsltd.com/sitemap.xml
+
 # App-generated assets — no crawlable content
 Disallow: /build/
 Disallow: /storage/

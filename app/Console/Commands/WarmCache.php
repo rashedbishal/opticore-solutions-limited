@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\SitemapController;
 use App\Models\Blog;
 use App\Models\Brand;
 use App\Models\Category;
@@ -54,6 +55,9 @@ class WarmCache extends Command
 
         // 9. Static CMS pages
         $this->warmStaticPages();
+
+        // 10. Sitemap
+        $this->warmSitemap($categories);
 
         $this->info('Cache warm-up complete.');
 
@@ -291,6 +295,15 @@ class WarmCache extends Command
         });
 
         $this->line('  ✓ blog.index');
+    }
+
+    /** @param array<string, mixed> $categories */
+    private function warmSitemap(array $categories): void
+    {
+        Cache::forget('sitemap.xml');
+        // Delegate to the controller's build logic by booting it through the app.
+        app(SitemapController::class)->index();
+        $this->line('  ✓ sitemap.xml');
     }
 
     private function warmStaticPages(): void

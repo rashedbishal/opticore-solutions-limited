@@ -335,6 +335,7 @@ class CategoryController extends Controller
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
         Cache::forget('hire-us.subcategories');
+        Cache::forget('sitemap.xml');
         if ($slug !== null) {
             Cache::forget("portfolio.subcategories.{$slug}");
             Cache::forget("categories.service-page.{$slug}");

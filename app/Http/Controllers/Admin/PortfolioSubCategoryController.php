@@ -114,6 +114,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget("hire-us.siblings.{$validated['category_slug']}");
         Cache::forget('hire-us.recommended-pool');
         Cache::forget('admin.task.sub-category-options');
+        Cache::forget('sitemap.xml');
 
         return redirect()->route('admin.sub-categories.edit', $subCategory)
             ->with('success', 'Sub-category created. Now fill in the plans, description points, and FAQs.');
@@ -235,6 +236,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget("hire-us.siblings.{$subCategory->category_slug}");
         Cache::forget('hire-us.recommended-pool');
         Cache::forget('admin.task.sub-category-options');
+        Cache::forget('sitemap.xml');
         if ($oldCategorySlug !== $subCategory->category_slug) {
             Cache::forget("portfolio.subcategories.{$oldCategorySlug}");
             Cache::forget("hire-us.siblings.{$oldCategorySlug}");
@@ -276,6 +278,7 @@ class PortfolioSubCategoryController extends Controller
         Cache::forget("hire-us.siblings.{$categorySlug}");
         Cache::forget('hire-us.recommended-pool');
         Cache::forget('admin.task.sub-category-options');
+        Cache::forget('sitemap.xml');
 
         return back()->with('success', 'Sub-category deleted.');
     }
