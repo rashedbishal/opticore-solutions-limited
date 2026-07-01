@@ -113,7 +113,7 @@ export default function Career({ jobListings }: Props) {
     return (
         <>
             <Head>
-                <title>Career — Opticore Solutions Ltd.</title>
+                <title>Career</title>
                 <meta
                     name="description"
                     content="Join Opticore Solutions Ltd. and work on premium creative, digital marketing, 3D production, and web projects from anywhere."

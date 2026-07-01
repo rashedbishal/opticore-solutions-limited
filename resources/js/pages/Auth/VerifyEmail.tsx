@@ -13,7 +13,10 @@ export default function VerifyEmail({ status }: { status?: string }) {
 
     return (
         <>
-            <Head title="Verify Email | Opticore Solutions Ltd." />
+            <Head>
+                <title>Verify Email</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <div className="mb-[min(3vh,1.5rem)] text-center [@media(max-height:400px)]:mb-2">
                 <h1 className="mb-[min(1vh,0.375rem)] text-[clamp(1.25rem,4vh,2.5rem)] font-black tracking-tighter text-foreground uppercase">

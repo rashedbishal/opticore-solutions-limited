@@ -17,7 +17,10 @@ export default function Login({ status }: { status?: string }) {
 
     return (
         <>
-            <Head title="Sign In | Opticore Solutions Ltd." />
+            <Head>
+                <title>Sign In</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <div className="mb-[min(3vh,1.5rem)] text-center [@media(max-height:400px)]:mb-2">
                 <h1 className="mb-[min(1vh,0.375rem)] text-[clamp(1.25rem,4vh,2.5rem)] font-black tracking-tighter text-foreground uppercase">

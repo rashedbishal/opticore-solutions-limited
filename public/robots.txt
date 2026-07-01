@@ -1,2 +1,36 @@
 User-agent: *
-Disallow:
+
+# App-generated assets — no crawlable content
+Disallow: /build/
+Disallow: /storage/
+Disallow: /images/
+
+# Auth & account flows
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /email/
+
+# Authenticated client area
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /gpay/
+Disallow: /orders/
+Disallow: /offer/
+
+# Admin panel
+Disallow: /admin/
+
+# Payment gateway callbacks (no value to crawlers)
+Disallow: /success
+Disallow: /fail
+Disallow: /cancel
+Disallow: /ipn
+Disallow: /pay-via-ajax
+
+# Internal / API-like endpoints
+Disallow: /up
+Disallow: /broadcasting/

@@ -158,7 +158,7 @@ export default function Contact() {
     return (
         <>
             <Head>
-                <title>Contact — Opticore Solutions Ltd.</title>
+                <title>Contact</title>
                 <meta
                     name="description"
                     content="Contact Opticore Solutions Ltd. to discuss graphic design, video editing, digital marketing, 3D production, and web development projects."

@@ -16,8 +16,8 @@ class PageController extends Controller
     {
         return Inertia::render('HireUs', [
             'meta' => [
-                'title' => 'Hire Us — Opticore Solutions Ltd.',
-                'description' => 'Hire Opticore Solutions Ltd. for expert digital services. Explore our offerings and get a custom quote.',
+                'title' => 'Hire Us',
+                'description' => 'Hire Opticore Solutions Ltd. for expert digital services. Browse our full service catalogue and get a custom quote.',
             ],
             'subCategories' => $this->hireUsSubCategories(),
         ]);

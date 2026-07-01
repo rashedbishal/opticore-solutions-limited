@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="canonical" href="{{ url()->current() }}">
         <link rel="icon" href="/favicon.ico" sizes="any">
 
         {{-- Preload both logos so they're ready before React paints the navbar.
@@ -52,7 +53,10 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
         <x-inertia::head>
-            <title>Opticore Solutions Limited</title>
+            <title>{{ $pageTitle ?? 'Opticore Solutions Limited' }}</title>
+            @isset($pageDescription)
+                <meta name="description" content="{{ $pageDescription }}">
+            @endisset
         </x-inertia::head>
     </head>
     <body class="bg-background font-sans antialiased">

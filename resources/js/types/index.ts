@@ -129,6 +129,10 @@ export interface SectionHeading {
 export interface ServicePageContent {
     name: string;
     shortDescription: string;
+    metaTitle: string | null;
+    metaDescription: string | null;
+    ogTitle: string | null;
+    ogDescription: string | null;
     longDescription: string;
     href: string;
     icon: string;

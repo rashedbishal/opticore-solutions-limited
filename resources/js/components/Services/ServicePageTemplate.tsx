@@ -54,12 +54,28 @@ export default function ServicePageTemplate({
     return (
         <>
             <Head>
-                <title>{`${service.name} — Opticore Solutions Ltd.`}</title>
-                <meta name="description" content={service.shortDescription} />
+                <title>{service.metaTitle ?? service.name}</title>
+                <meta
+                    name="description"
+                    content={service.metaDescription ?? service.shortDescription}
+                />
                 <meta
                     property="og:title"
-                    content={`${service.name} — Opticore Solutions Ltd.`}
+                    content={
+                        service.ogTitle ??
+                        `${service.metaTitle ?? service.name} — Opticore Solutions Ltd.`
+                    }
                 />
+                {(service.ogDescription ?? service.metaDescription) && (
+                    <meta
+                        property="og:description"
+                        content={
+                            service.ogDescription ??
+                            service.metaDescription ??
+                            ''
+                        }
+                    />
+                )}
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"

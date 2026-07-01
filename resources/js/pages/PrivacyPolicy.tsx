@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
     return (
         <>
             <Head>
-                <title>Privacy Policy — Opticore Solutions Ltd.</title>
+                <title>Privacy Policy</title>
                 <meta
                     name="description"
                     content="Read the privacy policy for Opticore Solutions Ltd."

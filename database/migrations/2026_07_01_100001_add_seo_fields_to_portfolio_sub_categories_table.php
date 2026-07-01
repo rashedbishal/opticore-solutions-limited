@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('portfolio_sub_categories', function (Blueprint $table) {
+            $table->string('meta_title', 160)->nullable()->after('description');
+            $table->string('meta_description', 320)->nullable()->after('meta_title');
+            $table->string('og_title', 160)->nullable()->after('meta_description');
+            $table->string('og_description', 320)->nullable()->after('og_title');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('portfolio_sub_categories', function (Blueprint $table) {
+            $table->dropColumn(['meta_title', 'meta_description', 'og_title', 'og_description']);
+        });
+    }
+};

@@ -485,7 +485,10 @@ export default function Profile() {
 
     return (
         <>
-            <Head title="My Profile — Opticore" />
+            <Head>
+                <title>My Profile</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             {echoReady && auth.user && (
                 <>

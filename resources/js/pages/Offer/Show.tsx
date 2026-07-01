@@ -1328,10 +1328,17 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
         />
     ) : null;
 
+    const offerHead = (
+        <Head>
+            <title>{title}</title>
+            <meta name="robots" content="noindex, nofollow" />
+        </Head>
+    );
+
     if (isAdmin) {
         return (
             <AdminLayout title="Edit Offer">
-                <Head title={title} />
+                {offerHead}
                 {echoListener}
                 <AdminView offer={offer} />
             </AdminLayout>
@@ -1340,7 +1347,7 @@ export default function OfferShow({ offer: initial, isAdmin }: Props) {
 
     return (
         <>
-            <Head title={title} />
+            {offerHead}
             {echoListener}
             <AppLayout>
                 <ClientView

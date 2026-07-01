@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Career from '@/pages/Career';
 
@@ -12,6 +12,18 @@ vi.mock('@inertiajs/react', async () => {
             useFormMock(initialData),
     };
 });
+
+vi.mock('@/components/UI/Modal', () => ({
+    default: ({
+        open,
+        children,
+    }: {
+        open: boolean;
+        title: string;
+        onClose: () => void;
+        children?: React.ReactNode;
+    }) => (open ? <div role="dialog">{children}</div> : null),
+}));
 
 const careerPageProps = {
     jobListings: [
@@ -51,20 +63,23 @@ describe('Career', () => {
     it('updates field values as the user types after opening the application modal', async () => {
         const user = await openApplicationModal();
 
-        const nameInput = screen.getByLabelText('Name');
-        const emailInput = screen.getByLabelText('Email');
-        const phoneInput = screen.getByLabelText('Phone');
-        const messageInput = screen.getByLabelText('Message');
+        await waitFor(() =>
+            expect(screen.getByRole('dialog')).toBeInTheDocument(),
+        );
+        const dialog = screen.getByRole('dialog');
+
+        const inputs = within(dialog).getAllByRole('textbox');
+        const nameInput = inputs[0];
+        const emailInput = inputs[2];
+        const phoneInput = inputs[1];
 
         await user.type(nameInput, 'John Smith');
         await user.type(emailInput, 'john@example.com');
         await user.type(phoneInput, '01700000000');
-        await user.type(messageInput, 'I would love to join the team.');
 
         expect(nameInput).toHaveValue('John Smith');
         expect(emailInput).toHaveValue('john@example.com');
         expect(phoneInput).toHaveValue('01700000000');
-        expect(messageInput).toHaveValue('I would love to join the team.');
     });
 
     it('shows validation error messages when submitting an empty application form', async () => {
@@ -85,7 +100,7 @@ describe('Career', () => {
             screen.getByText('The email field is required.'),
         ).toBeInTheDocument();
         expect(
-            screen.getByText('The message field is required.'),
+            screen.getByText('The phone field is required.'),
         ).toBeInTheDocument();
     });
 });

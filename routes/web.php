@@ -81,6 +81,8 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
 
     // Hire Us Page Routes
     Route::get('/hire-us', [PageController::class, 'hireUs'])->name('hireUs');
+    // 301s for corrected slug typo — must be before the {subcategory} wildcard
+    Route::permanentRedirect('/hire-us/video-editing/weading-video-editing', '/hire-us/video-editing/wedding-video-editing');
     Route::get('/hire-us/{category}/{subcategory}', [HireUsController::class, 'showSubCategory'])
         ->where('category', '[a-z0-9-]+')
         ->name('hireUsSubCategory');
@@ -90,6 +92,8 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
     Route::get('/portfolio/{category}', [PortfolioController::class, 'showCategory'])
         ->where('category', '[a-z0-9-]+')
         ->name('portfolioCategory');
+    // 301s for corrected slug typo — must be before the {subcategory} wildcard
+    Route::permanentRedirect('/portfolio/video-editing/weading-video-editing', '/portfolio/video-editing/wedding-video-editing');
     Route::get('/portfolio/{category}/{subcategory}', [PortfolioController::class, 'showSubCategory'])
         ->where('category', '[a-z0-9-]+')
         ->name('portfolioSubCategory');

@@ -24,6 +24,10 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
         reviews_count: 0,
         image: null as File | null,
         sort_order: 0,
+        meta_title: '',
+        meta_description: '',
+        og_title: '',
+        og_description: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -211,6 +215,90 @@ export default function PortfolioSubCategoryCreate({ categories }: Props) {
                             }
                             className="block w-64 rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                         />
+                    </div>
+
+                    {/* SEO / Meta */}
+                    <div className="border-t border-violet-500/10 pt-6">
+                        <p className="mb-4 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                            SEO / Meta
+                        </p>
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Meta Title{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 160 chars)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.meta_title}
+                                    onChange={(e) =>
+                                        setData('meta_title', e.target.value)
+                                    }
+                                    maxLength={160}
+                                    placeholder="Leave blank to use the sub-category name"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    OG Title{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 160 chars)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.og_title}
+                                    onChange={(e) =>
+                                        setData('og_title', e.target.value)
+                                    }
+                                    maxLength={160}
+                                    placeholder="Leave blank to use meta title"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Meta Description{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 320 chars)
+                                    </span>
+                                </label>
+                                <textarea
+                                    value={data.meta_description}
+                                    onChange={(e) =>
+                                        setData(
+                                            'meta_description',
+                                            e.target.value,
+                                        )
+                                    }
+                                    maxLength={320}
+                                    rows={3}
+                                    placeholder="Leave blank to use the description"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    OG Description{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 320 chars)
+                                    </span>
+                                </label>
+                                <textarea
+                                    value={data.og_description}
+                                    onChange={(e) =>
+                                        setData('og_description', e.target.value)
+                                    }
+                                    maxLength={320}
+                                    rows={3}
+                                    placeholder="Leave blank to use meta description"
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

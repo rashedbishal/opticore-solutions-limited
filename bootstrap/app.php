@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\PruneOrphanedCheckoutUploads;
+use App\Console\Commands\WarmCache;
 use App\Http\Middleware\EnsureAdminHasPermission;
 use App\Http\Middleware\EnsureAdminSessionIsCurrent;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -85,6 +86,11 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSchedule(function (Schedule $schedule): void {
+        // Re-prime all public-facing Redis caches every 50 minutes so the
+        // 60-minute TTL never cold-misses in production (first request after
+        // expiry would otherwise hit the DB directly and spike TTFB).
+        $schedule->command(WarmCache::class)->everyFiftyMinutes()->withoutOverlapping();
+
         // Clean up files pre-uploaded at checkout but never paid for
         // (user abandoned mid-flow or refreshed before clicking Pay Now).
         $schedule->command(PruneOrphanedCheckoutUploads::class)->everyTwentyMinutes();

@@ -44,8 +44,10 @@ class PortfolioController extends Controller
         return Inertia::render('Portfolio/Show', [
             'categories' => $categories,
             'meta' => [
-                'title' => 'Portfolio — Opticore Solutions Ltd.',
+                'title' => 'Portfolio',
+                'ogTitle' => null,
                 'description' => 'Browse our creative categories and explore sub-category specific work across branding, digital, video, 3D, and web.',
+                'ogDescription' => null,
             ],
         ]);
     }
@@ -136,6 +138,10 @@ class PortfolioController extends Controller
                     'name' => $subCategory->name,
                     'slug' => $subCategory->slug,
                     'description' => $subCategory->description,
+                    'meta_title' => $subCategory->meta_title,
+                    'meta_description' => $subCategory->meta_description,
+                    'og_title' => $subCategory->og_title,
+                    'og_description' => $subCategory->og_description,
                     'portfolios_count' => $subCategory->portfolios_count,
                 ])
                 ->values()
@@ -182,9 +188,17 @@ class PortfolioController extends Controller
             'portfolios' => $portfolios->values()->toArray(),
             'meta' => [
                 'title' => $selectedSubCategory !== null
-                    ? $selectedSubCategory['name'].' — '.$categoryData['label'].' — Opticore Solutions Ltd.'
-                    : $categoryData['label'].' — Opticore Solutions Ltd.',
-                'description' => $selectedSubCategory['description'] ?? $categoryData['description'],
+                    ? ($selectedSubCategory['meta_title'] ?? $selectedSubCategory['name'].' — '.$categoryData['label'])
+                    : ($categoryData['meta_title'] ?? $categoryData['label']),
+                'ogTitle' => $selectedSubCategory !== null
+                    ? ($selectedSubCategory['og_title'] ?? null)
+                    : ($categoryData['og_title'] ?? null),
+                'description' => $selectedSubCategory !== null
+                    ? ($selectedSubCategory['meta_description'] ?? $selectedSubCategory['description'] ?? $categoryData['description'])
+                    : ($categoryData['meta_description'] ?? $categoryData['description']),
+                'ogDescription' => $selectedSubCategory !== null
+                    ? ($selectedSubCategory['og_description'] ?? null)
+                    : ($categoryData['og_description'] ?? null),
             ],
         ]);
     }

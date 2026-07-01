@@ -40,6 +40,10 @@ interface SubCategory {
     name: string;
     slug: string;
     description: string | null;
+    meta_title: string | null;
+    meta_description: string | null;
+    og_title: string | null;
+    og_description: string | null;
     price: string | null;
     rating: number | null;
     reviews_count: number;
@@ -83,6 +87,10 @@ export default function PortfolioSubCategoryEdit({
         name: subCategory.name,
         slug: subCategory.slug,
         description: subCategory.description || '',
+        meta_title: subCategory.meta_title || '',
+        meta_description: subCategory.meta_description || '',
+        og_title: subCategory.og_title || '',
+        og_description: subCategory.og_description || '',
         price: subCategory.price || '',
         rating: subCategory.rating?.toFixed(1) || '5.0',
         reviews_count: subCategory.reviews_count,
@@ -454,6 +462,75 @@ export default function PortfolioSubCategoryEdit({
                         </Link>
                     </div>
                 </form>
+            </div>
+
+            {/* SEO section */}
+            <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                <h2 className="mb-1 text-base font-semibold tracking-wide text-white">
+                    SEO
+                </h2>
+                <p className="mb-5 text-sm text-zinc-500">
+                    Overrides the default title and description for search results and social shares. Leave blank to use the sub-category name / description as fallbacks.
+                </p>
+                <div className="grid gap-6">
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                Meta Title <span className="normal-case text-zinc-600">(max 160)</span>
+                            </label>
+                            <input
+                                type="text"
+                                maxLength={160}
+                                value={data.meta_title}
+                                onChange={(e) => setData('meta_title', e.target.value)}
+                                placeholder={subCategory.name}
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                OG Title <span className="normal-case text-zinc-600">(social, max 160)</span>
+                            </label>
+                            <input
+                                type="text"
+                                maxLength={160}
+                                value={data.og_title}
+                                onChange={(e) => setData('og_title', e.target.value)}
+                                placeholder={`${subCategory.name} — Opticore Solutions Ltd.`}
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                Meta Description <span className="normal-case text-zinc-600">(max 320)</span>
+                            </label>
+                            <textarea
+                                maxLength={320}
+                                rows={3}
+                                value={data.meta_description}
+                                onChange={(e) => setData('meta_description', e.target.value)}
+                                placeholder={subCategory.description ?? ''}
+                                className="block w-full resize-none rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                        <div>
+                            <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                                OG Description <span className="normal-case text-zinc-600">(social, max 320)</span>
+                            </label>
+                            <textarea
+                                maxLength={320}
+                                rows={3}
+                                value={data.og_description}
+                                onChange={(e) => setData('og_description', e.target.value)}
+                                placeholder={subCategory.description ?? ''}
+                                className="block w-full resize-none rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Pricing Plans section */}

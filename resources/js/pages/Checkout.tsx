@@ -556,7 +556,10 @@ export default function Checkout({ item, sslEmbedScriptUrl }: Props) {
 
     return (
         <>
-            <Head title="Checkout — Opticore" />
+            <Head>
+                <title>Checkout</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <div className="relative min-h-screen pb-24">
                 <div className="pointer-events-none absolute top-0 right-0 h-[700px] w-[700px] bg-radial from-cyan-500/6 to-transparent" />

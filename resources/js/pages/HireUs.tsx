@@ -20,9 +20,10 @@ interface HireUsSubCategory {
 
 interface Props {
     subCategories: Record<string, HireUsSubCategory[]>;
+    meta: { title: string; description: string };
 }
 
-const HireUsPage = ({ subCategories = {} }: Props) => {
+const HireUsPage = ({ subCategories = {}, meta }: Props) => {
     const { categories } = usePage<SharedPageProps>().props;
 
     // Tabs are fully CMS-driven: name, icon, and color all come from the
@@ -65,7 +66,12 @@ const HireUsPage = ({ subCategories = {} }: Props) => {
 
     return (
         <>
-            <Head title="Hire Opticore | Digital Services Marketplace" />
+            <Head>
+                <title>{meta.title}</title>
+                <meta name="description" content={meta.description} />
+                <meta property="og:title" content={`${meta.title} — Opticore Solutions Ltd.`} />
+                <meta property="og:description" content={meta.description} />
+            </Head>
 
             <div className="relative min-h-screen overflow-hidden px-4 pt-32 pb-24">
                 {/* Background Glows */}

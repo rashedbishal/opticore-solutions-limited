@@ -28,7 +28,10 @@ export default function Error({ status, message }: ErrorPageProps) {
 
     return (
         <>
-            <Head title={`${status} — ${title}`} />
+            <Head>
+                <title>{`${status} — ${title}`}</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <section className="flex min-h-screen items-center justify-center bg-zinc-950 px-6">
                 <div className="text-center">

@@ -57,6 +57,10 @@ interface CategoryData {
     sort_order: number;
     icon: string | null;
     color: string | null;
+    meta_title: string | null;
+    meta_description: string | null;
+    og_title: string | null;
+    og_description: string | null;
     long_description: string | null;
     is_active: boolean;
     headings: Headings;
@@ -106,6 +110,10 @@ export default function CategoryEdit({
         sort_order: category.sort_order,
         icon: category.icon ?? allowed_icons[0] ?? '',
         color: category.color ?? allowed_colors[0] ?? '',
+        meta_title: category.meta_title ?? '',
+        meta_description: category.meta_description ?? '',
+        og_title: category.og_title ?? '',
+        og_description: category.og_description ?? '',
         long_description: category.long_description ?? '',
         is_active: category.is_active,
         headings: category.headings,
@@ -343,6 +351,86 @@ export default function CategoryEdit({
                                 >
                                     Publish marketing page at /{category.slug}
                                 </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-8 backdrop-blur-sm">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                    <h2 className="mb-1 text-base font-semibold tracking-wide text-white">
+                        SEO
+                    </h2>
+                    <p className="mb-5 text-sm text-zinc-500">
+                        Overrides the default title and description shown in search results and social shares. Leave blank to use the category label / description as fallbacks.
+                    </p>
+                    <div className="grid gap-6">
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <div>
+                                <label className={LABEL}>
+                                    Meta Title{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 160 chars)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={160}
+                                    value={data.meta_title}
+                                    onChange={(e) => setData('meta_title', e.target.value)}
+                                    placeholder={category.label}
+                                    className={INPUT}
+                                />
+                            </div>
+                            <div>
+                                <label className={LABEL}>
+                                    OG Title{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (social share title, max 160 chars)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={160}
+                                    value={data.og_title}
+                                    onChange={(e) => setData('og_title', e.target.value)}
+                                    placeholder={`${category.label} — Opticore Solutions Ltd.`}
+                                    className={INPUT}
+                                />
+                            </div>
+                        </div>
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <div>
+                                <label className={LABEL}>
+                                    Meta Description{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (max 320 chars)
+                                    </span>
+                                </label>
+                                <textarea
+                                    maxLength={320}
+                                    rows={3}
+                                    value={data.meta_description}
+                                    onChange={(e) => setData('meta_description', e.target.value)}
+                                    placeholder={category.description ?? ''}
+                                    className={INPUT}
+                                />
+                            </div>
+                            <div>
+                                <label className={LABEL}>
+                                    OG Description{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (social share description, max 320 chars)
+                                    </span>
+                                </label>
+                                <textarea
+                                    maxLength={320}
+                                    rows={3}
+                                    value={data.og_description}
+                                    onChange={(e) => setData('og_description', e.target.value)}
+                                    placeholder={category.description ?? ''}
+                                    className={INPUT}
+                                />
                             </div>
                         </div>
                     </div>

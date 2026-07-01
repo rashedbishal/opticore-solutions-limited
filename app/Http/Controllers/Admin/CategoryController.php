@@ -119,6 +119,10 @@ class CategoryController extends Controller
                 'sort_order' => $category->sort_order,
                 'icon' => $category->icon,
                 'color' => $category->color,
+                'meta_title' => $category->meta_title,
+                'meta_description' => $category->meta_description,
+                'og_title' => $category->og_title,
+                'og_description' => $category->og_description,
                 'long_description' => $category->long_description,
                 'is_active' => $category->is_active,
                 'headings' => [

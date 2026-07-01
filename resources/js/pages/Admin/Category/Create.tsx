@@ -27,6 +27,10 @@ export default function CategoryCreate() {
         label: '',
         description: '',
         sort_order: 0,
+        meta_title: '',
+        meta_description: '',
+        og_title: '',
+        og_description: '',
     });
 
     const updateLabel = (value: string) => {
@@ -111,6 +115,85 @@ export default function CategoryCreate() {
                                         Number(e.target.value),
                                     )
                                 }
+                                className={INPUT}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-8 backdrop-blur-sm">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+                    <p className={`${LABEL} mb-4`}>SEO / Meta</p>
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div>
+                            <label className={LABEL}>
+                                Meta Title{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (max 160 chars)
+                                </span>
+                            </label>
+                            <input
+                                type="text"
+                                value={data.meta_title}
+                                onChange={(e) =>
+                                    setData('meta_title', e.target.value)
+                                }
+                                maxLength={160}
+                                placeholder="Leave blank to use the category label"
+                                className={INPUT}
+                            />
+                        </div>
+                        <div>
+                            <label className={LABEL}>
+                                OG Title{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (max 160 chars)
+                                </span>
+                            </label>
+                            <input
+                                type="text"
+                                value={data.og_title}
+                                onChange={(e) =>
+                                    setData('og_title', e.target.value)
+                                }
+                                maxLength={160}
+                                placeholder="Leave blank to use meta title"
+                                className={INPUT}
+                            />
+                        </div>
+                        <div>
+                            <label className={LABEL}>
+                                Meta Description{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (max 320 chars)
+                                </span>
+                            </label>
+                            <textarea
+                                value={data.meta_description}
+                                onChange={(e) =>
+                                    setData('meta_description', e.target.value)
+                                }
+                                maxLength={320}
+                                rows={3}
+                                placeholder="Leave blank to use the category description"
+                                className={INPUT}
+                            />
+                        </div>
+                        <div>
+                            <label className={LABEL}>
+                                OG Description{' '}
+                                <span className="font-normal text-zinc-500 normal-case">
+                                    (max 320 chars)
+                                </span>
+                            </label>
+                            <textarea
+                                value={data.og_description}
+                                onChange={(e) =>
+                                    setData('og_description', e.target.value)
+                                }
+                                maxLength={320}
+                                rows={3}
+                                placeholder="Leave blank to use meta description"
                                 className={INPUT}
                             />
                         </div>

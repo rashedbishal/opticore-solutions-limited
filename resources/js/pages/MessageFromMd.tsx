@@ -27,7 +27,7 @@ export default function MessageFromMd() {
     return (
         <>
             <Head>
-                <title>Message from MD — Opticore Solutions Ltd.</title>
+                <title>Message from MD</title>
                 <meta
                     name="description"
                     content="Read a message from the Managing Director of Opticore Solutions Ltd. about the company vision, values, and commitment to clients."

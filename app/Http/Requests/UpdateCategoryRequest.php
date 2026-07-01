@@ -21,6 +21,10 @@ class UpdateCategoryRequest extends FormRequest
         return [
             'label' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:500'],
+            'meta_title' => ['nullable', 'string', 'max:160'],
+            'meta_description' => ['nullable', 'string', 'max:320'],
+            'og_title' => ['nullable', 'string', 'max:160'],
+            'og_description' => ['nullable', 'string', 'max:320'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
 
             // Marketing/service-page fields — all optional so a category

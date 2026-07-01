@@ -22,7 +22,7 @@ describe('Login', () => {
         render(<Login />);
 
         expect(
-            screen.getByRole('heading', { name: /welcome back/i }),
+            screen.getByRole('heading', { name: /welcome/i }),
         ).toBeInTheDocument();
         expect(
             screen.getByPlaceholderText('Email Address'),

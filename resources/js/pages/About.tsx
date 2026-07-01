@@ -46,7 +46,7 @@ export default function About() {
     return (
         <>
             <Head>
-                <title>About Us — Opticore Solutions Ltd.</title>
+                <title>About Us</title>
                 <meta
                     name="description"
                     content="Learn how Opticore Solutions Ltd. helps brands grow, earn trust, and stand apart through premium digital execution."

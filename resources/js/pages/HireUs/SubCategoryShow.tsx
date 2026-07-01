@@ -71,6 +71,10 @@ interface SubCategory {
     name: string;
     slug: string;
     description: string | null;
+    metaTitle: string | null;
+    metaDescription: string | null;
+    ogTitle: string | null;
+    ogDescription: string | null;
     description_points?: DescriptionPoint[] | null;
     faqs?: FaqItem[];
     plans?: {
@@ -1271,7 +1275,32 @@ export default function SubCategoryShow({
 
     return (
         <>
-            <Head title={`${subCategory.name} — Hire Opticore`} />
+            <Head>
+                <title>{subCategory.metaTitle ?? subCategory.name}</title>
+                {(subCategory.metaDescription ?? subCategory.description) && (
+                    <meta
+                        name="description"
+                        content={subCategory.metaDescription ?? subCategory.description ?? ''}
+                    />
+                )}
+                <meta
+                    property="og:title"
+                    content={
+                        subCategory.ogTitle ??
+                        `${subCategory.metaTitle ?? subCategory.name} — Opticore Solutions Ltd.`
+                    }
+                />
+                {(subCategory.ogDescription ?? subCategory.metaDescription) && (
+                    <meta
+                        property="og:description"
+                        content={
+                            subCategory.ogDescription ??
+                            subCategory.metaDescription ??
+                            ''
+                        }
+                    />
+                )}
+            </Head>
 
             <div className="relative min-h-screen pb-36 lg:pb-24">
                 {/* Background Glows */}

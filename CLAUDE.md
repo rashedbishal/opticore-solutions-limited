@@ -88,12 +88,12 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 `TaskGenerator::createFromTransaction(Transaction $transaction)` is called after a successful SSLCommerz payment to auto-create a `Task` record for the order (keyed by `transaction_id`, idempotent). It looks up the `User` by email from the transaction, derives the category from `Category::configShape()`, and sends `TaskStatusMail`. If you modify the `Transaction` → `Task` pipeline, verify idempotency (it guards on existing `task.transaction_id`). `CheckoutMetadata` stores buyer notes and file attachment paths (keyed by `upload_token` / `transaction_id`) from the checkout form; read it inside `PendingOrderResolver` when building the pending order.
 
 ### Blog system
-`Blog` (`app/Models/Blog.php`) is a standalone CMS model for editorial posts. `BlogController` serves the public listing (`/blogs`) and single-post (`/blogs/{slug}`) pages, both cached for 60 minutes (`blog.index`, `blog.show.{slug}`). `Admin/BlogController` manages CRUD from the CMS. Blog posts are not linked to `Category` at the model level — the listing page passes category labels from `Category::configShape()` purely for frontend filtering. If you add any cache derived from blog data, bust it inside `Admin/BlogController`.
+`Blog` (`app/Models/Blog.php`) is a standalone CMS model for editorial posts. `Blog` stores `category` as a plain string (no FK to `Category`). `BlogController` serves the public listing (`/blogs`) and single-post (`/blogs/{slug}`) pages, both cached for 60 minutes (`blog.index`, `blog.show.{slug}`). `Admin/BlogController` manages CRUD from the CMS and busts `blog.index` on every write and `blog.show.{slug}` on update/delete — follow this dual-forget pattern if you add any new blog-derived cache. Blog posts are not linked to `Category` at the model level — the listing page passes category labels from `Category::configShape()` purely for frontend filtering.
 
 ### Other CMS-managed content models
 These simpler models are managed through the admin CMS and are largely independent of the core business logic:
 - `Portfolio` / `PortfolioSubCategory` — `Admin/PortfolioController` / `Admin/PortfolioSubCategoryController`. See Known open bug below for the SubCategory update issue.
-- `Brand`, `Testimonial`, `ClientReview`, `Faq` — each has a corresponding `Admin/*Controller`; content is surfaced on public pages via shared or per-page props.
+- `Brand` (logo marquee), `Testimonial`, `ClientReview`, `Faq` — each has a corresponding `Admin/*Controller`; content is surfaced on public pages via shared or per-page props. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
 
 ### Frontend structure
 - Pages: `resources/js/pages` (Inertia `Inertia::render()` targets), split into `Admin`, `Auth`, `Blogs`, `Dashboard`, `HireUs`, `Home`, `Offer`, `Portfolio`, `Services`.
@@ -113,9 +113,6 @@ These simpler models are managed through the admin CMS and are largely independe
 
 ### Career & job applications
 `JobListing` (has `is_active`, `sort_order`) drives the public career page (`/careers`). `CareerController::apply()` uploads résumés to the `local` disk under `resumes/` — intentionally not publicly accessible. `Admin/JobApplicationController` provides staff download access to résumés; `Admin/JobListingController` manages the listings. Both require the `job-listings` / `job-applications` permission keys respectively.
-
-### Other CMS-managed homepage content
-`Brand` (logo marquee), `Testimonial`, `Faq`, and `ClientReview` are each managed by a corresponding `Admin/*Controller`. `Brand` and `Testimonial` are Redis-cached by `HomeController` (`home.brands`, `home.testimonials`, 60 min) and their admin controllers bust those keys on every write. `Faq` and `ClientReview` are queried fresh (no cache layer).
 
 ### Known open bug
 `PortfolioSubCategoryController::update` throws `Undefined array key "slug"` when the payload omits the slug field (slug is auto-generated on create but not on update). Work around by always including slug in update payloads. See `docs/qa-bugs.md` for details.

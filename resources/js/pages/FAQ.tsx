@@ -20,7 +20,7 @@ export default function FAQ({ faqs = [] }: Props) {
     return (
         <>
             <Head>
-                <title>FAQ — Opticore Solutions Ltd.</title>
+                <title>FAQ</title>
                 <meta
                     name="description"
                     content="Answers to common questions about Opticore Solutions Ltd. services, process, pricing, revisions, delivery, and hiring."

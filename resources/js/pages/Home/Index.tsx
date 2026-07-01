@@ -451,7 +451,7 @@ export default function HomeIndex({
                 }
             `}</style>
             <Head>
-                <title>Opticore Solutions Ltd. — Premium Digital Agency</title>
+                <title>Premium Digital Agency</title>
                 <meta
                     name="description"
                     content="From graphic design to web development, Opticore Solutions Ltd. creates premium digital experiences that help brands grow."

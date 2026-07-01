@@ -111,6 +111,25 @@ export function useFormMock<T extends FormDataShape>(initialData: T) {
     };
 }
 
+const mockSiteSettings = {
+    email: 'hello@opticore.io',
+    phoneUsa: null,
+    phoneBangladesh: '+880 1700 000000',
+    phoneBangladeshLink: 'tel:+8801700000000',
+    addressUsa: null,
+    addressUsaMapUrl: null,
+    addressBangladesh: 'Dhaka, Bangladesh',
+    addressBangladeshMapUrl: null,
+    socialFacebook: null,
+    socialX: null,
+    socialInstagram: null,
+    socialLinkedin: null,
+    socialYoutube: null,
+    socialBehance: null,
+    socialPinterest: null,
+    socialTiktok: null,
+};
+
 export const inertiaMock = {
     Head: ({ children }: { children?: ReactNode }) => <>{children}</>,
     Link: ({
@@ -126,6 +145,23 @@ export const inertiaMock = {
             {children}
         </a>
     ),
+    usePage: () => ({
+        props: {
+            name: 'Opticore Solutions Ltd.',
+            auth: { user: null },
+            flash: {},
+            categories: {},
+            footerServices: [],
+            siteSettings: mockSiteSettings,
+        },
+        component: '',
+        url: '/',
+        version: null,
+        scrollRegions: [],
+        rememberedState: {},
+        resolvedErrors: {},
+    }),
+    Deferred: ({ children }: { children?: ReactNode; data?: string | string[] }) => <>{children}</>,
     router: {
         get: vi.fn(),
         post: vi.fn(),

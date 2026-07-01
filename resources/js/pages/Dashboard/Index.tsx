@@ -524,7 +524,10 @@ function DashboardContent({ tasks }: { tasks: Task[] }) {
 export default function UserDashboard({ tasks }: Props) {
     return (
         <>
-            <Head title="Client Dashboard | Opticore Solutions Ltd." />
+            <Head>
+                <title>Client Dashboard</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <div className="min-h-screen bg-black px-4 pt-32 pb-24">
                 <div className="mx-auto max-w-7xl">

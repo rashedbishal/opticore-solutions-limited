@@ -33,7 +33,10 @@ export default function Register() {
 
     return (
         <>
-            <Head title="Create Account | Opticore Solutions Ltd." />
+            <Head>
+                <title>Create Account</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             <div className="mb-[min(2vh,1rem)] text-center [@media(max-height:400px)]:mb-1.5">
                 <h1 className="mb-[min(1vh,0.375rem)] text-[clamp(1.1rem,3.5vh,2rem)] font-black tracking-tighter text-foreground uppercase">

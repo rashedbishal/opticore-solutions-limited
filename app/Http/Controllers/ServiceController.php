@@ -23,10 +23,9 @@ class ServiceController extends Controller
 
         return Inertia::render('Services/Show', [
             'service' => $serviceData,
-            'meta' => [
-                'title' => "{$serviceData['name']} — Opticore Solutions Ltd.",
-                'description' => $serviceData['shortDescription'],
-            ],
+        ])->withViewData([
+            'pageTitle' => $serviceData['metaTitle'] ?? $serviceData['name'],
+            'pageDescription' => $serviceData['metaDescription'] ?? $serviceData['shortDescription'],
         ]);
     }
 
@@ -38,6 +37,10 @@ class ServiceController extends Controller
         return [
             'name' => $category->label,
             'shortDescription' => $category->description,
+            'metaTitle' => $category->meta_title,
+            'metaDescription' => $category->meta_description,
+            'ogTitle' => $category->og_title,
+            'ogDescription' => $category->og_description,
             'longDescription' => $category->long_description,
             'href' => '/'.$category->slug,
             'icon' => $category->icon,

@@ -39,7 +39,7 @@ export default function PortfolioPreview({ item }: Props) {
     return (
         <LazyMotion features={domAnimation}>
             <Head>
-                <title>{`${item.title} — Opticore Solutions Ltd.`}</title>
+                <title>{item.title}</title>
                 <meta name="description" content={item.alt || item.title} />
             </Head>
 

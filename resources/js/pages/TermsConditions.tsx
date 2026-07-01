@@ -13,7 +13,7 @@ export default function TermsConditions() {
     return (
         <>
             <Head>
-                <title>Terms & Conditions — Opticore Solutions Ltd.</title>
+                <title>Terms & Conditions</title>
                 <meta
                     name="description"
                     content="Read the terms and conditions for Opticore Solutions Ltd."
