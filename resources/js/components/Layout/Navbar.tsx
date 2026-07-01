@@ -1,6 +1,5 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { AnimatePresence } from 'framer-motion';
 import {
     PenTool,
     Globe,
@@ -17,7 +16,7 @@ import {
     Menu,
     X,
 } from 'lucide-react';
-import { lazy, Suspense, useEffect, useState, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import HoverScramble from '@/components/text-animations/hover-scramble';
 import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import { navigationItems } from '@/lib/site';
@@ -90,6 +89,9 @@ function NavLink({
 export default function Navbar() {
     const { url, props } = usePage<SharedPageProps>();
     const [open, setOpen] = useState(false);
+    // Keep MobileMenu mounted once it first loads so AnimatePresence inside it
+    // can play the closing animation before the component disappears.
+    const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
     const [visible, setVisible] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const lastScrollY = useRef(0);
@@ -260,7 +262,10 @@ export default function Navbar() {
                                         : 'Open navigation menu'
                                 }
                                 className="neo-btn-ghost group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
-                                onClick={() => setOpen((current) => !current)}
+                                onClick={() => {
+                                    setHasOpenedOnce(true);
+                                    setOpen((current) => !current);
+                                }}
                             >
                                 {open ? (
                                     <X className="drop-icon dark:drop-icon h-4 w-4 text-zinc-600 dark:text-zinc-300" />
@@ -273,14 +278,13 @@ export default function Navbar() {
                 </nav>
             </header>
 
-            {/* AnimatePresence here so the rail's exit animation plays before unmount */}
-            <AnimatePresence>
-                {open && (
-                    <Suspense key="mobile-menu" fallback={null}>
-                        <MobileMenu url={url} onClose={() => setOpen(false)} />
-                    </Suspense>
-                )}
-            </AnimatePresence>
+            {/* Stays mounted after first open so AnimatePresence inside MobileMenu
+                can play exit animations without the tree disappearing mid-flight. */}
+            {hasOpenedOnce && (
+                <Suspense fallback={null}>
+                    <MobileMenu url={url} open={open} onClose={() => setOpen(false)} />
+                </Suspense>
+            )}
         </>
     );
 }
