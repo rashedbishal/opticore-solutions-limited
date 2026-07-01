@@ -140,7 +140,7 @@ export default function MessageFromMd() {
                                     (tag) => (
                                         <span
                                             key={tag}
-                                            className="rounded-full border border-theme bg-white px-4 py-1.5 text-[10px] font-bold tracking-widest text-theme-muted [box-shadow:var(--neo-shadow-btn)] uppercase dark:bg-white/[0.04]"
+                                            className="rounded-full border border-theme bg-white px-4 py-1.5 text-[10px] font-bold tracking-widest text-theme-muted uppercase [box-shadow:var(--neo-shadow-btn)] dark:bg-white/[0.04]"
                                         >
                                             {tag}
                                         </span>
