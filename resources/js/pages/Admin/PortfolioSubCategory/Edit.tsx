@@ -532,7 +532,7 @@ export default function PortfolioSubCategoryEdit({
                                 onChange={(e) =>
                                     setData('og_title', e.target.value)
                                 }
-                                placeholder={`${subCategory.name} — Opticore Solutions Ltd.`}
+                                placeholder={`${subCategory.name} — Opticore Solutions Limited`}
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
                             />
                         </div>

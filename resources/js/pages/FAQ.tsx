@@ -23,11 +23,11 @@ export default function FAQ({ faqs = [] }: Props) {
                 <title>FAQ</title>
                 <meta
                     name="description"
-                    content="Answers to common questions about Opticore Solutions Ltd. services, process, pricing, revisions, delivery, and hiring."
+                    content="Answers to common questions about Opticore Solutions Limited services, process, pricing, revisions, delivery, and hiring."
                 />
                 <meta
                     property="og:title"
-                    content="FAQ — Opticore Solutions Ltd."
+                    content="FAQ — Opticore Solutions Limited"
                 />
                 <meta
                     name="viewport"

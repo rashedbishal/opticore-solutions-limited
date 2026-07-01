@@ -1291,7 +1291,7 @@ export default function SubCategoryShow({
                     property="og:title"
                     content={
                         subCategory.ogTitle ??
-                        `${subCategory.metaTitle ?? subCategory.name} — Opticore Solutions Ltd.`
+                        `${subCategory.metaTitle ?? subCategory.name} — Opticore Solutions Limited`
                     }
                 />
                 {(subCategory.ogDescription ?? subCategory.metaDescription) && (

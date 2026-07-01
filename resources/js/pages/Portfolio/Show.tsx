@@ -49,7 +49,7 @@ export default function PortfolioShow({ categories, meta }: Props) {
                     property="og:title"
                     content={
                         meta.ogTitle ??
-                        `${meta.title} — Opticore Solutions Ltd.`
+                        `${meta.title} — Opticore Solutions Limited`
                     }
                 />
                 {meta.ogDescription && (

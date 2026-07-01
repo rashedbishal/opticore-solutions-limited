@@ -375,7 +375,7 @@ class TaskController extends Controller
 
         $reviewLink = $serviceUrl ? "[[here:{$serviceUrl}]]" : 'here';
 
-        $messageText = "🎉 Great news! Your task \"{$task->task_name}\" has been delivered!\n\nWe'd love to hear your feedback. You have 24 hours to leave a review for this service {$reviewLink}.\n\nThank you for choosing Opticore Solutions Ltd.!";
+        $messageText = "🎉 Great news! Your task \"{$task->task_name}\" has been delivered!\n\nWe'd love to hear your feedback. You have 24 hours to leave a review for this service {$reviewLink}.\n\nThank you for choosing Opticore Solutions Limited!";
 
         $userOnline = Cache::has("user_chat_online_{$user->id}");
 

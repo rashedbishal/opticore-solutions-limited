@@ -16,11 +16,11 @@ export default function TermsConditions() {
                 <title>Terms & Conditions</title>
                 <meta
                     name="description"
-                    content="Read the terms and conditions for Opticore Solutions Ltd."
+                    content="Read the terms and conditions for Opticore Solutions Limited"
                 />
                 <meta
                     property="og:title"
-                    content="Terms & Conditions — Opticore Solutions Ltd."
+                    content="Terms & Conditions — Opticore Solutions Limited"
                 />
                 <meta
                     name="viewport"

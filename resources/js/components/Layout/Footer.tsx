@@ -232,7 +232,7 @@ export default function Footer() {
                             {siteSettings.phoneBangladeshLink && (
                                 <MagneticButton
                                     href={siteSettings.phoneBangladeshLink}
-                                    ariaLabel="Call now — Opticore Solutions Ltd."
+                                    ariaLabel="Call now — Opticore Solutions Limited"
                                 >
                                     Call now
                                 </MagneticButton>
@@ -420,7 +420,7 @@ export default function Footer() {
 
                     <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-theme pt-6 text-center text-sm text-theme-subtle sm:flex-row sm:text-left">
                         <p>
-                            © 2026 Opticore Solutions Ltd. All rights reserved.
+                            © 2026 Opticore Solutions Limited All rights reserved.
                         </p>
                         <p className="max-w-md">
                             Built for brands that want sharper positioning,

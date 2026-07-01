@@ -113,7 +113,7 @@
     </div>
 
     <div class="footer">
-        Opticore Solutions Ltd. &mdash; Digital Agency, Bangladesh<br>
+        Opticore Solutions Limited &mdash; Digital Agency, Bangladesh<br>
         This is an automated email. Please do not reply directly.
     </div>
 </div>

@@ -71,7 +71,7 @@ const HireUsPage = ({ subCategories = {}, meta }: Props) => {
                 <meta name="description" content={meta.description} />
                 <meta
                     property="og:title"
-                    content={`${meta.title} — Opticore Solutions Ltd.`}
+                    content={`${meta.title} — Opticore Solutions Limited`}
                 />
                 <meta property="og:description" content={meta.description} />
             </Head>

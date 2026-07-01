@@ -69,7 +69,7 @@ export default function BlogShow({ dbBlog }: BlogShowProps) {
                 {shareUrl && <meta property="og:url" content={shareUrl} />}
                 <meta
                     property="og:site_name"
-                    content="Opticore Solutions Ltd."
+                    content="Opticore Solutions Limited"
                 />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={post.title} />

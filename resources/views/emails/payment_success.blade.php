@@ -33,7 +33,7 @@
     <div class="body">
         <p class="greeting">Hi <strong>{{ $transaction->name }}</strong>,</p>
         <p style="font-size:14px;color:#4b5563;line-height:1.7;">
-            Your payment to <strong>Opticore Solutions Ltd.</strong> has been successfully processed.
+            Your payment to <strong>Opticore Solutions Limited</strong> has been successfully processed.
             Your invoice is attached to this email. Please keep it for your records.
         </p>
 
@@ -76,7 +76,7 @@
         </p>
     </div>
     <div class="footer">
-        Opticore Solutions Ltd. &mdash; Digital Agency, Bangladesh<br>
+        Opticore Solutions Limited &mdash; Digital Agency, Bangladesh<br>
         This is an automated email. Please do not reply directly.
     </div>
 </div>

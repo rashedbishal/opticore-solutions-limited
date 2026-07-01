@@ -400,7 +400,7 @@ export default function CategoryEdit({
                                     onChange={(e) =>
                                         setData('og_title', e.target.value)
                                     }
-                                    placeholder={`${category.label} — Opticore Solutions Ltd.`}
+                                    placeholder={`${category.label} — Opticore Solutions Limited`}
                                     className={INPUT}
                                 />
                             </div>

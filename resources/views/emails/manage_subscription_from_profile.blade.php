@@ -36,7 +36,7 @@
         </p>
     </div>
     <div class="footer">
-        Opticore Solutions Ltd. &mdash; Digital Agency, Bangladesh
+        Opticore Solutions Limited &mdash; Digital Agency, Bangladesh
     </div>
 </div>
 </body>

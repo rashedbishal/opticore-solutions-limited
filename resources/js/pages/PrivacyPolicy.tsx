@@ -16,11 +16,11 @@ export default function PrivacyPolicy() {
                 <title>Privacy Policy</title>
                 <meta
                     name="description"
-                    content="Read the privacy policy for Opticore Solutions Ltd."
+                    content="Read the privacy policy for Opticore Solutions Limited"
                 />
                 <meta
                     property="og:title"
-                    content="Privacy Policy — Opticore Solutions Ltd."
+                    content="Privacy Policy — Opticore Solutions Limited"
                 />
                 <meta
                     name="viewport"

@@ -857,7 +857,7 @@ export default function Login({ successName }: { successName?: string }) {
                             <div className="mt-7 flex items-center gap-3">
                                 <div className="h-px flex-1 bg-white/5" />
                                 <p className="font-mono text-[9px] tracking-[0.18em] text-white/18 uppercase">
-                                    Opticore Solutions Ltd.
+                                    Opticore Solutions Limited
                                 </p>
                                 <div className="h-px flex-1 bg-white/5" />
                             </div>

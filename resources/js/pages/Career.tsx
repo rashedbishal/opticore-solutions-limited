@@ -116,11 +116,11 @@ export default function Career({ jobListings }: Props) {
                 <title>Career</title>
                 <meta
                     name="description"
-                    content="Join Opticore Solutions Ltd. and work on premium creative, digital marketing, 3D production, and web projects from anywhere."
+                    content="Join Opticore Solutions Limited and work on premium creative, digital marketing, 3D production, and web projects from anywhere."
                 />
                 <meta
                     property="og:title"
-                    content="Career — Opticore Solutions Ltd."
+                    content="Career — Opticore Solutions Limited"
                 />
                 <meta
                     name="viewport"

@@ -37,7 +37,7 @@ class BlogController extends Controller
             'dbBlogs' => $dbBlogs,
             'categories' => array_values(array_column(Category::configShape(), 'label')),
             'meta' => [
-                'title' => 'Blog — Opticore Solutions Ltd.',
+                'title' => 'Blog — Opticore Solutions Limited',
                 'description' => 'Read the latest insights on design, tech, and marketing from the Opticore team.',
             ],
         ]);
@@ -69,7 +69,7 @@ class BlogController extends Controller
             'slug' => $slug,
             'dbBlog' => $formattedBlog,
             'meta' => [
-                'title' => $formattedBlog['title'].' — Opticore Solutions Ltd.',
+                'title' => $formattedBlog['title'].' — Opticore Solutions Limited',
                 'description' => Str::limit(strip_tags($formattedBlog['content']), 150),
             ],
         ]);

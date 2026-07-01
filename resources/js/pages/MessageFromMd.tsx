@@ -30,7 +30,7 @@ export default function MessageFromMd() {
                 <title>Message from MD</title>
                 <meta
                     name="description"
-                    content="Read a message from the Managing Director of Opticore Solutions Ltd. about the company vision, values, and commitment to clients."
+                    content="Read a message from the Managing Director of Opticore Solutions Limited about the company vision, values, and commitment to clients."
                 />
             </Head>
 
@@ -95,7 +95,7 @@ export default function MessageFromMd() {
                                 <div className="relative aspect-[4/5] h-[60vh] max-h-[700px] min-h-[400px] overflow-hidden rounded-[2rem] border border-theme [box-shadow:var(--neo-shadow-panel)] sm:aspect-[3/4] sm:h-[70vh] lg:aspect-[4/5] lg:h-[calc(100vh-200px)]">
                                     <img
                                         src={mdImage}
-                                        alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Ltd."
+                                        alt="Md. Asaduzzaman, Managing Director of Opticore Solutions Limited"
                                         decoding="async"
                                         className="h-full w-full scale-105 object-cover transition-all duration-700 group-hover:scale-100"
                                     />
@@ -195,7 +195,7 @@ export default function MessageFromMd() {
 
                                     <div className="space-y-6 text-lg leading-relaxed font-light text-theme-muted">
                                         <p>
-                                            Opticore Solutions Ltd. was
+                                            Opticore Solutions Limited was
                                             established on a simple yet powerful
                                             conviction: that in an increasingly
                                             crowded digital landscape, only

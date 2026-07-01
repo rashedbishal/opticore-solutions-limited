@@ -147,7 +147,7 @@ export const inertiaMock = {
     ),
     usePage: () => ({
         props: {
-            name: 'Opticore Solutions Ltd.',
+            name: 'Opticore Solutions Limited',
             auth: { user: null },
             flash: {},
             categories: {},

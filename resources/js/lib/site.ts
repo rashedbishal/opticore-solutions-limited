@@ -252,7 +252,7 @@ export const portfolioCategories: PortfolioCategory[] = [
 
 export const faqItems: FaqItem[] = [
     {
-        question: 'What services does Opticore Solutions Ltd. offer?',
+        question: 'What services does Opticore Solutions Limited offer?',
         answer: 'We provide Graphic Design, Video Editing, Digital Marketing, 3D Production, and Web Development services, often combining them into one cohesive delivery pipeline.',
     },
     {
@@ -324,7 +324,7 @@ export const privacySections = [
         id: 'overview',
         title: 'Overview',
         body: [
-            'Opticore Solutions Ltd. collects only the information needed to respond to inquiries, manage projects, provide services, and improve client communication.',
+            'Opticore Solutions Limited collects only the information needed to respond to inquiries, manage projects, provide services, and improve client communication.',
             'We treat all submitted business information, creative materials, and contact details with discretion and do not sell personal data to third parties.',
         ],
     },
@@ -379,7 +379,7 @@ export const termsSections = [
         id: 'engagement',
         title: 'Engagement',
         body: [
-            'Projects begin after scope, deliverables, pricing, and timelines have been agreed in writing between Opticore Solutions Ltd. and the client.',
+            'Projects begin after scope, deliverables, pricing, and timelines have been agreed in writing between Opticore Solutions Limited and the client.',
             'Any work outside the approved scope may require a revised estimate, updated timeline, or separate agreement.',
         ],
     },
@@ -411,7 +411,7 @@ export const termsSections = [
         id: 'liability',
         title: 'Liability',
         body: [
-            'Opticore Solutions Ltd. is not liable for indirect, incidental, or consequential losses arising from the use of delivered assets, campaign performance fluctuations, or delays caused by missing client input.',
+            'Opticore Solutions Limited is not liable for indirect, incidental, or consequential losses arising from the use of delivered assets, campaign performance fluctuations, or delays caused by missing client input.',
             'Clients are responsible for reviewing and approving final materials before publication, launch, or distribution.',
         ],
     },

@@ -66,7 +66,7 @@ export default function ServicePageTemplate({
                     property="og:title"
                     content={
                         service.ogTitle ??
-                        `${service.metaTitle ?? service.name} — Opticore Solutions Ltd.`
+                        `${service.metaTitle ?? service.name} — Opticore Solutions Limited`
                     }
                 />
                 {(service.ogDescription ?? service.metaDescription) && (

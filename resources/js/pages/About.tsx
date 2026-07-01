@@ -31,7 +31,7 @@ const values = [
 const storySections = [
     {
         title: 'A digital partner, not just a vendor',
-        body: 'Opticore Solutions Ltd. was built to help ambitious brands feel more polished, more credible, and more ready for growth. We bring strategy, design, motion, and development together so clients are not forced to manage disconnected specialists.',
+        body: 'Opticore Solutions Limited was built to help ambitious brands feel more polished, more credible, and more ready for growth. We bring strategy, design, motion, and development together so clients are not forced to manage disconnected specialists.',
     },
     {
         title: 'Craft that serves business outcomes',
@@ -50,11 +50,11 @@ export default function About() {
                 <title>About Us</title>
                 <meta
                     name="description"
-                    content="Learn how Opticore Solutions Ltd. helps brands grow, earn trust, and stand apart through premium digital execution."
+                    content="Learn how Opticore Solutions Limited helps brands grow, earn trust, and stand apart through premium digital execution."
                 />
                 <meta
                     property="og:title"
-                    content="About Us — Opticore Solutions Ltd."
+                    content="About Us — Opticore Solutions Limited"
                 />
                 <meta
                     name="viewport"
@@ -72,7 +72,7 @@ export default function About() {
                             </span>
                         </h1>
                         <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
-                            Opticore Solutions Ltd. helps businesses build
+                            Opticore Solutions Limited helps businesses build
                             stronger perception and sharper digital experiences
                             through premium creative, production, and
                             development services.

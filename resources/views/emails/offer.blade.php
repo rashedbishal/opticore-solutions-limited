@@ -24,7 +24,7 @@
         <img src="{{ $message->embedData(file_get_contents($imagePath), $imageName) }}" alt="Special Offer" />
     </div>
     <div class="footer">
-        Opticore Solutions Ltd. &mdash; Digital Agency, Bangladesh<br>
+        Opticore Solutions Limited &mdash; Digital Agency, Bangladesh<br>
         To unsubscribe, visit our website and enter your email in the newsletter section.
     </div>
 </div>

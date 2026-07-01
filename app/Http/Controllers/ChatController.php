@@ -54,7 +54,7 @@ class ChatController extends Controller
 
     private const WEBSITE_KNOWLEDGE = [
         'company' => [
-            'name' => 'Opticore Solutions Ltd.',
+            'name' => 'Opticore Solutions Limited',
             'description' => 'A modern digital agency offering creative and technical services. We focus on high-quality design, strategic marketing, modern web solutions, and client satisfaction. Our goal is to help businesses grow with creative and digital solutions.',
             'focus_areas' => ['high-quality design', 'strategic marketing', 'modern web solutions', 'client satisfaction', 'business growth'],
             'tone' => 'Professional but friendly, clear and confident, not too long, not robotic.',
@@ -283,7 +283,7 @@ class ChatController extends Controller
             return "I'm having a little trouble connecting to my brain right now. Please try again or reach out to us directly at hello@opticoresolutions.com!";
         }
 
-        $systemPrompt = 'You are an AI assistant for Opticore Solutions Ltd., a digital agency.
+        $systemPrompt = 'You are an AI assistant for Opticore Solutions Limited, a digital agency.
 
 Company Info: '.$knowledgeBase['company']['description'].'
 Tone: '.$knowledgeBase['company']['tone'].'

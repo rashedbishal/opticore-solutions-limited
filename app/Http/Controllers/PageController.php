@@ -17,7 +17,7 @@ class PageController extends Controller
         return Inertia::render('HireUs', [
             'meta' => [
                 'title' => 'Hire Us',
-                'description' => 'Hire Opticore Solutions Ltd. for expert digital services. Browse our full service catalogue and get a custom quote.',
+                'description' => 'Hire Opticore Solutions Limited for expert digital services. Browse our full service catalogue and get a custom quote.',
             ],
             'subCategories' => $this->hireUsSubCategories(),
         ]);
@@ -62,8 +62,8 @@ class PageController extends Controller
     {
         return Inertia::render('About', [
             'meta' => [
-                'title' => 'About Us — Opticore Solutions Ltd.',
-                'description' => 'Learn more about Opticore Solutions Ltd., our approach, values, and multidisciplinary digital expertise.',
+                'title' => 'About Us — Opticore Solutions Limited',
+                'description' => 'Learn more about Opticore Solutions Limited, our approach, values, and multidisciplinary digital expertise.',
             ],
         ]);
     }
@@ -72,8 +72,8 @@ class PageController extends Controller
     {
         return Inertia::render('Career', [
             'meta' => [
-                'title' => 'Career — Opticore Solutions Ltd.',
-                'description' => 'Explore remote career opportunities with Opticore Solutions Ltd.',
+                'title' => 'Career — Opticore Solutions Limited',
+                'description' => 'Explore remote career opportunities with Opticore Solutions Limited',
             ],
             'jobListings' => Cache::remember('career.jobListings', now()->addMinutes(60), fn () => JobListing::query()
                 ->where('is_active', true)
@@ -88,8 +88,8 @@ class PageController extends Controller
     {
         return Inertia::render('Contact', [
             'meta' => [
-                'title' => 'Contact — Opticore Solutions Ltd.',
-                'description' => 'Contact Opticore Solutions Ltd. to discuss your next digital project.',
+                'title' => 'Contact — Opticore Solutions Limited',
+                'description' => 'Contact Opticore Solutions Limited to discuss your next digital project.',
             ],
         ]);
     }
@@ -98,7 +98,7 @@ class PageController extends Controller
     {
         return Inertia::render('FAQ', [
             'meta' => [
-                'title' => 'FAQ — Opticore Solutions Ltd.',
+                'title' => 'FAQ — Opticore Solutions Limited',
                 'description' => 'Find answers to common questions about services, pricing, timelines, and project workflow.',
             ],
             'faqs' => Cache::remember('faq.items', now()->addMinutes(60), fn () => Faq::query()
@@ -114,8 +114,8 @@ class PageController extends Controller
     {
         return Inertia::render('MessageFromMd', [
             'meta' => [
-                'title' => 'Message from MD — Opticore Solutions Ltd.',
-                'description' => 'A message from the Managing Director of Opticore Solutions Ltd. about the company vision, standards, and client commitment.',
+                'title' => 'Message from MD — Opticore Solutions Limited',
+                'description' => 'A message from the Managing Director of Opticore Solutions Limited about the company vision, standards, and client commitment.',
             ],
         ]);
     }
@@ -124,8 +124,8 @@ class PageController extends Controller
     {
         return Inertia::render('PrivacyPolicy', [
             'meta' => [
-                'title' => 'Privacy Policy — Opticore Solutions Ltd.',
-                'description' => 'Review the privacy policy for Opticore Solutions Ltd.',
+                'title' => 'Privacy Policy — Opticore Solutions Limited',
+                'description' => 'Review the privacy policy for Opticore Solutions Limited',
             ],
         ]);
     }
@@ -134,8 +134,8 @@ class PageController extends Controller
     {
         return Inertia::render('TermsConditions', [
             'meta' => [
-                'title' => 'Terms & Conditions — Opticore Solutions Ltd.',
-                'description' => 'Review the terms and conditions for Opticore Solutions Ltd.',
+                'title' => 'Terms & Conditions — Opticore Solutions Limited',
+                'description' => 'Review the terms and conditions for Opticore Solutions Limited',
             ],
         ]);
     }

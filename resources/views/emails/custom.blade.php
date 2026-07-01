@@ -19,7 +19,7 @@
     </div>
     <div class="body">{{ $body }}</div>
     <div class="footer">
-        Opticore Solutions Ltd. &mdash; Digital Agency, Bangladesh<br>
+        Opticore Solutions Limited &mdash; Digital Agency, Bangladesh<br>
         osl@opticoresolutionsltd.com
     </div>
 </div>

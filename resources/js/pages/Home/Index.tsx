@@ -509,7 +509,7 @@ export default function HomeIndex({
                         className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl"
                     >
                         From stunning visuals to powerful digital strategies —
-                        Opticore Solutions Ltd. turns your vision into results.
+                        Opticore Solutions Limited turns your vision into results.
                     </motion.p>
 
                     <motion.div
@@ -521,7 +521,7 @@ export default function HomeIndex({
                     >
                         <MagneticButton
                             href="/hire-us"
-                            ariaLabel="Start a project with Opticore Solutions Ltd."
+                            ariaLabel="Start a project with Opticore Solutions Limited"
                             className="neo-btn-primary min-w-[180px] rounded-full px-8 py-4 text-base font-black shadow-lg transition-all hover:scale-105"
                         >
                             Start a Project
@@ -654,7 +654,7 @@ export default function HomeIndex({
                                 <div className="flex items-center rounded-full border border-slate-300 bg-linear-to-b from-slate-100 to-slate-200 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)]">
                                     <MagneticButton
                                         href="/hire-us"
-                                        ariaLabel="Hire Us — contact Opticore Solutions Ltd. now"
+                                        ariaLabel="Hire Us — contact Opticore Solutions Limited now"
                                         className="neo-btn-primary rounded-full px-10 py-4 text-base font-black tracking-tight shadow-xl"
                                     >
                                         Hire Us{' '}

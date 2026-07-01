@@ -161,7 +161,7 @@ export default function Contact() {
                 <title>Contact</title>
                 <meta
                     name="description"
-                    content="Contact Opticore Solutions Ltd. to discuss graphic design, video editing, digital marketing, 3D production, and web development projects."
+                    content="Contact Opticore Solutions Limited to discuss graphic design, video editing, digital marketing, 3D production, and web development projects."
                 />
             </Head>
 
@@ -557,7 +557,7 @@ export default function Contact() {
                                     </div>
                                 </div>
                                 <iframe
-                                    title="Opticore Solutions Ltd. location"
+                                    title="Opticore Solutions Limited location"
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.4890191049462!2d90.36899679999999!3d23.801203700000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c711e66e7703%3A0x6262d3b99b8ae3d4!2sOpticore%20solutions%20Ltd!5e0!3m2!1sen!2sbd!4v1776248482450!5m2!1sen!2sbd"
                                     className="h-full w-full rounded-[1.75rem] opacity-40 grayscale transition-all duration-1000 ease-out group-hover:opacity-100 group-hover:grayscale-0 dark:invert dark:group-hover:invert-0"
                                     loading="lazy"
