@@ -164,7 +164,7 @@ export default function Navbar() {
                                 height={48}
                                 decoding="async"
                                 fetchPriority="high"
-                                className="block h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:hidden"
+                                className="block h-16 w-auto shrink-0 object-contain md:h-18 lg:h-22 dark:hidden"
                             />
                             <img
                                 src="/images/logo/opticore-white.webp"
@@ -173,7 +173,7 @@ export default function Navbar() {
                                 height={48}
                                 decoding="async"
                                 fetchPriority="high"
-                                className="hidden h-12 w-auto shrink-0 object-contain md:h-14 lg:h-20 dark:block"
+                                className="hidden h-16 w-auto shrink-0 object-contain md:h-18 lg:h-22 dark:block"
                             />
                         </Link>
                     </div>
