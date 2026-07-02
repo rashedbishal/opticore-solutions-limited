@@ -59,7 +59,7 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '300 BDT',
             'rating' => '4.8',
             'reviews_count' => 84,
-            'image' => UploadedFile::fake()->create('thumbnail.jpg', 100, 'image/jpeg'),
+            'image' => UploadedFile::fake()->create('thumbnail.webp', 100, 'image/webp'),
             'sort_order' => 2,
         ])
         ->assertRedirect(route('admin.sub-categories.edit', 'thumbnail-design'));
@@ -82,7 +82,7 @@ it('allows admins to create update and delete hire us sub-categories', function 
             'price' => '500 BDT',
             'rating' => '5.0',
             'reviews_count' => 100,
-            'image' => UploadedFile::fake()->create('thumbnail-pro.jpg', 100, 'image/jpeg'),
+            'image' => UploadedFile::fake()->create('thumbnail-pro.webp', 100, 'image/webp'),
             'sort_order' => 1,
             'plans' => [
                 'basic' => ['price' => '$99', 'delivery' => '3 Days', 'features' => ['Custom Thumbnail Design']],
