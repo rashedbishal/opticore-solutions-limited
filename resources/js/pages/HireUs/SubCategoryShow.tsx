@@ -900,7 +900,32 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                         duration: 0.35,
                                         ease: [0.22, 1, 0.36, 1],
                                     }}
-                                    className="relative flex h-full w-full items-center justify-center overflow-hidden"
+                                    drag
+                                    dragElastic={0.35}
+                                    dragConstraints={{
+                                        top: 0,
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                    }}
+                                    onDragEnd={(_, info) => {
+                                        const distance = Math.hypot(
+                                            info.offset.x,
+                                            info.offset.y,
+                                        );
+                                        const velocity = Math.hypot(
+                                            info.velocity.x,
+                                            info.velocity.y,
+                                        );
+
+                                        if (
+                                            distance > 100 ||
+                                            velocity > 500
+                                        ) {
+                                            setIsLightboxOpen(false);
+                                        }
+                                    }}
+                                    className="relative flex h-full w-full cursor-grab items-center justify-center overflow-hidden active:cursor-grabbing"
                                 >
                                     <div
                                         className="absolute inset-0 cursor-zoom-out"
@@ -929,7 +954,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                             }
                                             alt={activeItem.alt}
                                             decoding="async"
-                                            className="relative z-10 h-full w-full object-contain"
+                                            className="pointer-events-none relative z-10 h-full w-full object-contain"
                                             onError={(e) => {
                                                 e.currentTarget.src =
                                                     PLACEHOLDER;
