@@ -15,6 +15,7 @@ import {
     Briefcase,
     ArrowRight,
     Loader2,
+    X,
 } from 'lucide-react';
 import { useId, useState } from 'react';
 import { navigationItems } from '@/lib/site';
@@ -170,19 +171,24 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                                     src="/images/logo/opticore.webp"
                                     alt="Opticore Solutions"
                                     decoding="async"
-                                    className="block h-9 w-auto dark:hidden"
+                                    className="block h-14 w-auto dark:hidden"
                                 />
                                 <img
                                     src="/images/logo/opticore-white.webp"
                                     alt="Opticore Solutions"
                                     decoding="async"
-                                    className="hidden h-9 w-auto dark:block"
+                                    className="hidden h-14 w-auto dark:block"
                                 />
                             </Link>
 
-                            <span className="font-[family-name:var(--font-geist-mono)] text-[9px] font-semibold tracking-[0.3em] text-zinc-400 uppercase dark:text-zinc-600">
-                                Navigate
-                            </span>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                aria-label="Close navigation menu"
+                                className="neo-btn-ghost group flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
+                            >
+                                <X className="h-4 w-4 text-zinc-600 dark:text-zinc-300" />
+                            </button>
                         </div>
 
                         {/* Unified item list — no independent fade here; the
