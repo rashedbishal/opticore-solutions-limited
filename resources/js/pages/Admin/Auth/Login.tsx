@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
+import CrtStaticIntro from '@/components/Admin/CrtStaticIntro';
 
 function CornerTL({ error }: { error: boolean }) {
     return (
@@ -427,6 +428,7 @@ export default function Login({ successName }: { successName?: string }) {
     const [showDialog, setShowDialog] = useState(false);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const [signingIn, setSigningIn] = useState(false);
+    const [showIntro, setShowIntro] = useState(true);
 
     const shakeControls = useAnimation();
 
@@ -478,6 +480,10 @@ export default function Login({ successName }: { successName?: string }) {
     return (
         <LazyMotion features={domAnimation}>
             <Head title="Secure Access" />
+
+            {showIntro && (
+                <CrtStaticIntro onComplete={() => setShowIntro(false)} />
+            )}
 
             <AnimatePresence>
                 {successName && (
