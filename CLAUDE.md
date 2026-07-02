@@ -91,6 +91,9 @@ SSR is disabled for `admin/*`, `dashboard`, `profile`, `checkout`, `checkout/*`,
 ### Blog system
 `Blog` (`app/Models/Blog.php`) is a standalone CMS model for editorial posts. `Blog` stores `category` as a plain string (no FK to `Category`). `BlogController` serves the public listing (`/blogs`) and single-post (`/blogs/{slug}`) pages, both cached for 60 minutes (`blog.index`, `blog.show.{slug}`). `Admin/BlogController` manages CRUD from the CMS and busts `blog.index` on every write and `blog.show.{slug}` on update/delete — follow this dual-forget pattern if you add any new blog-derived cache. Blog posts are not linked to `Category` at the model level — the listing page passes category labels from `Category::configShape()` purely for frontend filtering.
 
+### Dynamic sitemap
+`SitemapController::index()` builds `/sitemap.xml` from static pages, `Category::configShape()` slugs (service + portfolio category pages), `PortfolioSubCategory` rows, and `Blog` posts, cached 60 min under the `sitemap.xml` key. `Admin/CategoryController`, `Admin/PortfolioSubCategoryController`, and `Admin/BlogController` all call `Cache::forget('sitemap.xml')` on writes — add the same call if a new model contributes URLs to the sitemap.
+
 ### Other CMS-managed content models
 These simpler models are managed through the admin CMS and are largely independent of the core business logic:
 - `Portfolio` / `PortfolioSubCategory` — `Admin/PortfolioController` / `Admin/PortfolioSubCategoryController`. The update method auto-generates slug from `name` when the payload omits it.
