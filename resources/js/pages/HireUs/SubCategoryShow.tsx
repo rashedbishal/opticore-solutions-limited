@@ -1897,7 +1897,7 @@ export default function SubCategoryShow({
                             duration: 0.6,
                             ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mx-auto max-w-7xl px-4"
+                        className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8"
                     >
                         <div className="mb-12 flex flex-col items-center text-center">
                             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
