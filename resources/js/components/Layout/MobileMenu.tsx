@@ -17,7 +17,7 @@ import {
     Loader2,
     X,
 } from 'lucide-react';
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -51,17 +51,20 @@ const railEase = [0.16, 1, 0.3, 1] as const;
 // mask from nothing to fully revealed; closing is the exact reverse — no
 // square ever fades in only to fade out again mid-open.
 const TILE_COLS = 10;
-const TILE_ROWS = 17;
-const TILES = Array.from({ length: TILE_COLS * TILE_ROWS }, (_, i) => i);
+// Rows are measured from the rail's actual rendered size (see the
+// ResizeObserver below) so each square is a true square in pixels rather
+// than an even fractional split of a tall, narrow rail. This is only the
+// pre-measurement fallback.
+const DEFAULT_TILE_ROWS = 17;
 const TILE_DURATION = 0.8;
 const WAVE_GAP = 0.42;
 const POSITION_SPREAD = 0.75;
-const MAX_POSITION_STEPS = TILE_COLS - 1 + (TILE_ROWS - 1);
 const TOTAL_WIPE_DURATION = WAVE_GAP + POSITION_SPREAD + TILE_DURATION + 0.1;
 
-function tileDelay(row: number, col: number) {
+function tileDelay(row: number, col: number, tileRows: number) {
     const isEven = (row + col) % 2 === 0;
-    const positionDelay = (row + col) * (POSITION_SPREAD / MAX_POSITION_STEPS);
+    const maxPositionSteps = TILE_COLS - 1 + (tileRows - 1);
+    const positionDelay = (row + col) * (POSITION_SPREAD / maxPositionSteps);
 
     return (isEven ? 0 : WAVE_GAP) + positionDelay;
 }
@@ -71,6 +74,39 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
     const { user } = props.auth;
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const maskId = useId();
+    const railRef = useRef<HTMLDivElement>(null);
+    const [tileRows, setTileRows] = useState(DEFAULT_TILE_ROWS);
+
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+
+        const el = railRef.current;
+
+        if (!el) {
+            return;
+        }
+
+        const updateTileRows = () => {
+            const { width, height } = el.getBoundingClientRect();
+
+            if (width > 0 && height > 0) {
+                setTileRows(
+                    Math.max(1, Math.round(TILE_COLS * (height / width))),
+                );
+            }
+        };
+
+        updateTileRows();
+
+        const observer = new ResizeObserver(updateTileRows);
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, [open]);
+
+    const tiles = Array.from({ length: TILE_COLS * tileRows }, (_, i) => i);
 
     const navItems = [...navigationItems];
 
@@ -128,6 +164,7 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                         is what checkerboards its visibility in/out. */}
                     <motion.div
                         key="rail"
+                        ref={railRef}
                         exit={{ opacity: 1 }}
                         transition={{ delay: TOTAL_WIPE_DURATION }}
                         style={{
@@ -309,12 +346,16 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                                 id={maskId}
                                 maskContentUnits="objectBoundingBox"
                             >
-                                {TILES.map((i) => {
+                                {tiles.map((i) => {
                                     const col = i % TILE_COLS;
                                     const row = Math.floor(i / TILE_COLS);
-                                    const delay = tileDelay(row, col);
+                                    const delay = tileDelay(
+                                        row,
+                                        col,
+                                        tileRows,
+                                    );
                                     const w = 1 / TILE_COLS;
-                                    const h = 1 / TILE_ROWS;
+                                    const h = 1 / tileRows;
                                     // Slightly overlap neighboring squares so
                                     // sub-pixel/antialiasing rounding never
                                     // leaves a hairline seam once every
