@@ -41,6 +41,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import GradientOrb from '@/components/UI/GradientOrb';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface PortfolioItem {
     id: number;
@@ -394,7 +395,7 @@ const SLIDE_DUR = { duration: 1.4, ease: SLIDE_EASE };
 // CSS layout properties for each slot — no overlap at any rest position:
 //   peek-left  2%–22%  |  center 22%–78%  |  peek-right 78%–98%
 // framer-motion interpolates all properties simultaneously each RAF tick.
-const SLOT_STYLES = {
+const DESKTOP_SLOT_STYLES = {
     'exit-left': {
         left: '-22%',
         top: '17.5%',
@@ -442,7 +443,58 @@ const SLOT_STYLES = {
     },
 } as const;
 
-type SlotPos = keyof typeof SLOT_STYLES;
+// Mobile gets a wider center slide and slimmer side peeks — the desktop
+// proportions (20% peeks) read as barely-there slivers on narrow screens.
+//   peek-left  2%–16%  |  center 16%–84%  |  peek-right 84%–98%
+const MOBILE_SLOT_STYLES = {
+    'exit-left': {
+        left: '-14%',
+        top: '17.5%',
+        width: '14%',
+        height: '65%',
+        opacity: 0,
+        scale: 0.9,
+        borderRadius: '16px',
+    },
+    'peek-left': {
+        left: '2%',
+        top: '17.5%',
+        width: '14%',
+        height: '65%',
+        opacity: 0.5,
+        scale: 0.95,
+        borderRadius: '16px',
+    },
+    center: {
+        left: '16%',
+        top: '0%',
+        width: '68%',
+        height: '100%',
+        opacity: 1,
+        scale: 1.0,
+        borderRadius: '0px',
+    },
+    'peek-right': {
+        left: '84%',
+        top: '17.5%',
+        width: '14%',
+        height: '65%',
+        opacity: 0.5,
+        scale: 0.95,
+        borderRadius: '16px',
+    },
+    'exit-right': {
+        left: '100%',
+        top: '17.5%',
+        width: '14%',
+        height: '65%',
+        opacity: 0,
+        scale: 0.9,
+        borderRadius: '16px',
+    },
+} as const;
+
+type SlotPos = keyof typeof DESKTOP_SLOT_STYLES;
 
 // Render order: exits bottom, peeks middle, center on top.
 const SLOT_ORDER: Record<SlotPos, number> = {
@@ -464,6 +516,8 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
     const slides = items.length > 0 ? items : null;
     const uidCounter = useRef(0);
     const activeRef = useRef(0); // tracks activeIndex without stale-closure issues
+    const isMobile = useMediaQuery('(max-width: 767px)');
+    const slotStyles = isMobile ? MOBILE_SLOT_STYLES : DESKTOP_SLOT_STYLES;
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [slots, setSlots] = useState<CarouselSlot[]>(() => {
@@ -665,10 +719,10 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                             key={slot.uid}
                             initial={
                                 slot.enterFrom !== null
-                                    ? SLOT_STYLES[slot.enterFrom]
+                                    ? slotStyles[slot.enterFrom]
                                     : false
                             }
-                            animate={SLOT_STYLES[slot.pos]}
+                            animate={slotStyles[slot.pos]}
                             transition={SLIDE_DUR}
                             onAnimationComplete={() => {
                                 if (
