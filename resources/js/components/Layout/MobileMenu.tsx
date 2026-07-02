@@ -50,20 +50,18 @@ const railEase = [0.16, 1, 0.3, 1] as const;
 // (the blurred backdrop/page), not another layer's color. Opening grows the
 // mask from nothing to fully revealed; closing is the exact reverse — no
 // square ever fades in only to fade out again mid-open.
-const TILE_COLS = 7;
-const TILE_ROWS = 12;
+const TILE_COLS = 10;
+const TILE_ROWS = 17;
 const TILES = Array.from({ length: TILE_COLS * TILE_ROWS }, (_, i) => i);
 const TILE_DURATION = 0.8;
 const WAVE_GAP = 0.42;
 const POSITION_SPREAD = 0.75;
 const MAX_POSITION_STEPS = TILE_COLS - 1 + (TILE_ROWS - 1);
-const TOTAL_WIPE_DURATION =
-    WAVE_GAP + POSITION_SPREAD + TILE_DURATION + 0.1;
+const TOTAL_WIPE_DURATION = WAVE_GAP + POSITION_SPREAD + TILE_DURATION + 0.1;
 
 function tileDelay(row: number, col: number) {
     const isEven = (row + col) % 2 === 0;
-    const positionDelay =
-        (row + col) * (POSITION_SPREAD / MAX_POSITION_STEPS);
+    const positionDelay = (row + col) * (POSITION_SPREAD / MAX_POSITION_STEPS);
 
     return (isEven ? 0 : WAVE_GAP) + positionDelay;
 }
@@ -307,7 +305,10 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                         className="pointer-events-none absolute h-0 w-0 overflow-hidden"
                     >
                         <defs>
-                            <mask id={maskId} maskContentUnits="objectBoundingBox">
+                            <mask
+                                id={maskId}
+                                maskContentUnits="objectBoundingBox"
+                            >
                                 {TILES.map((i) => {
                                     const col = i % TILE_COLS;
                                     const row = Math.floor(i / TILE_COLS);
