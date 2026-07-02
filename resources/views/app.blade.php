@@ -8,6 +8,51 @@
         <link rel="canonical" href="{{ url()->current() }}">
         <link rel="icon" href="/favicon.ico" sizes="any">
 
+        {{-- Organization/WebSite JSON-LD so Google can understand the brand's
+             identity and social profiles (a contributing signal toward rich
+             results like sitelinks — not something that can be forced
+             directly). Built from the same SiteSetting singleton the footer
+             uses, so it stays in sync with the admin-editable social links.
+
+             The '@@context'/'@@type'/etc keys below use Blade's '@@' escape:
+             Blade scans the whole file for `@word` directives even inside
+             PHP code, and Laravel's built-in `@context`/`@endcontext`
+             directive (for the Context facade) would otherwise silently
+             swallow the literal "@context" JSON-LD key. --}}
+        @php($siteSettings = \App\Models\SiteSetting::current()->toPublicArray())
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@@context' => 'https://schema.org',
+                '@@graph' => [
+                    [
+                        '@@type' => 'Organization',
+                        '@@id' => url('/').'#organization',
+                        'name' => config('app.name'),
+                        'url' => url('/'),
+                        'logo' => asset('images/logo/opticore.png'),
+                        'email' => $siteSettings['email'],
+                        'sameAs' => array_values(array_filter([
+                            $siteSettings['socialFacebook'],
+                            $siteSettings['socialX'],
+                            $siteSettings['socialInstagram'],
+                            $siteSettings['socialLinkedin'],
+                            $siteSettings['socialYoutube'],
+                            $siteSettings['socialBehance'],
+                            $siteSettings['socialPinterest'],
+                            $siteSettings['socialTiktok'],
+                        ])),
+                    ],
+                    [
+                        '@@type' => 'WebSite',
+                        '@@id' => url('/').'#website',
+                        'name' => config('app.name'),
+                        'url' => url('/'),
+                        'publisher' => ['@@id' => url('/').'#organization'],
+                    ],
+                ],
+            ], JSON_UNESCAPED_SLASHES) !!}
+        </script>
+
         {{-- Preload both logos so they're ready before React paints the navbar.
              Both are ~7 KB so the cost of fetching both is negligible, and
              media-query-conditioned preloads are poorly supported and cause
