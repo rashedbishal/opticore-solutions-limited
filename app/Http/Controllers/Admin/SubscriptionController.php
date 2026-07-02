@@ -37,7 +37,7 @@ class SubscriptionController extends Controller
     public function sendOfferEmail(Request $request): RedirectResponse
     {
         $request->validate([
-            'image' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
+            'image' => ['required', 'file', 'image', 'mimes:webp', 'max:5120'],
         ]);
 
         $path = $request->file('image')->store('temp/offer-emails', 'local');

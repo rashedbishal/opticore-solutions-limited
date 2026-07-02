@@ -223,8 +223,8 @@ class CategoryController extends Controller
     public function floatingCardImagesStore(Request $request, Category $category): RedirectResponse
     {
         $request->validate([
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-            'thumb' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['required', 'image', 'mimes:webp', 'max:4096'],
+            'thumb' => ['nullable', 'image', 'mimes:webp', 'max:2048'],
         ]);
 
         $imagePath = $request->file('image')->store('categories/floating', 'public');
@@ -283,7 +283,7 @@ class CategoryController extends Controller
     public function galleryStore(Request $request, Category $category): RedirectResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
+            'image' => ['required', 'image', 'mimes:webp', 'max:4096'],
             'title' => ['required', 'string', 'max:100'],
             'category' => ['required', 'string', 'max:60'],
             'description' => ['nullable', 'string', 'max:500'],

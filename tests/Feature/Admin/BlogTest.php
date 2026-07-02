@@ -69,7 +69,7 @@ it('stores a blog post with an uploaded image', function () {
             'title' => 'Blog With Image',
             'category' => 'Web Development',
             'content' => 'Content here.',
-            'image' => UploadedFile::fake()->image('cover.jpg', 800, 400),
+            'image' => UploadedFile::fake()->image('cover.webp', 800, 400),
         ]);
 
     $blog = Blog::where('title', 'Blog With Image')->first();
@@ -127,7 +127,7 @@ it('rejects a blog image exceeding 10 MB', function () {
             'title' => 'Huge Image Blog',
             'category' => 'Graphic Design',
             'content' => 'Content.',
-            'image' => UploadedFile::fake()->create('huge.jpg', 11_000, 'image/jpeg'),
+            'image' => UploadedFile::fake()->create('huge.webp', 11_000, 'image/webp'),
         ])
         ->assertInvalid(['image']);
 });
@@ -176,7 +176,7 @@ it('replaces the blog image when a new one is uploaded', function () {
             'title' => $blog->title,
             'category' => $blog->category,
             'content' => 'Updated content.',
-            'image' => UploadedFile::fake()->image('new.jpg'),
+            'image' => UploadedFile::fake()->image('new.webp'),
         ]);
 
     Storage::disk('public')->assertMissing($oldPath);

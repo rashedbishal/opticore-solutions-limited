@@ -341,7 +341,7 @@ it('adds an item to a category selected-work gallery', function () {
 
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.categories.gallery.store', $category), [
-            'image' => UploadedFile::fake()->image('work.jpg'),
+            'image' => UploadedFile::fake()->image('work.webp'),
             'title' => 'Launch Film',
             'category' => 'Brand Video',
             'description' => 'A cinematic launch film.',
@@ -438,7 +438,7 @@ it('blocks unauthenticated POST to admin categories gallery store', function () 
     $this->post(route('admin.categories.gallery.store', $category), [
         'title' => 'Injected',
         'category' => 'Test',
-        'image' => UploadedFile::fake()->image('work.jpg'),
+        'image' => UploadedFile::fake()->image('work.webp'),
     ])->assertRedirect(route('admin.login'));
 
     $this->assertDatabaseMissing('category_portfolio_items', ['title' => 'Injected']);
@@ -477,7 +477,7 @@ it('blocks a regular admin without the categories permission from the gallery ro
         ->post(route('admin.categories.gallery.store', $category), [
             'title' => 'Injected',
             'category' => 'Test',
-            'image' => UploadedFile::fake()->image('work.jpg'),
+            'image' => UploadedFile::fake()->image('work.webp'),
         ])
         ->assertForbidden();
 
