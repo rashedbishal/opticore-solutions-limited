@@ -79,7 +79,14 @@ const initializeRealtime = async () => {
 };
 
 createInertiaApp({
-    title: (title) => (title ? `${title} — ${appName}` : appName),
+    // Most pages set a short <title> (e.g. "About Us") and rely on this to
+    // append the brand suffix. A few pages (e.g. Home) set their full,
+    // brand-inclusive SEO title directly — skip the suffix there so it
+    // doesn't end up appended twice.
+    title: (title) =>
+        title && !title.includes(appName)
+            ? `${title} — ${appName}`
+            : title || appName,
     progress: {
         color: '#7C3AED',
         includeCSS: true,
