@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\CustomMail;
-use App\Mail\OfferMail;
+use App\Jobs\SendCustomEmail;
+use App\Jobs\SendSubscriptionOfferEmail;
 use App\Models\Subscription;
+use Illuminate\Bus\Batch;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -42,15 +43,30 @@ class SubscriptionController extends Controller
 
         $path = $request->file('image')->store('temp/offer-emails', 'local');
         $fullPath = Storage::disk('local')->path($path);
+        $imageName = $request->file('image')->getClientOriginalName();
 
-        $subscribers = Subscription::pluck('email')->toArray();
         $companyEmail = config('mail.from.address');
 
-        Mail::to($companyEmail)
-            ->bcc($subscribers)
-            ->send(new OfferMail($fullPath, $request->file('image')->getClientOriginalName()));
+        // Chunk the BCC list instead of one email with every subscriber on
+        // it — mail providers commonly cap recipients per message — and run
+        // each chunk on the queue so this request isn't blocked on the SMTP
+        // round-trip. The temp upload is only deleted once every chunk has
+        // been sent (or given up on), since each job reads it independently.
+        $jobs = Subscription::pluck('email')
+            ->chunk(50)
+            ->map(fn ($chunk) => new SendSubscriptionOfferEmail($companyEmail, $chunk->values()->all(), $fullPath, $imageName))
+            ->values()
+            ->all();
 
-        Storage::disk('local')->delete($path);
+        if (empty($jobs)) {
+            $jobs[] = new SendSubscriptionOfferEmail($companyEmail, [], $fullPath, $imageName);
+        }
+
+        Bus::batch($jobs)
+            ->finally(function (Batch $batch) use ($path) {
+                Storage::disk('local')->delete($path);
+            })
+            ->dispatch();
 
         return back()->with('success', 'Offer email sent to all subscribers.');
     }
@@ -99,19 +115,15 @@ class SubscriptionController extends Controller
             ];
         }
 
-        Mail::to($to)
-            ->cc($cc)
-            ->bcc($bcc)
-            ->send(new CustomMail(
-                emailSubject: $request->subject,
-                emailTitle: $request->title,
-                body: $request->body,
-                attachmentPaths: $attachmentPaths,
-            ));
-
-        foreach ($attachmentPaths as $att) {
-            Storage::disk('local')->delete($att['path']);
-        }
+        SendCustomEmail::dispatch(
+            to: $to,
+            cc: $cc,
+            bcc: $bcc,
+            emailSubject: $request->subject,
+            emailTitle: $request->title,
+            body: $request->body,
+            attachmentPaths: $attachmentPaths,
+        );
 
         return back()->with('success', 'Email sent successfully.');
     }
