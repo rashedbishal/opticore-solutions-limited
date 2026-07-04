@@ -495,7 +495,7 @@ export default function HomeIndex({
                     >
                         <Sparkles className="drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
                         <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,var(--theme-text-muted),var(--theme-text),var(--theme-text-muted))] bg-[length:200%_100%] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))]">
-                            Premium Digital Agency
+                            Premium Creative & Digital Solutions
                         </span>
                     </motion.span>
 
@@ -510,9 +510,10 @@ export default function HomeIndex({
                         transition={{ delay: 0.4 }}
                         className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl"
                     >
-                        From stunning visuals to powerful digital strategies —
-                        Opticore Solutions Limited turns your vision into
-                        results.
+                        We help businesses transform ideas into powerful digital
+                        experiences through creative design, cinematic video
+                        production, immersive 3D visualization, strategic
+                        marketing, and modern web development.
                     </motion.p>
 
                     <motion.div
@@ -527,13 +528,13 @@ export default function HomeIndex({
                             ariaLabel="Start a project with Opticore Solutions Limited"
                             className="neo-btn-primary min-w-[180px] rounded-full px-8 py-4 text-base font-black shadow-lg transition-all hover:scale-105"
                         >
-                            Start a Project
+                            Start Your Project
                         </MagneticButton>
                         <Link
                             href={portfolio.url()}
                             className="neo-btn-ghost touch-target inline-flex min-w-[180px] items-center justify-center rounded-full px-8 py-4 text-base font-black text-theme transition-all hover:scale-105 hover:bg-theme-surface-hover"
                         >
-                            See Our Work
+                            Explore Our Work
                         </Link>
                     </motion.div>
 

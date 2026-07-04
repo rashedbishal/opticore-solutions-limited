@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { m as motion } from 'framer-motion';
+import { Handshake, Lightbulb, ShieldCheck, Trophy } from 'lucide-react';
 import Marquee from '@/components/UI/Marquee';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { cardAccent } from '@/lib/cardAccents';
@@ -9,37 +10,47 @@ const values = [
     {
         title: 'Innovation',
         description:
-            'We push for sharper ideas, fresher visual language, and better digital solutions instead of relying on safe templates.',
+            'We embrace creativity, technology, and forward-thinking ideas to help businesses stay ahead in a changing digital landscape.',
+        icon: Lightbulb,
     },
     {
-        title: 'Quality',
+        title: 'Excellence',
         description:
-            'Every detail matters, from motion timing and typography to code structure and production finish.',
+            'We maintain high standards in every project, ensuring professional quality, attention to detail, and consistent results.',
+        icon: Trophy,
     },
     {
         title: 'Integrity',
         description:
-            'We communicate directly, scope honestly, and keep promises visible through every stage of the project.',
+            'Transparency, accountability, and trust guide every relationship we build with clients and partners.',
+        icon: ShieldCheck,
     },
     {
-        title: 'Client-First',
+        title: 'Partnership',
         description:
-            'Our process is built to make the client look stronger, move faster, and feel supported from brief to delivery.',
+            'We believe long-term success is achieved through collaboration, communication, and shared goals.',
+        icon: Handshake,
     },
 ];
 
 const storySections = [
     {
-        title: 'A digital partner, not just a vendor',
-        body: 'Opticore Solutions Limited was built to help ambitious brands feel more polished, more credible, and more ready for growth. We bring strategy, design, motion, and development together so clients are not forced to manage disconnected specialists.',
+        title: 'More Than a Service Provider',
+        body: 'We work as an extension of our clients’ teams. By combining creativity, strategic thinking, and technical expertise, we help businesses solve challenges, improve visibility, and create long-term value.',
+        perspective:
+            'A vendor delivers what is asked. A partner asks what the business actually needs.',
     },
     {
-        title: 'Craft that serves business outcomes',
-        body: 'We believe premium design is not decoration. It changes how audiences perceive value, trust, and quality. That is why every Opticore deliverable is grounded in business goals as much as visual ambition.',
+        title: 'Creativity With Purpose',
+        body: 'We believe creative work should serve a business objective. Every design, animation, campaign, and website is developed with clear goals, measurable outcomes, and user-focused experiences.',
+        perspective:
+            'Great design is judged by the outcome it drives, not just the reaction it gets.',
     },
     {
-        title: 'Execution with momentum',
-        body: 'Our team moves quickly, communicates clearly, and keeps quality high even under pressure. We work with founders, marketers, and product teams who need sharp output without unnecessary complexity.',
+        title: 'Built for Growth',
+        body: 'As industries evolve, so do we. Our team continuously develops new skills, embraces emerging technologies, and refines processes to deliver future-ready solutions for our clients.',
+        perspective:
+            'Staying relevant is not a one-time achievement. It is a habit we practice on every project.',
     },
 ];
 
@@ -68,14 +79,22 @@ export default function About() {
                         <span className="section-kicker">About Us</span>
                         <h1 className="text-4xl font-extrabold text-balance text-theme sm:text-5xl md:text-6xl">
                             <span className="gradient-text">
-                                Empowering You to Grow, Earn, and Succeed
+                                Empowering Businesses Through Creative
+                                Excellence
                             </span>
                         </h1>
                         <p className="mt-6 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
-                            Opticore Solutions Limited helps businesses build
-                            stronger perception and sharper digital experiences
-                            through premium creative, production, and
-                            development services.
+                            Opticore Solutions Ltd. is a multidisciplinary
+                            creative and digital solutions company helping
+                            businesses strengthen brand perception, improve
+                            communication, and achieve sustainable growth.
+                        </p>
+                        <p className="mt-4 max-w-3xl text-base leading-8 text-theme-muted sm:text-lg">
+                            From strategic graphic design and engaging video
+                            content to immersive 3D visualization, digital
+                            marketing, and high-performance web development, we
+                            create solutions that combine creativity with
+                            measurable business impact.
                         </p>
                     </div>
                 </div>
@@ -139,9 +158,7 @@ export default function About() {
                                             Opticore Perspective
                                         </p>
                                         <p className="text-2xl font-semibold text-balance text-theme sm:text-3xl">
-                                            Premium digital work only matters
-                                            when it creates trust, momentum, and
-                                            commercial advantage.
+                                            {section.perspective}
                                         </p>
                                     </div>
                                 </motion.div>
@@ -162,6 +179,7 @@ export default function About() {
                     <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
                         {values.map((value, index) => {
                             const accent = cardAccent(index);
+                            const Icon = value.icon;
 
                             return (
                                 <motion.article
@@ -184,9 +202,9 @@ export default function About() {
                                     className={`neo-panel rounded-[2rem] border-t-2 p-6 ${accent.ring}`}
                                 >
                                     <span
-                                        className={`inline-flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black ${accent.chip} ${accent.icon}`}
+                                        className={`inline-flex h-9 w-9 items-center justify-center rounded-xl ${accent.chip} ${accent.icon}`}
                                     >
-                                        {String(index + 1).padStart(2, '0')}
+                                        <Icon className="h-5 w-5" />
                                     </span>
                                     <h3 className="mt-4 text-xl font-semibold text-theme">
                                         {value.title}

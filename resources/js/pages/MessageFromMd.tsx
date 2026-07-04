@@ -187,68 +187,60 @@ export default function MessageFromMd() {
 
                                 <div className="prose prose-invert relative z-10 max-w-none">
                                     <p className="mb-8 border-l-4 border-violet-500 pl-8 text-xl leading-relaxed font-light text-theme italic md:text-2xl">
-                                        "Digital transformation is not merely a
-                                        technical shift, but a strategic
-                                        imperative that defines the future of
-                                        every brand."
+                                        "Success in today's world is shaped not
+                                        only by products and services but by how
+                                        effectively businesses communicate,
+                                        connect, and create meaningful
+                                        experiences."
                                     </p>
 
                                     <div className="space-y-6 text-lg leading-relaxed font-light text-theme-muted">
                                         <p>
-                                            Opticore Solutions Limited was
-                                            established on a simple yet powerful
-                                            conviction: that in an increasingly
-                                            crowded digital landscape, only
-                                            those who combine{' '}
+                                            At Opticore Solutions Ltd., our
+                                            vision is to bridge{' '}
                                             <span className="font-medium text-theme">
-                                                creative ambition
-                                            </span>{' '}
-                                            with{' '}
+                                                creativity
+                                            </span>
+                                            ,{' '}
                                             <span className="font-medium text-theme">
-                                                operational discipline
+                                                technology
+                                            </span>
+                                            , and{' '}
+                                            <span className="font-medium text-theme">
+                                                strategic thinking
                                             </span>{' '}
-                                            will truly stand out.
+                                            to help organizations grow with
+                                            confidence in an increasingly
+                                            competitive marketplace.
                                         </p>
 
                                         <p>
-                                            Since our inception, our focus has
-                                            been to bridge the gap between
-                                            abstract strategy and tactical
-                                            execution. Too many businesses
-                                            settle for fragmented solutions that
-                                            dilute their message and weaken
-                                            their market position. We advocate
-                                            for a different position.
+                                            Since our founding in 2024, we have
+                                            partnered with businesses across
+                                            multiple industries, delivering
+                                            solutions in graphic design, video
+                                            production, 3D visualization,
+                                            digital marketing, and web
+                                            development.
                                         </p>
 
                                         <p>
-                                            We believe every visual, every line
-                                            of code, and every interaction is a
-                                            brand asset that must work toward a
-                                            singular objective:{' '}
+                                            We believe exceptional creative work
+                                            should do more than look impressive.
+                                            It should{' '}
                                             <span className="font-medium text-violet-600 dark:text-violet-400">
-                                                building trust and momentum
+                                                build trust, strengthen market
+                                                positioning, and contribute
+                                                directly to business objectives
                                             </span>
                                             .
                                         </p>
 
                                         <p>
-                                            Whether we are developing a complex
-                                            web ecosystem, a brand identity, or
-                                            a motion campaign, our
-                                            responsibility remains constant: to
-                                            deliver work that feels premium and
-                                            performs with purpose.
-                                        </p>
-
-                                        <p>
-                                            Our clients trust us with their most
-                                            ambitious goals. We respect that by
-                                            staying disciplined in our process
-                                            and uncompromising in our quality
-                                            standards. We are not just vendors;
-                                            we are partners in your growth
-                                            journey.
+                                            Our commitment remains clear:
+                                            deliver quality, embrace innovation,
+                                            and create measurable value for
+                                            every client we serve.
                                         </p>
                                     </div>
 
@@ -266,7 +258,7 @@ export default function MessageFromMd() {
 
                                             <div className="flex flex-wrap items-center gap-4 text-[10px] font-medium tracking-widest text-theme-subtle uppercase">
                                                 <span className="whitespace-nowrap">
-                                                    EST. 2015
+                                                    EST. 2024
                                                 </span>
                                                 <span className="h-1 w-1 rounded-full bg-black/20 dark:bg-white/20" />
                                                 <span className="whitespace-nowrap">
