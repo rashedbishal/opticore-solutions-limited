@@ -177,6 +177,8 @@ export default function ShowTask({ task }: Props) {
                             <img
                                 src={task.image_url}
                                 alt="Task delivery"
+                                loading="lazy"
+                                decoding="async"
                                 className="mt-2 h-48 w-auto rounded-lg object-cover"
                             />
                         </div>

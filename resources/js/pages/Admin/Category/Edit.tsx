@@ -942,6 +942,8 @@ export default function CategoryEdit({
                                     <img
                                         src={category.floating_card_image_url!}
                                         alt="Floating card image"
+                                        loading="lazy"
+                                        decoding="async"
                                         className="h-full w-full object-cover"
                                     />
                                 </div>
@@ -959,6 +961,8 @@ export default function CategoryEdit({
                                                     category.floating_card_thumb_url
                                                 }
                                                 alt="Floating card thumbnail"
+                                                loading="lazy"
+                                                decoding="async"
                                                 className="h-full w-full object-cover"
                                             />
                                         </div>

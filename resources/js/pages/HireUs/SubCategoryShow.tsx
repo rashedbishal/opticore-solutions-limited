@@ -766,6 +766,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 <img
                                     src={item.media_path ?? PLACEHOLDER}
                                     alt={item.alt}
+                                    loading="lazy"
                                     decoding="async"
                                     onError={(e) => {
                                         e.currentTarget.src = PLACEHOLDER;
