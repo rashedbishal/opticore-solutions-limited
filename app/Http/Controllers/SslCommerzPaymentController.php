@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SslCommerzPaymentController extends Controller
@@ -265,6 +266,7 @@ class SslCommerzPaymentController extends Controller
                 ]);
             }
         } elseif ($order_details && ($order_details->status === 'Processing' || $order_details->status === 'Complete')) {
+            console.log("IPN HIT!");
             return $this->alreadyProcessedSuccessRedirect($request, $tran_id);
         }
 
