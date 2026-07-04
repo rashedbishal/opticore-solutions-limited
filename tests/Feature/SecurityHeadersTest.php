@@ -32,11 +32,14 @@ it('sends a CSP and HSTS header in production that allowlists every required int
     expect($csp)->toContain('https://pay.google.com');
     expect($csp)->toContain('https://sandbox.sslcommerz.com');
     expect($csp)->toContain('https://securepay.sslcommerz.com');
-    // Live (non-sandbox) SSLCommerz embedded-checkout traffic is served
-    // from a third, different domain than the API/sandbox ones — see
-    // config/sslcommerz.php. Missing this blocks the live payment popup
-    // in production only, since CSP is disabled locally.
+    // Live (non-sandbox) SSLCommerz embedded-checkout traffic spans two
+    // more domains than the API/sandbox ones: seamless-epay.sslcommerz.com
+    // serves the embed.min.js bootstrap script, and pay.sslcommerz.com is
+    // the actual payment-form iframe it opens. Missing either blocks the
+    // live payment popup in production only, since CSP is disabled locally
+    // — and sandbox-mode testing never exercises either domain.
     expect($csp)->toContain('https://seamless-epay.sslcommerz.com');
+    expect($csp)->toContain('https://pay.sslcommerz.com');
     expect($csp)->toContain('https://fonts.googleapis.com');
     expect($csp)->toContain('https://www.google.com');
     expect($csp)->toContain("object-src 'none'");

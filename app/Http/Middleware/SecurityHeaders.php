@@ -35,6 +35,13 @@ class SecurityHeaders
      * widget, Google Fonts, the Reverb websocket, the Google Maps embed on
      * the contact page, and the 3D-Secure bank redirect form that SSLCommerz
      * injects during card payments (hence the permissive form-action).
+     *
+     * SSLCommerz embedded checkout spans four distinct domains, not one:
+     * sandbox.sslcommerz.com/securepay.sslcommerz.com (API + sandbox embed),
+     * seamless-epay.sslcommerz.com (live embed.min.js bootstrap script), and
+     * pay.sslcommerz.com (the actual payment-form iframe the widget opens
+     * once live credentials are used — sandbox mode never hits this one,
+     * which is why it's easy to miss testing only against sandbox).
      */
     private function contentSecurityPolicy(Response $response): string
     {
@@ -53,7 +60,7 @@ class SecurityHeaders
             "img-src 'self' data: https:",
             "media-src 'self' https:",
             "connect-src 'self' https://pay.google.com {$reverbOrigin} https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
-            "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://www.googletagmanager.com",
+            "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://pay.sslcommerz.com https://www.googletagmanager.com",
             "form-action 'self' https:",
             "worker-src 'self' blob:",
             "object-src 'none'",
