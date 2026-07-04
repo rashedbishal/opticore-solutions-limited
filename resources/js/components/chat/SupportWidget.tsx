@@ -563,7 +563,12 @@ export default function SupportWidget({
         },
     };
 
-    const buttonTransition = { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 } as const;
+    const buttonTransition = {
+        type: 'spring',
+        stiffness: 500,
+        damping: 30,
+        mass: 0.5,
+    } as const;
 
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
