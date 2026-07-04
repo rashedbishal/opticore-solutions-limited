@@ -4,6 +4,7 @@ use App\Models\Admin;
 use App\Models\Task;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -283,6 +284,32 @@ it('allows the mother admin to clear all transactions using their own password t
         ->assertRedirect();
 
     $this->assertDatabaseMissing('transactions', ['transaction_id' => 'mother-txn']);
+});
+
+it('downloads and caches the invoice pdf for a transaction with an invoice number', function () {
+    Storage::fake('local');
+
+    $transaction = createTestTransaction(['invoice_number' => 'INV-ADMIN-1']);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->get(route('admin.transactions.invoice', $transaction))
+        ->assertOk()
+        ->assertHeader('content-type', 'application/pdf');
+
+    Storage::disk('local')->assertExists('invoices/INV-ADMIN-1.pdf');
+});
+
+it('does not cache the invoice pdf for a transaction that has no invoice number yet', function () {
+    Storage::fake('local');
+
+    $transaction = createTestTransaction(['status' => 'Pending', 'invoice_number' => null]);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->get(route('admin.transactions.invoice', $transaction))
+        ->assertOk()
+        ->assertHeader('content-type', 'application/pdf');
+
+    Storage::disk('local')->assertDirectoryEmpty('invoices');
 });
 
 it('blocks guests from transaction management routes', function () {

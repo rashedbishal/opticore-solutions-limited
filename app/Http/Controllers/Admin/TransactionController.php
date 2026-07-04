@@ -11,13 +11,13 @@ use App\Models\Transaction;
 use App\Support\InvoicePdfBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\LaravelPdf\PdfBuilder;
 
 class TransactionController extends Controller
 {
@@ -112,11 +112,14 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function downloadInvoice(Transaction $transaction): PdfBuilder
+    public function downloadInvoice(Transaction $transaction): HttpResponse
     {
         $filename = 'Invoice-'.($transaction->invoice_number ?? $transaction->transaction_id).'.pdf';
 
-        return InvoicePdfBuilder::build($transaction)->download($filename);
+        return response(InvoicePdfBuilder::cachedContent($transaction), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
     }
 
     public function erase(Request $request): RedirectResponse

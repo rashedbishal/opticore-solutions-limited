@@ -7,8 +7,8 @@ use App\Events\OrderUpdated;
 use App\Events\PaymentReceived;
 use App\Events\TaskCreated;
 use App\Events\TransactionUpdated;
+use App\Jobs\SendPaymentInvoiceEmail;
 use App\Library\SslCommerz\SslCommerzNotification;
-use App\Mail\PaymentSuccessMail;
 use App\Models\CheckoutMetadata;
 use App\Models\Offer;
 use App\Models\PortfolioSubCategory;
@@ -17,7 +17,6 @@ use App\Models\TaskAttachment;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Support\IdGenerator;
-use App\Support\InvoicePdfBuilder;
 use App\Support\PaymentReturnToken;
 use App\Support\TaskGenerator;
 use DB;
@@ -26,7 +25,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class SslCommerzPaymentController extends Controller
@@ -202,9 +200,13 @@ class SslCommerzPaymentController extends Controller
             $validation = $sslc->orderValidate($request->all(), $tran_id, $order_details->amount, $order_details->currency);
 
             if ($validation) {
-                DB::table('orders')
-                    ->where('transaction_id', $tran_id)
-                    ->update(['status' => 'Processing']);
+                if (! $this->claimOrderForProcessing($tran_id)) {
+                    // Lost the race: the IPN webhook (or a duplicate call)
+                    // already claimed and is processing this transaction.
+                    // Treat it the same as an already-processed order
+                    // instead of repeating the invoice email/task creation.
+                    return $this->alreadyProcessedSuccessRedirect($request, $tran_id);
+                }
 
                 $invoiceNumber = IdGenerator::invoiceNumber();
 
@@ -238,7 +240,7 @@ class SslCommerzPaymentController extends Controller
                         'risk_title' => $request->input('risk_title'),
                     ]);
 
-                    $this->sendInvoiceEmail($transaction);
+                    SendPaymentInvoiceEmail::dispatch($transaction);
                     $this->provisionWorkflowTask($transaction);
 
                     PaymentReceived::dispatch($transaction);
@@ -260,21 +262,51 @@ class SslCommerzPaymentController extends Controller
                 ]);
             }
         } elseif ($order_details && ($order_details->status === 'Processing' || $order_details->status === 'Complete')) {
-            $existing = Transaction::where('transaction_id', $tran_id)->first();
-
-            if (PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
-                $this->loginUserFromTransaction($request, $tran_id);
-            }
-
-            return redirect()->route('profile')->with('payment_success', [
-                'invoice_number' => $existing?->invoice_number,
-                'amount' => (string) $existing?->amount,
-                'currency' => $existing?->currency,
-                'tran_id' => $tran_id,
-            ]);
+            return $this->alreadyProcessedSuccessRedirect($request, $tran_id);
         }
 
         return redirect()->route('home')->with('payment_error', 'Payment validation failed. Please contact support.');
+    }
+
+    /**
+     * Shared response for the success() callback when the order was already
+     * marked Processing/Complete by the time this call ran — either because
+     * it was genuinely processed earlier, or because a concurrent callback
+     * (the IPN webhook typically fires around the same time as the browser
+     * redirect) won the claimOrderForProcessing() race for this transaction.
+     */
+    private function alreadyProcessedSuccessRedirect(Request $request, string $tran_id)
+    {
+        $existing = Transaction::where('transaction_id', $tran_id)->first();
+
+        if (PaymentReturnToken::consume($tran_id, $request->input('value_c'))) {
+            $this->loginUserFromTransaction($request, $tran_id);
+        }
+
+        return redirect()->route('profile')->with('payment_success', [
+            'invoice_number' => $existing?->invoice_number,
+            'amount' => (string) $existing?->amount,
+            'currency' => $existing?->currency,
+            'tran_id' => $tran_id,
+        ]);
+    }
+
+    /**
+     * Atomically flip the order from Pending to Processing. SSLCommerz fires
+     * the browser-redirect success() callback and the server-to-server ipn()
+     * webhook independently for the same transaction, often within
+     * milliseconds of each other; both can reach this point having read
+     * status "Pending". This conditional UPDATE ensures only one of them
+     * actually wins the flip (the DB guarantees a single row-affecting
+     * writer), so only the winner sends the invoice email and provisions
+     * the workflow task.
+     */
+    private function claimOrderForProcessing(string $tran_id): bool
+    {
+        return DB::table('orders')
+            ->where('transaction_id', $tran_id)
+            ->where('status', 'Pending')
+            ->update(['status' => 'Processing']) > 0;
     }
 
     public function fail(Request $request)
@@ -361,7 +393,13 @@ class SslCommerzPaymentController extends Controller
             $validation = $sslc->orderValidate($request->all(), $tran_id, $order_details->amount, $order_details->currency);
 
             if ($validation) {
-                DB::table('orders')->where('transaction_id', $tran_id)->update(['status' => 'Processing']);
+                if (! $this->claimOrderForProcessing($tran_id)) {
+                    // Lost the race: the browser-redirect success() callback
+                    // (or a duplicate IPN retry) already claimed and is
+                    // processing this transaction — acknowledge without
+                    // repeating the invoice email/task creation.
+                    return response('ALREADY PROCESSED', 200);
+                }
 
                 $invoiceNumber = IdGenerator::invoiceNumber();
 
@@ -395,7 +433,7 @@ class SslCommerzPaymentController extends Controller
                         'risk_title' => $request->input('risk_title'),
                     ]);
 
-                    $this->sendInvoiceEmail($transaction);
+                    SendPaymentInvoiceEmail::dispatch($transaction);
                     $this->provisionWorkflowTask($transaction);
                 }
 
@@ -453,28 +491,6 @@ class SslCommerzPaymentController extends Controller
                 $request->session()->regenerate();
             }
         }
-    }
-
-    private function sendInvoiceEmail(Transaction $transaction): void
-    {
-        if (! $transaction->email) {
-            return;
-        }
-
-        $subcategory = $transaction->subcategory_id
-            ? PortfolioSubCategory::find($transaction->subcategory_id)
-            : null;
-
-        $serviceName = $subcategory?->name;
-        $categoryName = $transaction->category
-            ? ucwords(str_replace('-', ' ', $transaction->category))
-            : null;
-
-        $pdfContent = InvoicePdfBuilder::build($transaction)->generatePdfContent();
-
-        Mail::to($transaction->email)->send(
-            new PaymentSuccessMail($transaction, $pdfContent, $serviceName, $categoryName)
-        );
     }
 
     private function provisionWorkflowTask(Transaction $transaction): void

@@ -11,6 +11,7 @@ use App\Support\PendingOrderResolver;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
@@ -19,7 +20,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\LaravelPdf\PdfBuilder;
 
 class ProfileController extends Controller
 {
@@ -149,16 +149,18 @@ class ProfileController extends Controller
         return redirect('/');
     }
 
-    public function downloadInvoice(Request $request, Transaction $transaction): PdfBuilder
+    public function downloadInvoice(Request $request, Transaction $transaction): HttpResponse
     {
         abort_unless($transaction->email === $request->user()->email, 403);
         abort_unless($transaction->status === 'Processing' && $transaction->invoice_number, 404);
 
-        return InvoicePdfBuilder::build($transaction)
-            ->download("Invoice-{$transaction->invoice_number}.pdf");
+        return response(InvoicePdfBuilder::cachedContent($transaction), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Invoice-'.$transaction->invoice_number.'.pdf"',
+        ]);
     }
 
-    public function verifyInvoice(Request $request, string $token): PdfBuilder
+    public function verifyInvoice(Request $request, string $token): HttpResponse
     {
         try {
             $transactionId = Crypt::decryptString(strtr($token, '-_', '+/'));
@@ -171,7 +173,9 @@ class ProfileController extends Controller
         abort_unless($transaction->email === $request->user()->email, 403);
         abort_unless($transaction->status === 'Processing' && $transaction->invoice_number, 404);
 
-        return InvoicePdfBuilder::build($transaction)
-            ->inline("Invoice-{$transaction->invoice_number}.pdf");
+        return response(InvoicePdfBuilder::cachedContent($transaction), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Invoice-'.$transaction->invoice_number.'.pdf"',
+        ]);
     }
 }

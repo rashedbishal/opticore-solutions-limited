@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 function createProfileTransaction(array $attributes = []): Transaction
@@ -129,6 +130,8 @@ it('returns not found when the order is not processing or has no invoice number'
 });
 
 it('downloads the invoice pdf for an owned processing order', function () {
+    Storage::fake('local');
+
     $user = User::factory()->create(['email' => 'owner@example.com']);
 
     $transaction = createProfileTransaction([
@@ -140,6 +143,33 @@ it('downloads the invoice pdf for an owned processing order', function () {
         ->get(route('orders.invoice', $transaction))
         ->assertOk()
         ->assertHeader('content-type', 'application/pdf');
+
+    Storage::disk('local')->assertExists('invoices/INV-102.pdf');
+});
+
+it('serves the cached invoice pdf on a repeat download instead of re-rendering it', function () {
+    Storage::fake('local');
+
+    $user = User::factory()->create(['email' => 'owner@example.com']);
+
+    $transaction = createProfileTransaction([
+        'email' => $user->email,
+        'invoice_number' => 'INV-103',
+    ]);
+
+    $this->actingAs($user)->get(route('orders.invoice', $transaction))->assertOk();
+
+    $cachedContent = Storage::disk('local')->get('invoices/INV-103.pdf');
+
+    // Corrupt the cached file so a second render would be detectable —
+    // if the controller re-rendered instead of reading the cache, the
+    // response body would come back as valid PDF bytes, not this stub.
+    Storage::disk('local')->put('invoices/INV-103.pdf', 'stubbed-cached-pdf');
+
+    $response = $this->actingAs($user)->get(route('orders.invoice', $transaction))->assertOk();
+
+    expect($response->getContent())->toBe('stubbed-cached-pdf');
+    expect($cachedContent)->not->toBe('stubbed-cached-pdf');
 });
 
 it('redirects guests to login and back to the invoice verification page after authenticating', function () {
@@ -163,6 +193,8 @@ it('redirects guests to login and back to the invoice verification page after au
 });
 
 it('shows the invoice pdf inline for an owned processing order via the verification token', function () {
+    Storage::fake('local');
+
     $user = User::factory()->create(['email' => 'owner@example.com']);
 
     $transaction = createProfileTransaction([
