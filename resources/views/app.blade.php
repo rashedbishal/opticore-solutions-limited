@@ -79,31 +79,46 @@
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap">
         </noscript>
 
-        {{-- Google Tag Manager: injected after `load` (via requestIdleCallback where
-             available) rather than immediately, so gtm.js's evaluation and the
-             tags/pixels it in turn loads don't compete with hydration on the
-             main thread during the critical rendering window. --}}
+        {{-- Google Tag Manager: injected on first user interaction (mirroring the
+             same interaction-or-fallback-timeout pattern AppLayout uses to defer
+             the chat widgets), rather than on `load`. gtm.js's evaluation and the
+             tags/pixels it loads in turn are the single largest main-thread cost
+             on this site, so keeping it off the critical path until the visitor
+             has actually engaged (or a fallback timer elapses) keeps it from
+             competing with hydration and initial rendering. --}}
         <script>
             (function () {
+                var fired = false;
+
                 function loadGTM() {
+                    if (fired) {
+                        return;
+                    }
+                    fired = true;
+
                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
                     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
                     })(window,document,'script','dataLayer','GTM-P6NS89RJ');
+
+                    events.forEach(function (event) {
+                        window.removeEventListener(event, loadGTM);
+                    });
+                    clearTimeout(fallbackTimer);
                 }
-                function scheduleGTM() {
-                    if ('requestIdleCallback' in window) {
-                        requestIdleCallback(loadGTM, { timeout: 2000 });
-                    } else {
-                        setTimeout(loadGTM, 1000);
-                    }
-                }
-                if (document.readyState === 'complete') {
-                    scheduleGTM();
-                } else {
-                    window.addEventListener('load', scheduleGTM);
-                }
+
+                var events = ['mousemove', 'touchstart', 'keydown', 'scroll'];
+                events.forEach(function (event) {
+                    window.addEventListener(event, loadGTM, {
+                        once: true,
+                        passive: true,
+                    });
+                });
+
+                // Fallback so visitors who never interact (or bots) still get
+                // tracked eventually, instead of never loading GTM at all.
+                var fallbackTimer = setTimeout(loadGTM, 8000);
             })();
         </script>
         {{-- End Google Tag Manager --}}
