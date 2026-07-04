@@ -266,7 +266,8 @@ class SslCommerzPaymentController extends Controller
                 ]);
             }
         } elseif ($order_details && ($order_details->status === 'Processing' || $order_details->status === 'Complete')) {
-            console.log("IPN HIT!");
+            Log::info('IPN HIT!');
+
             return $this->alreadyProcessedSuccessRedirect($request, $tran_id);
         }
 
