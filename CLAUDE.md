@@ -15,6 +15,7 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 - `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
 - `vendor/bin/pint --dirty --format agent` — format only changed PHP files; run this after any PHP edit before finishing.
 - `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the alternate local-environment config (different DB names/`APP_ENV`) instead of the default `phpunit.xml`. GitHub Actions CI uses the default `phpunit.xml`, not this one.
+- `BROADCAST_CONNECTION` defaults to `log` in `.env.example`; `composer dev` does not start Reverb. To exercise real-time chat/notifications locally, set `BROADCAST_CONNECTION=reverb`, fill in the `REVERB_*`/`VITE_REVERB_*` vars, and run `php artisan reverb:start` alongside the dev stack.
 
 ### Frontend (JS/TS)
 - `npm run dev` — Vite dev server. `npm run build` / `npm run build:ssr` — production build.
