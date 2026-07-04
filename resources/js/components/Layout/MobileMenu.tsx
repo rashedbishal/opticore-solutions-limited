@@ -349,11 +349,7 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                                 {tiles.map((i) => {
                                     const col = i % TILE_COLS;
                                     const row = Math.floor(i / TILE_COLS);
-                                    const delay = tileDelay(
-                                        row,
-                                        col,
-                                        tileRows,
-                                    );
+                                    const delay = tileDelay(row, col, tileRows);
                                     const w = 1 / TILE_COLS;
                                     const h = 1 / tileRows;
                                     // Slightly overlap neighboring squares so

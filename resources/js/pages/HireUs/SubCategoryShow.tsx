@@ -918,10 +918,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                             info.velocity.y,
                                         );
 
-                                        if (
-                                            distance > 100 ||
-                                            velocity > 500
-                                        ) {
+                                        if (distance > 100 || velocity > 500) {
                                             setIsLightboxOpen(false);
                                         }
                                     }}
