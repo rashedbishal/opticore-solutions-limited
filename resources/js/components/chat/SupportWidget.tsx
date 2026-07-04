@@ -563,6 +563,8 @@ export default function SupportWidget({
         },
     };
 
+    const buttonTransition = { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 } as const;
+
     const latestOutgoingMessageId = getLatestOutgoingMessageId(messages);
 
     return (
@@ -906,8 +908,9 @@ export default function SupportWidget({
                 animate="idle"
                 whileHover="hover"
                 whileTap="tap"
+                transition={buttonTransition}
                 className={cn(
-                    'relative flex h-14 w-14 items-center justify-center rounded-full transition-all duration-200 sm:h-16 sm:w-16',
+                    'relative flex h-14 w-14 items-center justify-center rounded-full transition-colors duration-200 sm:h-16 sm:w-16',
                     isOpen
                         ? 'bg-foreground text-background ring-1 ring-white/10 ring-inset'
                         : 'bg-linear-to-br from-cyan-500 via-cyan-600 to-indigo-600 text-white ring-1 ring-cyan-400/40 ring-inset',

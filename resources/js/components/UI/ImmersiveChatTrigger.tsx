@@ -55,6 +55,8 @@ export default function ImmersiveChatTrigger({
         }
     };
 
+    const buttonTransition = { type: "spring", stiffness: 500, damping: 30, mass: 0.5 } as const;
+
         return (
         <div className={cn("relative group", className)}>
             {/* AI Pulse Glow */}
@@ -80,8 +82,9 @@ export default function ImmersiveChatTrigger({
                 animate={isDancing && !isOpen ? "attention" : "idle"}
                 whileHover="hover"
                 whileTap="tap"
+                transition={buttonTransition}
                 className={cn(
-                    "relative h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center text-white transition-all duration-200",
+                    "relative h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center text-white transition-colors duration-200",
                     isOpen
                         ? "bg-zinc-900 ring-1 ring-inset ring-white/10 rounded-full"
                         : "bg-linear-to-br from-violet-600 via-violet-500 to-cyan-500 ring-1 ring-inset ring-violet-400/40 rounded-full"
