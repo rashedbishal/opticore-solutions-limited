@@ -177,18 +177,25 @@ function HeroHeadline() {
             // Reset container opacity for new phrase
             el.style.opacity = '1';
 
-            // Align gradients across letters
+            // Align gradients across letters. All layout reads
+            // (getBoundingClientRect) are batched before any style writes so
+            // the browser doesn't recalculate layout once per letter.
             requestAnimationFrame(() => {
                 const containerWidth = el.offsetWidth;
                 const containerRect = el.getBoundingClientRect();
-                const letters =
-                    el.querySelectorAll<HTMLElement>('.anime-letter');
+                const letters = Array.from(
+                    el.querySelectorAll<HTMLElement>('.anime-letter'),
+                );
 
-                letters.forEach((letter) => {
-                    const letterRect = letter.getBoundingClientRect();
-                    const offsetLeft = letterRect.left - containerRect.left;
+                const offsets = letters.map(
+                    (letter) =>
+                        letter.getBoundingClientRect().left -
+                        containerRect.left,
+                );
+
+                letters.forEach((letter, i) => {
                     letter.style.backgroundSize = `${containerWidth}px 100%`;
-                    letter.style.backgroundPosition = `-${offsetLeft}px 0`;
+                    letter.style.backgroundPosition = `-${offsets[i]}px 0`;
                 });
             });
 
@@ -329,8 +336,21 @@ export default function HomeIndex({
     useEffect(() => {
         const observer = new ResizeObserver((entries) => {
             requestAnimationFrame(() => {
-                entries.forEach((entry) => {
+                // Batch all getBoundingClientRect reads before any style/attribute
+                // writes below, so resizing several cards at once doesn't force a
+                // layout recalculation per card.
+                const updates = entries.map((entry) => {
                     const card = entry.target as HTMLElement;
+                    const box = card.getBoundingClientRect();
+
+                    return {
+                        card,
+                        w: Math.round(box.width),
+                        h: Math.round(box.height),
+                    };
+                });
+
+                updates.forEach(({ card, w, h }) => {
                     const rect =
                         card.querySelector<SVGRectElement>('.trace-rect');
                     const beam =
@@ -339,10 +359,6 @@ export default function HomeIndex({
                     if (!rect) {
                         return;
                     }
-
-                    const box = card.getBoundingClientRect();
-                    const w = Math.round(box.width);
-                    const h = Math.round(box.height);
 
                     // Skip if dimensions haven't significantly changed
                     if (
@@ -385,9 +401,18 @@ export default function HomeIndex({
                     100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
                 }
 
+                /* Split into two opacity-only layers (this element's base
+                   background plus the ::after accent below) instead of
+                   animating filter: drop-shadow, which most browsers can't
+                   composite off the main thread. */
                 @keyframes pulsateGlow {
-                    0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
-                    50% { opacity: 0.7; filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.6)); }
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 0.7; }
+                }
+
+                @keyframes pulsateGlowAccent {
+                    0%, 100% { opacity: 0; }
+                    50% { opacity: 1; }
                 }
 
                 @keyframes borderTrace {
@@ -438,16 +463,29 @@ export default function HomeIndex({
                     position: absolute;
                     inset: -10px;
                     border-radius: 2rem;
-                    background: radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+                    background: radial-gradient(circle at center, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
                     opacity: 0;
                     transition: opacity 0.6s ease;
                     pointer-events: none;
                     z-index: 0;
                 }
 
+                .aura-glow::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    border-radius: inherit;
+                    background: radial-gradient(circle at center, rgba(168, 85, 247, 0.6) 0%, transparent 70%);
+                    opacity: 0;
+                }
+
                 .group:hover .aura-glow {
                     opacity: 1;
                     animation: pulsateGlow 3s ease-in-out infinite;
+                }
+
+                .group:hover .aura-glow::after {
+                    animation: pulsateGlowAccent 3s ease-in-out infinite;
                 }
             `}</style>
             <Head>

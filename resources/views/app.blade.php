@@ -79,12 +79,33 @@
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap">
         </noscript>
 
-        {{-- Google Tag Manager --}}
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P6NS89RJ');</script>
+        {{-- Google Tag Manager: injected after `load` (via requestIdleCallback where
+             available) rather than immediately, so gtm.js's evaluation and the
+             tags/pixels it in turn loads don't compete with hydration on the
+             main thread during the critical rendering window. --}}
+        <script>
+            (function () {
+                function loadGTM() {
+                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                    })(window,document,'script','dataLayer','GTM-P6NS89RJ');
+                }
+                function scheduleGTM() {
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(loadGTM, { timeout: 2000 });
+                    } else {
+                        setTimeout(loadGTM, 1000);
+                    }
+                }
+                if (document.readyState === 'complete') {
+                    scheduleGTM();
+                } else {
+                    window.addEventListener('load', scheduleGTM);
+                }
+            })();
+        </script>
         {{-- End Google Tag Manager --}}
 
         {{-- Inlined to avoid an extra render-blocking network request before paint --}}
