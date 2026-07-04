@@ -435,9 +435,12 @@ class SslCommerzPaymentController extends Controller
 
                     SendPaymentInvoiceEmail::dispatch($transaction);
                     $this->provisionWorkflowTask($transaction);
+
+                    PaymentReceived::dispatch($transaction);
                 }
 
                 Cache::forget('admin.transactions.filter-options');
+                TransactionUpdated::dispatch();
                 OrderUpdated::dispatch();
 
                 return response('IPN OK', 200);
