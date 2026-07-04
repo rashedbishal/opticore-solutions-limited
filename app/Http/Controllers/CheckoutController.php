@@ -159,7 +159,9 @@ class CheckoutController extends Controller
 
     /**
      * Stream a task attachment to the authenticated user or admin.
-     * Clients may only download attachments belonging to their own tasks.
+     * Clients may only download attachments belonging to their own tasks;
+     * admins need the `tasks` permission (route isn't under the `admin.`
+     * prefix, so EnsureAdminHasPermission can't derive the key automatically).
      */
     public function downloadTaskAttachment(TaskAttachment $taskAttachment): StreamedResponse
     {
@@ -168,7 +170,9 @@ class CheckoutController extends Controller
         $adminGuard = auth()->guard('admin');
         $webGuard = auth()->guard('web');
 
-        if (! $adminGuard->check()) {
+        if ($adminGuard->check()) {
+            abort_unless($adminGuard->user()->canAccess('tasks'), 403);
+        } else {
             abort_if(! $webGuard->check() || $webGuard->id() !== $task->user_id, 403);
         }
 

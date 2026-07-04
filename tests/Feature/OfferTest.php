@@ -44,7 +44,7 @@ it('shows an offer to its owning client and allows them to respond while pending
         );
 });
 
-it('shows an offer to any admin without allowing them to respond', function () {
+it('shows an offer to a full-access admin without allowing them to respond', function () {
     $user = User::factory()->create();
     $offer = createOfferForUser($user);
 
@@ -55,6 +55,33 @@ it('shows an offer to any admin without allowing them to respond', function () {
             ->component('Offer/Show')
             ->where('offer.id', $offer->id)
             ->where('canRespond', false)
+            ->where('isAdmin', true)
+        );
+});
+
+it('blocks a regular admin without the customer-conversations permission from viewing an offer', function () {
+    $admin = Admin::factory()->regular()->create();
+
+    $user = User::factory()->create();
+    $offer = createOfferForUser($user);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('offer.show', $offer->offer_token))
+        ->assertForbidden();
+});
+
+it('allows a regular admin with the customer-conversations permission to view an offer', function () {
+    $admin = Admin::factory()->withPermissions(['customer-conversations'])->create();
+
+    $user = User::factory()->create();
+    $offer = createOfferForUser($user);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('offer.show', $offer->offer_token))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Offer/Show')
+            ->where('offer.id', $offer->id)
             ->where('isAdmin', true)
         );
 });
