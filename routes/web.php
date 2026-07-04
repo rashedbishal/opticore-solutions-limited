@@ -115,7 +115,7 @@ Route::middleware(RedirectAdminToPanel::class)->group(function () {
         Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
         Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware('throttle:password-reset');
         Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
-        Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+        Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware('throttle:password-reset');
 
         // Social Auth
         Route::get('/auth/{provider}/redirect', [SocialController::class, 'redirect'])->name('social.redirect');

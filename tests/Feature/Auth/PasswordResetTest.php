@@ -70,6 +70,28 @@ it('rate limits reset requests across many different emails from one source', fu
         ->assertStatus(429);
 });
 
+it('rate limits repeated reset submissions aimed at the same email', function () {
+    $user = User::factory()->create();
+
+    foreach (range(1, 3) as $_) {
+        $this->post(route('password.update'), [
+            'token' => 'invalid-token',
+            'email' => $user->email,
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ])->assertStatus(302);
+    }
+
+    $this->post(route('password.update'), [
+        'token' => 'invalid-token',
+        'email' => $user->email,
+        'password' => 'NewPassword123!',
+        'password_confirmation' => 'NewPassword123!',
+    ])->assertStatus(429);
+
+    expect(Hash::check('NewPassword123!', $user->fresh()->password))->toBeFalse();
+});
+
 it('requires a valid email to request a reset link', function () {
     $this->post(route('password.email'), [])->assertInvalid(['email']);
 
