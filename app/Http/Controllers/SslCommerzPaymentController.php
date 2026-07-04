@@ -100,7 +100,10 @@ class SslCommerzPaymentController extends Controller
                 return $response->json('conversion_rate');
             });
             abort_if(! $rate, 422);
-            $totalAmount = (string) round($usdAmount * $rate);
+            // exchangerate-api.com encodes conversion_rate as a JSON string
+            // (e.g. "123.3291"); cast explicitly rather than rely on PHP's
+            // numeric-string coercion in the multiplication below.
+            $totalAmount = (string) round($usdAmount * (float) $rate);
         } else {
             $totalAmount = (string) $usdAmount;
         }

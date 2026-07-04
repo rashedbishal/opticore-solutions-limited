@@ -92,7 +92,12 @@ class CheckoutController extends Controller
             return $response->json('conversion_rate');
         });
 
-        return response()->json(['rate' => $rate]);
+        // The exchangerate-api.com response encodes conversion_rate as a
+        // JSON string (e.g. "123.3291"), not a number. Cast it explicitly
+        // so the frontend always receives a real JSON number — a raw
+        // string here breaks any JS code calling .toFixed()/.toLocaleString()
+        // on it, since those are Number-only methods.
+        return response()->json(['rate' => $rate !== null ? (float) $rate : null]);
     }
 
     /**
