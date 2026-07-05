@@ -37,6 +37,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ClientReviewController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\CspReportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GooglePayCheckoutController;
 use App\Http\Controllers\HireUsController;
@@ -298,6 +299,9 @@ Route::middleware('throttle:payment-callback')->group(function () {
     Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
     Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 });
+
+// Browser-sent CSP violation reports — see app/Http/Middleware/SecurityHeaders.php.
+Route::post('/csp-report', [CspReportController::class, 'store'])->name('csp.report')->middleware('throttle:30,1');
 
 // CMS-managed service pages (e.g. /video-editing). Single-segment wildcard —
 // Laravel matches routes in registration order across the *entire* file, not

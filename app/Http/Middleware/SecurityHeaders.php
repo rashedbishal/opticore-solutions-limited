@@ -66,6 +66,12 @@ class SecurityHeaders
             "object-src 'none'",
             "base-uri 'self'",
             "frame-ancestors 'self'",
+            // Reports every real-world violation (blocked script/frame/connect
+            // origin) to CspReportController so we can see exactly which
+            // SSLCommerz/bank/payment-method domain needs whitelisting,
+            // instead of guessing. Doesn't relax enforcement — the block
+            // still happens, this just also logs it.
+            'report-uri /csp-report',
         ];
 
         return implode('; ', $directives);

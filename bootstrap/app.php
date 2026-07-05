@@ -53,6 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'cancel',
             'ipn',
             'pay-via-ajax',
+            'csp-report',
         ]);
 
         $middleware->web(append: [
