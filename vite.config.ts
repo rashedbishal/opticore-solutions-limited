@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig(({ command }) => ({
     plugins: [
@@ -91,5 +92,10 @@ export default defineConfig(({ command }) => ({
         environment: 'jsdom',
         globals: true,
         setupFiles: ['./resources/js/test-setup.js'],
+        // Without this, Vitest's default include glob also matches the
+        // Playwright specs under e2e/*.spec.ts and tries to run them as
+        // unit tests, failing immediately since they call test.describe()
+        // outside of Playwright's runner.
+        exclude: [...configDefaults.exclude, 'e2e/**'],
     },
 }));
