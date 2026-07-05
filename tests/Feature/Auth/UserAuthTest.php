@@ -2,7 +2,6 @@
 
 use App\Models\Admin;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 it('logs out an authenticated user and redirects to home', function () {
@@ -59,22 +58,4 @@ it('redirects to intended page after successful login', function () {
     ])->assertRedirect('/');
 
     $this->assertAuthenticatedAs($user);
-});
-
-it('logs in a user with a legacy bcrypt password and silently upgrades it to argon2id', function () {
-    // Bypasses the `password` column's `hashed` cast (Eloquent's cast would
-    // reject assigning an already-bcrypt hash now that the app's default
-    // driver is argon2id) to simulate a real pre-migration user account.
-    $user = User::factory()->create();
-    DB::table('users')->where('id', $user->id)->update(['password' => bcrypt('legacy-password')]);
-
-    $this->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'legacy-password',
-    ])->assertRedirect('/');
-
-    $this->assertAuthenticatedAs($user);
-
-    expect(DB::table('users')->where('id', $user->id)->value('password'))
-        ->toStartWith('$argon2id$');
 });

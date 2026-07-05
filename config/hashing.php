@@ -30,13 +30,7 @@ return [
 
     'bcrypt' => [
         'rounds' => env('BCRYPT_ROUNDS', 12),
-        // false, not Laravel's stub default of true: the "verify" guard makes
-        // a driver's Hash::check() throw on any hash it didn't produce itself
-        // (e.g. argon2id refusing to check a bcrypt hash) instead of just
-        // verifying it — which breaks every existing bcrypt user's login the
-        // moment the default driver flips to argon2id, defeating the whole
-        // point of rehash_on_login's graceful, no-forced-reset migration.
-        'verify' => env('HASH_VERIFY', false),
+        'verify' => env('HASH_VERIFY', true),
         'limit' => env('BCRYPT_LIMIT', null),
     ],
 
@@ -59,13 +53,7 @@ return [
         'memory' => env('ARGON_MEMORY', 65536),
         'threads' => env('ARGON_THREADS', 1),
         'time' => env('ARGON_TIME', 4),
-        // false, not Laravel's stub default of true: the "verify" guard makes
-        // a driver's Hash::check() throw on any hash it didn't produce itself
-        // (e.g. argon2id refusing to check a bcrypt hash) instead of just
-        // verifying it — which breaks every existing bcrypt user's login the
-        // moment the default driver flips to argon2id, defeating the whole
-        // point of rehash_on_login's graceful, no-forced-reset migration.
-        'verify' => env('HASH_VERIFY', false),
+        'verify' => env('HASH_VERIFY', true),
     ],
 
     /*
@@ -77,10 +65,10 @@ return [
     | the user's password during login if the configured work factor for
     | the algorithm has changed, allowing graceful upgrades of hashes.
     |
-    | This is what upgrades existing bcrypt password hashes (User and Admin
-    | both use this, via the shared "web"/"admin" SessionGuard) to argon2id
-    | transparently over time as each account logs in — no forced password
-    | resets or migration needed.
+    | Kept on for any future work-factor changes (e.g. raising argon's memory
+    | cost later) — not relied on for the bcrypt -> argon2id migration itself,
+    | since every account was force-reset via `auth:force-password-reset`
+    | rather than gracefully upgraded on next login.
     |
     */
 
