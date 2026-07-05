@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 it('always sets the baseline security headers', function () {
     $this->get('/')
         ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
@@ -44,6 +46,26 @@ it('sends a CSP and HSTS header in production that allowlists every required int
     expect($csp)->toContain('https://www.google.com');
     expect($csp)->toContain("object-src 'none'");
     expect($csp)->toContain("frame-ancestors 'self'");
+});
+
+it('widens frame-src to any HTTPS origin on the checkout page only, not site-wide', function () {
+    $user = User::factory()->create();
+    app()->instance('env', 'production');
+
+    try {
+        $checkoutCsp = $this->actingAs($user)->get(route('checkout'))
+            ->headers->get('Content-Security-Policy');
+        $homeCsp = $this->get('/')->headers->get('Content-Security-Policy');
+    } finally {
+        app()->instance('env', 'testing');
+    }
+
+    // Individual SSLCommerz payment methods (bKash, etc.) get framed at
+    // their own domain, which changes over time — the checkout page is the
+    // only place this embed renders, so only it gets the wildcard.
+    expect($checkoutCsp)->toContain("frame-src 'self' https:;");
+    expect($homeCsp)->not->toContain("frame-src 'self' https:;");
+    expect($homeCsp)->toContain('https://sandbox.sslcommerz.com');
 });
 
 it('allows the Inertia data-page script via a hash computed from the actual response body', function () {

@@ -23,7 +23,7 @@ class SecurityHeaders
         // Vite's dev-server HMR.
         if (app()->isProduction()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-            $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($response));
+            $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($response, $request));
         }
 
         return $response;
@@ -42,11 +42,26 @@ class SecurityHeaders
      * pay.sslcommerz.com (the actual payment-form iframe the widget opens
      * once live credentials are used — sandbox mode never hits this one,
      * which is why it's easy to miss testing only against sandbox).
+     *
+     * Individual payment methods (bKash confirmed so far, via a real
+     * production CSP violation report) get framed directly at their own
+     * domain instead of staying inside an sslcommerz.com wrapper, and
+     * SSLCommerz can add/change which bank or wallet domain that is at any
+     * time without us knowing in advance — enumerating them one CSP
+     * violation at a time forever isn't sustainable. Since `Checkout.tsx` is
+     * the *only* page that renders this embed, frame-src is widened to any
+     * HTTPS origin exclusively on the checkout route (same "can't enumerate,
+     * so widen" call already made for form-action below) rather than
+     * site-wide, so the rest of the app keeps the tight, enumerated list.
      */
-    private function contentSecurityPolicy(Response $response): string
+    private function contentSecurityPolicy(Response $response, Request $request): string
     {
         $reverb = config('csp.reverb');
         $reverbOrigin = "{$reverb['scheme']}://{$reverb['host']}:{$reverb['port']}";
+
+        $frameSrc = $request->routeIs('checkout')
+            ? "frame-src 'self' https:"
+            : "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://pay.sslcommerz.com https://www.googletagmanager.com";
 
         $directives = [
             "default-src 'self'",
@@ -60,7 +75,7 @@ class SecurityHeaders
             "img-src 'self' data: https:",
             "media-src 'self' https:",
             "connect-src 'self' https://pay.google.com {$reverbOrigin} https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
-            "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://pay.sslcommerz.com https://www.googletagmanager.com",
+            $frameSrc,
             "form-action 'self' https:",
             "worker-src 'self' blob:",
             "object-src 'none'",
