@@ -278,9 +278,9 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
+                            <h2 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                                 Services
-                            </h3>
+                            </h2>
                             <div className="space-y-3">
                                 {footerServices.map((item) => (
                                     <Link
@@ -295,9 +295,9 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
+                            <h2 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                                 Company
-                            </h3>
+                            </h2>
                             <div className="space-y-3">
                                 {companyLinks.map((item) => (
                                     <Link
@@ -312,9 +312,9 @@ export default function Footer() {
                         </div>
 
                         <div className="col-span-2 sm:col-span-1 lg:col-span-1">
-                            <h3 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
+                            <h2 className="mb-5 text-sm font-semibold tracking-wider text-theme-muted uppercase">
                                 Contact
-                            </h3>
+                            </h2>
                             <div className="space-y-6 text-sm text-theme-muted">
                                 <div className="space-y-3">
                                     {siteSettings.email && (
@@ -363,7 +363,7 @@ export default function Footer() {
                                                     }
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                                    className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-700 uppercase transition-colors hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300"
                                                 >
                                                     View on Map
                                                 </a>
@@ -389,7 +389,7 @@ export default function Footer() {
                                                     }
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-600 uppercase transition-colors hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300"
+                                                    className="mt-1.5 inline-block text-[12px] font-bold tracking-wider text-cyan-700 uppercase transition-colors hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300"
                                                 >
                                                     View on Map
                                                 </a>

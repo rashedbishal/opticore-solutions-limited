@@ -776,7 +776,7 @@
     /* Semantic light-mode design tokens (Standard AA Contrast) */
     --theme-text: oklch(0.2 0.01 240);
     --theme-text-muted: oklch(0.45 0.01 240);
-    --theme-text-subtle: oklch(0.55 0.01 240);
+    --theme-text-subtle: oklch(0.48 0.01 240);
     --theme-surface: oklch(0 0 0 / 0.03);
     --theme-surface-hover: oklch(0 0 0 / 0.06);
     --theme-border: oklch(0 0 0 / 0.08);

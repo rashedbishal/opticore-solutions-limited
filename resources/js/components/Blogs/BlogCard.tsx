@@ -48,9 +48,9 @@ export default function BlogCard({ post, index }: BlogCardProps) {
                 </div>
 
                 <Link href={`/blog/${post.slug}`}>
-                    <h3 className="mb-3 line-clamp-2 text-xl leading-tight font-bold text-zinc-900 transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-primary">
+                    <h2 className="mb-3 line-clamp-2 text-xl leading-tight font-bold text-zinc-900 transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-primary">
                         {post.title}
-                    </h3>
+                    </h2>
                 </Link>
 
                 <p className="mb-8 line-clamp-3 flex-grow text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">

@@ -16,6 +16,7 @@
         "perf:bundle-check": "node scripts/perf/check-bundle-size.mjs"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.12.1",
         "@eslint/js": "^9.19.0",
         "@inertiajs/vite": "^3.0.0",
         "@laravel/echo-react": "^2.3.3",

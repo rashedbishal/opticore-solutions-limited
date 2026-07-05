@@ -110,9 +110,9 @@ export default function MessageFromMd() {
                                             viewport={{ once: true }}
                                             transition={{ delay: 0.4 }}
                                         >
-                                            <h3 className="text-xl font-bold tracking-tight whitespace-nowrap text-white sm:text-2xl">
+                                            <h2 className="text-xl font-bold tracking-tight whitespace-nowrap text-white sm:text-2xl">
                                                 Md. Asaduzzaman
-                                            </h3>
+                                            </h2>
                                             <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-violet-300 uppercase sm:text-sm">
                                                 Managing Director
                                             </p>
@@ -162,9 +162,9 @@ export default function MessageFromMd() {
                                         <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 transition-transform group-hover:scale-110">
                                             <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         </div>
-                                        <h4 className="mb-2 font-bold text-theme">
+                                        <h3 className="mb-2 font-bold text-theme">
                                             {item.title}
-                                        </h4>
+                                        </h3>
                                         <p className="text-xs leading-relaxed text-theme-muted">
                                             {item.description}
                                         </p>
@@ -284,9 +284,9 @@ export default function MessageFromMd() {
                                         <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/10 transition-transform group-hover:scale-110">
                                             <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         </div>
-                                        <h4 className="mb-2 font-bold text-theme">
+                                        <h3 className="mb-2 font-bold text-theme">
                                             {item.title}
-                                        </h4>
+                                        </h3>
                                         <p className="text-xs leading-relaxed text-theme-muted">
                                             {item.description}
                                         </p>
@@ -303,9 +303,9 @@ export default function MessageFromMd() {
                             >
                                 <div className="relative z-10 flex flex-col items-center justify-between gap-8 text-center sm:flex-row sm:text-left xl:flex-row">
                                     <div className="max-w-md">
-                                        <h3 className="mb-3 text-2xl font-bold text-theme">
+                                        <h2 className="mb-3 text-2xl font-bold text-theme">
                                             Ready to transform your brand?
-                                        </h3>
+                                        </h2>
                                         <p className="text-sm text-theme-muted">
                                             Join the ranks of ambitious
                                             businesses that trust Opticore for

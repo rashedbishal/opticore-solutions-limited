@@ -196,16 +196,16 @@ function DashboardContent({ tasks }: { tasks: Task[] }) {
                             >
                                 <stat.icon className="h-5 w-5" />
                             </div>
-                            <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">
+                            <span className="text-[10px] font-black tracking-widest text-zinc-400 uppercase">
                                 Lifetime
                             </span>
                         </div>
-                        <p className="mb-1 text-sm font-medium text-zinc-500">
+                        <p className="mb-1 text-sm font-medium text-zinc-400">
                             {stat.label}
                         </p>
-                        <h3 className="text-2xl font-black text-white">
+                        <h2 className="text-2xl font-black text-white">
                             {stat.value}
-                        </h3>
+                        </h2>
                     </div>
                 ))}
             </div>
@@ -215,19 +215,19 @@ function DashboardContent({ tasks }: { tasks: Task[] }) {
                     <div className="flex rounded-xl bg-black/40 p-1">
                         <button
                             onClick={() => setActiveTab('active')}
-                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-400 hover:text-zinc-300'}`}
                         >
                             Active
                         </button>
                         <button
                             onClick={() => setActiveTab('completed')}
-                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'completed' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-400 hover:text-zinc-300'}`}
                         >
                             Completed
                         </button>
                         <button
                             onClick={() => setActiveTab('all')}
-                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'all' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${activeTab === 'all' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-400 hover:text-zinc-300'}`}
                         >
                             All
                         </button>
@@ -249,9 +249,9 @@ function DashboardContent({ tasks }: { tasks: Task[] }) {
                                             </div>
                                             <div>
                                                 <div className="mb-1 flex items-center gap-3">
-                                                    <h4 className="text-lg font-bold text-white">
+                                                    <h3 className="text-lg font-bold text-white">
                                                         {task.task_name}
-                                                    </h4>
+                                                    </h3>
                                                     <span
                                                         className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-widest uppercase ${stateClass(task)}`}
                                                     >
@@ -308,10 +308,10 @@ function DashboardContent({ tasks }: { tasks: Task[] }) {
                     ) : (
                         <div className="py-24 text-center">
                             <Package className="mx-auto mb-6 h-12 w-12 text-zinc-800" />
-                            <h3 className="text-xl font-bold tracking-widest text-zinc-600 uppercase">
+                            <h3 className="text-xl font-bold tracking-widest text-zinc-400 uppercase">
                                 No orders found
                             </h3>
-                            <p className="mt-2 text-zinc-700">
+                            <p className="mt-2 text-zinc-400">
                                 Try switching tabs or start a new project.
                             </p>
                         </div>
@@ -536,13 +536,16 @@ export default function UserDashboard({ tasks }: Props) {
                             <h1 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase">
                                 My Workspace
                             </h1>
-                            <p className="font-medium text-zinc-500">
+                            <p className="font-medium text-zinc-400">
                                 Track your active projects and manage your
                                 deliveries.
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white">
+                            <button
+                                aria-label="Notifications"
+                                className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:text-white"
+                            >
                                 <Bell className="h-5 w-5" />
                                 {tasks?.some((t) => t.can_review) && (
                                     <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-amber-500" />
@@ -583,7 +586,7 @@ export default function UserDashboard({ tasks }: Props) {
                                 <Link
                                     key={item.id}
                                     href={item.href}
-                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'dashboard' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                                    className={`flex w-full items-center gap-4 rounded-2xl px-6 py-4 font-bold transition-all ${item.id === 'dashboard' ? 'border border-white/10 bg-white/5 text-cyan-400' : 'text-zinc-400 hover:text-zinc-300'}`}
                                 >
                                     <item.icon className="h-5 w-5" />
                                     {item.label}
@@ -591,14 +594,14 @@ export default function UserDashboard({ tasks }: Props) {
                             ))}
                         </aside>
 
-                        <main className="space-y-8">
+                        <div className="space-y-8">
                             <Deferred
                                 data="tasks"
                                 fallback={<DashboardSkeleton />}
                             >
                                 <DashboardContent tasks={tasks!} />
                             </Deferred>
-                        </main>
+                        </div>
                     </div>
                 </div>
             </div>

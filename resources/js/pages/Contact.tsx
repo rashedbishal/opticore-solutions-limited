@@ -211,9 +211,9 @@ export default function Contact() {
                                         <MessageSquare className="h-6 w-6 text-violet-500 dark:text-violet-400" />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-theme">
+                                        <h2 className="text-2xl font-bold text-theme">
                                             Send a Message
-                                        </h3>
+                                        </h2>
                                         <p className="mt-1 text-sm text-theme-muted">
                                             Our team typically responds within
                                             24 hours.
