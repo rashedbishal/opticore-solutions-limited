@@ -713,15 +713,3 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Support/PendingOrderResolver.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Console\\Scheduling\\Event\:\:everyFiftyMinutes\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: bootstrap/app.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Console\\Scheduling\\Event\:\:everyTwentyMinutes\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: bootstrap/app.php

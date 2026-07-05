@@ -90,10 +90,17 @@ return Application::configure(basePath: dirname(__DIR__))
         // Re-prime all public-facing Redis caches every 50 minutes so the
         // 60-minute TTL never cold-misses in production (first request after
         // expiry would otherwise hit the DB directly and spike TTFB).
-        $schedule->command(WarmCache::class)->everyFiftyMinutes()->withoutOverlapping();
+        // everyFiftyMinutes() isn't a real Schedule method (Laravel has no
+        // built-in helper for non-hour-dividing intervals) — ->cron() is
+        // the primitive every named frequency helper is built on, so this
+        // runs at :00 and :50 past the hour, keeping the gap since the last
+        // refresh at or under 50 minutes, safely inside the 60-minute TTL.
+        $schedule->command(WarmCache::class)->cron('*/50 * * * *')->withoutOverlapping();
 
         // Clean up files pre-uploaded at checkout but never paid for
         // (user abandoned mid-flow or refreshed before clicking Pay Now).
-        $schedule->command(PruneOrphanedCheckoutUploads::class)->everyTwentyMinutes();
+        // everyTwentyMinutes() isn't real either; 20 evenly divides 60, so
+        // this cron expression is a true, evenly-spaced every-20-minutes.
+        $schedule->command(PruneOrphanedCheckoutUploads::class)->cron('*/20 * * * *');
     })
     ->create();
