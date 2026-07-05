@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\password;
@@ -43,8 +44,12 @@ class ResetMotherAdminCredentials extends Command
         $password = password(
             label: 'New password',
             required: true,
+            // Same policy used everywhere else in the app (registration,
+            // profile updates, self-service reset) — Password::defaults()
+            // is min:8 + letters + numbers in production, unrestricted
+            // outside it. See AppServiceProvider::configureDefaults().
             validate: fn (string $value) => Validator::make(['password' => $value], [
-                'password' => ['required', 'string', 'min:8'],
+                'password' => ['required', 'string', Password::defaults()],
             ])->errors()->first('password'),
         );
 
