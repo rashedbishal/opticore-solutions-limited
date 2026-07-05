@@ -6,22 +6,25 @@ test.describe('Visitor submits the contact form', () => {
     }) => {
         await page.goto('/contact');
 
-        await page.getByPlaceholder('Your name').fill('E2E Test Visitor');
-        await page
+        // Scoped to the contact form itself — the footer's newsletter
+        // signup input coincidentally shares the same "your@email.com"
+        // placeholder, which otherwise makes getByPlaceholder ambiguous.
+        const form = page.locator('form');
+
+        await form.getByPlaceholder('Your name').fill('E2E Test Visitor');
+        await form
             .getByPlaceholder('your@email.com')
             .fill(`e2e-contact-${Date.now()}@example.com`);
-        await page
+        await form
             .getByPlaceholder('How can we help?')
             .fill('Automated end-to-end test inquiry');
-        await page
+        await form
             .getByPlaceholder('Tell us about your project or inquiry...')
             .fill(
                 'This message was submitted by an automated end-to-end test and can be safely ignored.',
             );
 
-        await page
-            .getByRole('button', { name: 'Submit contact form' })
-            .click();
+        await page.getByRole('button', { name: 'Submit contact form' }).click();
 
         await expect(
             page.getByRole('heading', { name: 'Message Received' }),
