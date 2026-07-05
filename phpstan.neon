@@ -1,0 +1,23 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+        - bootstrap
+        - config
+        - database
+        - routes
+
+    # Level 5 catches real bugs (undefined methods/properties, wrong argument
+    # types, always-true/false conditions) without the noise of Laravel's
+    # heavier dynamic patterns that higher levels flag constantly (magic
+    # properties, facade return types). Raise incrementally later rather
+    # than starting stricter and drowning in false positives.
+    level: 5
+
+    excludePaths:
+        - bootstrap/ssr/*
+
+    tmpDir: storage/phpstan

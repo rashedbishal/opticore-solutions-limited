@@ -59,6 +59,12 @@ jobs:
       - name: Run Pint (PHP Lint)
         run: ./vendor/bin/pint --test
 
+      - name: Run Larastan (PHP static analysis)
+        run: ./vendor/bin/phpstan analyse --no-progress
+
+      - name: Audit Composer dependencies for known vulnerabilities
+        run: composer audit
+
       - name: Prepare environment
         run: |
           cp .env.example .env
@@ -78,6 +84,15 @@ jobs:
 
       - name: Run Type Check
         run: npm run types:check
+
+      # Advisory only for now: the current dependency tree has known,
+      # unresolved moderate/high findings (mostly devDependencies) that
+      # haven't been triaged yet. continue-on-error surfaces new findings
+      # in every run's log without failing the build on old ones — flip
+      # this to blocking once the existing findings are reviewed/fixed.
+      - name: Audit npm dependencies for known vulnerabilities
+        run: npm audit --audit-level=high
+        continue-on-error: true
 
       - name: Build frontend + SSR
         run: npm run build:ssr
