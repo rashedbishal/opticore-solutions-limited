@@ -107,6 +107,19 @@ export default [
         },
     },
     {
+        // k6 test scripts run in k6's own JS runtime, not Node or the
+        // browser — __ENV/__VU/__ITER are globals it injects, unrecognized
+        // by ESLint's default env presets.
+        files: ['load-testing/**/*.js'],
+        languageOptions: {
+            globals: {
+                __ENV: 'readonly',
+                __VU: 'readonly',
+                __ITER: 'readonly',
+            },
+        },
+    },
+    {
         ignores: [
             'vendor',
             'node_modules',

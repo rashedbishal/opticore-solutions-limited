@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check, sleep } from 'k6';
+import http from 'k6/http';
 import { loginAsUser } from './lib/auth.js';
 
 // Tier A: safe, read-heavy. No real orders/transactions are created — this
@@ -17,7 +17,9 @@ export const options = {
 
 export function setup() {
     if (!TEST_USER_EMAIL || !TEST_USER_PASSWORD) {
-        throw new Error('Set TEST_USER_EMAIL and TEST_USER_PASSWORD to a real, non-production test account — see README.md.');
+        throw new Error(
+            'Set TEST_USER_EMAIL and TEST_USER_PASSWORD to a real, non-production test account — see README.md.',
+        );
     }
 
     return loginAsUser(BASE_URL, TEST_USER_EMAIL, TEST_USER_PASSWORD);
@@ -33,7 +35,9 @@ export default function (data) {
         { headers },
     );
 
-    check(checkoutRes, { 'checkout page renders (200)': (r) => r.status === 200 });
+    check(checkoutRes, {
+        'checkout page renders (200)': (r) => r.status === 200,
+    });
 
     const rateRes = http.get(`${BASE_URL}/checkout/exchange-rate`, { headers });
 
@@ -41,7 +45,10 @@ export default function (data) {
         'exchange-rate endpoint responds (200)': (r) => r.status === 200,
         'exchange-rate returns a numeric rate': (r) => {
             try {
-                return typeof JSON.parse(r.body).rate === 'number' || JSON.parse(r.body).rate === null;
+                return (
+                    typeof JSON.parse(r.body).rate === 'number' ||
+                    JSON.parse(r.body).rate === null
+                );
             } catch {
                 return false;
             }

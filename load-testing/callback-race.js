@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check } from 'k6';
+import http from 'k6/http';
 
 // k6's `open()` reads the file at init time (this is the standard, version-
 // safe way to load local fixture data in k6 — plain `import ... from
@@ -34,7 +34,9 @@ export default function () {
         method: 'POST',
         url: `${BASE_URL}/ipn`,
         body: payload,
-        params: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
+        params: {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
     }));
 
     // http.batch fires every request concurrently from this single
@@ -43,10 +45,15 @@ export default function () {
     const responses = http.batch(requests);
 
     const wonClaim = responses.filter((r) => r.body === 'IPN OK').length;
-    const alreadyProcessed = responses.filter((r) => r.body === 'ALREADY PROCESSED').length;
+    const alreadyProcessed = responses.filter(
+        (r) => r.body === 'ALREADY PROCESSED',
+    ).length;
     const serverErrors = responses.filter((r) => r.status >= 500).length;
     const other = responses.filter(
-        (r) => r.body !== 'IPN OK' && r.body !== 'ALREADY PROCESSED' && r.status < 500,
+        (r) =>
+            r.body !== 'IPN OK' &&
+            r.body !== 'ALREADY PROCESSED' &&
+            r.status < 500,
     );
 
     console.log(
@@ -55,12 +62,15 @@ export default function () {
     );
 
     if (other.length > 0) {
-        console.log(`Unexpected response bodies: ${other.map((r) => `${r.status} ${r.body}`).join(' | ')}`);
+        console.log(
+            `Unexpected response bodies: ${other.map((r) => `${r.status} ${r.body}`).join(' | ')}`,
+        );
     }
 
     check(null, {
         'exactly one request won the processing claim': () => wonClaim === 1,
-        'every other request was told it was already processed': () => alreadyProcessed === CONCURRENCY - 1,
+        'every other request was told it was already processed': () =>
+            alreadyProcessed === CONCURRENCY - 1,
         'no server errors under concurrency': () => serverErrors === 0,
     });
 }

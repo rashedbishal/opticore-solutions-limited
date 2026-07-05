@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check } from 'k6';
+import http from 'k6/http';
 
 function extractCsrfToken(html) {
     const match = html.match(/<meta name="csrf-token" content="([^"]+)"/);
@@ -36,7 +36,8 @@ export function loginAsUser(baseUrl, email, password) {
     );
 
     check(loginRes, {
-        'login redirected (session established)': (r) => r.status === 302 || r.status === 303,
+        'login redirected (session established)': (r) =>
+            r.status === 302 || r.status === 303,
     });
 
     if (loginRes.status !== 302 && loginRes.status !== 303) {
@@ -52,7 +53,9 @@ export function loginAsUser(baseUrl, email, password) {
 
     // Re-fetch a page as the now-authenticated session to get a CSRF token
     // tied to it, rather than reusing the pre-login one.
-    const authedPage = http.get(`${baseUrl}/dashboard`, { headers: { Cookie: cookieHeader } });
+    const authedPage = http.get(`${baseUrl}/dashboard`, {
+        headers: { Cookie: cookieHeader },
+    });
     const freshCsrf = extractCsrfToken(authedPage.body) ?? csrfToken;
 
     return { cookieHeader, csrfToken: freshCsrf };

@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check, sleep } from 'k6';
+import http from 'k6/http';
 import { loginAsUser } from './lib/auth.js';
 
 // Tier A, but data-creating: every successful iteration inserts a real
@@ -24,7 +24,9 @@ export const options = {
 
 export function setup() {
     if (!TEST_USER_EMAIL || !TEST_USER_PASSWORD) {
-        throw new Error('Set TEST_USER_EMAIL and TEST_USER_PASSWORD to a real, non-production test account — see README.md.');
+        throw new Error(
+            'Set TEST_USER_EMAIL and TEST_USER_PASSWORD to a real, non-production test account — see README.md.',
+        );
     }
 
     if (!SUBCATEGORY_ID) {
@@ -54,12 +56,17 @@ export default function (data) {
         delivery: '3 Days',
     });
 
-    const res = http.post(`${BASE_URL}/pay-via-ajax`, JSON.stringify({ cart_json: cartJson }), { headers });
+    const res = http.post(
+        `${BASE_URL}/pay-via-ajax`,
+        JSON.stringify({ cart_json: cartJson }),
+        { headers },
+    );
 
     check(res, {
         'pay-via-ajax did not error (5xx)': (r) => r.status < 500,
         'pay-via-ajax was not rate-limited (429)': (r) => r.status !== 429,
-        'pay-via-ajax was not rejected as invalid (422)': (r) => r.status !== 422,
+        'pay-via-ajax was not rejected as invalid (422)': (r) =>
+            r.status !== 422,
     });
 
     sleep(1);

@@ -92,7 +92,7 @@ This is the one that directly re-tests the exact bug fixed in
 `SslCommerzPaymentController::claimOrderForProcessing()`: SSLCommerz calling
 `/success` (browser redirect) and `/ipn` (webhook) near-simultaneously for
 the same transaction. It fires N truly concurrent `POST /ipn` requests
-carrying the *same* transaction's callback data and asserts **exactly one**
+carrying the _same_ transaction's callback data and asserts **exactly one**
 gets back `"IPN OK"` (won the claim) and every other one gets
 `"ALREADY PROCESSED"` — with zero 5xx errors.
 
