@@ -49,3 +49,7 @@ boost.json
 # OS
 .DS_Store
 .aider*
+
+# Real captured SSLCommerz gateway callback data used by load-testing/callback-race.js — never commit
+/load-testing/fixtures/*.json
+!/load-testing/fixtures/*.example.json
