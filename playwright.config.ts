@@ -6,6 +6,18 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     reporter: 'list',
+    // Applies to every toHaveScreenshot() call (e2e/08-visual-regression.spec.ts):
+    // animations 'disabled' finishes CSS transitions/animations before
+    // capturing, and the pixel-ratio tolerance absorbs minor anti-aliasing/
+    // font-rendering noise between machines — it does NOT cover JS-driven
+    // (canvas/Framer Motion/GSAP) animation, which that spec masks/avoids
+    // directly instead.
+    expect: {
+        toHaveScreenshot: {
+            maxDiffPixelRatio: 0.02,
+            animations: 'disabled',
+        },
+    },
     use: {
         baseURL: process.env.APP_URL || 'http://localhost:8000',
         headless: true,
