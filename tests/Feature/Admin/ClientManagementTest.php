@@ -4,10 +4,11 @@ use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
-    $this->admin = Admin::factory()->create(['password' => bcrypt('admin-secret')]);
+    $this->admin = Admin::factory()->create(['password' => Hash::make('admin-secret')]);
 });
 
 it('lists clients with conversation and task counts', function () {

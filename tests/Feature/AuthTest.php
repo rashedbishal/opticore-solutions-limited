@@ -2,6 +2,7 @@
 
 use App\Models\Admin;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 it('displays the login page', function () {
     $this->get('/login')->assertStatus(200);
@@ -9,7 +10,7 @@ it('displays the login page', function () {
 
 it('authenticates a user with valid credentials', function () {
     $user = User::factory()->create([
-        'password' => bcrypt('password123'),
+        'password' => Hash::make('password123'),
     ]);
 
     $this->post('/login', [
@@ -22,7 +23,7 @@ it('authenticates a user with valid credentials', function () {
 
 it('rejects invalid credentials', function () {
     $user = User::factory()->create([
-        'password' => bcrypt('password123'),
+        'password' => Hash::make('password123'),
     ]);
 
     $this->post('/login', [

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
 
 it('renders the admin login page for guests', function () {
@@ -43,7 +44,7 @@ it('rejects wrong password for a real admin', function () {
 });
 
 it('authenticates admin with correct credentials', function () {
-    $admin = Admin::factory()->create(['password' => bcrypt('correct-pass')]);
+    $admin = Admin::factory()->create(['password' => Hash::make('correct-pass')]);
 
     $this->post(route('admin.login'), [
         'email' => $admin->email,

@@ -4,10 +4,11 @@ use App\Models\Admin;
 use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
-    $this->admin = Admin::factory()->create(['password' => bcrypt('mother-secret')]);
+    $this->admin = Admin::factory()->create(['password' => Hash::make('mother-secret')]);
     $this->user = User::factory()->create();
 });
 

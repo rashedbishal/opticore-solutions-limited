@@ -4,11 +4,12 @@ use App\Models\Admin;
 use App\Models\Task;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
-    $this->motherAdmin = Admin::factory()->create(['password' => bcrypt('mother-secret')]);
+    $this->motherAdmin = Admin::factory()->create(['password' => Hash::make('mother-secret')]);
 });
 
 function createTestTransaction(array $attributes = []): Transaction
@@ -176,7 +177,7 @@ it('rejects erasing transactions with an incorrect mother admin password', funct
 });
 
 it('erases failed transactions and their linked orders using the mother admin password as a master key', function () {
-    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => Hash::make('regular-secret')]);
 
     $failedTransaction = createTestTransaction(['status' => 'Failed', 'transaction_id' => 'linked-txn']);
     $keptTransaction = createTestTransaction(['status' => 'Processing', 'transaction_id' => 'kept-txn']);
@@ -214,7 +215,7 @@ it('erases failed transactions and their linked orders using the mother admin pa
 });
 
 it('rejects clearing all transactions with an incorrect admin password', function () {
-    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => Hash::make('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 
@@ -229,7 +230,7 @@ it('rejects clearing all transactions with an incorrect admin password', functio
 });
 
 it('rejects clearing all transactions with an incorrect mother admin password', function () {
-    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => Hash::make('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 
@@ -244,7 +245,7 @@ it('rejects clearing all transactions with an incorrect mother admin password', 
 });
 
 it('clears all transactions and their linked orders and tasks using double authentication', function () {
-    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => bcrypt('regular-secret')]);
+    $regularAdmin = Admin::factory()->withPermissions(['transactions'])->create(['password' => Hash::make('regular-secret')]);
 
     $transaction = createTestTransaction(['transaction_id' => 'linked-txn']);
 
