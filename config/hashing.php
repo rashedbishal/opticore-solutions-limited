@@ -7,11 +7,11 @@ return [
     | Default Hash Driver
     |--------------------------------------------------------------------------
     |
-    | This option controls the default hash driver that will be used to hash
-    | passwords for your application. By default, the bcrypt algorithm is
-    | used; however, you remain free to modify this option if you wish.
-    |
-    | Supported: "bcrypt", "argon", "argon2id"
+    | Deliberately argon2id only — bcrypt is not supported by this app.
+    | 'verify' below is on, so a bcrypt hash would be rejected outright
+    | rather than silently accepted. Every account was force-reset via
+    | `auth:force-password-reset` specifically so no bcrypt hash would ever
+    | need to be read again.
     |
     */
 
@@ -22,17 +22,16 @@ return [
     | Bcrypt Options
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the configuration options that should be used when
-    | passwords are hashed using the Bcrypt algorithm. This will allow you
-    | to control the amount of time it takes to hash the given password.
+    | Explicitly emptied, not omitted: Laravel 11+ auto-merges any config
+    | key this file doesn't set from its own internal default config (see
+    | Illuminate\Foundation\Bootstrap\LoadConfiguration::getBaseConfiguration())
+    | — which still ships a populated 'bcrypt' block. Simply not declaring
+    | this key here does NOT remove it; it silently comes back from the
+    | framework default. It has to be declared and blanked explicitly.
     |
     */
 
-    'bcrypt' => [
-        'rounds' => env('BCRYPT_ROUNDS', 12),
-        'verify' => env('HASH_VERIFY', true),
-        'limit' => env('BCRYPT_LIMIT', null),
-    ],
+    'bcrypt' => [],
 
     /*
     |--------------------------------------------------------------------------
