@@ -63,7 +63,10 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
                 'invoice' => fn () => $request->session()->get('invoice'),
-                'payment_success' => fn () => $request->session()->get('payment_success'),
+                // pull(), not get(): this is meant to be shown exactly once. Relying
+                // on Laravel's implicit two-request flash aging instead would leave
+                // it resurfaceable by anything that reflashes/keeps session data.
+                'payment_success' => fn () => $request->session()->pull('payment_success'),
                 'payment_error' => fn () => $request->session()->get('payment_error'),
                 'checkout_url' => fn () => $request->session()->get('checkout_url'),
                 'subscription' => fn () => $request->session()->get('subscription'),

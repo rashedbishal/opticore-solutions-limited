@@ -139,6 +139,22 @@ const stagger = {
 
 const PENDING_ORDERS_PER_PAGE = 3;
 
+// The Workflow/Orders tabs paginate via partial Inertia reloads (`only:
+// ['tasks']` / `['orders']`), which deliberately never re-send `flash` — so
+// `flash.payment_success` stays truthy in the client's cached props for the
+// rest of this page's lifetime, even though the server-side session value is
+// long gone. Tracking dismissal in sessionStorage (keyed by tran_id, not just
+// a plain boolean) survives that stale prop instead of trusting it.
+function paymentModalDismissed(tranId: string | undefined): boolean {
+    if (!tranId || typeof window === 'undefined') {
+        return false;
+    }
+
+    return (
+        sessionStorage.getItem(`payment-success-dismissed:${tranId}`) === '1'
+    );
+}
+
 function Pagination({
     page,
     totalPages,
@@ -407,8 +423,22 @@ export default function Profile() {
     const [orderUpdates, setOrderUpdates] = useState(notifyOrderUpdates);
     const [securityAlerts, setSecurityAlerts] = useState(notifySecurityAlerts);
     const [paymentModalOpen, setPaymentModalOpen] = useState(
-        !!flash?.payment_success,
+        () =>
+            !!flash?.payment_success &&
+            !paymentModalDismissed(flash.payment_success.tran_id),
     );
+
+    function dismissPaymentModal() {
+        if (flash?.payment_success) {
+            sessionStorage.setItem(
+                `payment-success-dismissed:${flash.payment_success.tran_id}`,
+                '1',
+            );
+        }
+
+        setPaymentModalOpen(false);
+    }
+
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     // Unlike the other two toggles, this one can also change from outside its
@@ -526,7 +556,7 @@ export default function Profile() {
                             <Modal
                                 open={paymentModalOpen}
                                 title="Payment Successful"
-                                onClose={() => setPaymentModalOpen(false)}
+                                onClose={dismissPaymentModal}
                             >
                                 <div className="space-y-6">
                                     <div className="flex flex-col items-center gap-3 text-center">
@@ -573,9 +603,7 @@ export default function Profile() {
 
                                     <Button
                                         className="neo-btn-primary w-full"
-                                        onClick={() =>
-                                            setPaymentModalOpen(false)
-                                        }
+                                        onClick={dismissPaymentModal}
                                     >
                                         Done
                                     </Button>
