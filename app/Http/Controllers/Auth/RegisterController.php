@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -23,6 +24,14 @@ class RegisterController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // Normalize before validating (not just an assertion) so that e.g.
+        // "Jane@Example.com" is silently treated as "jane@example.com"
+        // instead of colliding — case-sensitively — with an existing
+        // lowercase row and creating a duplicate account for the same
+        // address. See SocialController for the matching normalization on
+        // the social-login side.
+        $request->merge(['email' => Str::lower((string) $request->input('email'))]);
+
         $request->validate([
             // Letters (any language) plus combining marks — Bengali/Devanagari
             // etc. names commonly combine a base letter (\p{L}) with a
@@ -30,7 +39,7 @@ class RegisterController extends Controller
             // — spaces, dots, and hyphens only. No digits or other symbols.
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\s.-]+$/u'],
             'email' => [
-                'required', 'string', 'lowercase', 'email', 'max:255',
+                'required', 'string', 'email', 'max:255',
                 Rule::unique('users')->whereNull('deleted_at'),
             ],
             'phone_number' => ['nullable', 'string', 'max:20', 'regex:/^\+[1-9]\d{1,14}$/'],

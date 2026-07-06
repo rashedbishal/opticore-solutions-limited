@@ -56,6 +56,31 @@ it('rejects registration when email is already taken', function () {
     $this->assertGuest();
 });
 
+it('normalizes the email to lowercase before storing it', function () {
+    $this->post(route('register'), [
+        'name' => 'Jane Doe',
+        'email' => 'Jane@Example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertRedirect(route('verification.notice'));
+
+    $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+    $this->assertDatabaseMissing('users', ['email' => 'Jane@Example.com']);
+});
+
+it('rejects registration when the email is already taken in a different case', function () {
+    User::factory()->create(['email' => 'taken@example.com']);
+
+    $this->post(route('register'), [
+        'name' => 'Someone',
+        'email' => 'Taken@Example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertInvalid(['email']);
+
+    $this->assertGuest();
+});
+
 it('rejects registration when password confirmation does not match', function () {
     $this->post(route('register'), [
         'name' => 'Jane',

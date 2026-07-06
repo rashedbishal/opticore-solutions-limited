@@ -59,3 +59,17 @@ it('redirects to intended page after successful login', function () {
 
     $this->assertAuthenticatedAs($user);
 });
+
+it('logs in successfully when the email is submitted in a different case than stored', function () {
+    $user = User::factory()->create([
+        'email' => 'jane@example.com',
+        'password' => Hash::make('secret'),
+    ]);
+
+    $this->post(route('login'), [
+        'email' => 'Jane@Example.com',
+        'password' => 'secret',
+    ])->assertRedirect('/');
+
+    $this->assertAuthenticatedAs($user);
+});

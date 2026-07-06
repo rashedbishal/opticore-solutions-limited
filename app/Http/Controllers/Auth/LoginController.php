@@ -37,10 +37,15 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
+        // Registration/social-login store emails lowercased; normalize the
+        // login attempt the same way so a differently-cased but otherwise
+        // correct email doesn't fail to match the stored row.
+        $credentials['email'] = Str::lower($credentials['email']);
+
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            $email = Str::lower($request->string('email'));
+            $email = $credentials['email'];
             RateLimiter::clear(md5('login'.$email.'|'.$request->ip()));
             RateLimiter::clear(md5('login'.'account:'.$email));
 
