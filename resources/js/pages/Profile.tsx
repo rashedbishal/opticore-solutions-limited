@@ -7,13 +7,16 @@ import {
     Bell,
     Briefcase,
     Calendar,
+    Check,
     CheckCircle,
     ChevronLeft,
     ChevronRight,
     Clock,
+    Copy,
     CreditCard,
     Download,
     FileText,
+    Hash,
     Loader2,
     Mail,
     MapPin,
@@ -23,6 +26,7 @@ import {
     Settings,
     Shield,
     ShoppingBag,
+    Sparkles,
     ToggleLeft,
     ToggleRight,
     Trash2,
@@ -39,7 +43,7 @@ import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import { Button } from '@/components/UI/Button';
 import { Input } from '@/components/UI/input';
 import { Label } from '@/components/UI/label';
-import Modal from '@/components/UI/Modal';
+import Modal, { ModalBody, ModalFooter } from '@/components/UI/Modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
 import useEchoReady from '@/hooks/useEchoReady';
 import ordersRoutes from '@/routes/orders';
@@ -136,6 +140,41 @@ const stagger = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.1 } },
 };
+
+function useCountUp(target: number, active: boolean, duration = 900) {
+    const [value, setValue] = useState(0);
+
+    useEffect(() => {
+        if (!active) {
+            return;
+        }
+
+        let frame: number;
+        const start = performance.now();
+
+        const tick = (now: number) => {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setValue(target * eased);
+
+            if (progress < 1) {
+                frame = requestAnimationFrame(tick);
+            }
+        };
+
+        frame = requestAnimationFrame(tick);
+
+        return () => cancelAnimationFrame(frame);
+    }, [target, active, duration]);
+
+    return value;
+}
+
+const SUCCESS_SPARKLES = [
+    { style: { top: '-14%', left: '18%' }, delay: 0.5, size: 'h-3 w-3' },
+    { style: { top: '6%', right: '-12%' }, delay: 0.7, size: 'h-2.5 w-2.5' },
+    { style: { bottom: '-10%', left: '38%' }, delay: 0.9, size: 'h-2 w-2' },
+];
 
 const PENDING_ORDERS_PER_PAGE = 3;
 
@@ -427,19 +466,12 @@ export default function Profile() {
             !!flash?.payment_success &&
             !paymentModalDismissed(flash.payment_success.tran_id),
     );
-
-    function dismissPaymentModal() {
-        if (flash?.payment_success) {
-            sessionStorage.setItem(
-                `payment-success-dismissed:${flash.payment_success.tran_id}`,
-                '1',
-            );
-        }
-
-        setPaymentModalOpen(false);
-    }
-
+    const animatedAmount = useCountUp(
+        flash?.payment_success ? parseFloat(flash.payment_success.amount) : 0,
+        !!flash?.payment_success && paymentModalOpen,
+    );
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [tranIdCopied, setTranIdCopied] = useState(false);
 
     // Unlike the other two toggles, this one can also change from outside its
     // own click handler (footer newsletter form, admin removing a subscriber),
@@ -552,64 +584,234 @@ export default function Profile() {
                         className="space-y-10"
                     >
                         {/* Payment Success Modal */}
-                        {flash?.payment_success && (
-                            <Modal
-                                open={paymentModalOpen}
-                                title="Payment Successful"
-                                onClose={dismissPaymentModal}
-                            >
-                                <div className="space-y-6">
-                                    <div className="flex flex-col items-center gap-3 text-center">
-                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30">
-                                            <CheckCircle className="h-8 w-8 text-emerald-500" />
-                                        </div>
-                                        <div>
-                                            <p className="text-2xl font-black text-theme">
-                                                {flash.payment_success.currency}{' '}
-                                                {parseFloat(
-                                                    flash.payment_success
-                                                        .amount,
-                                                ).toLocaleString()}
-                                            </p>
-                                            <p className="mt-1 text-sm text-theme-muted">
-                                                Payment confirmed — invoice sent
-                                                to your email.
-                                            </p>
-                                        </div>
-                                    </div>
+                        {flash?.payment_success &&
+                            (() => {
+                                const paidOrder = (orders?.data ?? []).find(
+                                    (order) =>
+                                        order.transaction_id ===
+                                        flash.payment_success?.tran_id,
+                                );
 
-                                    <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="text-theme-muted">
-                                                Invoice
-                                            </span>
-                                            <span className="font-mono font-semibold text-theme">
-                                                #
-                                                {
-                                                    flash.payment_success
-                                                        .invoice_number
-                                                }
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="text-theme-muted">
-                                                Transaction ID
-                                            </span>
-                                            <span className="font-mono text-theme-subtle">
-                                                {flash.payment_success.tran_id}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <Button
-                                        className="neo-btn-primary w-full"
-                                        onClick={dismissPaymentModal}
+                                return (
+                                    <Modal
+                                        accent="emerald"
+                                        open={paymentModalOpen}
+                                        title="Payment Successful"
+                                        onClose={() =>
+                                            setPaymentModalOpen(false)
+                                        }
                                     >
-                                        Done
-                                    </Button>
-                                </div>
-                            </Modal>
-                        )}
+                                        <ModalBody className="space-y-7">
+                                            <div className="flex flex-col items-center gap-5 text-center">
+                                                <motion.div
+                                                    initial={{
+                                                        scale: 0.5,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        scale: 1,
+                                                        opacity: 1,
+                                                    }}
+                                                    transition={{
+                                                        type: 'spring',
+                                                        stiffness: 260,
+                                                        damping: 18,
+                                                    }}
+                                                    className="relative flex h-20 w-20 items-center justify-center"
+                                                >
+                                                    <motion.span
+                                                        aria-hidden
+                                                        className="absolute inset-[-8px] rounded-full opacity-80"
+                                                        style={{
+                                                            background:
+                                                                'conic-gradient(from 0deg, transparent, rgba(16,185,129,0.55), transparent 65%)',
+                                                            maskImage:
+                                                                'radial-gradient(closest-side, transparent 76%, black 78%)',
+                                                            WebkitMaskImage:
+                                                                'radial-gradient(closest-side, transparent 76%, black 78%)',
+                                                        }}
+                                                        animate={{
+                                                            rotate: 360,
+                                                        }}
+                                                        transition={{
+                                                            duration: 6,
+                                                            repeat: Infinity,
+                                                            ease: 'linear',
+                                                        }}
+                                                    />
+                                                    <motion.span
+                                                        aria-hidden
+                                                        className="absolute inset-0 rounded-full bg-emerald-500/20"
+                                                        animate={{
+                                                            scale: [
+                                                                1, 1.5, 1.5,
+                                                            ],
+                                                            opacity: [
+                                                                0.5, 0, 0,
+                                                            ],
+                                                        }}
+                                                        transition={{
+                                                            duration: 1.8,
+                                                            repeat: Infinity,
+                                                            ease: 'easeOut',
+                                                        }}
+                                                    />
+                                                    {SUCCESS_SPARKLES.map(
+                                                        (sparkle, index) => (
+                                                            <motion.span
+                                                                key={index}
+                                                                aria-hidden
+                                                                className="absolute"
+                                                                style={
+                                                                    sparkle.style
+                                                                }
+                                                                initial={{
+                                                                    opacity: 0,
+                                                                    scale: 0.3,
+                                                                }}
+                                                                animate={{
+                                                                    opacity: [
+                                                                        0, 1, 0,
+                                                                    ],
+                                                                    scale: [
+                                                                        0.3, 1,
+                                                                        0.6,
+                                                                    ],
+                                                                    y: [
+                                                                        0, -6,
+                                                                        -10,
+                                                                    ],
+                                                                }}
+                                                                transition={{
+                                                                    duration: 1.4,
+                                                                    delay: sparkle.delay,
+                                                                    ease: 'easeOut',
+                                                                }}
+                                                            >
+                                                                <Sparkles
+                                                                    className={`${sparkle.size} text-emerald-400`}
+                                                                />
+                                                            </motion.span>
+                                                        ),
+                                                    )}
+                                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30">
+                                                        <CheckCircle className="drop-icon-emerald h-9 w-9 text-emerald-500" />
+                                                    </div>
+                                                </motion.div>
+                                                <div>
+                                                    <p className="bg-gradient-to-br from-emerald-600 to-teal-600 bg-clip-text text-4xl font-black tracking-tight text-transparent dark:from-emerald-400 dark:to-cyan-300">
+                                                        {
+                                                            flash
+                                                                .payment_success
+                                                                .currency
+                                                        }{' '}
+                                                        {Math.round(
+                                                            animatedAmount,
+                                                        ).toLocaleString()}
+                                                    </p>
+                                                    <p className="mt-2 text-sm text-theme-muted">
+                                                        Payment confirmed —
+                                                        invoice sent to your
+                                                        email.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2.5 rounded-2xl border border-theme bg-theme-surface p-4">
+                                                <div className="flex items-center justify-between text-xs">
+                                                    <span className="flex items-center gap-1.5 text-theme-muted">
+                                                        <Receipt className="h-3.5 w-3.5" />
+                                                        Invoice
+                                                    </span>
+                                                    <span className="font-mono font-semibold text-theme">
+                                                        #
+                                                        {
+                                                            flash
+                                                                .payment_success
+                                                                .invoice_number
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="h-px bg-theme-surface-hover" />
+                                                <div className="flex items-center justify-between text-xs">
+                                                    <span className="flex items-center gap-1.5 text-theme-muted">
+                                                        <Hash className="h-3.5 w-3.5" />
+                                                        Transaction ID
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const tranId =
+                                                                flash
+                                                                    .payment_success
+                                                                    ?.tran_id;
+
+                                                            if (!tranId) {
+                                                                return;
+                                                            }
+
+                                                            void navigator.clipboard
+                                                                .writeText(
+                                                                    tranId,
+                                                                )
+                                                                .then(() => {
+                                                                    setTranIdCopied(
+                                                                        true,
+                                                                    );
+                                                                    setTimeout(
+                                                                        () =>
+                                                                            setTranIdCopied(
+                                                                                false,
+                                                                            ),
+                                                                        1500,
+                                                                    );
+                                                                });
+                                                        }}
+                                                        className="group flex items-center gap-1.5 font-mono text-theme-subtle transition-colors hover:text-theme"
+                                                    >
+                                                        {
+                                                            flash
+                                                                .payment_success
+                                                                .tran_id
+                                                        }
+                                                        {tranIdCopied ? (
+                                                            <Check className="h-3 w-3 text-emerald-500" />
+                                                        ) : (
+                                                            <Copy className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </ModalBody>
+
+                                        <ModalFooter>
+                                            <Button
+                                                className="neo-btn-primary flex-1"
+                                                onClick={() =>
+                                                    setPaymentModalOpen(false)
+                                                }
+                                            >
+                                                Done
+                                            </Button>
+                                            {paidOrder?.invoice_number && (
+                                                <a
+                                                    href={ordersRoutes.invoice.url(
+                                                        {
+                                                            transaction:
+                                                                paidOrder.id,
+                                                        },
+                                                    )}
+                                                    download={`Invoice-${paidOrder.invoice_number}.pdf`}
+                                                    className="neo-btn-ghost flex flex-1 items-center justify-center gap-2 rounded-xl text-sm font-semibold text-theme"
+                                                >
+                                                    <Download className="h-4 w-4" />
+                                                    Download Invoice
+                                                </a>
+                                            )}
+                                        </ModalFooter>
+                                    </Modal>
+                                );
+                            })()}
 
                         <Tabs defaultValue={initialTab} className="w-full">
                             <div className="relative mb-8">

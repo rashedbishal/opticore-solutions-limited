@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import MagneticButton from '@/components/UI/MagneticButton';
-import Modal from '@/components/UI/Modal';
+import Modal, { ModalBody, ModalFooter } from '@/components/UI/Modal';
 import SectionHeader from '@/components/UI/SectionHeader';
 import { culturePerks } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -260,207 +260,216 @@ export default function Career({ jobListings }: Props) {
                 onClose={() => setOpen(false)}
             >
                 {submitted ? (
-                    <div className="flex min-h-[18rem] flex-col items-center justify-center text-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-                            <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                    <ModalBody>
+                        <div className="flex min-h-[18rem] flex-col items-center justify-center text-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
+                                <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                            </div>
+                            <h3 className="mt-6 text-2xl font-semibold text-theme">
+                                Application received
+                            </h3>
+                            <p className="mt-3 text-sm leading-7 text-theme-muted">
+                                Thanks for applying. Our team will review your
+                                submission and follow up if there is a strong
+                                fit.
+                            </p>
                         </div>
-                        <h3 className="mt-6 text-2xl font-semibold text-theme">
-                            Application received
-                        </h3>
-                        <p className="mt-3 text-sm leading-7 text-theme-muted">
-                            Thanks for applying. Our team will review your
-                            submission and follow up if there is a strong fit.
-                        </p>
-                    </div>
+                    </ModalBody>
                 ) : (
                     <form
-                        className="space-y-6"
                         onSubmit={(event) => {
                             event.preventDefault();
                             submit();
                         }}
                     >
-                        {/* Role recap */}
-                        <div className="flex items-center gap-3 rounded-2xl border border-theme bg-linear-to-r from-violet-500/10 to-cyan-400/10 px-4 py-3">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-theme-surface">
-                                <Briefcase className="h-4 w-4 text-violet-600 dark:text-violet-400" />
-                            </span>
-                            <span className="min-w-0">
-                                <span className="block text-[11px] font-semibold tracking-[0.2em] text-theme-subtle uppercase">
-                                    Applying for
+                        <ModalBody>
+                            {/* Role recap */}
+                            <div className="flex items-center gap-3 rounded-2xl border border-theme bg-linear-to-r from-violet-500/10 to-cyan-400/10 px-4 py-3">
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-theme-surface">
+                                    <Briefcase className="h-4 w-4 text-violet-600 dark:text-violet-400" />
                                 </span>
-                                <span className="block truncate text-sm font-semibold text-theme">
-                                    {form.data.role}
+                                <span className="min-w-0">
+                                    <span className="block text-[11px] font-semibold tracking-[0.2em] text-theme-subtle uppercase">
+                                        Applying for
+                                    </span>
+                                    <span className="block truncate text-sm font-semibold text-theme">
+                                        {form.data.role}
+                                    </span>
                                 </span>
-                            </span>
-                        </div>
+                            </div>
 
-                        {/* Personal details */}
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {personalFields.map((field) => {
-                                const Icon = field.icon;
-                                const error = form.errors[field.key];
+                            {/* Personal details */}
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                {personalFields.map((field) => {
+                                    const Icon = field.icon;
+                                    const error = form.errors[field.key];
 
-                                return (
-                                    <label
-                                        key={field.key}
-                                        className={`block ${field.full ? 'sm:col-span-2' : ''}`}
+                                    return (
+                                        <label
+                                            key={field.key}
+                                            className={`block ${field.full ? 'sm:col-span-2' : ''}`}
+                                        >
+                                            <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
+                                                {field.label}
+                                                {field.required ? (
+                                                    <span
+                                                        className="text-rose-500"
+                                                        aria-hidden="true"
+                                                    >
+                                                        *
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs font-normal text-theme-subtle">
+                                                        (optional)
+                                                    </span>
+                                                )}
+                                            </span>
+                                            <div className="relative">
+                                                <Icon className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-theme-subtle" />
+                                                <input
+                                                    type={field.type}
+                                                    value={form.data[field.key]}
+                                                    onChange={(event) =>
+                                                        form.setData(
+                                                            field.key,
+                                                            event.target.value,
+                                                        )
+                                                    }
+                                                    className={inputCn(error)}
+                                                />
+                                            </div>
+                                            {error ? (
+                                                <p className="mt-2 text-sm text-rose-500">
+                                                    {error}
+                                                </p>
+                                            ) : null}
+                                        </label>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Resume upload */}
+                            <div className="block">
+                                <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
+                                    Resume / CV
+                                    <span
+                                        className="text-rose-500"
+                                        aria-hidden="true"
                                     >
-                                        <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
-                                            {field.label}
-                                            {field.required ? (
-                                                <span
-                                                    className="text-rose-500"
-                                                    aria-hidden="true"
-                                                >
-                                                    *
-                                                </span>
-                                            ) : (
-                                                <span className="text-xs font-normal text-theme-subtle">
-                                                    (optional)
-                                                </span>
-                                            )}
-                                        </span>
-                                        <div className="relative">
-                                            <Icon className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-theme-subtle" />
-                                            <input
-                                                type={field.type}
-                                                value={form.data[field.key]}
-                                                onChange={(event) =>
-                                                    form.setData(
-                                                        field.key,
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                className={inputCn(error)}
-                                            />
-                                        </div>
-                                        {error ? (
-                                            <p className="mt-2 text-sm text-rose-500">
-                                                {error}
-                                            </p>
-                                        ) : null}
-                                    </label>
-                                );
-                            })}
-                        </div>
-
-                        {/* Resume upload */}
-                        <div className="block">
-                            <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-theme-muted">
-                                Resume / CV
-                                <span
-                                    className="text-rose-500"
-                                    aria-hidden="true"
+                                        *
+                                    </span>
+                                </span>
+                                <label
+                                    htmlFor="resume-upload"
+                                    className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-theme bg-theme-surface px-4 py-4 transition hover:border-violet-500/50"
                                 >
-                                    *
-                                </span>
-                            </span>
-                            <label
-                                htmlFor="resume-upload"
-                                className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-theme bg-theme-surface px-4 py-4 transition hover:border-violet-500/50"
-                            >
-                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-violet-500/10 to-cyan-400/10">
+                                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-violet-500/10 to-cyan-400/10">
+                                        {form.data.resume ? (
+                                            <FileCheck2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                                        ) : (
+                                            <UploadCloud className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                                        )}
+                                    </span>
+                                    <span className="min-w-0 flex-1">
+                                        <span className="block truncate text-sm font-medium text-theme">
+                                            {form.data.resume
+                                                ? form.data.resume.name
+                                                : 'Choose a PDF file to upload'}
+                                        </span>
+                                        <span className="mt-0.5 block text-xs text-theme-muted">
+                                            {form.data.resume
+                                                ? formatFileSize(
+                                                      form.data.resume.size,
+                                                  )
+                                                : 'PDF only, up to 5MB'}
+                                        </span>
+                                    </span>
                                     {form.data.resume ? (
-                                        <FileCheck2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                                    ) : (
-                                        <UploadCloud className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
-                                    )}
-                                </span>
-                                <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-medium text-theme">
-                                        {form.data.resume
-                                            ? form.data.resume.name
-                                            : 'Choose a PDF file to upload'}
-                                    </span>
-                                    <span className="mt-0.5 block text-xs text-theme-muted">
-                                        {form.data.resume
-                                            ? formatFileSize(
-                                                  form.data.resume.size,
-                                              )
-                                            : 'PDF only, up to 5MB'}
-                                    </span>
-                                </span>
-                                {form.data.resume ? (
-                                    <button
-                                        type="button"
-                                        aria-label="Remove selected resume"
-                                        onClick={(event) => {
-                                            event.preventDefault();
-                                            event.stopPropagation();
-                                            selectResume(null);
+                                        <button
+                                            type="button"
+                                            aria-label="Remove selected resume"
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                                selectResume(null);
 
-                                            if (resumeInputRef.current) {
-                                                resumeInputRef.current.value =
-                                                    '';
-                                            }
-                                        }}
-                                        className="touch-target shrink-0 rounded-full p-2 text-theme-subtle transition hover:bg-theme-surface hover:text-theme"
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </button>
+                                                if (resumeInputRef.current) {
+                                                    resumeInputRef.current.value =
+                                                        '';
+                                                }
+                                            }}
+                                            className="touch-target shrink-0 rounded-full p-2 text-theme-subtle transition hover:bg-theme-surface hover:text-theme"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    ) : null}
+                                </label>
+                                <input
+                                    id="resume-upload"
+                                    ref={resumeInputRef}
+                                    type="file"
+                                    accept="application/pdf,.pdf"
+                                    className="sr-only"
+                                    onChange={(event) => {
+                                        const file =
+                                            event.target.files?.[0] ?? null;
+
+                                        if (
+                                            file &&
+                                            file.type !== 'application/pdf'
+                                        ) {
+                                            form.setError(
+                                                'resume',
+                                                'The resume must be a PDF file.',
+                                            );
+                                            form.setData('resume', null);
+                                            event.target.value = '';
+
+                                            return;
+                                        }
+
+                                        if (
+                                            file &&
+                                            file.size > MAX_RESUME_SIZE
+                                        ) {
+                                            form.setError(
+                                                'resume',
+                                                'The resume must not be larger than 5MB.',
+                                            );
+                                            form.setData('resume', null);
+                                            event.target.value = '';
+
+                                            return;
+                                        }
+
+                                        selectResume(file);
+                                    }}
+                                />
+                                {form.errors.resume ? (
+                                    <p className="mt-2 text-sm text-rose-500">
+                                        {form.errors.resume}
+                                    </p>
                                 ) : null}
-                            </label>
-                            <input
-                                id="resume-upload"
-                                ref={resumeInputRef}
-                                type="file"
-                                accept="application/pdf,.pdf"
-                                className="sr-only"
-                                onChange={(event) => {
-                                    const file =
-                                        event.target.files?.[0] ?? null;
+                            </div>
+                        </ModalBody>
 
-                                    if (
-                                        file &&
-                                        file.type !== 'application/pdf'
-                                    ) {
-                                        form.setError(
-                                            'resume',
-                                            'The resume must be a PDF file.',
-                                        );
-                                        form.setData('resume', null);
-                                        event.target.value = '';
-
-                                        return;
-                                    }
-
-                                    if (file && file.size > MAX_RESUME_SIZE) {
-                                        form.setError(
-                                            'resume',
-                                            'The resume must not be larger than 5MB.',
-                                        );
-                                        form.setData('resume', null);
-                                        event.target.value = '';
-
-                                        return;
-                                    }
-
-                                    selectResume(file);
-                                }}
-                            />
-                            {form.errors.resume ? (
-                                <p className="mt-2 text-sm text-rose-500">
-                                    {form.errors.resume}
-                                </p>
-                            ) : null}
-                        </div>
-
-                        <MagneticButton
-                            type="submit"
-                            ariaLabel="Submit career application"
-                            fullWidth
-                            disabled={form.processing}
-                        >
-                            {form.processing ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                    Submitting...
-                                </span>
-                            ) : (
-                                'Submit Application'
-                            )}
-                        </MagneticButton>
+                        <ModalFooter>
+                            <MagneticButton
+                                type="submit"
+                                ariaLabel="Submit career application"
+                                fullWidth
+                                disabled={form.processing}
+                            >
+                                {form.processing ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Submitting...
+                                    </span>
+                                ) : (
+                                    'Submit Application'
+                                )}
+                            </MagneticButton>
+                        </ModalFooter>
                     </form>
                 )}
             </Modal>

@@ -3,7 +3,7 @@ import type { Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 import { Head, Link, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { lazy, useEffect, useRef, useState, Suspense } from 'react';
 
@@ -16,7 +16,7 @@ const SpotlightCarousel = lazy(
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
-import Modal from '@/components/UI/Modal';
+import Modal, { ModalBody, ModalFooter } from '@/components/UI/Modal';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
     resolveCategoryColor,
@@ -164,13 +164,14 @@ function HeroHeadline() {
         }
 
         let animeInstance: any;
+        let cancelled = false;
 
         const run = async () => {
             const anime =
                 (await import('animejs')).default ?? (await import('animejs'));
             const el = phraseRef.current;
 
-            if (!el) {
+            if (!el || cancelled) {
                 return;
             }
 
@@ -223,9 +224,32 @@ function HeroHeadline() {
                 });
         };
 
-        run();
+        // Deferred to idle time (matching the pattern already used for
+        // Reverb init in app.tsx) so the animejs module fetch and the
+        // getBoundingClientRect measurement pass below don't compete with
+        // the browser for main-thread time in the first frames after
+        // hydration, when the hero paragraph's own enter animation is
+        // trying to run. The letter-reveal sequence itself is unchanged —
+        // only its start is pushed to whenever the thread is actually free.
+        let idleHandle: number | ReturnType<typeof setTimeout>;
+
+        if (typeof window.requestIdleCallback === 'function') {
+            idleHandle = window.requestIdleCallback(() => void run(), {
+                timeout: 300,
+            });
+        } else {
+            idleHandle = setTimeout(() => void run(), 0);
+        }
 
         return () => {
+            cancelled = true;
+
+            if (typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(idleHandle as number);
+            } else {
+                clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
+            }
+
             if (animeInstance?.pause) {
                 animeInstance.pause();
             }
@@ -250,14 +274,14 @@ function HeroHeadline() {
                     margin-right: 0.25em;
                 }
             `}</style>
-            <motion.h1
+            <m.h1
                 layout
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="pb-4 text-[2rem] leading-[1.3] font-extrabold text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
-                <motion.span layout className="inline-block">
+                <m.span layout className="inline-block">
                     We
-                </motion.span>{' '}
+                </m.span>{' '}
                 <span ref={phraseRef} className="inline">
                     {currentPhrase.split(' ').map((word, wi) => {
                         if (word === '<br/>') {
@@ -283,7 +307,7 @@ function HeroHeadline() {
                         );
                     })}
                 </span>
-            </motion.h1>
+            </m.h1>
         </>
     );
 }
@@ -525,7 +549,7 @@ export default function HomeIndex({
                 />
 
                 <div className="section-inner relative z-10 flex flex-col items-center justify-center text-center">
-                    <motion.span
+                    <m.span
                         variants={blurReveal}
                         initial="hidden"
                         animate="visible"
@@ -535,13 +559,13 @@ export default function HomeIndex({
                         <span className="[animation:shimmer_2.5s_linear_infinite] bg-[linear-gradient(120deg,var(--theme-text-muted),var(--theme-text),var(--theme-text-muted))] bg-[length:200%_100%] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,rgba(255,255,255,0.5),rgba(255,255,255,1),rgba(255,255,255,0.5))]">
                             Premium Creative & Digital Solutions
                         </span>
-                    </motion.span>
+                    </m.span>
 
                     <div className="mt-8 max-w-5xl">
                         <HeroHeadline />
                     </div>
 
-                    <motion.p
+                    <m.p
                         variants={blurReveal}
                         initial="hidden"
                         animate="visible"
@@ -552,9 +576,9 @@ export default function HomeIndex({
                         experiences through creative design, cinematic video
                         production, immersive 3D visualization, strategic
                         marketing, and modern web development.
-                    </motion.p>
+                    </m.p>
 
-                    <motion.div
+                    <m.div
                         variants={fadeUp}
                         initial="hidden"
                         animate="visible"
@@ -574,7 +598,7 @@ export default function HomeIndex({
                         >
                             Explore Our Work
                         </Link>
-                    </motion.div>
+                    </m.div>
 
                     {desktop ? (
                         <div className="pointer-events-none absolute inset-0 hidden xl:block">
@@ -585,7 +609,7 @@ export default function HomeIndex({
                                     animation,
                                     colorClass,
                                 }) => (
-                                    <motion.div
+                                    <m.div
                                         key={className}
                                         className={`absolute ${className} flex h-16 w-16 items-center justify-center rounded-2xl border border-theme bg-theme-surface ${colorClass} backdrop-blur-md`}
                                         animate={animation}
@@ -597,7 +621,7 @@ export default function HomeIndex({
                                         }}
                                     >
                                         <Icon className="h-8 w-8" />
-                                    </motion.div>
+                                    </m.div>
                                 ),
                             )}
                         </div>
@@ -712,44 +736,79 @@ export default function HomeIndex({
             {/* Payment Failure / Cancel Modal */}
             {flash?.payment_error && (
                 <Modal
+                    accent="red"
                     open={errorModalOpen}
                     title="Payment Unsuccessful"
                     onClose={() => setErrorModalOpen(false)}
                 >
-                    <div className="space-y-6">
-                        <div className="flex flex-col items-center gap-3 text-center">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 ring-1 ring-red-500/30">
-                                <AlertCircle className="h-8 w-8 text-red-500" />
-                            </div>
+                    <ModalBody>
+                        <div className="flex flex-col items-center gap-5 text-center">
+                            <m.div
+                                initial={{ scale: 0.5, opacity: 0 }}
+                                animate={{
+                                    scale: 1,
+                                    opacity: 1,
+                                    rotate: [0, -6, 5, -3, 0],
+                                }}
+                                transition={{
+                                    scale: {
+                                        type: 'spring',
+                                        stiffness: 300,
+                                        damping: 20,
+                                    },
+                                    opacity: { duration: 0.3 },
+                                    rotate: {
+                                        duration: 0.5,
+                                        delay: 0.15,
+                                        ease: 'easeOut',
+                                    },
+                                }}
+                                className="relative flex h-18 w-18 items-center justify-center rounded-full bg-red-500/10 ring-1 ring-red-500/30"
+                            >
+                                <m.span
+                                    aria-hidden
+                                    className="absolute inset-0 rounded-full bg-red-500/20"
+                                    animate={{
+                                        scale: [1, 1.5, 1.5],
+                                        opacity: [0.5, 0, 0],
+                                    }}
+                                    transition={{
+                                        duration: 1.8,
+                                        repeat: Infinity,
+                                        ease: 'easeOut',
+                                    }}
+                                />
+                                <AlertCircle className="relative h-9 w-9 text-red-500" />
+                            </m.div>
                             <div>
-                                <p className="text-base font-bold text-theme">
+                                <p className="text-lg font-bold text-theme">
                                     Something went wrong
                                 </p>
-                                <p className="mt-1 text-sm text-theme-muted">
+                                <p className="mt-1.5 text-sm text-theme-muted">
                                     {flash.payment_error}
                                 </p>
                             </div>
                         </div>
+                    </ModalBody>
 
-                        <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                            <button
-                                type="button"
+                    <ModalFooter className="sm:justify-center">
+                        {flash.checkout_url && (
+                            <Link
+                                href={flash.checkout_url}
+                                className="neo-btn-primary flex-1 rounded-xl px-6 py-2.5 text-center text-sm font-semibold transition-all hover:scale-[1.02]"
                                 onClick={() => setErrorModalOpen(false)}
-                                className="neo-btn-ghost rounded-xl px-6 py-2.5 text-sm font-semibold text-theme transition-all hover:scale-[1.02]"
                             >
-                                Dismiss
-                            </button>
-                            {flash.checkout_url && (
-                                <Link
-                                    href={flash.checkout_url}
-                                    className="neo-btn-primary rounded-xl px-6 py-2.5 text-center text-sm font-semibold transition-all hover:scale-[1.02]"
-                                    onClick={() => setErrorModalOpen(false)}
-                                >
-                                    Try Again
-                                </Link>
-                            )}
-                        </div>
-                    </div>
+                                Try Again
+                            </Link>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => setErrorModalOpen(false)}
+                            className="neo-btn-ghost flex-1 rounded-xl px-6 py-2.5 text-sm font-semibold text-theme transition-all hover:scale-[1.02]"
+                        >
+                            Dismiss
+                        </button>
+                    </ModalFooter>
                 </Modal>
             )}
         </>
