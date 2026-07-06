@@ -14,7 +14,12 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 - `composer test` — clears config cache, runs `pint --test`, then the full test suite (used in CI-like checks).
 - `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
 - `vendor/bin/pint --dirty --format agent` — format only changed PHP files; run this after any PHP edit before finishing.
+<<<<<<< HEAD
 - `composer analyse` (`vendor/bin/phpstan analyse --no-progress`) — Larastan static analysis, config in `phpstan.neon` (level 5, paths `app`/`bootstrap`/`config`/`database`/`routes`, pre-existing findings suppressed via `phpstan-baseline.neon`). Level 5 is deliberate — see the comment in `phpstan.neon` before raising it.
+=======
+- `composer analyse` — Larastan (PHPStan) at level 5, baselined against pre-existing findings (`phpstan-baseline.neon`) so only new code is held to the standard. Wired into `ci:check` and CI.
+- `composer audit` — Composer dependency vulnerability scan; blocking in CI.
+>>>>>>> fd1768b (optimized first content paint)
 - `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the alternate local-environment config (different DB names/`APP_ENV`) instead of the default `phpunit.xml`. GitHub Actions CI uses the default `phpunit.xml`, not this one.
 - `BROADCAST_CONNECTION` defaults to `log` in `.env.example`; `composer dev` does not start Reverb. To exercise real-time chat/notifications locally, set `BROADCAST_CONNECTION=reverb`, fill in the `REVERB_*`/`VITE_REVERB_*` vars, and run `php artisan reverb:start` alongside the dev stack.
 
@@ -29,8 +34,7 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 
 ### Combined CI check
 - `composer ci:check` — regenerates Wayfinder, then runs `lint:check`, `format:check`, `types:check`, `analyse` (Larastan), and the test suite. Run this (or the equivalent individual commands) before considering backend+frontend work done.
-- GitHub Actions CI (`ci.yml`) additionally runs `composer audit` (blocking) and `npm audit --audit-level=high` (advisory, `continue-on-error: true` until the existing findings are triaged — don't treat a red npm audit line as a CI failure), plus `npm run build:ssr` and `npm run perf:bundle-check` — make sure the build and bundle-check pass locally before pushing to `main`.
-- Tests run in CI via `./vendor/bin/pest --ci` against a separate `opticoresolutions_admin_test` Postgres database created in a dedicated CI step (mirrors the dual-database auth architecture below).
+- GitHub Actions CI (`ci.yml`) additionally runs `npm run build:ssr`, `npm run perf:bundle-check`, `composer audit` (blocking), and `npm audit --audit-level=high` (advisory, `continue-on-error` — the dependency tree has real unresolved moderate/high findings not yet triaged) — make sure the blocking ones pass locally before pushing to `main`.
 
 ## Architecture
 

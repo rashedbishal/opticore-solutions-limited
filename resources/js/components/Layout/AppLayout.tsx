@@ -1,7 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
-import { domAnimation, LazyMotion } from 'framer-motion';
+import { LazyMotion } from 'framer-motion';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
@@ -9,6 +9,13 @@ import SmoothScroll from '@/components/Layout/SmoothScroll';
 
 const ChatWidget = lazy(() => import('@/components/UI/ChatWidget'));
 const SupportWidget = lazy(() => import('@/components/chat/SupportWidget'));
+
+// Loaded via a dynamic import (framer-motion's documented code-splitting
+// pattern for LazyMotion) instead of a static `import { domAnimation }`, so
+// resolving this feature set no longer sits in the synchronous module graph
+// that has to finish evaluating before the app can hydrate.
+const loadFramerFeatures = () =>
+    import('framer-motion').then((mod) => mod.domAnimation);
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
@@ -49,7 +56,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
     }, []);
 
     return (
-        <LazyMotion features={domAnimation}>
+        <LazyMotion features={loadFramerFeatures}>
             <SmoothScroll>
                 {/* Global Wrapper restored to original styling to debug render crash */}
                 <div className="app-shell bg-grain">
