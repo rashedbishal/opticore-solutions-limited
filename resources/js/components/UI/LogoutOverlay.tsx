@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { AnimatePresence, m as motion } from 'framer-motion';
+import { AnimatePresence, domAnimation, LazyMotion, m as motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 const LETTERS = 'SIGNING OUT'.split('');
@@ -118,62 +118,80 @@ export default function LogoutOverlay() {
     }, []);
 
     return (
-        <AnimatePresence>
-            {visible && (
-                <motion.div
-                    key="logout-overlay"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4, ease: 'easeInOut' }}
-                    className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[oklch(0.99_0.003_240)] dark:bg-[oklch(0.12_0_0)]"
-                >
-                    {/* Ambient glow */}
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                        <div className="h-[480px] w-[480px] rounded-full bg-violet-500/[0.05] blur-3xl dark:bg-violet-500/[0.09]" />
-                    </div>
-
+        <LazyMotion features={domAnimation}>
+            <AnimatePresence>
+                {visible && (
                     <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative flex flex-col items-center gap-8"
+                        key="logout-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+                        className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[oklch(0.99_0.003_240)] dark:bg-[oklch(0.12_0_0)]"
                     >
-                        <GradientRing />
+                        {/* Ambient glow */}
+                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                            <div className="h-[480px] w-[480px] rounded-full bg-violet-500/[0.05] blur-3xl dark:bg-violet-500/[0.09]" />
+                        </div>
 
-                        {/* Staggered letter text */}
                         <motion.div
-                            className="flex items-center gap-[0.18em]"
-                            initial="hidden"
-                            animate="visible"
-                            exit="hidden"
-                            variants={{
-                                visible: { transition: { staggerChildren: 0.045, delayChildren: 0.15 } },
-                                hidden: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{
+                                duration: 0.5,
+                                ease: [0.22, 1, 0.36, 1],
                             }}
+                            className="relative flex flex-col items-center gap-8"
                         >
-                            {LETTERS.map((char, i) =>
-                                char === ' ' ? (
-                                    <span key={i} className="w-2" />
-                                ) : (
-                                    <motion.span
-                                        key={i}
-                                        variants={{
-                                            hidden: { opacity: 0, y: 6 },
-                                            visible: { opacity: 1, y: 0 },
-                                        }}
-                                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                                        className="font-[family-name:var(--font-geist-mono)] text-[10px] font-semibold tracking-[0.22em] text-zinc-400/70 dark:text-zinc-500/80"
-                                    >
-                                        {char}
-                                    </motion.span>
-                                ),
-                            )}
+                            <GradientRing />
+
+                            {/* Staggered letter text */}
+                            <motion.div
+                                className="flex items-center gap-[0.18em]"
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                variants={{
+                                    visible: {
+                                        transition: {
+                                            staggerChildren: 0.045,
+                                            delayChildren: 0.15,
+                                        },
+                                    },
+                                    hidden: {
+                                        transition: {
+                                            staggerChildren: 0.03,
+                                            staggerDirection: -1,
+                                        },
+                                    },
+                                }}
+                            >
+                                {LETTERS.map((char, i) =>
+                                    char === ' ' ? (
+                                        <span key={i} className="w-2" />
+                                    ) : (
+                                        <motion.span
+                                            key={i}
+                                            variants={{
+                                                hidden: { opacity: 0, y: 6 },
+                                                visible: { opacity: 1, y: 0 },
+                                            }}
+                                            transition={{
+                                                duration: 0.35,
+                                                ease: [0.22, 1, 0.36, 1],
+                                            }}
+                                            className="font-[family-name:var(--font-geist-mono)] text-[10px] font-semibold tracking-[0.22em] text-zinc-400/70 dark:text-zinc-500/80"
+                                        >
+                                            {char}
+                                        </motion.span>
+                                    ),
+                                )}
+                            </motion.div>
                         </motion.div>
                     </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                )}
+            </AnimatePresence>
+        </LazyMotion>
     );
 }
