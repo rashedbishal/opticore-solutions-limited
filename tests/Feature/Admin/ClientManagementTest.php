@@ -52,6 +52,58 @@ it('does not list admin accounts in the client index', function () {
         );
 });
 
+it('includes the client country in the index payload, blank when missing', function () {
+    User::factory()->create(['role' => 'user', 'name' => 'Has Country', 'country' => 'Bangladesh']);
+    User::factory()->create(['role' => 'user', 'name' => 'No Country', 'country' => null]);
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data', fn ($clients) => collect($clients)->pluck('country', 'name')->sortKeys()->toArray() === [
+                'Has Country' => 'Bangladesh',
+                'No Country' => null,
+            ])
+        );
+});
+
+it('searches clients by name, email, and phone number', function () {
+    User::factory()->create(['role' => 'user', 'name' => 'Jane Searchable', 'email' => 'jane@example.com', 'phone_number' => '+1-555-0100']);
+    User::factory()->create(['role' => 'user', 'name' => 'John Other', 'email' => 'john@example.com', 'phone_number' => '+1-555-0200']);
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index', ['search' => 'Searchable']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data', fn ($clients) => collect($clients)->pluck('name')->toArray() === ['Jane Searchable'])
+            ->where('filters.search', 'Searchable')
+        );
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index', ['search' => 'jane@example.com']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data', fn ($clients) => collect($clients)->pluck('name')->toArray() === ['Jane Searchable'])
+        );
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index', ['search' => '555-0200']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data', fn ($clients) => collect($clients)->pluck('name')->toArray() === ['John Other'])
+        );
+});
+
+it('finds a self-deleted client by their real email through search', function () {
+    $client = User::factory()->create(['role' => 'user', 'name' => 'Formerly Here', 'email' => 'formerly-here@example.com']);
+
+    $this->actingAs($client)
+        ->delete(route('profile.delete'), ['password' => 'password'])
+        ->assertRedirect('/');
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.clients.index', ['search' => 'formerly-here@example.com']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('clients.data', fn ($clients) => collect($clients)->pluck('name')->toArray() === ['Formerly Here'])
+        );
+});
+
 it('rejects client deletion without the admin password', function () {
     $client = User::factory()->create(['role' => 'user']);
 

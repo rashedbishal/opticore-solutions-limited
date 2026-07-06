@@ -15,15 +15,24 @@ use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $admins = Admin::query()
             ->when(! $this->actor()->isMotherAdmin(), fn ($query) => $query->where('is_super_admin', false))
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Admin/User/Index', [
             'users' => $admins,
+            'filters' => $request->only(['search']),
         ]);
     }
 

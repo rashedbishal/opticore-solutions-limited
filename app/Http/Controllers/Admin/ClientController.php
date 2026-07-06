@@ -19,16 +19,31 @@ use Inertia\Response;
 
 class ClientController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $clients = User::withTrashed()
             ->where('role', '!=', 'admin')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        // Trashed users' real address lives in `original_email` —
+                        // the `email` column holds an unreachable placeholder once
+                        // deleted (see User::email() accessor) — so both columns
+                        // must be checked to find a trashed client by email.
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('original_email', 'like', "%{$search}%")
+                        ->orWhere('phone_number', 'like', "%{$search}%");
+                });
+            })
             ->withCount(['conversations', 'tasks'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Admin/Client/Index', [
             'clients' => $clients,
+            'filters' => $request->only(['search']),
         ]);
     }
 

@@ -31,6 +31,24 @@ it('renders the admin management index page for a regular admin', function () {
         ->assertInertia(fn (Assert $page) => $page->component('Admin/User/Index'));
 });
 
+it('searches admins by name or email in the same search box', function () {
+    $searchable = Admin::factory()->create(['name' => 'Findable Person', 'email' => 'findable@example.com']);
+    Admin::factory()->create(['name' => 'Other Person', 'email' => 'other@example.com']);
+
+    $this->actingAs($this->mother, 'admin')
+        ->get(route('admin.users.index', ['search' => 'Findable']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('users.data', fn ($users) => collect($users)->pluck('id')->toArray() === [$searchable->id])
+            ->where('filters.search', 'Findable')
+        );
+
+    $this->actingAs($this->mother, 'admin')
+        ->get(route('admin.users.index', ['search' => 'findable@example.com']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('users.data', fn ($users) => collect($users)->pluck('id')->toArray() === [$searchable->id])
+        );
+});
+
 it('includes the mother admin in the roster shown to the mother admin', function () {
     $this->actingAs($this->mother, 'admin')
         ->get(route('admin.users.index'))

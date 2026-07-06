@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import type { FormEvent, ReactNode } from 'react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
@@ -10,6 +10,7 @@ import {
     Loader2,
     MessageSquare,
     Phone,
+    Search,
     Trash2,
     UserX,
     Workflow,
@@ -40,12 +41,17 @@ interface PaginationLink {
     active: boolean;
 }
 
+interface Filters {
+    search?: string;
+}
+
 interface Props {
     clients: {
         data: ClientRecord[];
         links: PaginationLink[];
         total: number;
     };
+    filters: Filters;
 }
 
 const AVATAR_GRADIENTS = [
@@ -95,9 +101,40 @@ interface DeleteState {
     step: DeleteStep;
 }
 
-export default function ClientIndex({ clients }: Props) {
+export default function ClientIndex({ clients, filters }: Props) {
     const [deleteState, setDeleteState] = useState<DeleteState | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+
+    const [search, setSearch] = useState(filters.search ?? '');
+    const hasActiveFilters = Boolean(filters.search);
+
+    function applyFilters(e: FormEvent) {
+        e.preventDefault();
+        const params: Record<string, string> = {};
+
+        if (search.trim()) {
+            params.search = search.trim();
+        }
+
+        router.get(adminRoutes.clients.index.url(), params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    }
+
+    function resetFilters() {
+        setSearch('');
+        router.get(
+            adminRoutes.clients.index.url(),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    }
 
     const {
         delete: destroy,
@@ -151,6 +188,49 @@ export default function ClientIndex({ clients }: Props) {
                     {clients.total} {clients.total === 1 ? 'client' : 'clients'}{' '}
                     registered
                 </p>
+            </div>
+
+            {/* Search bar */}
+            <div className="rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-3 backdrop-blur-sm sm:p-4">
+                <form
+                    onSubmit={applyFilters}
+                    className="flex flex-wrap items-end gap-2"
+                >
+                    <div className="min-w-48 flex-1">
+                        <label className="mb-0.5 block font-mono text-[10px] tracking-[0.18em] text-violet-400/60 uppercase">
+                            Search
+                        </label>
+                        <div className="relative">
+                            <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Client name, email, or phone"
+                                className="block w-full rounded-lg border border-white/8 bg-white/4 py-1.5 pr-3 pl-8 text-xs text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                        <button
+                            type="submit"
+                            className="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 transition-colors hover:bg-violet-500/20"
+                        >
+                            Apply
+                        </button>
+                        {hasActiveFilters && (
+                            <button
+                                type="button"
+                                onClick={resetFilters}
+                                title="Reset filters"
+                                className="flex items-center justify-center rounded-lg border border-white/8 bg-white/4 p-1.5 text-zinc-400 transition-colors hover:bg-white/8 hover:text-white"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
+                        )}
+                    </div>
+                </form>
             </div>
 
             {/* Table */}
