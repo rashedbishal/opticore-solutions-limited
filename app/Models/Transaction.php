@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class Transaction extends Model
 {
@@ -78,5 +79,30 @@ class Transaction extends Model
                 'order_number' => IdGenerator::orderNumber(),
             ])->saveQuietly();
         });
+
+        // Covers every single-model create/update (including the
+        // Pending -> Processing transition in SslCommerzPaymentController
+        // that actually sets store_amount) and every single-model delete.
+        // Bulk `Transaction::where(...)->delete()` calls (the admin "erase"
+        // / "clear all" actions) bypass these events entirely, so those
+        // call sites must forget the cache explicitly themselves.
+        static::saved(fn () => self::forgetMonthlyPaymentCache());
+        static::deleted(fn () => self::forgetMonthlyPaymentCache());
+    }
+
+    /**
+     * Cache key for the current month's received-payment total. Scoping the
+     * key by year-month means a new month starts with a guaranteed cache
+     * miss (and therefore a fresh, correct total) without needing any
+     * scheduled "reset" job.
+     */
+    public static function monthlyPaymentCacheKey(): string
+    {
+        return 'admin.dashboard.monthly-payment-received.'.now()->format('Y-m');
+    }
+
+    public static function forgetMonthlyPaymentCache(): void
+    {
+        Cache::forget(self::monthlyPaymentCacheKey());
     }
 }

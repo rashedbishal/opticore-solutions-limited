@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from '@inertiajs/react';
 import { m as motion } from 'framer-motion';
@@ -10,6 +11,7 @@ import {
     Image,
     Loader2,
     Radio,
+    Wallet,
 } from 'lucide-react';
 import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -20,6 +22,8 @@ interface DashboardProps {
         portfolios: number;
         blogs: number;
         job_applications: number;
+        monthlyPaymentReceived: number;
+        monthlyPaymentReceivedHref: string;
     };
     workflow: {
         pending: number;
@@ -28,10 +32,26 @@ interface DashboardProps {
     };
 }
 
+const currentMonthLabel = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+});
+
+interface StatCard {
+    name: string;
+    count: number;
+    format?: 'currency';
+    icon: LucideIcon;
+    href: string;
+    color: string;
+    bg: string;
+    glow: string;
+}
+
 export default function Dashboard({ stats, workflow }: DashboardProps) {
     const echoReady = useEchoReady();
 
-    const cards = [
+    const cards: StatCard[] = [
         {
             name: 'Portfolios',
             count: stats.portfolios,
@@ -58,6 +78,16 @@ export default function Dashboard({ stats, workflow }: DashboardProps) {
             color: 'text-violet-400',
             bg: 'bg-violet-400/10',
             glow: 'hover:shadow-[0_0_30px_rgba(167,139,250,0.15)]',
+        },
+        {
+            name: `Payment Received (${currentMonthLabel})`,
+            count: stats.monthlyPaymentReceived,
+            format: 'currency' as const,
+            icon: Wallet,
+            href: stats.monthlyPaymentReceivedHref,
+            color: 'text-amber-400',
+            bg: 'bg-amber-400/10',
+            glow: 'hover:shadow-[0_0_30px_rgba(251,191,36,0.15)]',
         },
     ];
 
@@ -129,60 +159,6 @@ export default function Dashboard({ stats, workflow }: DashboardProps) {
                 </>
             )}
 
-            {/* ── Stat cards ── */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {cards.map((card, index) => (
-                    <motion.div
-                        key={card.name}
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{
-                            duration: 0.4,
-                            delay: index * 0.1,
-                            ease: 'easeOut',
-                        }}
-                        className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm transition-all hover:border-violet-500/30 ${card.glow}`}
-                    >
-                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-
-                        <div
-                            className={`absolute -top-8 -right-8 h-32 w-32 rounded-full ${card.bg} pointer-events-none opacity-50 blur-3xl transition-opacity duration-500 group-hover:opacity-100`}
-                        ></div>
-
-                        <div className="relative z-10 mb-4 flex items-start justify-between">
-                            <div
-                                className={`rounded-2xl p-3 ${card.bg} border border-white/5 shadow-inner`}
-                            >
-                                <card.icon
-                                    className={`h-6 w-6 ${card.color}`}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="relative z-10">
-                            <h3 className="text-sm font-medium tracking-wide text-zinc-400">
-                                {card.name}
-                            </h3>
-                            <div className="mt-1 flex items-baseline gap-2">
-                                <p className="text-4xl font-bold tracking-tight text-white">
-                                    {card.count}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="relative z-10 mt-6 flex items-center justify-between border-t border-violet-500/10 pt-5">
-                            <Link
-                                href={card.href}
-                                className="group/link flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/60 transition-colors hover:text-cyan-300"
-                            >
-                                View Details
-                                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-1" />
-                            </Link>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
             {/* ── Client Workflow ── */}
             <div>
                 <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
@@ -212,7 +188,7 @@ export default function Dashboard({ stats, workflow }: DashboardProps) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             transition={{
                                 duration: 0.4,
-                                delay: 0.3 + index * 0.1,
+                                delay: index * 0.1,
                                 ease: 'easeOut',
                             }}
                             className={`group relative flex flex-col overflow-hidden rounded-xl border ${card.border} bg-[#060c1a]/80 p-6 backdrop-blur-sm transition-all ${card.hoverBorder} ${card.glow}`}
@@ -261,6 +237,62 @@ export default function Dashboard({ stats, workflow }: DashboardProps) {
                         </motion.div>
                     ))}
                 </div>
+            </div>
+
+            {/* ── Stat cards ── */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {cards.map((card, index) => (
+                    <motion.div
+                        key={card.name}
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{
+                            duration: 0.4,
+                            delay: 0.3 + index * 0.1,
+                            ease: 'easeOut',
+                        }}
+                        className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-violet-500/15 bg-[#060c1a]/80 p-6 backdrop-blur-sm transition-all hover:border-violet-500/30 ${card.glow}`}
+                    >
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+
+                        <div
+                            className={`absolute -top-8 -right-8 h-32 w-32 rounded-full ${card.bg} pointer-events-none opacity-50 blur-3xl transition-opacity duration-500 group-hover:opacity-100`}
+                        ></div>
+
+                        <div className="relative z-10 mb-4 flex items-start justify-between">
+                            <div
+                                className={`rounded-2xl p-3 ${card.bg} border border-white/5 shadow-inner`}
+                            >
+                                <card.icon
+                                    className={`h-6 w-6 ${card.color}`}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="relative z-10">
+                            <h3 className="text-sm font-medium tracking-wide text-zinc-400">
+                                {card.name}
+                            </h3>
+                            <div className="mt-1 flex items-baseline gap-2">
+                                <p className="text-4xl font-bold tracking-tight text-white">
+                                    {card.format === 'currency'
+                                        ? `৳ ${card.count.toLocaleString()}`
+                                        : card.count}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="relative z-10 mt-6 flex items-center justify-between border-t border-violet-500/10 pt-5">
+                            <Link
+                                href={card.href}
+                                className="group/link flex items-center gap-1.5 font-mono text-xs tracking-wide text-cyan-400/60 transition-colors hover:text-cyan-300"
+                            >
+                                View Details
+                                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-1" />
+                            </Link>
+                        </div>
+                    </motion.div>
+                ))}
             </div>
         </div>
     );

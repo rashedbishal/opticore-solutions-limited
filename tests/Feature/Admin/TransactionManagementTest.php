@@ -3,6 +3,7 @@
 use App\Models\Admin;
 use App\Models\Task;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -285,6 +286,29 @@ it('allows the mother admin to clear all transactions using their own password t
         ->assertRedirect();
 
     $this->assertDatabaseMissing('transactions', ['transaction_id' => 'mother-txn']);
+});
+
+it('busts the monthly payment dashboard cache when transactions are bulk-cleared', function () {
+    // clearAll()/erase() run a mass `Transaction::where(...)->delete()`, which
+    // bypasses Eloquent model events entirely — the controller must forget
+    // the cache explicitly instead of relying on Transaction::booted().
+    createTestTransaction(['transaction_id' => 'bulk-cleared-txn', 'store_amount' => 500]);
+
+    $this->actingAs($this->motherAdmin, 'admin')->get(route('admin.dashboard'));
+    expect((float) Cache::get(Transaction::monthlyPaymentCacheKey()))->toBe(500.0);
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->delete(route('admin.transactions.clear-all'), [
+            'admin_password' => 'mother-secret',
+            'mother_password' => 'mother-secret',
+        ])
+        ->assertRedirect();
+
+    expect(Cache::has(Transaction::monthlyPaymentCacheKey()))->toBeFalse();
+
+    $this->actingAs($this->motherAdmin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page->where('stats.monthlyPaymentReceived', 0));
 });
 
 it('downloads and caches the invoice pdf for a transaction with an invoice number', function () {

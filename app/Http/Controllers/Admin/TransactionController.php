@@ -146,6 +146,10 @@ class TransactionController extends Controller
             }
         });
 
+        // Mass deletes above bypass Eloquent model events, so the
+        // monthly-payment dashboard cache needs an explicit bust here.
+        Transaction::forgetMonthlyPaymentCache();
+
         OrderUpdated::dispatch();
         TransactionUpdated::dispatch();
 
@@ -181,6 +185,8 @@ class TransactionController extends Controller
                 Task::whereIn('transaction_id', $transactionIds)->delete();
             }
         });
+
+        Transaction::forgetMonthlyPaymentCache();
 
         OrderUpdated::dispatch();
         TransactionUpdated::dispatch();
