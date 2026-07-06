@@ -133,10 +133,15 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
+        // Shared by every password-setting flow — registration, self-service
+        // reset, profile updates, and the mother-admin break-glass command —
+        // via Password::defaults(). Update this one place, not each call site.
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(8)
                 ->letters()
                 ->numbers()
+                ->mixedCase()
+                ->symbols()
             : null,
         );
 
