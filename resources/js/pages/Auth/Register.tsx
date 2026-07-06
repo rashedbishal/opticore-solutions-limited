@@ -98,19 +98,23 @@ export default function Register() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-1.5">
-                    <div className="group relative">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
-                            <User className="h-4 w-4" />
+                    <div className="group">
+                        <div className="relative">
+                            <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
+                                <User className="h-4 w-4" />
+                            </div>
+                            <input
+                                type="text"
+                                name="name"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                placeholder="Full Name"
+                                className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                required
+                            />
                         </div>
-                        <input
-                            type="text"
-                            name="name"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Full Name"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            required
-                        />
                         {errors.name && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
                                 {errors.name}
@@ -118,19 +122,23 @@ export default function Register() {
                         )}
                     </div>
 
-                    <div className="group relative">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
-                            <Mail className="h-4 w-4" />
+                    <div className="group">
+                        <div className="relative">
+                            <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
+                                <Mail className="h-4 w-4" />
+                            </div>
+                            <input
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                placeholder="Email Address"
+                                className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                required
+                            />
                         </div>
-                        <input
-                            type="email"
-                            name="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            placeholder="Email Address"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-cyan-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            required
-                        />
                         {errors.email && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
                                 {errors.email}
@@ -138,59 +146,61 @@ export default function Register() {
                         )}
                     </div>
 
-                    <div className="group relative sm:col-span-2 [@media(max-height:500px)]:col-span-2">
-                        <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
-                            <Phone className="h-4 w-4" />
-                        </div>
-                        <div className="flex w-full overflow-hidden rounded-xl border border-theme bg-theme-surface transition-all focus-within:border-cyan-500/50">
-                            <select
-                                value={countryCode}
-                                onChange={(e) => {
-                                    setCountryCode(e.target.value);
+                    <div className="group sm:col-span-2 [@media(max-height:500px)]:col-span-2">
+                        <div className="relative">
+                            <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-cyan-400">
+                                <Phone className="h-4 w-4" />
+                            </div>
+                            <div className="flex w-full overflow-hidden rounded-xl border border-theme bg-theme-surface transition-all focus-within:border-cyan-500/50">
+                                <select
+                                    value={countryCode}
+                                    onChange={(e) => {
+                                        setCountryCode(e.target.value);
 
-                                    if (localPhone) {
-                                        setData(
-                                            'phone_number',
-                                            `${e.target.value}${localPhone}`,
+                                        if (localPhone) {
+                                            setData(
+                                                'phone_number',
+                                                `${e.target.value}${localPhone}`,
+                                            );
+                                        }
+                                    }}
+                                    className="cursor-pointer border-y-0 border-r border-l-0 border-theme bg-transparent py-2.5 pr-8 pl-11 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                >
+                                    {COUNTRY_CODES.map((country) => (
+                                        <option
+                                            key={country.code}
+                                            value={country.code}
+                                        >
+                                            {country.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="tel"
+                                    value={localPhone}
+                                    onChange={(e) => {
+                                        // Only allow digits
+                                        const val = e.target.value.replace(
+                                            /\D/g,
+                                            '',
                                         );
-                                    }
-                                }}
-                                className="cursor-pointer border-y-0 border-r border-l-0 border-theme bg-transparent py-2.5 pr-8 pl-11 text-xs font-medium text-foreground outline-none focus:border-theme focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            >
-                                {COUNTRY_CODES.map((country) => (
-                                    <option
-                                        key={country.code}
-                                        value={country.code}
-                                    >
-                                        {country.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <input
-                                type="tel"
-                                value={localPhone}
-                                onChange={(e) => {
-                                    // Only allow digits
-                                    const val = e.target.value.replace(
-                                        /\D/g,
-                                        '',
-                                    );
-                                    setLocalPhone(val);
+                                        setLocalPhone(val);
 
-                                    if (val) {
-                                        setData(
-                                            'phone_number',
-                                            `${countryCode}${val}`,
-                                        );
-                                    } else {
-                                        setData('phone_number', '');
-                                    }
-                                }}
-                                pattern="[0-9]*"
-                                inputMode="numeric"
-                                placeholder="Phone Number"
-                                className="w-full border-none bg-transparent px-4 py-2.5 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            />
+                                        if (val) {
+                                            setData(
+                                                'phone_number',
+                                                `${countryCode}${val}`,
+                                            );
+                                        } else {
+                                            setData('phone_number', '');
+                                        }
+                                    }}
+                                    pattern="[0-9]*"
+                                    inputMode="numeric"
+                                    placeholder="Phone Number"
+                                    className="w-full border-none bg-transparent px-4 py-2.5 text-xs text-foreground outline-none placeholder:text-theme-subtle focus:ring-0 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                />
+                            </div>
                         </div>
                         {errors.phone_number && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
@@ -199,21 +209,23 @@ export default function Register() {
                         )}
                     </div>
 
-                    <div className="group relative">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-violet-400">
-                            <Lock className="h-4 w-4" />
+                    <div className="group">
+                        <div className="relative">
+                            <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-violet-400">
+                                <Lock className="h-4 w-4" />
+                            </div>
+                            <input
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData('password', e.target.value)
+                                }
+                                placeholder="Create Password"
+                                className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-violet-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                required
+                            />
                         </div>
-                        <input
-                            type="password"
-                            name="password"
-                            value={data.password}
-                            onChange={(e) =>
-                                setData('password', e.target.value)
-                            }
-                            placeholder="Create Password"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-violet-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            required
-                        />
                         {errors.password && (
                             <p className="mt-1 ml-3 text-[10px] text-red-500">
                                 {errors.password}
@@ -221,21 +233,26 @@ export default function Register() {
                         )}
                     </div>
 
-                    <div className="group relative">
-                        <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-violet-400">
-                            <Lock className="h-4 w-4" />
+                    <div className="group">
+                        <div className="relative">
+                            <div className="absolute top-1/2 left-4 -translate-y-1/2 text-theme-muted transition-colors group-focus-within:text-violet-400">
+                                <Lock className="h-4 w-4" />
+                            </div>
+                            <input
+                                type="password"
+                                name="password_confirmation"
+                                value={data.password_confirmation}
+                                onChange={(e) =>
+                                    setData(
+                                        'password_confirmation',
+                                        e.target.value,
+                                    )
+                                }
+                                placeholder="Confirm Password"
+                                className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-violet-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
+                                required
+                            />
                         </div>
-                        <input
-                            type="password"
-                            name="password_confirmation"
-                            value={data.password_confirmation}
-                            onChange={(e) =>
-                                setData('password_confirmation', e.target.value)
-                            }
-                            placeholder="Confirm Password"
-                            className="w-full rounded-xl border border-theme bg-theme-surface py-2.5 pr-4 pl-11 text-xs text-foreground transition-all placeholder:text-theme-subtle focus:border-violet-500/50 focus:outline-none sm:py-3 sm:text-sm [@media(max-height:500px)]:py-1.5"
-                            required
-                        />
                     </div>
                 </div>
 

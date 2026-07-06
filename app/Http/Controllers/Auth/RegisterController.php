@@ -24,7 +24,11 @@ class RegisterController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            // Letters (any language) plus combining marks — Bengali/Devanagari
+            // etc. names commonly combine a base letter (\p{L}) with a
+            // dependent vowel sign (\p{M}), e.g. "জেন" is জ (L) + ে (M) + ন (L)
+            // — spaces, dots, and hyphens only. No digits or other symbols.
+            'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\p{M}\s.-]+$/u'],
             'email' => [
                 'required', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique('users')->whereNull('deleted_at'),

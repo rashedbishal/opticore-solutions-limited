@@ -72,6 +72,39 @@ it('requires name, email, and password', function () {
         ->assertInvalid(['name', 'email', 'password']);
 });
 
+it('rejects names containing digits or special characters other than space, dot, or hyphen', function (string $name) {
+    $this->post(route('register'), [
+        'name' => $name,
+        'email' => 'jane@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertInvalid(['name']);
+
+    $this->assertGuest();
+})->with([
+    'Jane99',
+    'Jane_Doe',
+    'Jane@Doe',
+    'Jane#Doe',
+    "Jane'Doe",
+]);
+
+it('accepts names with letters, spaces, dots, and hyphens', function (string $name) {
+    $this->post(route('register'), [
+        'name' => $name,
+        'email' => 'jane@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertRedirect(route('verification.notice'));
+
+    $this->assertDatabaseHas('users', ['name' => $name]);
+})->with([
+    'Jane Doe',
+    'Dr. Jane Doe',
+    'Jane-Doe',
+    'জেন ডো',
+]);
+
 it('rejects an invalid phone number format', function () {
     $this->post(route('register'), [
         'name' => 'Jane',
