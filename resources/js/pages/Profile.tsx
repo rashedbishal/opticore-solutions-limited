@@ -999,9 +999,6 @@ export default function Profile() {
                                             >
                                                 <Phone className="h-3.5 w-3.5 text-cyan-500" />
                                                 Phone Number
-                                                <span className="text-[10px] text-theme-subtle">
-                                                    (optional)
-                                                </span>
                                             </Label>
                                             <Input
                                                 id="phone_number"
@@ -1024,9 +1021,6 @@ export default function Profile() {
                                             >
                                                 <MapPin className="h-3.5 w-3.5 text-cyan-500" />
                                                 Country
-                                                <span className="text-[10px] text-theme-subtle">
-                                                    (optional)
-                                                </span>
                                             </Label>
                                             <Input
                                                 id="country"
@@ -1048,9 +1042,6 @@ export default function Profile() {
                                             >
                                                 <MapPin className="h-3.5 w-3.5 text-cyan-500" />
                                                 Address
-                                                <span className="text-[10px] text-theme-subtle">
-                                                    (optional)
-                                                </span>
                                             </Label>
                                             <Input
                                                 id="address"
