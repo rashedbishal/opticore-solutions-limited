@@ -5,12 +5,25 @@ type Theme = 'light' | 'dark';
 const STORAGE_KEY = 'preferred-theme';
 const THEME_CHANGE_EVENT = 'opticore:theme-change';
 
+// Kept in sync with the inline pre-hydration script in app.blade.php and the
+// `:root`/`.dark` --background tokens in app.css, so the browser chrome
+// (address bar, task switcher) always matches what the toggle actually
+// renders instead of following the OS's prefers-color-scheme independently.
+const THEME_COLOR: Record<Theme, string> = {
+    light: '#fcfcfd',
+    dark: '#0a0a0a',
+};
+
 function applyTheme(theme: Theme): void {
     if (theme === 'dark') {
         document.documentElement.classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
     }
+
+    document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', THEME_COLOR[theme]);
 }
 
 function resolveTheme(): Theme {

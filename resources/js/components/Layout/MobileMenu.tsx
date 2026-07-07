@@ -76,9 +76,17 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
     const maskId = useId();
     const railRef = useRef<HTMLDivElement>(null);
     const [tileRows, setTileRows] = useState(DEFAULT_TILE_ROWS);
+    // Once the wipe's first frame has measured the grid, later resizes are
+    // ignored until the rail closes again — otherwise a mid-wipe viewport
+    // change (e.g. the address bar collapsing as the menu opens on Samsung
+    // Internet) changes tileRows while the <motion.rect> tiles are still
+    // animating, remounting them with a different row count mid-transition.
+    const wipeStartedRef = useRef(false);
 
     useEffect(() => {
         if (!open) {
+            wipeStartedRef.current = false;
+
             return;
         }
 
@@ -89,6 +97,10 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
         }
 
         const updateTileRows = () => {
+            if (wipeStartedRef.current) {
+                return;
+            }
+
             const { width, height } = el.getBoundingClientRect();
 
             if (width > 0 && height > 0) {
@@ -99,6 +111,7 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
         };
 
         updateTileRows();
+        wipeStartedRef.current = true;
 
         const observer = new ResizeObserver(updateTileRows);
         observer.observe(el);

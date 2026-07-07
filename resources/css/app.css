@@ -153,7 +153,16 @@
                 oklch(0.97 0.03 80 / 0.35),
                 transparent 48%
             );
-        background-attachment: fixed;
+
+        /* background-attachment: fixed is scoped to non-touch/mouse-driven
+           viewports: on touch devices (incl. Samsung Internet/Chrome on
+           Android) it forces the compositor to repaint this layered
+           gradient on every scroll frame instead of compositing it,
+           causing visible jank and battery drain that isn't worth the
+           parallax effect on a decorative background. */
+        @media (hover: hover) and (pointer: fine) {
+            background-attachment: fixed;
+        }
 
         @variant dark {
             background-image:
@@ -755,6 +764,7 @@
 }
 
 :root {
+    color-scheme: light;
     --background: oklch(0.99 0.003 240);
     --foreground: oklch(0.25 0.01 240);
     --card: oklch(0.99 0.003 240);
@@ -846,6 +856,7 @@
 }
 
 .dark {
+    color-scheme: dark;
     --background: oklch(0.12 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.18 0 0);

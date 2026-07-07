@@ -530,7 +530,7 @@ export default function HomeIndex({
                 />
             </Head>
 
-            <section className="hero-noise relative flex min-h-screen items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
+            <section className="hero-noise relative flex min-h-svh items-center overflow-hidden px-4 pt-28 pb-16 sm:px-6 lg:px-8">
                 <GradientOrb
                     className="top-20 left-[-4rem] h-64 w-64 md:h-80 md:w-80"
                     color="rgb(124 58 237 / 0.55)"

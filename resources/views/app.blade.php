@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light dark">
+        <meta name="theme-color" content="#fcfcfd">
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="canonical" href="{{ url()->current() }}">
@@ -135,6 +137,10 @@
                             : 'light');
                     if (theme === 'dark') {
                         document.documentElement.classList.add('dark');
+                        var meta = document.querySelector('meta[name="theme-color"]');
+                        if (meta) {
+                            meta.setAttribute('content', '#0a0a0a');
+                        }
                     }
                 } catch (e) {}
             })();
