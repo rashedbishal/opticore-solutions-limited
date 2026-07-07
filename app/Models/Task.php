@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
 
 class Task extends Model
 {
@@ -25,6 +26,12 @@ class Task extends Model
         'review_eligible_until',
         'transaction_id',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => self::forgetWorkflowStatsCache());
+        static::deleted(fn () => self::forgetWorkflowStatsCache());
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -79,5 +86,21 @@ class Task extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(TaskAttachment::class);
+    }
+
+    /**
+     * Cache key for the admin dashboard's workflow counts. Scoped by
+     * year-month so "delivered this month" starts with a guaranteed cache
+     * miss (and therefore a fresh, correct count) at the start of a new
+     * month without needing a scheduled reset job.
+     */
+    public static function workflowStatsCacheKey(): string
+    {
+        return 'admin.dashboard.workflow-stats.'.now()->format('Y-m');
+    }
+
+    public static function forgetWorkflowStatsCache(): void
+    {
+        Cache::forget(self::workflowStatsCacheKey());
     }
 }

@@ -18,9 +18,18 @@ class DashboardController extends Controller
     {
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'portfolios' => Portfolio::count(),
-                'blogs' => Blog::count(),
-                'job_applications' => JobApplication::count(),
+                'portfolios' => Cache::rememberForever(
+                    Portfolio::dashboardCountCacheKey(),
+                    fn () => Portfolio::count(),
+                ),
+                'blogs' => Cache::rememberForever(
+                    Blog::dashboardCountCacheKey(),
+                    fn () => Blog::count(),
+                ),
+                'job_applications' => Cache::rememberForever(
+                    JobApplication::dashboardCountCacheKey(),
+                    fn () => JobApplication::count(),
+                ),
                 'monthlyPaymentReceived' => Cache::rememberForever(
                     Transaction::monthlyPaymentCacheKey(),
                     fn () => (float) Transaction::where('status', 'Processing')
@@ -33,14 +42,17 @@ class DashboardController extends Controller
                     'date_to' => now()->endOfMonth()->toDateString(),
                 ]),
             ],
-            'workflow' => [
-                'pending' => Task::where('state', 'pending')->count(),
-                'processing' => Task::where('state', 'in progress')->count(),
-                'deliveredThisMonth' => Task::query()
-                    ->where('state', 'delivered')
-                    ->whereBetween('updated_at', [now()->startOfMonth(), now()->endOfMonth()])
-                    ->count(),
-            ],
+            'workflow' => Cache::rememberForever(
+                Task::workflowStatsCacheKey(),
+                fn () => [
+                    'pending' => Task::where('state', 'pending')->count(),
+                    'processing' => Task::where('state', 'in progress')->count(),
+                    'deliveredThisMonth' => Task::query()
+                        ->where('state', 'delivered')
+                        ->whereBetween('updated_at', [now()->startOfMonth(), now()->endOfMonth()])
+                        ->count(),
+                ],
+            ),
         ]);
     }
 }
