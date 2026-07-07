@@ -22,3 +22,13 @@ class MockObserver {
 
 globalThis.IntersectionObserver = MockObserver;
 globalThis.ResizeObserver = MockObserver;
+
+// jsdom doesn't implement scrollIntoView — chat widgets call it on every
+// new message to auto-scroll.
+Element.prototype.scrollIntoView = () => {};
+
+// jsdom doesn't implement sendBeacon — chat widgets use it to report
+// "went offline" on unmount/navigation.
+if (!navigator.sendBeacon) {
+    navigator.sendBeacon = () => true;
+}
