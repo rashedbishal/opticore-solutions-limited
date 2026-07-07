@@ -76,10 +76,6 @@ export default defineConfig(({ command }) => ({
                         return 'vendor-animejs';
                     }
 
-                    if (id.includes('node_modules/recharts/')) {
-                        return 'vendor-charts';
-                    }
-
                     if (id.includes('node_modules/radix-ui/')) {
                         return 'vendor-radix';
                     }
