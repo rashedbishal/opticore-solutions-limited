@@ -76,6 +76,10 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
     const maskId = useId();
     const railRef = useRef<HTMLDivElement>(null);
     const [tileRows, setTileRows] = useState(DEFAULT_TILE_ROWS);
+    // The mask's <svg> is drawn in real pixel space (userSpaceOnUse) matching
+    // this measured size, rather than fractional objectBoundingBox units —
+    // see the comment on the <svg> below for why.
+    const [railSize, setRailSize] = useState({ width: 0, height: 0 });
     // Once the wipe's first frame has measured the grid, later resizes are
     // ignored until the rail closes again — otherwise a mid-wipe viewport
     // change (e.g. the address bar collapsing as the menu opens on Samsung
@@ -107,6 +111,7 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                 setTileRows(
                     Math.max(1, Math.round(TILE_COLS * (height / width))),
                 );
+                setRailSize({ width, height });
             }
         };
 
@@ -349,22 +354,37 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                         default (unpainted) mask background is transparent,
                         so a square at opacity 0 shows through to whatever is
                         actually behind the rail (the blurred backdrop/page),
-                        not another opaque layer. */}
+                        not another opaque layer.
+
+                        The <svg>/<mask> are drawn in real pixel space
+                        (userSpaceOnUse, via an explicit viewBox matching the
+                        measured rail size) rather than fractional
+                        objectBoundingBox units. Firefox resolves the CSS
+                        mask-size percentage on the rail using this wrapper
+                        <svg>'s own intrinsic aspect ratio; left at its
+                        visually-hidden 0x0 size (or with
+                        maskContentUnits="objectBoundingBox", which is
+                        agnostic to the wrapper's size), Firefox falls back to
+                        a square intrinsic ratio and stretches it unevenly
+                        onto the rail's non-square box, rendering every tile
+                        as a rectangle instead of a square — Chromium/WebKit
+                        don't have this quirk. Giving the wrapper the same
+                        pixel size as the rail makes the mask's natural size
+                        equal its mask-size target in every browser, so there
+                        is no aspect ratio left to guess. */}
                     <svg
                         aria-hidden
+                        viewBox={`0 0 ${railSize.width} ${railSize.height}`}
                         className="pointer-events-none absolute h-0 w-0 overflow-hidden"
                     >
                         <defs>
-                            <mask
-                                id={maskId}
-                                maskContentUnits="objectBoundingBox"
-                            >
+                            <mask id={maskId}>
                                 {tiles.map((i) => {
                                     const col = i % TILE_COLS;
                                     const row = Math.floor(i / TILE_COLS);
                                     const delay = tileDelay(row, col, tileRows);
-                                    const w = 1 / TILE_COLS;
-                                    const h = 1 / tileRows;
+                                    const w = railSize.width / TILE_COLS;
+                                    const h = railSize.height / tileRows;
                                     // Slightly overlap neighboring squares so
                                     // sub-pixel/antialiasing rounding never
                                     // leaves a hairline seam once every
