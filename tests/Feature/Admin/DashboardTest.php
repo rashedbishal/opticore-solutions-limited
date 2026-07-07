@@ -107,6 +107,69 @@ it('caches the monthly payment total and busts it on transaction create, update,
         ->assertInertia(fn (Assert $page) => $page->where('stats.monthlyPaymentReceived', 0));
 });
 
+it('caches the portfolio, blog, and job application counts and busts them on create and delete', function () {
+    $admin = Admin::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('stats.portfolios', 0)
+            ->where('stats.blogs', 0)
+            ->where('stats.job_applications', 0)
+        );
+
+    $portfolio = Portfolio::factory()->create();
+    Blog::factory()->create();
+    JobApplication::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('stats.portfolios', 1)
+            ->where('stats.blogs', 1)
+            ->where('stats.job_applications', 1)
+        );
+
+    $portfolio->delete();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page->where('stats.portfolios', 0));
+});
+
+it('caches the workflow stats and busts them on task create, update, and delete', function () {
+    $admin = Admin::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('workflow.pending', 0)
+            ->where('workflow.processing', 0)
+            ->where('workflow.deliveredThisMonth', 0)
+        );
+
+    $task = Task::factory()->create(['state' => 'pending']);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page->where('workflow.pending', 1));
+
+    $task->update(['state' => 'delivered']);
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('workflow.pending', 0)
+            ->where('workflow.deliveredThisMonth', 1)
+        );
+
+    $task->delete();
+
+    $this->actingAs($admin, 'admin')
+        ->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page->where('workflow.deliveredThisMonth', 0));
+});
+
 it('rolls over to a fresh cache key at the start of a new month with no scheduled reset job needed', function () {
     Cache::put(Transaction::monthlyPaymentCacheKey(), 999999.0);
 
