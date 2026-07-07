@@ -363,12 +363,19 @@ MAINTENANCE_ACTIVE=true
 # PHASE 5 — Database migrations.
 # Runs from the NEW release so new migration files are available.
 # Migrations run while in maintenance mode to prevent schema/code mismatch.
+#
+# A single `migrate --force` handles BOTH connections: the two admin-table
+# migrations declare `protected $connection = 'admin'` (and call
+# Schema::connection('admin') explicitly), so Laravel routes those two to
+# the admin database on its own. Do NOT add a second
+# `migrate --force --database=admin` pass here — that flag overrides the
+# *default* connection for the whole command, so every migration lacking an
+# explicit $connection (i.e. all the non-admin ones) would replay against
+# the admin database too, cloning the entire default schema into it. That
+# exact bug shipped once already and had to be cleaned up by hand.
 # =========================================================================
-log "Running migrations (default connection)..."
+log "Running migrations..."
 $ARTISAN migrate --force
-
-log "Running migrations (admin connection)..."
-$ARTISAN migrate --force --database=admin
 
 # =========================================================================
 # PHASE 6 — Cache config, routes, views, events in the new release.
