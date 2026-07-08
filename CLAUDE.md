@@ -14,12 +14,8 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 - `composer test` — clears config cache, runs `pint --test`, then the full test suite (used in CI-like checks).
 - `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
 - `vendor/bin/pint --dirty --format agent` — format only changed PHP files; run this after any PHP edit before finishing.
-<<<<<<< HEAD
 - `composer analyse` (`vendor/bin/phpstan analyse --no-progress`) — Larastan static analysis, config in `phpstan.neon` (level 5, paths `app`/`bootstrap`/`config`/`database`/`routes`, pre-existing findings suppressed via `phpstan-baseline.neon`). Level 5 is deliberate — see the comment in `phpstan.neon` before raising it.
-=======
-- `composer analyse` — Larastan (PHPStan) at level 5, baselined against pre-existing findings (`phpstan-baseline.neon`) so only new code is held to the standard. Wired into `ci:check` and CI.
 - `composer audit` — Composer dependency vulnerability scan; blocking in CI.
->>>>>>> fd1768b (optimized first content paint)
 - `php artisan test --compact -c phpunit.pgsql.xml` — run tests against the alternate local-environment config (different DB names/`APP_ENV`) instead of the default `phpunit.xml`. GitHub Actions CI uses the default `phpunit.xml`, not this one.
 - `BROADCAST_CONNECTION` defaults to `log` in `.env.example`; `composer dev` does not start Reverb. To exercise real-time chat/notifications locally, set `BROADCAST_CONNECTION=reverb`, fill in the `REVERB_*`/`VITE_REVERB_*` vars, and run `php artisan reverb:start` alongside the dev stack.
 
