@@ -230,14 +230,10 @@ export default function Navbar() {
                                         as="button"
                                         tabIndex={ghost ? -1 : undefined}
                                         onStart={() => setIsLoggingOut(true)}
-                                        onFinish={() =>
-                                            setIsLoggingOut(false)
-                                        }
+                                        onFinish={() => setIsLoggingOut(false)}
                                         onClick={() =>
                                             window.dispatchEvent(
-                                                new CustomEvent(
-                                                    'logout:start',
-                                                ),
+                                                new CustomEvent('logout:start'),
                                             )
                                         }
                                         disabled={isLoggingOut}
@@ -278,7 +274,9 @@ export default function Navbar() {
                         aria-hidden={ghost ? undefined : open}
                         tabIndex={ghost ? undefined : open ? -1 : undefined}
                         aria-label={
-                            open ? 'Close navigation menu' : 'Open navigation menu'
+                            open
+                                ? 'Close navigation menu'
+                                : 'Open navigation menu'
                         }
                         className={cn(
                             'neo-btn-ghost group relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 md:hidden',
