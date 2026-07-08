@@ -2,7 +2,7 @@ import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { LazyMotion } from 'framer-motion';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
@@ -21,6 +21,41 @@ export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
     const [openWidget, setOpenWidget] = useState<'ai' | 'support' | null>(null);
     const [widgetsMounted, setWidgetsMounted] = useState(false);
+    const mainRef = useRef<HTMLElement>(null);
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        // Previously this was done by putting `key={url}` on <main>, which
+        // forced React to unmount and remount the *entire* page subtree on
+        // every Inertia navigation just to retrigger this fade — resetting
+        // every page component's state/effects each time, even navigating
+        // between two instances of the same page type (e.g. Blog A -> Blog
+        // B). Restarting the CSS animation directly gets the same visual
+        // replay without paying that remount cost.
+        if (isFirstRender.current) {
+            // Skip on mount: the server-rendered markup already carries the
+            // `page-enter` class, so the fade already plays once on initial
+            // load without any JS involvement here — restarting it again
+            // post-hydration would double it up.
+            isFirstRender.current = false;
+
+            return;
+        }
+
+        const el = mainRef.current;
+
+        if (!el) {
+            return;
+        }
+
+        el.classList.remove('page-enter');
+        // Force a reflow so the browser "forgets" the animation already
+        // ran before the class is re-added — without this, re-adding the
+        // same class on the same frame is a no-op and the animation won't
+        // replay.
+        void el.offsetWidth;
+        el.classList.add('page-enter');
+    }, [url]);
 
     useEffect(() => {
         // Defer widget mounting until after first user interaction so their
@@ -71,7 +106,10 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
                     <Navbar />
 
-                    <main key={url} className="page-enter relative z-20">
+                    <main
+                        ref={mainRef}
+                        className="page-enter relative z-20"
+                    >
                         {children}
                     </main>
 

@@ -1,6 +1,6 @@
 import type { BlogPost } from '@/types/blog';
 import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowRight, Clock } from 'lucide-react';
 
 interface BlogCardProps {

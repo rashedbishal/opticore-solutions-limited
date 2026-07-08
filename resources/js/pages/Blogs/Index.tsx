@@ -1,6 +1,6 @@
 import type { BlogCategory, BlogPost } from '@/types/blog';
 import { Head } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import BlogCard from '@/components/Blogs/BlogCard';
 import FilterBar from '@/components/Blogs/FilterBar';
