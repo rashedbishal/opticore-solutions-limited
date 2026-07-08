@@ -15,9 +15,9 @@ import {
     Briefcase,
     ArrowRight,
     Loader2,
-    X,
 } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
+import ThemeSwitcher from '@/components/UI/ThemeSwitcher';
 import { navigationItems } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
@@ -213,8 +213,12 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                             className="pointer-events-none absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-violet-100/40 to-transparent dark:from-violet-950/30 dark:to-transparent"
                         />
 
-                        {/* Rail header */}
-                        <div className="relative flex shrink-0 items-center justify-between pt-7 pr-5 pb-4 pl-7">
+                        {/* Rail header — closing happens via the navbar's
+                            own hamburger/X toggle (the sole open/close
+                            control, so its on-screen position never shifts
+                            between the two states), so there's nothing to
+                            render here besides the logo. */}
+                        <div className="relative flex shrink-0 items-center pt-7 pr-5 pb-4 pl-7">
                             <Link
                                 href="/"
                                 onClick={onClose}
@@ -233,15 +237,6 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                                     className="hidden h-14 w-auto dark:block"
                                 />
                             </Link>
-
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                aria-label="Close navigation menu"
-                                className="neo-btn-ghost group flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 hover:scale-105"
-                            >
-                                <X className="h-4 w-4 text-zinc-600 dark:text-zinc-300" />
-                            </button>
                         </div>
 
                         {/* Unified item list — no independent fade here; the
@@ -345,8 +340,13 @@ export default function MobileMenu({ url, open, onClose }: MobileMenuProps) {
                             </div>
                         </div>
 
-                        {/* Footer spacer */}
-                        <div className="shrink-0 pb-8" />
+                        {/* Footer — theme switcher */}
+                        <div className="flex shrink-0 items-center justify-between border-t border-slate-200/70 px-7 pt-4 pb-8 dark:border-zinc-800">
+                            <span className="text-xs font-medium text-slate-500 dark:text-zinc-500">
+                                Appearance
+                            </span>
+                            <ThemeSwitcher className="h-9 w-9" />
+                        </div>
                     </motion.div>
 
                     {/* SVG mask definition — each rect is one checker square.
