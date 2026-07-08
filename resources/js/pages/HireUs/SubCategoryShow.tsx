@@ -891,7 +891,7 @@ function GallerySlider({ items }: { items: PortfolioItem[] }) {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.25 }}
-                                className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
+                                className="site-typography fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
                             >
                                 <motion.div
                                     initial={{ scale: 0.9, opacity: 0 }}

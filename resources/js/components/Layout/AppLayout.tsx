@@ -94,7 +94,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
         <LazyMotion features={loadFramerFeatures}>
             <SmoothScroll>
                 {/* Global Wrapper restored to original styling to debug render crash */}
-                <div className="app-shell bg-grain">
+                <div className="app-shell bg-grain site-typography">
                     {/* Background effects */}
                     <div className="pointer-events-none absolute inset-0 z-5 overflow-hidden">
                         <div className="absolute inset-x-0 top-0 h-[800px] bg-linear-to-b from-violet-500/[0.35] via-cyan-400/[0.18] to-transparent blur-3xl dark:from-violet-500/10 dark:via-cyan-400/5" />
@@ -113,7 +113,11 @@ export default function AppLayout({ children }: PropsWithChildren) {
                     <Footer />
                 </div>
                 {widgetsMounted && (
-                    <>
+                    // `contents` keeps this div out of the box model (no layout
+                    // impact) — it exists purely so the site-typography font
+                    // variables inherit into the widgets, which render as
+                    // siblings of .app-shell rather than inside it.
+                    <div className="site-typography contents">
                         <Suspense fallback={null}>
                             <ChatWidget
                                 isOpen={openWidget === 'ai'}
@@ -130,7 +134,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                                 }
                             />
                         </Suspense>
-                    </>
+                    </div>
                 )}
             </SmoothScroll>
         </LazyMotion>

@@ -9,6 +9,111 @@
 @source '../js/**/*.{ts,tsx}';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
+/* Public-site fonts (Inter for body copy, Metropolis for headings), sourced
+   from resources/fonts/Inter and resources/fonts/metropolis so Vite manages
+   them like any other build asset (fingerprinted in prod, and actually
+   served in dev — files under public/ aren't served by the Vite dev server,
+   since laravel-vite-plugin sets `publicDir: false` to avoid clashing with
+   Laravel's own public/ doc root; a plain "/Inter/..." url() would 404
+   against the dev server's cross-origin localhost:5173 origin). Scoped to
+   the frontend only via .site-typography below — the admin CMS keeps the
+   Geist font from the `@theme` block's --font-sans default untouched, since
+   AdminLayout never gets the .site-typography class. A browser only
+   fetches the specific @font-face weight/style it actually needs to render
+   a given element, so declaring the full weight range here doesn't cost
+   anything on pages that only use a subset of them. */
+@layer base {
+    @font-face {
+        font-family: 'Inter Variable';
+        src: url('../fonts/Inter/Inter-VariableFont_opsz,wght.ttf')
+            format('truetype-variations');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Inter Variable';
+        src: url('../fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf')
+            format('truetype-variations');
+        font-weight: 100 900;
+        font-style: italic;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Thin.otf') format('opentype');
+        font-weight: 100;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-ExtraLight.otf') format('opentype');
+        font-weight: 200;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Light.otf') format('opentype');
+        font-weight: 300;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Regular.otf') format('opentype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Medium.otf') format('opentype');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-SemiBold.otf') format('opentype');
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Bold.otf') format('opentype');
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-ExtraBold.otf') format('opentype');
+        font-weight: 800;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'Metropolis';
+        src: url('../fonts/metropolis/Metropolis-Black.otf') format('opentype');
+        font-weight: 900;
+        font-style: normal;
+        font-display: swap;
+    }
+}
+
 @theme {
     --color-primary: #7c3aed;
     --color-accent: #06b6d4;
@@ -228,6 +333,32 @@
 
         @variant dark {
             background-color: var(--background);
+        }
+    }
+
+    /* Scopes the public-site fonts (see the @font-face block above) to the
+       customer-facing frontend only — applied on AppLayout's and
+       GuestLayout's root wrappers, never on AdminLayout, so the CMS keeps
+       rendering with the root `--font-sans` (Geist) default untouched. */
+    .site-typography {
+        --font-sans: 'Inter Variable', sans-serif;
+        --font-heading: 'Metropolis', sans-serif;
+
+        /* `html { @apply font-sans; }` resolves `font-family: var(--font-sans)`
+           once, at the html element — the computed value then inherits down
+           as plain text, so redefining the --font-sans *variable* here
+           wouldn't retroactively change anything unless font-family is also
+           re-declared at this scope, restarting inheritance from here down
+           with the new value. */
+        font-family: var(--font-sans);
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-heading);
         }
     }
 

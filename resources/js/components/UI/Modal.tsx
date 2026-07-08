@@ -108,7 +108,7 @@ export default function Modal({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     style={{ zIndex: 999999 }}
-                    className="fixed inset-0 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm dark:bg-black/80 dark:backdrop-blur-md"
+                    className="site-typography fixed inset-0 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm dark:bg-black/80 dark:backdrop-blur-md"
                     onClick={onClose}
                 >
                     <motion.div

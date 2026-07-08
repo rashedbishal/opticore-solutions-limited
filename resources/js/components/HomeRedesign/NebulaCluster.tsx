@@ -165,7 +165,7 @@ function ExpandModal({
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
                     style={{ zIndex: 99999 }}
-                    className="fixed inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="site-typography fixed inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
                     onPointerDown={onClose}
                 >
                     {/* Ambient violet glow behind the card */}

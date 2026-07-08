@@ -20,7 +20,7 @@ export default function GuestLayout({
 
     return (
         <LazyMotion features={domAnimation}>
-            <div className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-4">
+            <div className="site-typography relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-4">
                 <GradientOrb
                     className="top-[-10%] left-[-10%] h-[600px] w-[600px]"
                     color="#06b6d4"
