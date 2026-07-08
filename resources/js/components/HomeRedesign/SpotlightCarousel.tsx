@@ -1,5 +1,5 @@
 import { m as motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
+import { Quote, Star } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 
@@ -532,14 +532,6 @@ export default function SpotlightCarousel({
 
                 {/* ── Controls ── */}
                 <div className="mt-8 flex items-center justify-center gap-5">
-                    <button
-                        onClick={() => prev('manual')}
-                        aria-label="Previous testimonial"
-                        className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
-                    >
-                        <ChevronLeft className="drop-icon h-5 w-5 text-violet-500 dark:text-violet-400" />
-                    </button>
-
                     {/* Pill dots */}
                     <div
                         className="flex items-center gap-2"
@@ -564,14 +556,6 @@ export default function SpotlightCarousel({
                             />
                         ))}
                     </div>
-
-                    <button
-                        onClick={() => next('manual')}
-                        aria-label="Next testimonial"
-                        className="neo-btn-ghost flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
-                    >
-                        <ChevronRight className="drop-icon h-5 w-5 text-violet-500 dark:text-violet-400" />
-                    </button>
                 </div>
             </div>
         </div>

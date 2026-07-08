@@ -277,7 +277,12 @@ function HeroHeadline() {
             <m.h1
                 layout
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="pb-4 text-[2rem] leading-[1.3] font-extrabold text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
+                // An arbitrary-value weight (not the `font-extrabold`
+                // utility) so this heading's weight is independent of the
+                // sitewide --font-weight-extrabold override in app.css
+                // (scoped to .site-typography) — bumping it here doesn't
+                // change any other extrabold text on the site.
+                className="pb-4 text-[2rem] leading-[1.3] font-[800] text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
                 <m.span layout className="inline-block">
                     We
