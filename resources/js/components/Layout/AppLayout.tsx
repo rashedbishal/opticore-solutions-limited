@@ -106,10 +106,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
                     <Navbar />
 
-                    <main
-                        ref={mainRef}
-                        className="page-enter relative z-20"
-                    >
+                    <main ref={mainRef} className="page-enter relative z-20">
                         {children}
                     </main>
 
