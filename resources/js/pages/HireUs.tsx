@@ -1,7 +1,7 @@
 import type { SharedPageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ChevronDown, Star, Users, Zap } from 'lucide-react';
+import { ArrowRight, ChevronDown, Star, Zap } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import {
@@ -290,22 +290,14 @@ const HireUsPage = ({ subCategories = {}, meta }: Props) => {
 
                                         {/* Info */}
                                         <div className="p-8">
-                                            <div className="mb-4 flex items-center justify-between">
-                                                <div className="flex items-center gap-1 text-amber-400">
-                                                    <Star className="h-4 w-4 fill-current" />
-                                                    <span className="text-sm font-bold text-theme">
-                                                        {item.rating}
-                                                    </span>
-                                                    <span className="text-xs text-theme-muted">
-                                                        ({item.reviews})
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-theme-muted">
-                                                    <Users className="h-4 w-4" />
-                                                    <span className="text-xs">
-                                                        24 Active
-                                                    </span>
-                                                </div>
+                                            <div className="mb-4 flex items-center gap-1 text-amber-400">
+                                                <Star className="h-4 w-4 fill-current" />
+                                                <span className="text-sm font-bold text-theme">
+                                                    {item.rating}
+                                                </span>
+                                                <span className="text-xs text-theme-muted">
+                                                    ({item.reviews})
+                                                </span>
                                             </div>
                                             <h3 className="mb-6 text-2xl font-black tracking-tight text-theme transition-colors group-hover:text-violet-500">
                                                 {item.name}
