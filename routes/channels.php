@@ -30,3 +30,7 @@ Broadcast::channel('admin.transactions', function ($user) {
 Broadcast::channel('admin.tasks', function ($user) {
     return $user instanceof Admin && $user->canAccess('tasks');
 }, ['guards' => ['admin', 'web']]);
+
+Broadcast::channel('admin.meal-management', function ($user) {
+    return $user instanceof Admin && $user->canAccess('meal-management');
+}, ['guards' => ['admin', 'web']]);

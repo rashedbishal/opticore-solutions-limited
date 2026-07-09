@@ -364,15 +364,16 @@ MAINTENANCE_ACTIVE=true
 # Runs from the NEW release so new migration files are available.
 # Migrations run while in maintenance mode to prevent schema/code mismatch.
 #
-# A single `migrate --force` handles BOTH connections: the two admin-table
-# migrations declare `protected $connection = 'admin'` (and call
-# Schema::connection('admin') explicitly), so Laravel routes those two to
-# the admin database on its own. Do NOT add a second
-# `migrate --force --database=admin` pass here — that flag overrides the
-# *default* connection for the whole command, so every migration lacking an
-# explicit $connection (i.e. all the non-admin ones) would replay against
-# the admin database too, cloning the entire default schema into it. That
-# exact bug shipped once already and had to be cleaned up by hand.
+# A single `migrate --force` handles ALL THREE connections: the admin-table
+# migrations declare `protected $connection = 'admin'` and the meal-management
+# migrations declare `protected $connection = 'meal'` (each also calling
+# Schema::connection(...) explicitly), so Laravel routes those to the right
+# database on its own. Do NOT add a second `migrate --force --database=admin`
+# (or `=meal`) pass here — that flag overrides the *default* connection for
+# the whole command, so every migration lacking an explicit $connection (i.e.
+# all the non-admin, non-meal ones) would replay against that database too,
+# cloning the entire default schema into it. That exact bug shipped once
+# already (for the admin connection) and had to be cleaned up by hand.
 # =========================================================================
 log "Running migrations..."
 $ARTISAN migrate --force

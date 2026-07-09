@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\AutoDeclineMealSelections;
 use App\Console\Commands\PruneOrphanedCheckoutUploads;
 use App\Console\Commands\WarmCache;
 use App\Http\Middleware\EnsureAdminHasPermission;
@@ -102,5 +103,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // everyTwentyMinutes() isn't real either; 20 evenly divides 60, so
         // this cron expression is a true, evenly-spaced every-20-minutes.
         $schedule->command(PruneOrphanedCheckoutUploads::class)->cron('*/20 * * * *');
+
+        // Mother admin sets the daily lock time once and it applies every
+        // day thereafter, so there's no fixed cron time to hang this off —
+        // it has to poll. withoutOverlapping guards against a slow run
+        // overlapping the next minute's tick; the command itself is
+        // idempotent (only inserts rows for admins still missing one).
+        $schedule->command(AutoDeclineMealSelections::class)->everyMinute()->withoutOverlapping();
     })
     ->create();

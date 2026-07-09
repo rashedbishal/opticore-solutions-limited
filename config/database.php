@@ -58,6 +58,23 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        // Fully isolated from 'pgsql' (web/client) and 'admin' (CMS staff) —
+        // internal office meal-management data has no relationship to either
+        // and is deliberately kept in its own database.
+        'meal' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_MEAL_HOST', '127.0.0.1'),
+            'port' => env('DB_MEAL_PORT', '5432'),
+            'database' => env('DB_MEAL_DATABASE', 'opticoresolutions_meal'),
+            'username' => env('DB_MEAL_USERNAME', 'postgres'),
+            'password' => env('DB_MEAL_PASSWORD', 'password'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),

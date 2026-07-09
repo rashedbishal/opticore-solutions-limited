@@ -73,6 +73,9 @@ jobs:
       - name: Create admin test database
         run: PGPASSWORD=password psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE opticoresolutions_admin_test;"
 
+      - name: Create meal management test database
+        run: PGPASSWORD=password psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE opticoresolutions_meal_test;"
+
       - name: Generate Wayfinder Routes
         run: php artisan wayfinder:generate
 

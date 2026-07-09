@@ -28,6 +28,9 @@
         <env name="DB_ADMIN_DRIVER" value="pgsql"/>
         <env name="DB_ADMIN_CONNECTION" value="pgsql"/>
         <env name="DB_ADMIN_DATABASE" value="opticore_admin_test"/>
+        <env name="DB_MEAL_DRIVER" value="pgsql"/>
+        <env name="DB_MEAL_CONNECTION" value="pgsql"/>
+        <env name="DB_MEAL_DATABASE" value="opticore_meal_test"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

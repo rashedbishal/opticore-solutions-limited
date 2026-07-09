@@ -33,6 +33,10 @@
         <env name="DB_ADMIN_DATABASE" value="opticoresolutions_admin_test"/>
         <env name="DB_ADMIN_USERNAME" value="postgres"/>
         <env name="DB_ADMIN_PASSWORD" value="password"/>
+        <env name="DB_MEAL_HOST" value="127.0.0.1"/>
+        <env name="DB_MEAL_DATABASE" value="opticoresolutions_meal_test"/>
+        <env name="DB_MEAL_USERNAME" value="postgres"/>
+        <env name="DB_MEAL_PASSWORD" value="password"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

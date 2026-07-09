@@ -90,6 +90,24 @@ class Admin extends Authenticatable
     }
 
     /**
+     * True only for a regular admin whose sole granted permission is
+     * 'meal-management' — used to keep such admins off the dashboard
+     * entirely and land them straight in the meal-management section
+     * instead. Never true for the mother admin or a full_access admin,
+     * since both can already reach every section including the dashboard.
+     */
+    public function isMealManagementOnly(): bool
+    {
+        if ($this->is_super_admin || $this->full_access) {
+            return false;
+        }
+
+        $permissions = $this->permissions ?? [];
+
+        return count($permissions) === 1 && $permissions[0] === 'meal-management';
+    }
+
+    /**
      * A fingerprint of this admin's authentication-relevant state (password,
      * role, and permissions). Sessions store this value at login and compare
      * it on every request — a mismatch means someone changed the account

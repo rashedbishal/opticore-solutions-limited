@@ -44,6 +44,7 @@ class AdminPermissions
             ['key' => 'transactions', 'label' => 'Transactions'],
             ['key' => 'configuration', 'label' => 'Configuration'],
             ['key' => 'subscriptions', 'label' => 'Subscriptions'],
+            ['key' => 'meal-management', 'label' => 'Meal Management'],
         ];
     }
 

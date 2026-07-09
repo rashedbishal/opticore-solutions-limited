@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\MealManagementController;
+use App\Http\Controllers\Admin\MealReportController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PendingPaymentController;
@@ -286,6 +288,22 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::post('subscriptions/offer-email', [AdminSubscriptionController::class, 'sendOfferEmail'])->name('subscriptions.offer-email.send');
     Route::get('subscriptions/custom-email', [AdminSubscriptionController::class, 'customEmail'])->name('subscriptions.custom-email');
     Route::post('subscriptions/custom-email', [AdminSubscriptionController::class, 'sendCustomEmail'])->name('subscriptions.custom-email.send');
+
+    // Meal Management — internal office lunch program, backed by its own
+    // 'meal' database connection (see config/database.php). Unrelated to
+    // any client-facing workflow.
+    Route::prefix('meal-management')->name('meal-management.')->group(function () {
+        Route::get('/', [MealManagementController::class, 'index'])->name('index');
+        Route::post('/select', [MealManagementController::class, 'select'])->name('select');
+        Route::put('/item', [MealManagementController::class, 'updateItem'])->name('item.update');
+        Route::put('/settings', [MealManagementController::class, 'updateSettings'])->name('settings.update');
+        Route::post('/holidays', [MealManagementController::class, 'storeHoliday'])->name('holidays.store');
+        Route::delete('/holidays/{holiday}', [MealManagementController::class, 'destroyHoliday'])->name('holidays.destroy');
+        Route::post('/cancellations', [MealManagementController::class, 'storeCancellation'])->name('cancellations.store');
+        Route::delete('/cancellations/{cancellation}', [MealManagementController::class, 'destroyCancellation'])->name('cancellations.destroy');
+        Route::post('/selections/override', [MealManagementController::class, 'override'])->name('selections.override');
+        Route::get('/report/export', [MealReportController::class, 'export'])->name('report.export');
+    });
 });
 
 // SSLCommerz

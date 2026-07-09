@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var array<int, string>
      */
-    protected array $connectionsToTransact = ['pgsql', 'admin'];
+    protected array $connectionsToTransact = ['pgsql', 'admin', 'meal'];
 
     protected function setUp(): void
     {
@@ -30,16 +30,17 @@ abstract class TestCase extends BaseTestCase
         $this->seed(CategorySeeder::class);
     }
 
-    // No explicit `migrate:fresh --database=admin` here: the two
-    // admin-connection migrations declare `protected $connection = 'admin'`
-    // and call Schema::connection('admin') explicitly, so the plain
-    // migrate:fresh in parent::refreshTestDatabase() already routes them to
-    // the admin database correctly. An earlier version of this method
-    // added a second `migrate:fresh --database=admin` pass, which replays
-    // every OTHER migration (the ones with no explicit connection) against
-    // the admin database too — the same footgun documented in
-    // scripts/deploy/deploy.sh, and confirmed to actually reproduce when
-    // run directly. The separate opticoresolutions_admin_test database
-    // itself is expected to already exist (see ci.yml's explicit `CREATE
-    // DATABASE` step; create it once locally the same way if it's missing).
+    // No explicit `migrate:fresh --database=admin` (or `=meal`) here: the
+    // admin- and meal-connection migrations declare their own
+    // `protected $connection` and call Schema::connection(...) explicitly,
+    // so the plain migrate:fresh in parent::refreshTestDatabase() already
+    // routes them to the right database correctly. An earlier version of
+    // this method added a second `migrate:fresh --database=admin` pass,
+    // which replays every OTHER migration (the ones with no explicit
+    // connection) against the admin database too — the same footgun
+    // documented in scripts/deploy/deploy.sh, and confirmed to actually
+    // reproduce when run directly. The separate opticoresolutions_admin_test
+    // / opticoresolutions_meal_test databases are expected to already exist
+    // (see ci.yml's explicit `CREATE DATABASE` steps; create them once
+    // locally the same way if missing).
 }

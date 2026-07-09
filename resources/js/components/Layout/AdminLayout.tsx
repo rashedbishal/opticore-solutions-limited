@@ -32,6 +32,7 @@ import {
     DollarSign,
     Settings,
     Send,
+    UtensilsCrossed,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -145,7 +146,37 @@ const NAV_ITEMS = [
         icon: Send,
         key: 'subscriptions',
     },
+    {
+        name: 'Meal Management',
+        href: '/admin/meal-management',
+        icon: UtensilsCrossed,
+        key: 'meal-management',
+    },
 ];
+
+/**
+ * True only for a regular admin whose sole granted permission is
+ * 'meal-management' — mirrors Admin::isMealManagementOnly() server-side.
+ * Such admins never see the Dashboard nav item, since the dashboard route
+ * itself redirects them straight into the meal-management section.
+ */
+function isMealManagementOnly(
+    admin:
+        | {
+              is_super_admin?: boolean;
+              full_access?: boolean;
+              permissions?: string[] | null;
+          }
+        | undefined,
+): boolean {
+    if (admin?.is_super_admin || admin?.full_access) {
+        return false;
+    }
+
+    const permissions = admin?.permissions ?? [];
+
+    return permissions.length === 1 && permissions[0] === 'meal-management';
+}
 
 function canAccessNavItem(
     admin:
@@ -175,8 +206,10 @@ export default function AdminLayout({
 }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
-    const visibleNavItems = NAV_ITEMS.filter((item) =>
-        canAccessNavItem(auth.user, item.key),
+    const visibleNavItems = NAV_ITEMS.filter(
+        (item) =>
+            canAccessNavItem(auth.user, item.key) &&
+            !(item.key === null && isMealManagementOnly(auth.user)),
     );
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
