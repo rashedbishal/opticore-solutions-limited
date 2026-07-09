@@ -9,7 +9,7 @@ A Laravel 13 + Inertia v3 + React 19 marketing site and client portal for Optico
 ## Commands
 
 ### Backend (PHP)
-- `composer dev` — run dev stack concurrently: `php artisan serve`, queue listener, `pail` logs, and `npm run dev` (Vite).
+- `composer dev` — run dev stack concurrently: `php artisan serve`, queue listener, `pail` logs, `npm run dev` (Vite), and `php artisan schedule:work` (ticks the task scheduler every minute — required for any `withSchedule()` entry in `bootstrap/app.php`, e.g. `WarmCache`, `PruneOrphanedCheckoutUploads`, `AutoDeclineMealSelections`, to actually fire locally). `deploy.sh` itself doesn't provision a scheduler runner — on the VPS this is a `* * * * * cd /var/www/opticore/current && php8.3 artisan schedule:run` crontab entry for the `rashed` user (set up manually, outside this repo; not something `deploy.sh` manages or restarts, since it always points at the `current` symlink and needs no per-deploy changes).
 - `php artisan test --compact` — run the Pest/PHPUnit suite. Filter with `--filter=testName`.
 - `composer test` — clears config cache, runs `pint --test`, then the full test suite (used in CI-like checks).
 - `composer lint` / `composer lint:check` — Pint formatting (fix / check-only).
