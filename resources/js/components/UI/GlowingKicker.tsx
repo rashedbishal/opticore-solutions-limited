@@ -33,7 +33,7 @@ const GlowingKicker: React.FC<GlowingKickerProps> = ({ children, className }) =>
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-[10px] font-bold tracking-[0.2em] text-white uppercase backdrop-blur-sm overflow-hidden"
+                className="relative inline-flex items-center gap-2 rounded-full border border-theme bg-theme-surface px-4 py-1.5 text-[10px] font-bold tracking-[0.2em] text-theme uppercase backdrop-blur-sm overflow-hidden"
             >
                 {/* Text Content */}
                 <span className="relative z-10">{children}</span>
@@ -49,14 +49,14 @@ const GlowingKicker: React.FC<GlowingKickerProps> = ({ children, className }) =>
                         ease: "linear",
                         repeatDelay: 1
                     }}
-                    className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent z-0"
+                    className="absolute inset-0 bg-linear-to-r from-transparent via-[var(--theme-text)]/10 to-transparent z-0"
                 />
 
                 {/* Tiny Particles */}
                 {particles.map((p) => (
                     <motion.div
                         key={p.id}
-                        className="absolute bg-white rounded-full opacity-20 pointer-events-none"
+                        className="absolute rounded-full bg-[var(--theme-text)] opacity-20 pointer-events-none"
                         style={{
                             left: `${p.x}%`,
                             top: `${p.y}%`,

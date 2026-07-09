@@ -36,6 +36,7 @@ const companyLinks = [
     { label: 'About Us', href: '/about-us' },
     { label: 'Message from MD', href: '/message-from-md' },
     { label: 'Career', href: '/career' },
+    { label: 'Contact', href: '/contact' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Blogs', href: '/blogs' },
     { label: 'Privacy Policy', href: '/privacy-policy' },

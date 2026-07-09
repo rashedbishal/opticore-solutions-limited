@@ -196,7 +196,7 @@ export default function Contact() {
                             />
                         </h1>
                     </div>
-                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start lg:gap-12">
                         {/* Contact Form Container */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -205,7 +205,7 @@ export default function Contact() {
                             transition={{ duration: 0.8 }}
                             className="lg:col-span-7"
                         >
-                            <div className="h-full rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] sm:p-8 md:p-12 dark:bg-white/[0.04]">
+                            <div className="rounded-[2rem] border border-theme bg-white p-8 [box-shadow:var(--neo-shadow-panel)] sm:p-8 md:p-12 dark:bg-white/[0.04]">
                                 <div className="mb-10 flex items-center gap-4">
                                     <div className="rounded-2xl bg-violet-500/10 p-3">
                                         <MessageSquare className="h-6 w-6 text-violet-500 dark:text-violet-400" />
