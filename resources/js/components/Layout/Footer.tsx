@@ -198,7 +198,7 @@ export default function Footer() {
     return (
         <>
             <footer className="relative z-10 border-t border-theme bg-zinc-100 dark:bg-zinc-900/60">
-                <div className="h-px w-full bg-linear-to-r from-violet-500 via-cyan-400 to-violet-500" />
+                <div className="gradient-divider h-px w-full" />
                 <div className="section-shell pt-8 pb-6 md:pt-10 md:pb-8 lg:pt-12 lg:pb-10">
                     <div className="section-inner grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
                         <div className="col-span-2 space-y-5 sm:col-span-1">

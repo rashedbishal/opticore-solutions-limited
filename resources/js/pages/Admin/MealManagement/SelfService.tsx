@@ -6,6 +6,7 @@ import {
     CheckCircle2,
     Clock,
     Loader2,
+    Radio,
     ThumbsDown,
     ThumbsUp,
     UtensilsCrossed,
@@ -13,7 +14,9 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import MealManagementController from '@/actions/App/Http/Controllers/Admin/MealManagementController';
+import RealtimeTableListener from '@/components/Admin/RealtimeTableListener';
 import AdminLayout from '@/components/Layout/AdminLayout';
+import useEchoReady from '@/hooks/useEchoReady';
 
 interface Props {
     today: string;
@@ -60,6 +63,7 @@ export default function MealManagementSelfService({
     acceptStartTime,
     lockTime,
 }: Props) {
+    const echoReady = useEchoReady();
     const [pendingStatus, setPendingStatus] = useState<
         'accepted' | 'declined' | null
     >(null);
@@ -80,10 +84,30 @@ export default function MealManagementSelfService({
         <div className="mx-auto max-w-2xl space-y-6">
             <div className={CARD}>
                 <div className={CARD_ACCENT} />
-                <h2 className="mb-6 flex items-center gap-2 text-sm font-semibold text-white">
-                    <UtensilsCrossed className="h-4 w-4 text-violet-400" />{' '}
-                    Today&rsquo;s Lunch
-                </h2>
+                {echoReady && (
+                    <RealtimeTableListener
+                        channel="admin.meal-management"
+                        event="MealSelectionUpdated"
+                        only={[
+                            'todaysItem',
+                            'blockedReason',
+                            'isConfigured',
+                            'isOpen',
+                            'isLocked',
+                            'selection',
+                        ]}
+                    />
+                )}
+                <div className="mb-6 flex items-center justify-between gap-4">
+                    <h2 className="flex items-center gap-2 text-sm font-semibold text-white">
+                        <UtensilsCrossed className="h-4 w-4 text-violet-400" />
+                        Today&rsquo;s Lunch
+                    </h2>
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-emerald-400/60 uppercase">
+                        <Radio className="h-3 w-3 animate-pulse" />
+                        Live
+                    </span>
+                </div>
 
                 {blockedReason ? (
                     <div className="flex items-start gap-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-5">
