@@ -47,7 +47,7 @@ function TestimonialsTitle({ text }: { text: string }) {
                         repeat: Infinity,
                         ease: 'linear',
                     }}
-                    className="inline-block bg-[linear-gradient(110deg,#a855f7,45%,#ec4899,55%,#a855f7)] bg-[length:200%_100%] bg-clip-text text-transparent py-1"
+                    className="inline-block bg-[linear-gradient(110deg,#dc2626,45%,#fde047,55%,#dc2626)] bg-[length:200%_100%] bg-clip-text text-transparent py-1 dark:bg-[linear-gradient(110deg,#a855f7,45%,#ec4899,55%,#a855f7)]"
                 >
                     {text}
                 </motion.span>
@@ -105,7 +105,7 @@ function WhyOpticoreTitle({ text }: { text: string }) {
                     },
                 }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="inline-block bg-linear-to-r from-violet-400 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent py-1"
+                className="inline-block bg-linear-to-r from-red-600 via-yellow-300 to-orange-500 bg-clip-text text-transparent py-1 dark:from-violet-400 dark:via-fuchsia-500 dark:to-purple-600"
             >
                 {text}
             </motion.span>

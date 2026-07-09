@@ -395,8 +395,11 @@
         box-shadow: var(--neo-shadow-panel);
     }
 
+    /* Light mode uses a bright red/orange/amber "fire" gradient echoing the
+       logo's brand orange (#f47221). Dark mode keeps the original
+       violet/cyan gradient, which already reads well there. */
     .gradient-text {
-        @apply bg-linear-to-r from-violet-500 via-cyan-400 to-violet-400 bg-clip-text text-transparent;
+        @apply bg-linear-to-r from-red-600 via-yellow-300 to-orange-500 bg-clip-text text-transparent dark:from-violet-500 dark:via-cyan-400 dark:to-violet-400;
     }
 
     .section-kicker {
