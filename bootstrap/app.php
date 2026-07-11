@@ -15,6 +15,7 @@ use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Sentry\Laravel\Integration;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -113,5 +114,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // overlapping the next minute's tick; the command itself is
         // idempotent (only inserts rows for admins still missing one).
         $schedule->command(AutoDeclineMealSelections::class)->everyMinute()->withoutOverlapping();
+
+        // Writes a fresh heartbeat timestamp every tick; Spatie Health's
+        // ScheduleCheck (config: app/Providers/AppServiceProvider.php)
+        // compares against it to detect the scheduler itself silently
+        // dying — e.g. if the VPS's `* * * * * php artisan schedule:run`
+        // crontab entry ever gets removed, nothing else here would notice.
+        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     })
     ->create();

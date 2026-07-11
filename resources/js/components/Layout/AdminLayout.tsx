@@ -34,6 +34,7 @@ import {
     Send,
     UtensilsCrossed,
     Activity,
+    HeartPulse,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -165,6 +166,14 @@ const NAV_ITEMS = [
         // other item here.
         key: 'pulse',
     },
+    {
+        name: 'Health',
+        href: '/health',
+        icon: HeartPulse,
+        // Same deal as Pulse above — mother-admin-only, enforced via
+        // isMotherAdmin() below and the server-side viewHealth gate.
+        key: 'health',
+    },
 ];
 
 /**
@@ -192,15 +201,23 @@ function isMealManagementOnly(
 }
 
 /**
- * Mirrors Admin::isMotherAdmin() server-side — used to hide the Pulse nav
- * item from full_access admins, who otherwise pass every other item's
- * canAccessNavItem() check.
+ * Mirrors Admin::isMotherAdmin() server-side — used to hide the Pulse and
+ * Health nav items from full_access admins, who otherwise pass every other
+ * item's canAccessNavItem() check.
  */
 function isMotherAdmin(
     admin: { is_super_admin?: boolean } | undefined,
 ): boolean {
     return admin?.is_super_admin === true;
 }
+
+/**
+ * Nav keys that are (a) mother-admin-only, gated by the matching
+ * viewPulse/viewHealth server-side gate rather than an AdminPermissions
+ * key, and (b) separate non-Inertia dashboards rendered as plain <a> links
+ * below rather than Inertia <Link>s.
+ */
+const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = ['pulse', 'health'];
 
 function canAccessNavItem(
     admin:
@@ -234,7 +251,8 @@ export default function AdminLayout({
         (item) =>
             canAccessNavItem(auth.user, item.key) &&
             !(item.key === null && isMealManagementOnly(auth.user)) &&
-            (item.key !== 'pulse' || isMotherAdmin(auth.user)),
+            (!MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(item.key ?? '') ||
+                isMotherAdmin(auth.user)),
     );
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
@@ -696,13 +714,18 @@ export default function AdminLayout({
                                     </>
                                 );
 
-                                // Pulse is a separate Livewire dashboard, not
-                                // an Inertia page — Inertia's <Link> expects
-                                // an X-Inertia JSON response and breaks on
-                                // it, so this one item gets a plain browser
-                                // navigation (new tab, so CMS SPA state
-                                // isn't lost).
-                                if (item.key === 'pulse') {
+                                // Pulse/Health are separate non-Inertia
+                                // dashboards (Livewire and a plain Blade
+                                // view respectively) — Inertia's <Link>
+                                // expects an X-Inertia JSON response and
+                                // breaks on them, so these get a plain
+                                // browser navigation (new tab, so CMS SPA
+                                // state isn't lost).
+                                if (
+                                    MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(
+                                        item.key ?? '',
+                                    )
+                                ) {
                                     return (
                                         <a
                                             key={item.name}

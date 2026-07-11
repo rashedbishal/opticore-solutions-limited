@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\OptimizedAppCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,6 +60,31 @@ class AppServiceProvider extends ServiceProvider
         // no-op deny callback without ever running, no matter what it
         // would've returned.
         Gate::define('viewPulse', fn ($user = null): bool => (bool) auth('admin')->user()?->isMotherAdmin());
+
+        // Same dual-guard/nullable-$user reasoning as viewPulse above —
+        // restricts /health to the mother admin only.
+        Gate::define('viewHealth', fn ($user = null): bool => (bool) auth('admin')->user()?->isMotherAdmin());
+
+        $this->configureHealthChecks();
+    }
+
+    /**
+     * Register Spatie Health's checks. ScheduleCheck relies on
+     * ScheduleCheckHeartbeatCommand being scheduled every minute (see
+     * bootstrap/app.php) — without it, it always reports "did not run yet".
+     */
+    protected function configureHealthChecks(): void
+    {
+        Health::checks([
+            DatabaseCheck::new()->connectionName('pgsql')->name('Database (client)'),
+            DatabaseCheck::new()->connectionName('admin')->name('Database (admin)'),
+            DatabaseCheck::new()->connectionName('meal')->name('Database (meal)'),
+            CacheCheck::new(),
+            UsedDiskSpaceCheck::new(),
+            ScheduleCheck::new(),
+            DebugModeCheck::new(),
+            OptimizedAppCheck::new(),
+        ]);
     }
 
     /**

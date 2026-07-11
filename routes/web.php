@@ -56,6 +56,7 @@ use App\Http\Middleware\RedirectAdminToPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 // Broadcasting Auth — accessible by web users and admins.
 // CSRF is excluded for this route in bootstrap/app.php because the Pusher.js
@@ -320,6 +321,12 @@ Route::middleware('throttle:payment-callback')->group(function () {
 
 // Browser-sent CSP violation reports — see app/Http/Middleware/SecurityHeaders.php.
 Route::post('/csp-report', [CspReportController::class, 'store'])->name('csp.report')->middleware('throttle:30,1');
+
+// Spatie Health's dashboard — package doesn't auto-register this route
+// (unlike Pulse), only its own secret-token-gated JSON endpoint for external
+// monitors. Gated to the mother admin only via the viewHealth gate
+// (AppServiceProvider) — must stay above the /{slug} wildcard below.
+Route::get('/health', HealthCheckResultsController::class)->middleware('can:viewHealth')->name('health');
 
 // CMS-managed service pages (e.g. /video-editing). Single-segment wildcard —
 // Laravel matches routes in registration order across the *entire* file, not

@@ -24,6 +24,7 @@
         "phpoffice/phpspreadsheet": "^5.1",
         "sentry/sentry-laravel": "^4.26",
         "spatie/browsershot": "^5.4",
+        "spatie/laravel-health": "^1.40",
         "spatie/laravel-pdf": "^2.11"
     },
     "require-dev": {
