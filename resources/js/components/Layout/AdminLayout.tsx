@@ -35,6 +35,7 @@ import {
     UtensilsCrossed,
     Activity,
     HeartPulse,
+    Waypoints,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -174,6 +175,15 @@ const NAV_ITEMS = [
         // isMotherAdmin() below and the server-side viewHealth gate.
         key: 'health',
     },
+    {
+        name: 'Horizon',
+        href: '/horizon',
+        icon: Waypoints,
+        // Same deal as Pulse/Health above — mother-admin-only, enforced via
+        // isMotherAdmin() below and the server-side viewHorizon gate
+        // (HorizonServiceProvider).
+        key: 'horizon',
+    },
 ];
 
 /**
@@ -213,11 +223,11 @@ function isMotherAdmin(
 
 /**
  * Nav keys that are (a) mother-admin-only, gated by the matching
- * viewPulse/viewHealth server-side gate rather than an AdminPermissions
- * key, and (b) separate non-Inertia dashboards rendered as plain <a> links
- * below rather than Inertia <Link>s.
+ * viewPulse/viewHealth/viewHorizon server-side gate rather than an
+ * AdminPermissions key, and (b) separate non-Inertia dashboards rendered as
+ * plain <a> links below rather than Inertia <Link>s.
  */
-const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = ['pulse', 'health'];
+const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = ['pulse', 'health', 'horizon'];
 
 function canAccessNavItem(
     admin:
@@ -714,13 +724,14 @@ export default function AdminLayout({
                                     </>
                                 );
 
-                                // Pulse/Health are separate non-Inertia
-                                // dashboards (Livewire and a plain Blade
-                                // view respectively) — Inertia's <Link>
-                                // expects an X-Inertia JSON response and
-                                // breaks on them, so these get a plain
-                                // browser navigation (new tab, so CMS SPA
-                                // state isn't lost).
+                                // Pulse/Health/Horizon are separate
+                                // non-Inertia dashboards (Livewire, a plain
+                                // Blade view, and Horizon's own Vue SPA
+                                // respectively) — Inertia's <Link> expects
+                                // an X-Inertia JSON response and breaks on
+                                // them, so these get a plain browser
+                                // navigation (new tab, so CMS SPA state
+                                // isn't lost).
                                 if (
                                     MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(
                                         item.key ?? '',

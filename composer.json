@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^7.10",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0",
+        "laravel/horizon": "^5.47",
         "laravel/pulse": "^1.7",
         "laravel/reverb": "^1.0",
         "laravel/socialite": "^5.26",
@@ -22,6 +23,7 @@
         "laravel/wayfinder": "^0.1.14",
         "php-http/curl-client": "^2.4",
         "phpoffice/phpspreadsheet": "^5.1",
+        "predis/predis": "^3.5",
         "sentry/sentry-laravel": "^4.26",
         "spatie/browsershot": "^5.4",
         "spatie/laravel-health": "^1.40",
@@ -62,7 +64,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#a3e635\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan schedule:work\" --names=server,queue,logs,vite,schedule --kill-others"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#a3e635\" \"php artisan serve\" \"php artisan horizon\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan schedule:work\" --names=server,queue,logs,vite,schedule --kill-others"
         ],
         "lint": [
             "pint --parallel"
