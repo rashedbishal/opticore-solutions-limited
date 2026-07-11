@@ -44,6 +44,15 @@ There are two completely separate user systems backed by two separate Postgres d
 
 Several routes intentionally accept either guard (`auth:web,admin`) — e.g. offer viewing and chat attachment downloads — because both customers and staff can legitimately hit them.
 
+### Meal Management CMS (third, fully isolated database)
+An internal office lunch program under `/admin/meal-management`, backed by its own **`meal` DB connection** (`config/database.php` `'meal'` connection, env `DB_MEAL_*`) — deliberately unrelated to either the `pgsql` (client) or `admin` database, so `MealSetting`/`MealItem`/`MealHoliday`/`MealCancellation`/`MealSelection` never join against `User`/`Admin`/business tables.
+- Gated by the `meal-management` key in `AdminPermissions` (same three-places-must-match rule as every other admin section). The mother admin oversees but never selects — `MealScheduleService::eligibleAdmins()` explicitly excludes `is_super_admin` and requires `canAccess('meal-management')`.
+- `MealScheduleService` is the single source of truth for "is selection open right now" (weekly holiday day, ad hoc `MealCancellation`, the daily accept/decline window) — reused by `MealManagementController` (building UI props), the `select()` mutation's server-side guard, and the scheduled sweep, so the three can't drift out of sync. `MealClock` centralizes the timezone. Don't reimplement the window check elsewhere.
+- `AutoDeclineMealSelections` (console command, registered in `bootstrap/app.php`'s `withSchedule()`) auto-declines anyone who hasn't responded once the window closes — see the `composer dev` note above for running the scheduler locally.
+- Selection changes broadcast on the `admin.meal-management` private channel (`routes/channels.php`, gated the same as the permission check) via `MealSelectionUpdated`, so the mother admin's roster table (`Admin/MealManagement/Overview.tsx`) updates live using the existing `RealtimeTableListener` pattern (same one used by admin Orders/Transactions/Tasks tables) — no page reload.
+- An admin whose *only* granted permission is `meal-management` is kept out of the regular dashboard entirely: `Admin::isMealManagementOnly()` server-side and the mirrored check in `AdminLayout.tsx` redirect them straight into `Admin/MealManagement/SelfService.tsx` instead.
+- `Admin/MealReportController` exports a monthly Excel report (PhpSpreadsheet) of selections; the mother admin can password-gate override any admin's selection via `MealManagementController`.
+
 ### Admin permission system
 `app/Support/AdminPermissions.php` is the **single source of truth** for grantable CMS sections. Each `key` must simultaneously match:
 1. the route-name segment after `admin.` (e.g. `admin.portfolios.index` → `portfolios`),
@@ -57,7 +66,7 @@ Several routes intentionally accept either guard (`auth:web,admin`) — e.g. off
 Routes under `admin.permission` derive the required key from the route name automatically; routes that don't follow the `admin.<key>.*` convention (e.g. `offer.update`) check `Admin::canAccess()` explicitly inside the controller instead.
 
 ### Real-time (Laravel Reverb)
-`routes/channels.php` defines private/presence channels for per-user notifications (`App.Models.User.{id}`), customer↔admin conversations (`conversations.{id}`, dual-guard), and admin-only dashboards (`admin.conversations`, `admin.orders`, `admin.transactions`, `admin.tasks` — each gated by the matching `canAccess()` permission key). The `/broadcasting/auth` route promotes the `admin` guard to default when an admin is subscribing, so `Broadcast::auth()` resolves the right user; it's also CSRF-exempt because Pusher.js authorizes via JSON, not a form post. Use the `echo-development` / `echo-react-development` skills when touching any of this.
+`routes/channels.php` defines private/presence channels for per-user notifications (`App.Models.User.{id}`), customer↔admin conversations (`conversations.{id}`, dual-guard), and admin-only dashboards (`admin.conversations`, `admin.orders`, `admin.transactions`, `admin.tasks`, `admin.meal-management` — each gated by the matching `canAccess()` permission key). The `/broadcasting/auth` route promotes the `admin` guard to default when an admin is subscribing, so `Broadcast::auth()` resolves the right user; it's also CSRF-exempt because Pusher.js authorizes via JSON, not a form post. Use the `echo-development` / `echo-react-development` skills when touching any of this.
 
 ### Payments: SSLCommerz + Google Pay
 - `app/Library/SslCommerz/` wraps the SSLCommerz gateway SDK; `SslCommerzPaymentController` exposes `/pay-via-ajax`, `/success`, `/fail`, `/cancel`, `/ipn` (all under `throttle:payment-callback`, CSRF-exempt since the gateway POSTs directly).
