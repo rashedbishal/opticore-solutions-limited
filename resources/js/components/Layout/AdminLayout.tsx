@@ -33,6 +33,7 @@ import {
     Settings,
     Send,
     UtensilsCrossed,
+    Activity,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
@@ -152,6 +153,18 @@ const NAV_ITEMS = [
         icon: UtensilsCrossed,
         key: 'meal-management',
     },
+    {
+        name: 'Pulse',
+        href: '/pulse',
+        icon: Activity,
+        // Not a real AdminPermissions key (never appears in any admin's
+        // permissions array) — visibility is enforced entirely by the
+        // isMotherAdmin() check below, mirroring the server-side
+        // Gate::define('viewPulse', ...) restriction to the mother admin
+        // only. Deliberately excludes full_access admins too, unlike every
+        // other item here.
+        key: 'pulse',
+    },
 ];
 
 /**
@@ -176,6 +189,17 @@ function isMealManagementOnly(
     const permissions = admin?.permissions ?? [];
 
     return permissions.length === 1 && permissions[0] === 'meal-management';
+}
+
+/**
+ * Mirrors Admin::isMotherAdmin() server-side — used to hide the Pulse nav
+ * item from full_access admins, who otherwise pass every other item's
+ * canAccessNavItem() check.
+ */
+function isMotherAdmin(
+    admin: { is_super_admin?: boolean } | undefined,
+): boolean {
+    return admin?.is_super_admin === true;
 }
 
 function canAccessNavItem(
@@ -209,7 +233,8 @@ export default function AdminLayout({
     const visibleNavItems = NAV_ITEMS.filter(
         (item) =>
             canAccessNavItem(auth.user, item.key) &&
-            !(item.key === null && isMealManagementOnly(auth.user)),
+            !(item.key === null && isMealManagementOnly(auth.user)) &&
+            (item.key !== 'pulse' || isMotherAdmin(auth.user)),
     );
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
@@ -634,17 +659,13 @@ export default function AdminLayout({
                                     currentPath.startsWith(item.href) &&
                                     (item.href !== '/admin' ||
                                         currentPath === '/admin');
-
-                                return (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={`group relative flex items-center rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
-                                            active
-                                                ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
-                                                : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
-                                        }`}
-                                    >
+                                const linkClassName = `group relative flex items-center rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
+                                    active
+                                        ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
+                                        : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
+                                }`;
+                                const linkContent = (
+                                    <>
                                         {active && (
                                             <div className="absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
                                         )}
@@ -672,6 +693,36 @@ export default function AdminLayout({
                                                     />
                                                 </span>
                                             )}
+                                    </>
+                                );
+
+                                // Pulse is a separate Livewire dashboard, not
+                                // an Inertia page — Inertia's <Link> expects
+                                // an X-Inertia JSON response and breaks on
+                                // it, so this one item gets a plain browser
+                                // navigation (new tab, so CMS SPA state
+                                // isn't lost).
+                                if (item.key === 'pulse') {
+                                    return (
+                                        <a
+                                            key={item.name}
+                                            href={item.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={linkClassName}
+                                        >
+                                            {linkContent}
+                                        </a>
+                                    );
+                                }
+
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className={linkClassName}
+                                    >
+                                        {linkContent}
                                     </Link>
                                 );
                             })}

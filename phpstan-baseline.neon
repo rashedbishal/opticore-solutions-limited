@@ -713,3 +713,9 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Support/PendingOrderResolver.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 3
+			path: database/migrations/2026_07_11_082854_create_pulse_tables.php

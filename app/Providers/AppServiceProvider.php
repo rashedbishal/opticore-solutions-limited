@@ -35,6 +35,24 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('access-admin', function (User $user) {
             return $user->role === 'admin';
         });
+
+        // Pulse's Authorize middleware checks this gate. Deliberately ignore
+        // the injected $user — it resolves against the default ('web') guard,
+        // which is the customer User model here, not the Admin that
+        // authenticates via the separate 'admin' guard — and restrict the
+        // dashboard (request timings, exceptions, slow queries, per-user
+        // activity) to the mother admin only, rather than adding it as a
+        // delegable AdminPermissions key.
+        //
+        // The `$user = null` param is required, not decorative: Gate::raw()
+        // resolves "$user" from the *default* guard before invoking this
+        // closure, and when that's null (true here, since admins never
+        // authenticate on the default guard) it only invokes closures whose
+        // first parameter is nullable/defaults to null — i.e. explicitly
+        // "allows guests". A zero-arg closure gets silently swapped for a
+        // no-op deny callback without ever running, no matter what it
+        // would've returned.
+        Gate::define('viewPulse', fn ($user = null): bool => (bool) auth('admin')->user()?->isMotherAdmin());
     }
 
     /**
