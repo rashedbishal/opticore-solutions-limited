@@ -63,15 +63,34 @@ class SecurityHeaders
             ? "frame-src 'self' https:"
             : "frame-src 'self' https://www.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://pay.sslcommerz.com https://www.googletagmanager.com";
 
+        // Pulse/Health/Horizon are mother-admin-only ops dashboards (see
+        // AdminLayout.tsx, AppServiceProvider's viewPulse/viewHealth gates,
+        // HorizonServiceProvider's viewHorizon gate) — not public pages, so
+        // relaxing CSP here doesn't expose this to arbitrary visitors.
+        // Alpine.js (bundled by Livewire, which both Pulse and Horizon's
+        // dashboard rely on) evaluates x-data/@click/x-intersect directive
+        // expressions via `new Function()` at runtime — there's no
+        // precompiled alternative, so 'unsafe-eval' is a hard requirement,
+        // not a preference. Confirmed via real browser console errors
+        // (`EvalError: call to Function() blocked by CSP`) on /pulse; every
+        // lazy-loaded card's x-intersect="$wire.__lazyLoad(...)" silently
+        // never fires without it, which is what actually caused the blank
+        // dashboard (not a missing script hash — that part already worked).
+        // fonts.bunny.net is Livewire/Horizon's default font host (Bunny
+        // Fonts, a Google Fonts alternative) — serves both the CSS and the
+        // font files from the same domain, unlike Google's split
+        // fonts.googleapis.com/fonts.gstatic.com.
+        $isSelfHostedDashboard = $request->routeIs('pulse') || $request->routeIs('health') || $request->routeIs('horizon.*');
+
         $directives = [
             "default-src 'self'",
-            "script-src 'self' 'wasm-unsafe-eval' {$this->scriptHashes($response)}https://pay.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://www.googletagmanager.com",
+            "script-src 'self' 'wasm-unsafe-eval' ".($isSelfHostedDashboard ? "'unsafe-eval' " : '')."{$this->scriptHashes($response)}https://pay.google.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://seamless-epay.sslcommerz.com https://www.googletagmanager.com",
             // Inertia injects the progress-bar/error-modal CSS inline at
             // runtime with no nonce support in the installed package
             // version (added later in the 3.x line) — 'unsafe-inline' here
             // only weakens CSS injection, not script execution.
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "font-src 'self' https://fonts.gstatic.com",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com".($isSelfHostedDashboard ? ' https://fonts.bunny.net' : ''),
+            "font-src 'self' https://fonts.gstatic.com".($isSelfHostedDashboard ? ' https://fonts.bunny.net' : ''),
             "img-src 'self' data: https:",
             "media-src 'self' https:",
             "connect-src 'self' https://pay.google.com {$reverbOrigin} https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
