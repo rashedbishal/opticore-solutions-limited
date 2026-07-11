@@ -570,18 +570,12 @@ export default function HomeIndex({
                         <HeroHeadline />
                     </div>
 
-                    <m.p
-                        variants={blurReveal}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ delay: 0.4 }}
-                        className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl"
-                    >
+                    <p className="mx-auto mt-12 max-w-2xl text-base leading-8 text-theme-muted sm:mt-8 sm:text-lg md:text-xl">
                         We help businesses transform ideas into powerful digital
                         experiences through creative design, cinematic video
                         production, immersive 3D visualization, strategic
                         marketing, and modern web development.
-                    </m.p>
+                    </p>
 
                     <m.div
                         variants={fadeUp}
