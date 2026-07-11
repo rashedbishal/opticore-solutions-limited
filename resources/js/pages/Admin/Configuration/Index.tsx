@@ -375,12 +375,13 @@ export default function ConfigurationIndex({ settings }: Props) {
                     Database Backup
                 </h2>
                 <p className="-mt-4 mb-6 text-xs text-zinc-500">
-                    Downloads a zip containing a full, restorable SQL dump of
-                    all three databases (client, admin, meal) as they stand
-                    right now — whatever tables each has at the time, no manual
-                    list to keep updated. Each file inside restores with{' '}
+                    Downloads a zip containing a full, restorable backup of all
+                    three databases (client, admin, meal) as they stand right
+                    now — whatever tables each has at the time, no manual list
+                    to keep updated. Each file inside is pg_dump's compressed
+                    custom format; restore with{' '}
                     <code className="text-zinc-400">
-                        psql -d dbname &lt; file.sql
+                        pg_restore -d dbname file.dump
                     </code>
                     . This can take a little while depending on database size.
                 </p>

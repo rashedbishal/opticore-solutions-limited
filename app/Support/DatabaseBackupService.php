@@ -12,14 +12,17 @@ use ZipArchive;
  * Dumps all three Postgres databases (client/pgsql, admin, meal) via the
  * native `pg_dump` binary — not a hand-rolled table-by-table export — so a
  * future migration adding/removing tables in any of them needs no changes
- * here; pg_dump always captures whatever schema exists at dump time. Plain
- * SQL format (not pg_dump's custom -Fc format) so the result is restorable
- * with nothing more than `psql -d dbname < file.sql`, no pg_restore needed.
+ * here; pg_dump always captures whatever schema exists at dump time.
+ * Custom format (-Fc), Postgres's own recommended format for backups you
+ * intend to keep: compressed, and restorable selectively/in parallel via
+ * `pg_restore -d dbname file.dump` (plain SQL was the original choice here,
+ * switched to custom format for the smaller download size and restore
+ * flexibility).
  */
 class DatabaseBackupService
 {
     /**
-     * Connection name => label used for both the per-database .sql filename
+     * Connection name => label used for both the per-database .dump filename
      * inside the zip and in error messages.
      *
      * @var array<string, string>
@@ -40,16 +43,16 @@ class DatabaseBackupService
         File::makeDirectory($workDir, 0700, true);
 
         try {
-            $sqlFiles = [];
+            $dumpFiles = [];
 
             foreach (self::CONNECTIONS as $connectionName => $label) {
-                $sqlFiles[$label] = $this->dumpConnection($connectionName, $label, $workDir);
+                $dumpFiles[$label] = $this->dumpConnection($connectionName, $label, $workDir);
             }
 
-            return $this->zip($sqlFiles);
+            return $this->zip($dumpFiles);
         } finally {
             // The zip already has everything it needs by this point —
-            // always clean up the raw .sql files, success or failure, so a
+            // always clean up the raw .dump files, success or failure, so a
             // failed backup doesn't leave a partial dump sitting on disk.
             File::deleteDirectory($workDir);
         }
@@ -58,7 +61,7 @@ class DatabaseBackupService
     private function dumpConnection(string $connectionName, string $label, string $workDir): string
     {
         $config = config("database.connections.{$connectionName}");
-        $sqlPath = "{$workDir}/{$label}-database.sql";
+        $dumpPath = "{$workDir}/{$label}-database.dump";
 
         $process = new Process([
             'pg_dump',
@@ -71,8 +74,11 @@ class DatabaseBackupService
             // tied to that exact role name would otherwise fail to restore.
             '--no-owner',
             '--no-privileges',
-            '--format=plain',
-            '--file='.$sqlPath,
+            // Custom format: compressed, and pg_restore can go selective/
+            // parallel with it — not restorable via plain psql, needs
+            // pg_restore specifically.
+            '--format=custom',
+            '--file='.$dumpPath,
             $config['database'],
         ]);
         // pg_dump's own timeout, independent of the 5-minute ceiling set on
@@ -89,13 +95,13 @@ class DatabaseBackupService
             throw new RuntimeException("Failed to back up the {$label} database: ".$process->getErrorOutput());
         }
 
-        return $sqlPath;
+        return $dumpPath;
     }
 
     /**
-     * @param  array<string, string>  $sqlFiles  label => absolute path
+     * @param  array<string, string>  $dumpFiles  label => absolute path
      */
-    private function zip(array $sqlFiles): string
+    private function zip(array $dumpFiles): string
     {
         $zipPath = storage_path('app/private/db-backups/opticore-backup-'.now()->format('Y-m-d_His').'.zip');
 
@@ -105,8 +111,8 @@ class DatabaseBackupService
             throw new RuntimeException('Failed to create the backup zip archive.');
         }
 
-        foreach ($sqlFiles as $label => $path) {
-            $zip->addFile($path, "{$label}-database.sql");
+        foreach ($dumpFiles as $label => $path) {
+            $zip->addFile($path, "{$label}-database.dump");
         }
 
         $zip->close();
