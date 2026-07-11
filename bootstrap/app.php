@@ -15,6 +15,7 @@ use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Sentry\Laravel\Integration;
+use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -121,5 +122,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // dying — e.g. if the VPS's `* * * * * php artisan schedule:run`
         // crontab entry ever gets removed, nothing else here would notice.
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+
+        // Actually runs the checks and stores results for the /health
+        // dashboard to display — the heartbeat above only feeds the
+        // Schedule check, it doesn't run the checks themselves. Without
+        // this, latestResults() stays null forever and the dashboard shows
+        // nothing.
+        $schedule->command(RunHealthChecksCommand::class)->everyMinute()->withoutOverlapping();
     })
     ->create();

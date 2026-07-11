@@ -110,6 +110,16 @@ class SecurityHeaders
             return '';
         }
 
+        // Some vendor dashboards (Horizon's Vue app) inline a full compiled
+        // JS bundle — 1MB+ — directly into a <script> tag. PHP's default
+        // pcre.backtrack_limit (1,000,000) gets exhausted scanning that much
+        // content for the closing tag, which makes preg_match_all() return
+        // false (a silent failure, not "0 matches") — the hash list ends up
+        // empty and the browser blocks the entire script under CSP. Bump the
+        // limit well past any realistic inline script size; ini_set() here
+        // only affects this request, not the process-wide default.
+        ini_set('pcre.backtrack_limit', '10000000');
+
         if (! preg_match_all('/<script(?![^>]*\ssrc=)[^>]*>(.*?)<\/script>/s', $content, $matches)) {
             return '';
         }
