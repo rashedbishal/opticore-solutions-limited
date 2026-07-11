@@ -1,6 +1,14 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Loader2, Mail, MapPin, Save, Share2 } from 'lucide-react';
+import {
+    DatabaseBackup,
+    Download,
+    Loader2,
+    Mail,
+    MapPin,
+    Save,
+    Share2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -131,11 +139,58 @@ export default function ConfigurationIndex({ settings }: Props) {
         });
     };
 
+    const [backupErrors, setBackupErrors] = useState<string[]>([]);
+    const [downloadingBackup, setDownloadingBackup] = useState(false);
+
+    const handleDownloadBackup = async () => {
+        setDownloadingBackup(true);
+        setBackupErrors([]);
+
+        try {
+            const response = await fetch(
+                adminRoutes.configuration.backup.url(),
+                { headers: { 'X-Requested-With': 'XMLHttpRequest' } },
+            );
+
+            if (!response.ok) {
+                const body = await response.json().catch(() => null);
+                setBackupErrors([
+                    body?.message ?? 'Unable to generate the database backup.',
+                ]);
+
+                return;
+            }
+
+            const disposition = response.headers.get('Content-Disposition');
+            const filename =
+                disposition?.match(/filename="?([^"]+)"?/)?.[1] ??
+                `opticore-backup-${new Date().toISOString().slice(0, 10)}.zip`;
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        } catch {
+            setBackupErrors(['Unable to generate the database backup.']);
+        } finally {
+            setDownloadingBackup(false);
+        }
+    };
+
     return (
         <>
             <CmsErrorDialog
                 messages={errorMessages}
                 onClose={() => setErrorMessages([])}
+            />
+            <CmsErrorDialog
+                messages={backupErrors}
+                onClose={() => setBackupErrors([])}
             />
             <form onSubmit={submit} className="mx-auto max-w-3xl space-y-6">
                 <div className={CARD}>
@@ -312,6 +367,42 @@ export default function ConfigurationIndex({ settings }: Props) {
                     </button>
                 </div>
             </form>
+
+            <div className={`mx-auto max-w-3xl ${CARD} mt-6`}>
+                <div className={CARD_ACCENT} />
+                <h2 className={SECTION_TITLE}>
+                    <DatabaseBackup className="h-4 w-4 text-violet-400" />{' '}
+                    Database Backup
+                </h2>
+                <p className="-mt-4 mb-6 text-xs text-zinc-500">
+                    Downloads a zip containing a full, restorable SQL dump of
+                    all three databases (client, admin, meal) as they stand
+                    right now — whatever tables each has at the time, no manual
+                    list to keep updated. Each file inside restores with{' '}
+                    <code className="text-zinc-400">
+                        psql -d dbname &lt; file.sql
+                    </code>
+                    . This can take a little while depending on database size.
+                </p>
+                <button
+                    type="button"
+                    disabled={downloadingBackup}
+                    onClick={handleDownloadBackup}
+                    className="relative flex items-center justify-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-white/4 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:border-violet-400/50 hover:bg-violet-500/10 disabled:opacity-50"
+                >
+                    {downloadingBackup ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />{' '}
+                            Generating Backup...
+                        </>
+                    ) : (
+                        <>
+                            <Download className="h-4 w-4" /> Download Database
+                            Backup
+                        </>
+                    )}
+                </button>
+            </div>
         </>
     );
 }

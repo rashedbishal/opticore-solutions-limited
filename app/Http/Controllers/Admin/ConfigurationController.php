@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use App\Support\DatabaseBackupService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Throwable;
 
 class ConfigurationController extends Controller
 {
@@ -16,6 +20,30 @@ class ConfigurationController extends Controller
         return Inertia::render('Admin/Configuration/Index', [
             'settings' => SiteSetting::current(),
         ]);
+    }
+
+    /**
+     * Streams a zip of plain-SQL pg_dump backups for all three Postgres
+     * databases (client, admin, meal) — see DatabaseBackupService for why
+     * pg_dump rather than a hand-rolled export.
+     */
+    public function downloadBackup(DatabaseBackupService $backups): BinaryFileResponse|JsonResponse
+    {
+        // Each pg_dump already has its own 240s budget; this is the ceiling
+        // for all three plus zipping, comfortably above that.
+        set_time_limit(300);
+
+        try {
+            $zipPath = $backups->createZipArchive();
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Unable to generate the database backup. Please try again or check the server logs.',
+            ], 500);
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend();
     }
 
     public function update(Request $request): RedirectResponse

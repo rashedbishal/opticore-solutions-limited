@@ -281,6 +281,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     // Site Configuration
     Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('configuration.index');
     Route::put('/configuration', [AdminConfigurationController::class, 'update'])->name('configuration.update');
+    Route::get('/configuration/backup', [AdminConfigurationController::class, 'downloadBackup'])->name('configuration.backup');
 
     // Subscriptions
     Route::get('subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
