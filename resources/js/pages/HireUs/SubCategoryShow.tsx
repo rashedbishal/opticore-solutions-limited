@@ -2,7 +2,7 @@ import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
 import type React from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m as motion } from 'framer-motion';
 import {
     MessageSquare,
     Star,
@@ -42,6 +42,14 @@ import { createPortal } from 'react-dom';
 import { showSubCategory } from '@/actions/App/Http/Controllers/HireUsController';
 import GradientOrb from '@/components/UI/GradientOrb';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+
+// This page is the only public page that needs framer-motion's drag/layout
+// engine (the gallery slider drag and the review-media layout animations
+// below). Loading `domMax` via a dynamic import — instead of statically
+// importing the full `motion` component — keeps that engine out of the
+// `vendor-framer` chunk every other page also downloads (see
+// `AppLayout.tsx`'s `loadFramerFeatures` for the same pattern).
+const loadDomMax = () => import('framer-motion').then((mod) => mod.domMax);
 
 interface PortfolioItem {
     id: number;
@@ -1351,7 +1359,7 @@ export default function SubCategoryShow({
               ];
 
     return (
-        <>
+        <LazyMotion features={loadDomMax}>
             <Head>
                 <title>{subCategory.metaTitle ?? subCategory.name}</title>
                 {(subCategory.metaDescription ?? subCategory.description) && (
@@ -2437,6 +2445,6 @@ export default function SubCategoryShow({
                     </motion.div>
                 )}
             </AnimatePresence>
-        </>
+        </LazyMotion>
     );
 }

@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, m as motion } from 'framer-motion';
 import {
     Star,
     Trash2,

@@ -3,7 +3,7 @@ import type { SharedPageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     AnimatePresence,
-    domAnimation,
+    domMax,
     LazyMotion,
     m as motion,
 } from 'framer-motion';
@@ -368,7 +368,7 @@ export default function AdminLayout({
     }, [flash]);
 
     return (
-        <LazyMotion features={domAnimation}>
+        <LazyMotion features={domMax}>
             <div className="relative min-h-screen overflow-x-hidden bg-[#03050d] font-sans text-slate-200 selection:bg-violet-500/30">
                 {title && <Head title={`${title} — CMS`} />}
 

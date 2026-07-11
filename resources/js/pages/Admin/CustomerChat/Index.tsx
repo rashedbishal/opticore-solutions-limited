@@ -3,7 +3,7 @@ import type { SharedPageProps } from '@/types';
 import type { ReactNode } from 'react';
 import { usePage } from '@inertiajs/react';
 import { echo, useEcho } from '@laravel/echo-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     AlertTriangle,
     ArrowLeft,
