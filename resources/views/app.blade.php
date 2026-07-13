@@ -62,6 +62,16 @@
         <link rel="preload" as="image" href="/images/logo/opticore.webp" fetchpriority="high">
         <link rel="preload" as="image" href="/images/logo/opticore-white.webp" fetchpriority="high">
 
+        {{-- Metropolis ExtraBold (weight 800, see .site-typography's h1-h6 rule
+             in app.css) is the heaviest-used heading weight — the homepage hero
+             <h1> and SectionHeader.tsx both render in it above the fold. It's
+             self-hosted with font-display: swap, so without a preload hint the
+             browser only discovers it needs the file once it parses the CSS and
+             matches it against the DOM, fetching it later than necessary and
+             widening the visible fallback-font flash/reflow on first paint.
+             Preloading here starts the fetch in parallel with app.css/app.tsx. --}}
+        <link rel="preload" as="font" type="font/otf" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/fonts/metropolis/Metropolis-ExtraBold.otf') }}" crossorigin>
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         {{-- Only Roboto Mono is actually rendered: --font-sans resolves to the self-hosted Geist Variable font (see resources/css/app.css), so Plus Jakarta Sans was never visible. --}}
