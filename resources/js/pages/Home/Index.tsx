@@ -3,7 +3,7 @@ import type { Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 import { Head, Link, usePage } from '@inertiajs/react';
-import { m } from 'framer-motion';
+import { LazyMotion, m } from 'framer-motion';
 import { AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { lazy, useEffect, useRef, useState, Suspense } from 'react';
 
@@ -135,6 +135,15 @@ function LazySection({
 // letter-by-letter arrival animation on the hero headline.
 const HERO_TEXT_ANIMATION_ENABLED = true;
 
+// The "We" word's smooth reposition as the phrase next to it changes width
+// relies on framer-motion's `layout` prop (FLIP animation), which needs the
+// `layout` feature — not included in `domAnimation`, the feature set
+// AppLayout's site-wide LazyMotion loads. Scoping a `domMax` LazyMotion to
+// just this component (dynamically imported, same idiom as AppLayout's own
+// `loadFramerFeatures`) restores the smooth transition without adding the
+// drag/layout engine to every other page's bundle.
+const loadDomMax = () => import('framer-motion').then((mod) => mod.domMax);
+
 function HeroHeadline() {
     const phrases = [
         'deliver creative <br/> graphic design solutions <br/> for businesses',
@@ -260,7 +269,7 @@ function HeroHeadline() {
     const currentPhrase = phrases[index];
 
     return (
-        <>
+        <LazyMotion features={loadDomMax}>
             <style>{`
                 .anime-letter {
                     display: inline-block;
@@ -313,7 +322,7 @@ function HeroHeadline() {
                     })}
                 </span>
             </m.h1>
-        </>
+        </LazyMotion>
     );
 }
 
@@ -672,7 +681,8 @@ export default function HomeIndex({
             {/* Marquee */}
             <section className="section-shell pt-0 pb-6">
                 <div className="section-inner flex flex-col items-center">
-                    <span className="neo-btn-ghost mb-4 inline-block rounded-full px-5 py-2 text-[10px] font-black tracking-widest text-theme-muted uppercase sm:text-[11px]">
+                    <span className="neo-btn-ghost mb-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-[10px] font-black tracking-widest text-theme-muted uppercase sm:text-[11px]">
+                        <Sparkles className="drop-icon h-4 w-4 text-violet-500 dark:text-violet-400" />
                         Trusted by Industry Leaders
                     </span>
                     <div className="w-full">
