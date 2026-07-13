@@ -2,7 +2,7 @@ import type { SharedPageProps } from '@/types';
 import type { PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
 import { LazyMotion } from 'framer-motion';
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Fragment, lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
@@ -17,8 +17,19 @@ const SupportWidget = lazy(() => import('@/components/chat/SupportWidget'));
 const loadFramerFeatures = () =>
     import('framer-motion').then((mod) => mod.domAnimation);
 
+// These routes render through AppLayout (no page-level `.layout` override)
+// but have no scroll choreography that benefits from Lenis smoothing —
+// skipping the mount here avoids its dynamic import + idle-triggered rAF
+// loop on pages where it does nothing but cost bytes and main-thread time.
+// Admin/* and Offer/Show already bypass AppLayout entirely via their own
+// `.layout`, so they never reach this check.
+const SMOOTH_SCROLL_EXCLUDED_PREFIXES = ['/dashboard', '/profile', '/checkout'];
+
 export default function AppLayout({ children }: PropsWithChildren) {
     const { url } = usePage<SharedPageProps>();
+    const smoothScrollEnabled = !SMOOTH_SCROLL_EXCLUDED_PREFIXES.some(
+        (prefix) => url === prefix || url.startsWith(`${prefix}/`),
+    );
     const [openWidget, setOpenWidget] = useState<'ai' | 'support' | null>(null);
     const [widgetsMounted, setWidgetsMounted] = useState(false);
     const mainRef = useRef<HTMLElement>(null);
@@ -90,9 +101,16 @@ export default function AppLayout({ children }: PropsWithChildren) {
         return () => window.removeEventListener('open-support-chat', handler);
     }, []);
 
+    // Renders as a plain Fragment (no Lenis mount, no LenisContext value
+    // other than the default `null`) on routes where smooth scrolling is
+    // excluded — `useLenis()` consumers already null-guard (e.g. Modal.tsx's
+    // `lenis?.stop()`), so this is behaviorally identical to "Lenis hasn't
+    // started yet", a state every consumer already handles.
+    const ScrollWrapper = smoothScrollEnabled ? SmoothScroll : Fragment;
+
     return (
         <LazyMotion features={loadFramerFeatures}>
-            <SmoothScroll>
+            <ScrollWrapper>
                 {/* Global Wrapper restored to original styling to debug render crash */}
                 <div className="app-shell bg-grain site-typography">
                     {/* Background effects */}
@@ -136,7 +154,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                         </Suspense>
                     </div>
                 )}
-            </SmoothScroll>
+            </ScrollWrapper>
         </LazyMotion>
     );
 }
