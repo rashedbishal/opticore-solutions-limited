@@ -1,6 +1,5 @@
 import type { SharedPageProps } from '@/types';
 import type { Variants } from 'framer-motion';
-import type { ReactNode } from 'react';
 
 import { Head, Link, usePage } from '@inertiajs/react';
 import { LazyMotion, m } from 'framer-motion';
@@ -14,6 +13,7 @@ const SpotlightCarousel = lazy(
     () => import('@/components/HomeRedesign/SpotlightCarousel'),
 );
 import GradientOrb from '@/components/UI/GradientOrb';
+import LazySection from '@/components/UI/LazySection';
 import MagneticButton from '@/components/UI/MagneticButton';
 import Marquee from '@/components/UI/Marquee';
 import Modal, { ModalBody, ModalFooter } from '@/components/UI/Modal';
@@ -81,55 +81,6 @@ const FLOATING_POSITIONS = [
 ];
 
 // duplicatedServices removed due to being unused
-
-function LazySection({
-    minHeightClassName = 'min-h-[60vh]',
-    children,
-}: {
-    minHeightClassName?: string;
-    children: ReactNode;
-}) {
-    const [isVisible, setIsVisible] = useState(false);
-    const sentinelRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { rootMargin: '400px 0px' },
-        );
-
-        if (sentinelRef.current) {
-            observer.observe(sentinelRef.current);
-        }
-
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <div ref={sentinelRef}>
-            {isVisible ? (
-                <Suspense
-                    fallback={
-                        <div
-                            className={`flex ${minHeightClassName} items-center justify-center text-sm text-zinc-500`}
-                        >
-                            Loading section...
-                        </div>
-                    }
-                >
-                    {children}
-                </Suspense>
-            ) : (
-                <div className={minHeightClassName} aria-hidden="true" />
-            )}
-        </div>
-    );
-}
 
 // Temporarily disabled for testing — set back to true to re-enable the
 // letter-by-letter arrival animation on the hero headline.
