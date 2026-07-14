@@ -290,12 +290,13 @@ function HeroHeadline() {
                 // change any other extrabold text on the site.
                 className="pb-4 text-[2rem] leading-[1.3] font-[800] text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
-                <m.span
-                    layout
-                    className="inline-block"
-                    style={{ opacity: weFontReady ? 1 : 0 }}
-                >
-                    We
+                <m.span layout className="inline-block">
+                    {/* Plain span, not framer-motion's `m.span` above — the
+                        `m.span` owns the `layout` FLIP animation and doesn't
+                        reliably re-apply a plain `style` prop after mount,
+                        so opacity gating lives on an inner element it merely
+                        contains. */}
+                    <span style={{ opacity: weFontReady ? 1 : 0 }}>We</span>
                 </m.span>{' '}
                 <span ref={phraseRef} className="inline">
                     {currentPhrase.split(' ').map((word, wi) => {
