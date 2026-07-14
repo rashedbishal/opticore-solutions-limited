@@ -106,6 +106,51 @@ function HeroHeadline() {
 
     const [index, setIndex] = useState(0);
     const phraseRef = useRef<HTMLSpanElement>(null);
+    // The preload hint in app.blade.php only speeds up the font *fetch* — it
+    // doesn't guarantee Metropolis-ExtraBold (weight 800) has finished
+    // loading before this component's first paint. "We" renders immediately
+    // (unlike the phrase text, which stays at opacity 0 until anime.js
+    // reveals it well after hydration), so it's the one piece of text that
+    // can visibly flash in the browser's fallback font/weight. Holding it
+    // invisible until the Font Loading API confirms the weight is actually
+    // ready avoids that flash; the timeout is a safety net if the API is
+    // unsupported or the font fails to load.
+    const [weFontReady, setWeFontReady] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        if (typeof document === 'undefined' || !('fonts' in document)) {
+            setWeFontReady(true);
+            return;
+        }
+
+        const fallback = setTimeout(() => {
+            if (!cancelled) {
+                setWeFontReady(true);
+            }
+        }, 500);
+
+        document.fonts
+            .load('800 1em Metropolis')
+            .then(() => document.fonts.ready)
+            .then(() => {
+                if (!cancelled) {
+                    clearTimeout(fallback);
+                    setWeFontReady(true);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setWeFontReady(true);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+            clearTimeout(fallback);
+        };
+    }, []);
 
     useEffect(() => {
         if (!HERO_TEXT_ANIMATION_ENABLED) {
@@ -244,7 +289,11 @@ function HeroHeadline() {
                 // change any other extrabold text on the site.
                 className="pb-4 text-[2rem] leading-[1.3] font-[800] text-theme sm:text-4xl sm:leading-[1.2] md:text-5xl lg:text-6xl"
             >
-                <m.span layout className="inline-block">
+                <m.span
+                    layout
+                    className="inline-block"
+                    style={{ opacity: weFontReady ? 1 : 0 }}
+                >
                     We
                 </m.span>{' '}
                 <span ref={phraseRef} className="inline">
