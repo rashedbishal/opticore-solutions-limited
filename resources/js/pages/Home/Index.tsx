@@ -122,6 +122,7 @@ function HeroHeadline() {
 
         if (typeof document === 'undefined' || !('fonts' in document)) {
             setWeFontReady(true);
+
             return;
         }
 
