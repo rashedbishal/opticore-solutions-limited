@@ -70,7 +70,7 @@
              matches it against the DOM, fetching it later than necessary and
              widening the visible fallback-font flash/reflow on first paint.
              Preloading here starts the fetch in parallel with app.css/app.tsx. --}}
-        <link rel="preload" as="font" type="font/otf" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/fonts/metropolis/Metropolis-ExtraBold.otf') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/fonts/metropolis/Metropolis-ExtraBold.woff2') }}" crossorigin>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
