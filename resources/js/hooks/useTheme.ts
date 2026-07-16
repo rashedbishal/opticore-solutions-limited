@@ -1,4 +1,10 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useLayoutEffect, useState, useSyncExternalStore } from 'react';
+
+// useLayoutEffect only runs in the browser; on the server react-dom logs a
+// warning if it's called during SSR, so fall back to useEffect there (its
+// effect never actually runs server-side either way).
+const useIsomorphicLayoutEffect =
+    typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 type Theme = 'light' | 'dark';
 
@@ -66,10 +72,13 @@ export function useTheme() {
     );
     const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        queueMicrotask(() => {
-            setMounted(true);
-        });
+    // useLayoutEffect (not useEffect) so `mounted` flips to true in the same
+    // commit as hydration, before the browser paints — otherwise the theme
+    // switcher's real button/icon visibly pops in a frame or two after the
+    // rest of the navbar (e.g. the login icon, which isn't mount-gated),
+    // since plain useEffect callbacks run after paint.
+    useIsomorphicLayoutEffect(() => {
+        setMounted(true);
     }, []);
 
     useEffect(() => {

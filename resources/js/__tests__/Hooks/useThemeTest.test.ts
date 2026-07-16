@@ -75,14 +75,8 @@ describe('useTheme', () => {
         expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
 
-    it('flips mounted to true after mount', async () => {
+    it('mounted is true synchronously after mount (via useLayoutEffect)', () => {
         const { result } = renderHook(() => useTheme());
-
-        expect(result.current.mounted).toBe(false);
-
-        await act(async () => {
-            await Promise.resolve();
-        });
 
         expect(result.current.mounted).toBe(true);
     });
