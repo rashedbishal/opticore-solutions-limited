@@ -1,4 +1,9 @@
-import { useEffect, useLayoutEffect, useState, useSyncExternalStore } from 'react';
+import {
+    useEffect,
+    useLayoutEffect,
+    useState,
+    useSyncExternalStore,
+} from 'react';
 
 // useLayoutEffect only runs in the browser; on the server react-dom logs a
 // warning if it's called during SSR, so fall back to useEffect there (its
