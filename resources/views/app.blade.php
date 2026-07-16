@@ -72,6 +72,16 @@
              Preloading here starts the fetch in parallel with app.css/app.tsx. --}}
         <link rel="preload" as="font" type="font/woff2" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/fonts/metropolis/Metropolis-ExtraBold.woff2') }}" crossorigin>
 
+        {{-- Inter Variable (regular, non-italic) is the body-copy font on every
+             public page (--font-sans in app.css), so unlike the headline weight
+             above it's needed for nearly all above-the-fold text, not just
+             headings. Same rationale: without this hint the browser only
+             discovers it after parsing app.css. Only the non-italic axis is
+             preloaded — italic text is rare enough on this site that eagerly
+             fetching both weights isn't worth the extra bytes on the critical
+             path. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/fonts/Inter/Inter-VariableFont_opsz,wght.woff2') }}" crossorigin>
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         {{-- Only Roboto Mono is actually rendered: --font-sans resolves to the self-hosted Geist Variable font (see resources/css/app.css), so Plus Jakarta Sans was never visible. --}}
