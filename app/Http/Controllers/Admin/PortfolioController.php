@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePortfolioRequest;
 use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -83,7 +84,9 @@ class PortfolioController extends Controller
         $validated = $request->validated();
 
         $mediaType = $this->detectMediaType($request->file('media'));
-        $path = $request->file('media')->store('portfolios', 'public');
+        $path = $mediaType === 'image'
+            ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
+            : $request->file('media')->store('portfolios', 'public');
 
         // Derive category_slug for backward compatibility
         $categorySlug = null;
@@ -151,7 +154,9 @@ class PortfolioController extends Controller
             }
 
             $mediaType = $this->detectMediaType($request->file('media'));
-            $path = $request->file('media')->store('portfolios', 'public');
+            $path = $mediaType === 'image'
+                ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
+                : $request->file('media')->store('portfolios', 'public');
 
             $updateData['media_path'] = $path;
             $updateData['media_type'] = $mediaType;

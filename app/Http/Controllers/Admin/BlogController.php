@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
 use App\Models\Category;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -54,7 +55,7 @@ class BlogController extends Controller
         $validated['slug'] = Str::slug($validated['title']).'-'.uniqid();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('blogs', 'public');
+            $path = ImageUploadOptimizer::store($request->file('image'), 'blogs', 1600);
             $validated['image'] = Storage::url($path);
         }
 
@@ -83,7 +84,7 @@ class BlogController extends Controller
             // Delete old image
             $this->deleteImage($blog->image);
 
-            $path = $request->file('image')->store('blogs', 'public');
+            $path = ImageUploadOptimizer::store($request->file('image'), 'blogs', 1600);
             $validated['image'] = Storage::url($path);
         }
 

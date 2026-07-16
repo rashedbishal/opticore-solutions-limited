@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +27,7 @@ class BrandController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('brands', 'public');
+            $path = ImageUploadOptimizer::store($request->file('logo'), 'brands', 400);
             $validated['logo_path'] = '/storage/'.$path;
         }
 
@@ -52,7 +53,7 @@ class BrandController extends Controller
                 Storage::disk('public')->delete($oldPath);
             }
 
-            $path = $request->file('logo')->store('brands', 'public');
+            $path = ImageUploadOptimizer::store($request->file('logo'), 'brands', 400);
             $validated['logo_path'] = '/storage/'.$path;
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -51,7 +52,7 @@ class TestimonialController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')->store('testimonials', 'public');
+            $validated['image_path'] = ImageUploadOptimizer::store($request->file('image'), 'testimonials', 300);
         }
 
         unset($validated['image']);
@@ -96,7 +97,7 @@ class TestimonialController extends Controller
             if ($testimonial->image_path) {
                 Storage::disk('public')->delete($testimonial->image_path);
             }
-            $validated['image_path'] = $request->file('image')->store('testimonials', 'public');
+            $validated['image_path'] = ImageUploadOptimizer::store($request->file('image'), 'testimonials', 300);
         }
 
         unset($validated['image']);

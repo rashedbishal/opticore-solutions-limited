@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\CategoryPortfolioItem;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -227,11 +228,11 @@ class CategoryController extends Controller
             'thumb' => ['nullable', 'image', 'mimes:webp', 'max:2048'],
         ]);
 
-        $imagePath = $request->file('image')->store('categories/floating', 'public');
+        $imagePath = ImageUploadOptimizer::store($request->file('image'), 'categories/floating', 900);
 
         try {
             $thumbPath = $request->hasFile('thumb')
-                ? $request->file('thumb')->store('categories/floating', 'public')
+                ? ImageUploadOptimizer::store($request->file('thumb'), 'categories/floating', 600)
                 : null;
 
             // Delete old images before replacing
@@ -290,7 +291,7 @@ class CategoryController extends Controller
             'alt' => ['nullable', 'string', 'max:150'],
         ]);
 
-        $path = $request->file('image')->store('categories', 'public');
+        $path = ImageUploadOptimizer::store($request->file('image'), 'categories', 1200);
 
         try {
             $category->portfolioItems()->create([

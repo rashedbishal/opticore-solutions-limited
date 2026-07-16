@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\ClientReview;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -102,7 +103,7 @@ class PortfolioSubCategoryController extends Controller
 
         unset($validated['image']);
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('sub-categories', 'public');
+            $validated['image'] = ImageUploadOptimizer::store($request->file('image'), 'sub-categories', 1000);
         }
 
         $subCategory = PortfolioSubCategory::create($validated);
@@ -223,7 +224,7 @@ class PortfolioSubCategoryController extends Controller
             if ($subCategory->image) {
                 Storage::disk('public')->delete($subCategory->image);
             }
-            $validated['image'] = $request->file('image')->store('sub-categories', 'public');
+            $validated['image'] = ImageUploadOptimizer::store($request->file('image'), 'sub-categories', 1000);
         }
 
         $oldCategorySlug = $subCategory->category_slug;
@@ -291,8 +292,10 @@ class PortfolioSubCategoryController extends Controller
         ]);
 
         $file = $request->file('media');
-        $path = $file->store('portfolios', 'public');
         $mediaType = $this->detectMediaType($file);
+        $path = $mediaType === 'image'
+            ? ImageUploadOptimizer::store($file, 'portfolios', 1600)
+            : $file->store('portfolios', 'public');
         $caption = $request->filled('caption') ? $request->input('caption') : $subCategory->name;
 
         Portfolio::create([

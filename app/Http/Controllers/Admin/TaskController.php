@@ -12,6 +12,7 @@ use App\Models\PortfolioSubCategory;
 use App\Models\Task;
 use App\Models\TaskAttachment;
 use App\Models\User;
+use App\Support\ImageUploadOptimizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -153,7 +154,7 @@ class TaskController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')->store('tasks', 'public');
+            $validated['image_path'] = ImageUploadOptimizer::store($request->file('image'), 'tasks', 1200);
         }
 
         unset($validated['image'], $validated['attachments']);
@@ -283,7 +284,7 @@ class TaskController extends Controller
             if ($task->image_path) {
                 Storage::disk('public')->delete($task->image_path);
             }
-            $validated['image_path'] = $request->file('image')->store('tasks', 'public');
+            $validated['image_path'] = ImageUploadOptimizer::store($request->file('image'), 'tasks', 1200);
         } elseif (! empty($validated['remove_image'])) {
             if ($task->image_path) {
                 Storage::disk('public')->delete($task->image_path);
