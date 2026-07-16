@@ -21,16 +21,16 @@ import {
     Zap,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import amexIcon from '@/images/icons/amex.png';
-import banglaqrIcon from '@/images/icons/banglaqr.png';
-import bkashIcon from '@/images/icons/bkash.png';
-import dinersclubIcon from '@/images/icons/dinersclub.png';
+import amexIcon from '@/images/icons/amex.webp';
+import banglaqrIcon from '@/images/icons/banglaqr.webp';
+import bkashIcon from '@/images/icons/bkash.webp';
+import dinersclubIcon from '@/images/icons/dinersclub.webp';
 import mastercardIcon from '@/images/icons/mastercard.png';
-import nagadIcon from '@/images/icons/nagad.png';
-import rocketIcon from '@/images/icons/rocket.png';
+import nagadIcon from '@/images/icons/nagad.webp';
+import rocketIcon from '@/images/icons/rocket.webp';
 import surecashIcon from '@/images/icons/surecash.png';
-import unionpayIcon from '@/images/icons/unionpay.png';
-import upayIcon from '@/images/icons/upay.png';
+import unionpayIcon from '@/images/icons/unionpay.webp';
+import upayIcon from '@/images/icons/upay.webp';
 import visaIcon from '@/images/icons/visa.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
