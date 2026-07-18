@@ -72,6 +72,31 @@ sudo supervisorctl restart laravel-reverb
 log "Restarting SSR server..."
 sudo supervisorctl restart laravel-ssr 2>/dev/null || log "WARNING: laravel-ssr restart failed."
 
+# Verifies the Inertia SSR server (127.0.0.1:13714, config/inertia.php) is
+# actually responding after the restart above — same reasoning as deploy.sh's
+# ssr_check: restarting the supervisor program only proves it was signalled,
+# not that the Node process came back up. Deliberately non-fatal here too —
+# an SSR outage means public pages fall back to client-side rendering, which
+# is degraded but not down, so it must not block an otherwise-successful
+# rollback. It only needs to stop being silent.
+SSR_STATUS="ok"
+ssr_attempt=1
+ssr_max_attempts=5
+while [ $ssr_attempt -le $ssr_max_attempts ]; do
+    if "$PHP" "$CURRENT_LINK/artisan" inertia:check-ssr > /dev/null 2>&1; then
+        log "SSR check passed (attempt $ssr_attempt/$ssr_max_attempts)."
+        break
+    fi
+    if [ "$ssr_attempt" -eq "$ssr_max_attempts" ]; then
+        SSR_STATUS="DOWN"
+        err "SSR server is not responding after restart (php artisan inertia:check-ssr failed). Public pages are silently falling back to client-side rendering. This does NOT fail the rollback, but investigate: sudo supervisorctl status laravel-ssr / sudo supervisorctl tail laravel-ssr"
+        break
+    fi
+    log "SSR check attempt $ssr_attempt/$ssr_max_attempts failed. Retrying in 2s..."
+    sleep 2
+    ssr_attempt=$((ssr_attempt + 1))
+done
+
 log "Signalling queue workers to restart..."
 "$PHP" "$CURRENT_LINK/artisan" queue:restart
 
@@ -93,7 +118,7 @@ while [ $attempt -le $max_attempts ]; do
 done
 
 # ── Record rollback ───────────────────────────────────────────────────────────
-echo "ROLLBACK: $TARGET_RELEASE (from $CURRENT_RELEASE) at $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
+echo "ROLLBACK: $TARGET_RELEASE (from $CURRENT_RELEASE) at $(date -u '+%Y-%m-%d %H:%M:%S UTC') [ssr=$SSR_STATUS]" \
     >> "$DEPLOY_BASE/DEPLOY_LOG"
 
-log "Rollback complete. Production is now running: $TARGET_RELEASE"
+log "Rollback complete. Production is now running: $TARGET_RELEASE  SSR: $SSR_STATUS"

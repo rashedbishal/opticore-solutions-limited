@@ -269,6 +269,27 @@ health_check() {
     return 1  # set -e propagates this failure; on_exit fires with correct state.
 }
 
+# Verifies the Inertia SSR server (127.0.0.1:13714, config/inertia.php) is
+# actually responding after the supervisorctl restart below — restarting the
+# supervisor program only proves the process was signalled, not that the
+# Node process came back up and is serving. Deliberately non-fatal: an SSR
+# outage means public pages silently fall back to client-side rendering,
+# which is degraded but not down, so it must not trigger a full rollback of
+# an otherwise-successful deploy. It only needs to stop being silent.
+ssr_check() {
+    local max_attempts=5 attempt=1
+    while [ $attempt -le $max_attempts ]; do
+        if "$PHP" "$CURRENT_LINK/artisan" inertia:check-ssr > /dev/null 2>&1; then
+            log "SSR check passed (attempt $attempt/$max_attempts)."
+            return 0
+        fi
+        log "SSR check attempt $attempt/$max_attempts failed. Retrying in 2s..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    return 1
+}
+
 # =========================================================================
 # PHASE 1 — Populate release directory, then link shared resources.
 #
@@ -426,6 +447,12 @@ sudo supervisorctl restart laravel-reverb
 log "Restarting SSR server..."
 sudo supervisorctl restart laravel-ssr 2>/dev/null || log "WARNING: laravel-ssr restart failed — SSR disabled, site still live (client-side rendering active)."
 
+SSR_STATUS="ok"
+if ! ssr_check; then
+    SSR_STATUS="DOWN"
+    err "SSR server is not responding after restart (php artisan inertia:check-ssr failed). Public pages are silently falling back to client-side rendering. This does NOT fail the deploy, but investigate: sudo supervisorctl status laravel-ssr / sudo supervisorctl tail laravel-ssr"
+fi
+
 log "Signalling queue workers to restart gracefully..."
 "$PHP" "$CURRENT_LINK/artisan" queue:restart
 
@@ -443,8 +470,8 @@ health_check
 # on_exit fires, sees exit_code=0, calls release_lock, and returns early.
 # This ensures the lock is always released through a single code path.
 # =========================================================================
-log "Deployment successful. Release: $RELEASE_NAME  SHA: $COMMIT_SHA"
-echo "OK: $RELEASE_NAME ($COMMIT_SHA) at $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
+log "Deployment successful. Release: $RELEASE_NAME  SHA: $COMMIT_SHA  SSR: $SSR_STATUS"
+echo "OK: $RELEASE_NAME ($COMMIT_SHA) at $(date -u '+%Y-%m-%d %H:%M:%S UTC') [ssr=$SSR_STATUS]" \
     >> "$DEPLOY_BASE/DEPLOY_LOG"
 
 log "Cleaning up old releases (keeping last $KEEP_RELEASES)..."
