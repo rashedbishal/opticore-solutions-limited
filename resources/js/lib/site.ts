@@ -10,6 +10,7 @@ import type {
 
 export const navigationItems: NavItem[] = [
     { label: 'Home', href: '/', icon: 'Home' },
+    { label: 'Portfolio', href: '/portfolio', icon: 'Images' },
     { label: 'Hire Us', href: '/hire-us', icon: 'Briefcase' },
 ];
 

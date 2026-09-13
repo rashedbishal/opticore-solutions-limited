@@ -11,6 +11,7 @@ import {
     LogOut,
     LogIn,
     Home,
+    Images,
     Briefcase,
     Loader2,
     Menu,
@@ -33,6 +34,7 @@ const IconMap: Record<string, any> = {
     Mail,
     User,
     Home,
+    Images,
     Briefcase,
 };
 
