@@ -65,7 +65,7 @@ function MasonryCard({
                         loop
                         playsInline
                         preload="metadata"
-                        className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                        className="aspect-video w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                     />
                 ) : (
                     <img
