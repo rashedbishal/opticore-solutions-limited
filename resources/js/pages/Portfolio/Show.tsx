@@ -1,5 +1,5 @@
-import type { MouseEvent as ReactMouseEvent } from 'react';
 import type { Variants } from 'framer-motion';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import {
     m as motion,
@@ -11,12 +11,12 @@ import {
 import { ArrowRight, Layers3 } from 'lucide-react';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
     resolveCategoryColor,
     resolveCategoryIcon,
 } from '@/lib/categoryVisuals';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { portfolioCategory } from '@/routes';
 
 interface Category {
