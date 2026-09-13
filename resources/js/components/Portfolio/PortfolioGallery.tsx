@@ -48,12 +48,12 @@ function MasonryCard({
             <div className="relative aspect-auto overflow-hidden">
                 {isYoutube ? (
                     /* YouTube tile: autoplay iframe */
-                    <div className="relative w-full">
+                    <div className="relative aspect-[4/3] w-full ring-1 ring-white/10 ring-inset">
                         <iframe
                             src={`https://www.youtube.com/embed/${item.youtube_video_id}?autoplay=1&mute=1&loop=1&playlist=${item.youtube_video_id}&controls=0&rel=0&modestbranding=1&playsinline=1`}
                             title={item.title}
                             allow="autoplay; encrypted-media"
-                            className="aspect-video w-full"
+                            className="absolute inset-0 h-full w-full"
                             style={{ border: 'none', pointerEvents: 'none' }}
                         />
                     </div>
@@ -65,7 +65,7 @@ function MasonryCard({
                         loop
                         playsInline
                         preload="metadata"
-                        className="aspect-video w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                        className="aspect-[4/3] w-full object-cover ring-1 ring-white/10 ring-inset transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                     />
                 ) : (
                     <img
@@ -78,6 +78,17 @@ function MasonryCard({
                         }}
                         className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                     />
+                )}
+
+                {(isYoutube || item.media_type === 'video') && (
+                    <div className="pointer-events-none absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-[10px] font-bold tracking-wide text-white uppercase shadow-lg ring-1 ring-white/15 backdrop-blur-md">
+                        {isYoutube ? (
+                            <Play className="h-3 w-3 fill-current text-red-500" />
+                        ) : (
+                            <Film className="h-3 w-3 text-cyan-400" />
+                        )}
+                        Video
+                    </div>
                 )}
 
                 {/* Gradient Overlay */}
