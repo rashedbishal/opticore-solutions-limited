@@ -149,7 +149,8 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
                                             portfolio.media_type === 'youtube'
                                                 ? 'border-red-500/20 bg-red-500/10 text-red-400'
-                                                : portfolio.media_type === 'video'
+                                                : portfolio.media_type ===
+                                                    'video'
                                                   ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400'
                                                   : 'border-violet-500/20 bg-violet-500/10 text-violet-400'
                                         }`}

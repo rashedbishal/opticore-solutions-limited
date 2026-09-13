@@ -44,8 +44,8 @@ function extractVideoId(url: string): string {
         const match = url.match(pattern);
 
         if (match) {
-return match[1];
-}
+            return match[1];
+        }
     }
 
     return '';
@@ -259,31 +259,32 @@ export default function PortfolioEdit({
                     {mediaSource === 'file' && (
                         <>
                             {/* Current Media Preview (only if existing is a file) */}
-                            {portfolio.media_path && portfolio.media_type !== 'youtube' && (
-                                <div>
-                                    <p className="mb-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                                        Current Media
-                                    </p>
-                                    {portfolio.media_type === 'video' ? (
-                                        <video
-                                            src={portfolio.media_path}
-                                            muted
-                                            preload="metadata"
-                                            className="h-24 w-40 rounded-lg border border-white/10 object-cover"
-                                        />
-                                    ) : (
-                                        <img
-                                            src={portfolio.media_path}
-                                            alt="Current"
-                                            loading="lazy"
-                                            decoding="async"
-                                            width={160}
-                                            height={96}
-                                            className="h-24 w-40 rounded-lg border border-white/10 object-cover"
-                                        />
-                                    )}
-                                </div>
-                            )}
+                            {portfolio.media_path &&
+                                portfolio.media_type !== 'youtube' && (
+                                    <div>
+                                        <p className="mb-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                            Current Media
+                                        </p>
+                                        {portfolio.media_type === 'video' ? (
+                                            <video
+                                                src={portfolio.media_path}
+                                                muted
+                                                preload="metadata"
+                                                className="h-24 w-40 rounded-lg border border-white/10 object-cover"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={portfolio.media_path}
+                                                alt="Current"
+                                                loading="lazy"
+                                                decoding="async"
+                                                width={160}
+                                                height={96}
+                                                className="h-24 w-40 rounded-lg border border-white/10 object-cover"
+                                            />
+                                        )}
+                                    </div>
+                                )}
 
                             {/* Media Upload */}
                             <div>

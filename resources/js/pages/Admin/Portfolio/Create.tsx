@@ -238,7 +238,10 @@ export default function PortfolioCreate({
                                 type="file"
                                 accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/x-msvideo,video/webm"
                                 onChange={(e) =>
-                                    setData('media', e.target.files?.[0] || null)
+                                    setData(
+                                        'media',
+                                        e.target.files?.[0] || null,
+                                    )
                                 }
                                 className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
                             />
@@ -328,8 +331,8 @@ function extractVideoId(url: string): string {
         const match = url.match(pattern);
 
         if (match) {
-return match[1];
-}
+            return match[1];
+        }
     }
 
     return '';
