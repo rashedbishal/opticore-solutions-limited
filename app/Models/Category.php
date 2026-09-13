@@ -56,6 +56,9 @@ class Category extends Model
         ];
     }
 
+    /**
+     * @return HasMany<CategoryPortfolioItem, $this>
+     */
     public function portfolioItems(): HasMany
     {
         return $this->hasMany(CategoryPortfolioItem::class)->orderBy('sort_order')->orderBy('id');
@@ -235,7 +238,7 @@ class Category extends Model
 
         return [
             'cover' => $images[0] ?? null,
-            'previews' => array_values(array_slice($images, 1, 3)),
+            'previews' => array_slice($images, 1, 3),
         ];
     }
 

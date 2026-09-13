@@ -19,12 +19,6 @@ parameters:
 			path: app/Console/Commands/WarmCache.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{title\: string, category\: string, description\: string\|null, alt\: string, image\: string\}, Closure\(App\\Models\\CategoryPortfolioItem\)\: array\{title\: string, category\: string, description\: string\|null, alt\: string, image\: string\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/WarmCache.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between float and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
@@ -69,18 +63,6 @@ parameters:
 		-
 			message: '#^Offset ''whyOpticore'' on string\|null on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/Admin/CategoryController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{id\: int, title\: string, category\: string, description\: string\|null, alt\: string, image_url\: string\}, Closure\(App\\Models\\CategoryPortfolioItem\)\: array\{id\: int, title\: string, category\: string, description\: string\|null, alt\: string, image_url\: string\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Admin/CategoryController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:reject\(\) expects bool\|\(callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: bool\)\|Illuminate\\Database\\Eloquent\\Model, Closure\(App\\Models\\CategoryPortfolioItem\)\: bool given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Admin/CategoryController.php
 
@@ -575,12 +557,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/ProfileController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{title\: string, category\: string, description\: string\|null, alt\: string, image\: string\}, Closure\(App\\Models\\CategoryPortfolioItem\)\: array\{title\: string, category\: string, description\: string\|null, alt\: string, image\: string\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/ServiceController.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$price\.$#'
