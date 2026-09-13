@@ -9,7 +9,8 @@ interface PortfolioItem {
     category_slug: string;
     subcategory_slug?: string;
     media_path: string | null;
-    media_type: 'image' | 'video';
+    media_type: 'image' | 'video' | 'youtube';
+    youtube_video_id: string | null;
     alt: string;
 }
 
@@ -35,6 +36,8 @@ export default function PortfolioPreview({ item }: Props) {
     const categoryLabel = (item.subcategory_slug || item.category_slug)
         .replace(/-/g, ' ')
         .replace(/\b\w/g, (c) => c.toUpperCase());
+
+    const isYoutube = item.media_type === 'youtube';
 
     return (
         <LazyMotion features={domAnimation}>
@@ -93,7 +96,15 @@ export default function PortfolioPreview({ item }: Props) {
                         className="relative flex items-center justify-center"
                         style={{ maxWidth: '90vw', maxHeight: '90vh' }}
                     >
-                        {item.media_type === 'video' ? (
+                        {isYoutube ? (
+                            <iframe
+                                src={`https://www.youtube.com/embed/${item.youtube_video_id}?autoplay=1&rel=0`}
+                                title={item.title}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="aspect-video w-[min(90vw,140vh)] rounded-2xl shadow-2xl"
+                            />
+                        ) : item.media_type === 'video' ? (
                             <video
                                 src={item.media_path ?? undefined}
                                 controls

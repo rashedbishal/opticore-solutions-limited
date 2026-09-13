@@ -67,6 +67,7 @@ class PortfolioController extends Controller
                         : null,
                     'media_path' => $p->media_path ? asset('storage/'.$p->media_path) : null,
                     'media_type' => $p->media_type ?? 'image',
+                    'youtube_video_id' => $p->youtube_video_id,
                 ]),
         ]);
     }
@@ -83,11 +84,6 @@ class PortfolioController extends Controller
     {
         $validated = $request->validated();
 
-        $mediaType = $this->detectMediaType($request->file('media'));
-        $path = $mediaType === 'image'
-            ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
-            : $request->file('media')->store('portfolios', 'public');
-
         // Derive category_slug for backward compatibility
         $categorySlug = null;
         if ($validated['sub_category_id']) {
@@ -95,14 +91,34 @@ class PortfolioController extends Controller
             $categorySlug = $sub?->category_slug;
         }
 
-        Portfolio::create([
-            'title' => $validated['title'],
-            'category' => $categorySlug,
-            'sub_category_id' => $validated['sub_category_id'] ?? null,
-            'alt' => $validated['alt'] ?? null,
-            'media_path' => $path,
-            'media_type' => $mediaType,
-        ]);
+        if ($validated['media_source'] === 'youtube') {
+            $youtubeVideoId = $this->extractYoutubeVideoId($validated['youtube_url']);
+
+            Portfolio::create([
+                'title' => $validated['title'],
+                'category' => $categorySlug,
+                'sub_category_id' => $validated['sub_category_id'] ?? null,
+                'alt' => $validated['alt'] ?? null,
+                'media_path' => null,
+                'media_type' => 'youtube',
+                'youtube_video_id' => $youtubeVideoId,
+            ]);
+        } else {
+            $mediaType = $this->detectMediaType($request->file('media'));
+            $path = $mediaType === 'image'
+                ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
+                : $request->file('media')->store('portfolios', 'public');
+
+            Portfolio::create([
+                'title' => $validated['title'],
+                'category' => $categorySlug,
+                'sub_category_id' => $validated['sub_category_id'] ?? null,
+                'alt' => $validated['alt'] ?? null,
+                'media_path' => $path,
+                'media_type' => $mediaType,
+                'youtube_video_id' => null,
+            ]);
+        }
 
         Cache::forget('portfolio.categories.index');
         Cache::forget('home.featuredPortfolios');
@@ -124,6 +140,7 @@ class PortfolioController extends Controller
                 'alt' => $portfolio->alt,
                 'media_path' => $portfolio->media_path ? asset('storage/'.$portfolio->media_path) : null,
                 'media_type' => $portfolio->media_type ?? 'image',
+                'youtube_video_id' => $portfolio->youtube_video_id,
             ],
             'categories' => $this->categoryOptions(),
             'subCategoriesByCategory' => $this->subCategoryOptionsByCategory(),
@@ -148,18 +165,42 @@ class PortfolioController extends Controller
             'alt' => $validated['alt'] ?? null,
         ];
 
-        if ($request->hasFile('media')) {
+        if ($validated['media_source'] === 'youtube') {
+            // Switching to or staying on YouTube — delete any existing uploaded file
             if ($portfolio->media_path) {
                 Storage::disk('public')->delete($portfolio->media_path);
             }
 
-            $mediaType = $this->detectMediaType($request->file('media'));
-            $path = $mediaType === 'image'
-                ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
-                : $request->file('media')->store('portfolios', 'public');
+            $youtubeVideoId = $this->extractYoutubeVideoId($validated['youtube_url']);
 
-            $updateData['media_path'] = $path;
-            $updateData['media_type'] = $mediaType;
+            $updateData['media_path'] = null;
+            $updateData['media_type'] = 'youtube';
+            $updateData['youtube_video_id'] = $youtubeVideoId;
+        } else {
+            // File upload mode — clear YouTube data
+            $updateData['youtube_video_id'] = null;
+
+            if ($request->hasFile('media')) {
+                // Delete old file (whether it was a file or not)
+                if ($portfolio->media_path) {
+                    Storage::disk('public')->delete($portfolio->media_path);
+                }
+
+                $mediaType = $this->detectMediaType($request->file('media'));
+                $path = $mediaType === 'image'
+                    ? ImageUploadOptimizer::store($request->file('media'), 'portfolios', 1600)
+                    : $request->file('media')->store('portfolios', 'public');
+
+                $updateData['media_path'] = $path;
+                $updateData['media_type'] = $mediaType;
+            } else {
+                // Keeping current file but clearing YouTube data (if switching from YouTube to file with no new upload)
+                if ($portfolio->media_type === 'youtube') {
+                    // Was YouTube, switching to file but no file provided — keep as-is or clear
+                    // We leave media_path null (it was null for youtube entries)
+                    $updateData['media_type'] = $portfolio->media_type;
+                }
+            }
         }
 
         $oldCategorySlug = $portfolio->category;
@@ -216,5 +257,28 @@ class PortfolioController extends Controller
         }
 
         return 'image';
+    }
+
+    /**
+     * Extract an 11-character YouTube video ID from a URL.
+     * Supports: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/embed/ID, youtube.com/shorts/ID
+     */
+    private function extractYoutubeVideoId(string $url): string
+    {
+        $patterns = [
+            '/youtu\.be\/([\w\-]{11})/',
+            '/youtube\.com\/watch\?.*v=([\w\-]{11})/',
+            '/youtube\.com\/embed\/([\w\-]{11})/',
+            '/youtube\.com\/shorts\/([\w\-]{11})/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        // Fallback: return last path segment or query value (already validated by regex in form request)
+        return substr($url, -11);
     }
 }

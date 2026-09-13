@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Edit, Film, Image, Plus, Trash2 } from 'lucide-react';
+import { Edit, Film, Image, Plus, Trash2, PlayCircle } from 'lucide-react';
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -15,7 +15,8 @@ interface Portfolio {
         name: string;
     } | null;
     media_path: string | null;
-    media_type: 'image' | 'video';
+    media_type: 'image' | 'video' | 'youtube';
+    youtube_video_id: string | null;
 }
 
 interface PaginationLink {
@@ -100,7 +101,17 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                 className="border-b border-white/4 transition-colors last:border-0 hover:bg-violet-500/5"
                             >
                                 <td className="px-6 py-2 whitespace-nowrap">
-                                    {portfolio.media_path ? (
+                                    {portfolio.media_type === 'youtube' &&
+                                    portfolio.youtube_video_id ? (
+                                        <img
+                                            src={`https://img.youtube.com/vi/${portfolio.youtube_video_id}/mqdefault.jpg`}
+                                            alt={portfolio.title}
+                                            loading="lazy"
+                                            width={40}
+                                            height={40}
+                                            className="h-10 w-10 rounded border border-white/10 object-cover"
+                                        />
+                                    ) : portfolio.media_path ? (
                                         portfolio.media_type === 'video' ? (
                                             <video
                                                 src={portfolio.media_path}
@@ -136,12 +147,19 @@ export default function PortfolioIndex({ portfolios }: Props) {
                                 <td className="px-6 py-2 whitespace-nowrap">
                                     <span
                                         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-wide ${
-                                            portfolio.media_type === 'video'
-                                                ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400'
-                                                : 'border-violet-500/20 bg-violet-500/10 text-violet-400'
+                                            portfolio.media_type === 'youtube'
+                                                ? 'border-red-500/20 bg-red-500/10 text-red-400'
+                                                : portfolio.media_type === 'video'
+                                                  ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400'
+                                                  : 'border-violet-500/20 bg-violet-500/10 text-violet-400'
                                         }`}
                                     >
-                                        {portfolio.media_type === 'video' ? (
+                                        {portfolio.media_type === 'youtube' ? (
+                                            <>
+                                                <PlayCircle className="h-3 w-3" />{' '}
+                                                YouTube
+                                            </>
+                                        ) : portfolio.media_type === 'video' ? (
                                             <>
                                                 <Film className="h-3 w-3" />{' '}
                                                 Video

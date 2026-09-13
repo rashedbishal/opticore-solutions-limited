@@ -23,6 +23,7 @@ const portfolio = {
     alt: 'Brand refresh cover',
     media_path: '/storage/portfolio/brand-refresh.jpg',
     media_type: 'image' as const,
+    youtube_video_id: null,
 };
 
 const subCategoriesByCategory = {

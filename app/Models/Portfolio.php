@@ -17,6 +17,7 @@ class Portfolio extends Model
         'sub_category_id',
         'media_path',
         'media_type',
+        'youtube_video_id',
         'alt',
     ];
 

@@ -25,7 +25,8 @@ interface PortfolioItem {
     id: number;
     title: string;
     media_path: string | null;
-    media_type: 'image' | 'video';
+    media_type: 'image' | 'video' | 'youtube';
+    youtube_video_id: string | null;
     alt: string;
 }
 

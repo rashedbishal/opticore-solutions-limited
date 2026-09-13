@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { m as motion, useInView } from 'framer-motion';
-import { FolderOpen, Film, ArrowRight } from 'lucide-react';
+import { FolderOpen, Film, ArrowRight, Play } from 'lucide-react';
 import { useRef } from 'react';
 import { portfolioPreview } from '@/routes';
 
@@ -8,7 +8,8 @@ interface PortfolioItem {
     id: number;
     title: string;
     media_path: string | null;
-    media_type: 'image' | 'video';
+    media_type: 'image' | 'video' | 'youtube';
+    youtube_video_id: string | null;
     alt: string;
 }
 
@@ -29,6 +30,8 @@ function MasonryCard({
         margin: '0px 0px -80px 0px',
     });
 
+    const isYoutube = item.media_type === 'youtube';
+
     return (
         <motion.div
             ref={ref}
@@ -43,7 +46,18 @@ function MasonryCard({
             style={{ willChange: 'transform, opacity' }}
         >
             <div className="relative aspect-auto overflow-hidden">
-                {item.media_type === 'video' ? (
+                {isYoutube ? (
+                    /* YouTube tile: autoplay iframe */
+                    <div className="relative w-full">
+                        <iframe
+                            src={`https://www.youtube.com/embed/${item.youtube_video_id}?autoplay=1&mute=1&loop=1&playlist=${item.youtube_video_id}&controls=0&rel=0&modestbranding=1&playsinline=1`}
+                            title={item.title}
+                            allow="autoplay; encrypted-media"
+                            className="aspect-video w-full"
+                            style={{ border: 'none', pointerEvents: 'none' }}
+                        />
+                    </div>
+                ) : item.media_type === 'video' ? (
                     <video
                         src={item.media_path ?? undefined}
                         autoPlay
@@ -83,7 +97,12 @@ function MasonryCard({
                             className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
                             aria-label={`View ${item.title} full screen`}
                         >
-                            {item.media_type === 'video' ? (
+                            {isYoutube ? (
+                                <>
+                                    <Play className="h-3 w-3 fill-current" />{' '}
+                                    Watch
+                                </>
+                            ) : item.media_type === 'video' ? (
                                 <>
                                     <Film className="h-3 w-3" /> Watch
                                 </>

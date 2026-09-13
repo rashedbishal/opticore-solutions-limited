@@ -1,6 +1,6 @@
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Film, PlayCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
@@ -20,10 +20,35 @@ interface Props {
         sub_category_id: number | null;
         alt: string | null;
         media_path: string | null;
-        media_type: 'image' | 'video';
+        media_type: 'image' | 'video' | 'youtube';
+        youtube_video_id: string | null;
     };
     categories: Record<string, string>;
     subCategoriesByCategory: Record<string, SubCategory[]>;
+}
+
+type MediaSource = 'file' | 'youtube';
+
+/**
+ * Extract YouTube video ID from a URL for thumbnail preview.
+ */
+function extractVideoId(url: string): string {
+    const patterns = [
+        /youtu\.be\/([\w-]{11})/,
+        /youtube\.com\/watch\?.*v=([\w-]{11})/,
+        /youtube\.com\/embed\/([\w-]{11})/,
+        /youtube\.com\/shorts\/([\w-]{11})/,
+    ];
+
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+
+        if (match) {
+return match[1];
+}
+    }
+
+    return '';
 }
 
 export default function PortfolioEdit({
@@ -35,13 +60,22 @@ export default function PortfolioEdit({
         portfolio.category || Object.keys(categories)[0],
     );
 
+    const initialMediaSource: MediaSource =
+        portfolio.media_type === 'youtube' ? 'youtube' : 'file';
+    const [mediaSource, setMediaSource] =
+        useState<MediaSource>(initialMediaSource);
+
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, post, processing } = useForm({
         _method: 'PUT',
         title: portfolio.title,
         sub_category_id: portfolio.sub_category_id || ('' as string | number),
         alt: portfolio.alt || '',
+        media_source: initialMediaSource,
         media: null as File | null,
+        youtube_url: portfolio.youtube_video_id
+            ? `https://www.youtube.com/watch?v=${portfolio.youtube_video_id}`
+            : '',
     });
 
     const currentSubCategories =
@@ -63,12 +97,21 @@ export default function PortfolioEdit({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
 
+    const handleMediaSourceChange = (source: MediaSource) => {
+        setMediaSource(source);
+        setData('media_source', source);
+    };
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         const v: string[] = [];
 
         if (!data.sub_category_id) {
             v.push('Please select a sub-category.');
+        }
+
+        if (mediaSource === 'youtube' && !data.youtube_url.trim()) {
+            v.push('A YouTube URL is required.');
         }
 
         if (v.length > 0) {
@@ -177,54 +220,137 @@ export default function PortfolioEdit({
                         />
                     </div>
 
-                    {/* Current Media Preview */}
-                    {portfolio.media_path && (
+                    {/* Media Source Toggle */}
+                    <div>
+                        <label className="mb-2 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                            Media Source
+                        </label>
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={() => handleMediaSourceChange('file')}
+                                className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-all ${
+                                    mediaSource === 'file'
+                                        ? 'border-violet-500/50 bg-violet-500/15 text-violet-300'
+                                        : 'border-white/8 bg-white/4 text-zinc-400 hover:border-white/15 hover:text-zinc-200'
+                                }`}
+                            >
+                                <Film className="h-4 w-4" />
+                                Upload File
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleMediaSourceChange('youtube')
+                                }
+                                className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-all ${
+                                    mediaSource === 'youtube'
+                                        ? 'border-red-500/50 bg-red-500/15 text-red-300'
+                                        : 'border-white/8 bg-white/4 text-zinc-400 hover:border-white/15 hover:text-zinc-200'
+                                }`}
+                            >
+                                <PlayCircle className="h-4 w-4" />
+                                YouTube Video
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* File upload section */}
+                    {mediaSource === 'file' && (
+                        <>
+                            {/* Current Media Preview (only if existing is a file) */}
+                            {portfolio.media_path && portfolio.media_type !== 'youtube' && (
+                                <div>
+                                    <p className="mb-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                        Current Media
+                                    </p>
+                                    {portfolio.media_type === 'video' ? (
+                                        <video
+                                            src={portfolio.media_path}
+                                            muted
+                                            preload="metadata"
+                                            className="h-24 w-40 rounded-lg border border-white/10 object-cover"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={portfolio.media_path}
+                                            alt="Current"
+                                            loading="lazy"
+                                            decoding="async"
+                                            width={160}
+                                            height={96}
+                                            className="h-24 w-40 rounded-lg border border-white/10 object-cover"
+                                        />
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Media Upload */}
+                            <div>
+                                <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
+                                    Replace Media{' '}
+                                    <span className="font-normal text-zinc-500 normal-case">
+                                        (Leave empty to keep current)
+                                    </span>
+                                </label>
+                                <p className="mb-2 text-xs text-zinc-500">
+                                    Accepted: JPG, PNG, WEBP, GIF, MP4, MOV,
+                                    AVI, WEBM · Max 100MB
+                                </p>
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/x-msvideo,video/webm"
+                                    onChange={(e) =>
+                                        setData(
+                                            'media',
+                                            e.target.files?.[0] || null,
+                                        )
+                                    }
+                                    className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {/* YouTube URL section */}
+                    {mediaSource === 'youtube' && (
                         <div>
-                            <p className="mb-1.5 font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                                Current Media
+                            <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-red-400/80 uppercase">
+                                YouTube URL
+                            </label>
+                            <p className="mb-2 text-xs text-zinc-500">
+                                Paste any YouTube link — e.g.
+                                https://youtu.be/dQw4w9WgXcQ or
+                                https://www.youtube.com/watch?v=dQw4w9WgXcQ
                             </p>
-                            {portfolio.media_type === 'video' ? (
-                                <video
-                                    src={portfolio.media_path}
-                                    muted
-                                    preload="metadata"
-                                    className="h-24 w-40 rounded-lg border border-white/10 object-cover"
-                                />
-                            ) : (
-                                <img
-                                    src={portfolio.media_path}
-                                    alt="Current"
-                                    loading="lazy"
-                                    decoding="async"
-                                    width={160}
-                                    height={96}
-                                    className="h-24 w-40 rounded-lg border border-white/10 object-cover"
-                                />
+                            <input
+                                type="url"
+                                value={data.youtube_url}
+                                onChange={(e) =>
+                                    setData('youtube_url', e.target.value)
+                                }
+                                placeholder="https://youtu.be/..."
+                                className="block w-full rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-2.5 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-red-500/40 focus:bg-red-500/8"
+                            />
+                            {/* Live preview thumbnail */}
+                            {data.youtube_url.trim() && (
+                                <div className="mt-3 flex items-center gap-3">
+                                    <img
+                                        src={`https://img.youtube.com/vi/${extractVideoId(data.youtube_url)}/mqdefault.jpg`}
+                                        alt="YouTube thumbnail preview"
+                                        className="h-16 w-28 rounded-lg border border-white/10 object-cover"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display =
+                                                'none';
+                                        }}
+                                    />
+                                    <span className="text-xs text-zinc-500">
+                                        Thumbnail preview
+                                    </span>
+                                </div>
                             )}
                         </div>
                     )}
-
-                    {/* Media Upload */}
-                    <div>
-                        <label className="mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase">
-                            Replace Media{' '}
-                            <span className="font-normal text-zinc-500 normal-case">
-                                (Leave empty to keep current)
-                            </span>
-                        </label>
-                        <p className="mb-2 text-xs text-zinc-500">
-                            Accepted: JPG, PNG, WEBP, GIF, MP4, MOV, AVI, WEBM ·
-                            Max 100MB
-                        </p>
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/x-msvideo,video/webm"
-                            onChange={(e) =>
-                                setData('media', e.target.files?.[0] || null)
-                            }
-                            className="block w-full rounded-lg border border-white/8 bg-white/4 px-4 py-2.5 text-sm text-zinc-400 outline-none file:mr-3 file:rounded-md file:border-0 file:bg-violet-600/80 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-500"
-                        />
-                    </div>
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">
                         <button

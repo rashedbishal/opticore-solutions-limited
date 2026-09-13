@@ -12,7 +12,7 @@ class StorePortfolioRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
@@ -20,7 +20,21 @@ class StorePortfolioRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'sub_category_id' => ['nullable', 'integer', 'exists:portfolio_sub_categories,id'],
             'alt' => ['nullable', 'string', 'max:255'],
-            'media' => ['required', 'file', 'max:307200', 'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm'],
+            'media_source' => ['required', 'in:file,youtube'],
+            'media' => [
+                'nullable',
+                'required_if:media_source,file',
+                'file',
+                'max:307200',
+                'mimes:jpg,jpeg,png,webp,gif,mp4,mov,avi,webm',
+            ],
+            'youtube_url' => [
+                'nullable',
+                'required_if:media_source,youtube',
+                'string',
+                'max:255',
+                'regex:/^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|shorts\/)|youtu\.be\/)[\w\-]{11}/',
+            ],
         ];
     }
 }

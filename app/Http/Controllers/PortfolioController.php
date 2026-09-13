@@ -108,6 +108,7 @@ class PortfolioController extends Controller
                     ? asset('storage/'.$portfolio->media_path)
                     : null,
                 'media_type' => $portfolio->media_type ?? 'image',
+                'youtube_video_id' => $portfolio->youtube_video_id,
                 'alt' => $portfolio->alt ?? $portfolio->title,
             ],
         ]);
@@ -174,6 +175,7 @@ class PortfolioController extends Controller
                     'title' => $portfolio->title,
                     'media_path' => $portfolio->media_path ? asset('storage/'.$portfolio->media_path) : null,
                     'media_type' => $portfolio->media_type ?? 'image',
+                    'youtube_video_id' => $portfolio->youtube_video_id,
                     'alt' => $portfolio->alt ?? $portfolio->title,
                 ]);
         }
