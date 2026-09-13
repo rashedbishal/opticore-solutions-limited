@@ -6,6 +6,7 @@ use App\Models\CategoryPortfolioItem;
 use App\Models\Portfolio;
 use App\Models\PortfolioSubCategory;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -332,6 +333,33 @@ it('requires a title and description for each provided sub_service when updating
             ],
         ])
         ->assertInvalid(['sub_services.0.description']);
+});
+
+it('clears the portfolio category cache when floating-card images are updated', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    Cache::put('portfolio.categories.index', 'stale', now()->addHour());
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.categories.floating-card-images.store', $category), [
+            'image' => UploadedFile::fake()->image('card.webp'),
+        ])
+        ->assertRedirect();
+
+    expect(Cache::has('portfolio.categories.index'))->toBeFalse();
+});
+
+it('clears the portfolio category cache when floating-card images are removed', function () {
+    $category = Category::query()->where('slug', 'graphic-design')->first();
+    $category->update([
+        'floating_card_image' => UploadedFile::fake()->image('card.webp')->store('categories/floating', 'public'),
+    ]);
+    Cache::put('portfolio.categories.index', 'stale', now()->addHour());
+
+    $this->actingAs($this->admin, 'admin')
+        ->delete(route('admin.categories.floating-card-images.destroy', $category))
+        ->assertRedirect();
+
+    expect(Cache::has('portfolio.categories.index'))->toBeFalse();
 });
 
 // --- Selected Work gallery (merged in from the former Service model) ---

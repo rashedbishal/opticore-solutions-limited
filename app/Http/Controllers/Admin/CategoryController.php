@@ -249,6 +249,7 @@ class CategoryController extends Controller
             ]);
 
             Cache::forget('categories.floating-cards');
+            Cache::forget('portfolio.categories.index');
         } catch (\Throwable $e) {
             Storage::disk('public')->delete($imagePath);
             if (isset($thumbPath)) {
@@ -277,6 +278,7 @@ class CategoryController extends Controller
         ]);
 
         Cache::forget('categories.floating-cards');
+        Cache::forget('portfolio.categories.index');
 
         return back()->with('success', 'Floating card images removed.');
     }
@@ -309,6 +311,7 @@ class CategoryController extends Controller
         }
 
         Cache::forget("categories.service-page.{$category->slug}");
+        Cache::forget('portfolio.categories.index');
 
         return back()->with('success', 'Selected Work item added.');
     }
@@ -324,6 +327,7 @@ class CategoryController extends Controller
         $item->delete();
 
         Cache::forget("categories.service-page.{$category->slug}");
+        Cache::forget('portfolio.categories.index');
 
         return back()->with('success', 'Selected Work item removed.');
     }

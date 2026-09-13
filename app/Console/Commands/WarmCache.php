@@ -42,7 +42,7 @@ class WarmCache extends Command
         $this->warmServicePages($categories);
 
         // 5. Portfolio index
-        $this->warmPortfolioIndex($categories);
+        $this->warmPortfolioIndex();
 
         // 6. Portfolio subcategory caches (per category)
         $this->warmPortfolioSubcategories($categories);
@@ -166,33 +166,10 @@ class WarmCache extends Command
         ];
     }
 
-    /** @param array<string, mixed> $categories */
-    private function warmPortfolioIndex(array $categories): void
+    private function warmPortfolioIndex(): void
     {
         Cache::forget('portfolio.categories.index');
-        Cache::remember('portfolio.categories.index', now()->addMinutes(60), function () use ($categories) {
-            $subCategoryCounts = PortfolioSubCategory::query()
-                ->selectRaw('category_slug, COUNT(*) as aggregate')
-                ->groupBy('category_slug')
-                ->pluck('aggregate', 'category_slug');
-
-            $portfolioCounts = Portfolio::query()
-                ->selectRaw('category, COUNT(*) as aggregate')
-                ->groupBy('category')
-                ->pluck('aggregate', 'category');
-
-            return collect($categories)
-                ->map(fn (array $data, string $slug) => [
-                    'slug' => $slug,
-                    'label' => $data['label'],
-                    'description' => $data['description'],
-                    'sub_categories_count' => (int) ($subCategoryCounts[$slug] ?? 0),
-                    'portfolios_count' => (int) ($portfolioCounts[$slug] ?? 0),
-                ])
-                ->values()
-                ->toArray();
-        });
-
+        Category::portfolioIndex();
         $this->line('  ✓ portfolio.categories.index');
     }
 

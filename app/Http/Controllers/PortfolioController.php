@@ -16,33 +16,8 @@ class PortfolioController extends Controller
      */
     public function index(): Response
     {
-        $categories = Cache::remember('portfolio.categories.index', now()->addMinutes(60), function () {
-            $configCategories = $this->portfolioCategories();
-
-            $subCategoryCounts = PortfolioSubCategory::query()
-                ->selectRaw('category_slug, COUNT(*) as aggregate')
-                ->groupBy('category_slug')
-                ->pluck('aggregate', 'category_slug');
-
-            $portfolioCounts = Portfolio::query()
-                ->selectRaw('category, COUNT(*) as aggregate')
-                ->groupBy('category')
-                ->pluck('aggregate', 'category');
-
-            return collect($configCategories)
-                ->map(fn (array $data, string $slug) => [
-                    'slug' => $slug,
-                    'label' => $data['label'],
-                    'description' => $data['description'],
-                    'sub_categories_count' => (int) ($subCategoryCounts[$slug] ?? 0),
-                    'portfolios_count' => (int) ($portfolioCounts[$slug] ?? 0),
-                ])
-                ->values()
-                ->toArray();
-        });
-
         return Inertia::render('Portfolio/Show', [
-            'categories' => $categories,
+            'categories' => Category::portfolioIndex(),
             'meta' => [
                 'title' => 'Portfolio',
                 'ogTitle' => null,
