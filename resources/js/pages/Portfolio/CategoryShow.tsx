@@ -1,16 +1,21 @@
 import type { Variants } from 'framer-motion';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { m as motion } from 'framer-motion';
 import { ArrowLeft, FolderOpen } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import PortfolioGallery from '@/components/Portfolio/PortfolioGallery';
 import GradientOrb from '@/components/UI/GradientOrb';
 import MagneticButton from '@/components/UI/MagneticButton';
-import { portfolio, portfolioSubCategory } from '@/routes';
+import { portfolio, portfolioCategory, portfolioSubCategory } from '@/routes';
 
 interface Category {
     slug: string;
     label: string;
     description: string;
+    meta_title: string | null;
+    meta_description: string | null;
+    og_title: string | null;
+    og_description: string | null;
 }
 
 interface SubCategory {
@@ -19,6 +24,10 @@ interface SubCategory {
     slug: string;
     description: string | null;
     portfolios_count: number;
+    meta_title: string | null;
+    meta_description: string | null;
+    og_title: string | null;
+    og_description: string | null;
 }
 
 interface PortfolioItem {
@@ -30,17 +39,19 @@ interface PortfolioItem {
     alt: string;
 }
 
+interface HeadMeta {
+    title: string;
+    ogTitle: string | null;
+    description: string;
+    ogDescription: string | null;
+}
+
 interface Props {
     category: Category;
     subCategories: SubCategory[];
     selectedSubCategory: SubCategory | null;
-    portfolios: PortfolioItem[];
-    meta: {
-        title: string;
-        ogTitle: string | null;
-        description: string;
-        ogDescription: string | null;
-    };
+    portfoliosBySubCategory: Record<string, PortfolioItem[]>;
+    meta: HeadMeta;
 }
 
 const fadeUp: Variants = {
@@ -52,29 +63,111 @@ const fadeUp: Variants = {
     },
 };
 
+function metaForSubCategory(
+    category: Category,
+    subCategory: SubCategory | null,
+): HeadMeta {
+    if (!subCategory) {
+        return {
+            title: category.meta_title ?? category.label,
+            ogTitle: category.og_title,
+            description: category.meta_description ?? category.description,
+            ogDescription: category.og_description,
+        };
+    }
+
+    return {
+        title: subCategory.meta_title ?? subCategory.name,
+        ogTitle: subCategory.og_title,
+        description:
+            subCategory.meta_description ??
+            subCategory.description ??
+            category.description,
+        ogDescription: subCategory.og_description,
+    };
+}
+
 export default function PortfolioCategoryShow({
     category,
     subCategories,
     selectedSubCategory,
-    portfolios,
+    portfoliosBySubCategory,
     meta,
 }: Props) {
+    // Tabs switch purely from data already sent with the page — no
+    // request, no Inertia navigation, so nothing can touch the scroll
+    // position or re-run the page-level entrance animations. The URL is
+    // kept in sync with plain History API calls so deep links and
+    // browser back/forward keep working.
+    const [activeSlug, setActiveSlug] = useState<string | null>(
+        selectedSubCategory?.slug ?? null,
+    );
+    const [headMeta, setHeadMeta] = useState<HeadMeta>(meta);
+
+    const activeSubCategory = useMemo(
+        () => subCategories.find((sub) => sub.slug === activeSlug) ?? null,
+        [subCategories, activeSlug],
+    );
+
+    useEffect(() => {
+        const categoryPath = portfolioCategory.url([category.slug]);
+        const subCategoryPrefix = `${categoryPath}/`;
+
+        function syncFromLocation() {
+            const { pathname } = window.location;
+            const isSubCategoryUrl = pathname.startsWith(subCategoryPrefix);
+            const slugFromUrl = isSubCategoryUrl
+                ? pathname.slice(subCategoryPrefix.length).split('/')[0]
+                : null;
+
+            const matched = slugFromUrl
+                ? (subCategories.find((sub) => sub.slug === slugFromUrl) ??
+                  null)
+                : null;
+
+            setActiveSlug(matched?.slug ?? null);
+            setHeadMeta(metaForSubCategory(category, matched));
+        }
+
+        window.addEventListener('popstate', syncFromLocation);
+
+        return () => window.removeEventListener('popstate', syncFromLocation);
+    }, [category, subCategories]);
+
+    function selectSubCategory(sub: SubCategory) {
+        if (sub.slug === activeSlug) {
+            return;
+        }
+
+        setActiveSlug(sub.slug);
+        setHeadMeta(metaForSubCategory(category, sub));
+        window.history.pushState(
+            {},
+            '',
+            portfolioSubCategory.url([category.slug, sub.slug]),
+        );
+    }
+
+    const portfolios = activeSlug
+        ? (portfoliosBySubCategory[activeSlug] ?? [])
+        : [];
+
     return (
         <>
             <Head>
-                <title>{meta.title}</title>
-                <meta name="description" content={meta.description} />
+                <title>{headMeta.title}</title>
+                <meta name="description" content={headMeta.description} />
                 <meta
                     property="og:title"
                     content={
-                        meta.ogTitle ??
-                        `${meta.title} — Opticore Solutions Limited`
+                        headMeta.ogTitle ??
+                        `${headMeta.title} — Opticore Solutions Limited`
                     }
                 />
-                {meta.ogDescription && (
+                {headMeta.ogDescription && (
                     <meta
                         property="og:description"
-                        content={meta.ogDescription}
+                        content={headMeta.ogDescription}
                     />
                 )}
                 <meta
@@ -149,32 +242,15 @@ export default function PortfolioCategoryShow({
                                     <div className="inline-flex flex-wrap items-center gap-6 rounded-[2rem] border border-slate-300 bg-linear-to-b from-slate-200 to-slate-100 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)] backdrop-blur-md dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
                                         {subCategories.map((sub) => {
                                             const isActive =
-                                                sub.slug ===
-                                                selectedSubCategory?.slug;
+                                                sub.slug === activeSlug;
 
                                             return (
                                                 <button
                                                     key={sub.id}
                                                     type="button"
-                                                    onClick={() => {
-                                                        if (isActive) {
-                                                            return;
-                                                        }
-
-                                                        router.get(
-                                                            portfolioSubCategory.url(
-                                                                [
-                                                                    category.slug,
-                                                                    sub.slug,
-                                                                ],
-                                                            ),
-                                                            {},
-                                                            {
-                                                                preserveState: true,
-                                                                preserveScroll: true,
-                                                            },
-                                                        );
-                                                    }}
+                                                    onClick={() =>
+                                                        selectSubCategory(sub)
+                                                    }
                                                     className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
                                                         isActive
                                                             ? 'neo-btn-primary scale-[1.03]'
@@ -188,7 +264,7 @@ export default function PortfolioCategoryShow({
                                     </div>
                                 </div>
 
-                                {selectedSubCategory && (
+                                {activeSubCategory && (
                                     <motion.div
                                         initial="hidden"
                                         animate="visible"
@@ -201,12 +277,12 @@ export default function PortfolioCategoryShow({
                                                     Current Perspective
                                                 </p>
                                                 <h2 className="mt-4 text-3xl font-black text-theme sm:text-4xl">
-                                                    {selectedSubCategory.name}
+                                                    {activeSubCategory.name}
                                                 </h2>
-                                                {selectedSubCategory.description && (
+                                                {activeSubCategory.description && (
                                                     <p className="mt-4 text-sm leading-relaxed font-medium text-theme-muted">
                                                         {
-                                                            selectedSubCategory.description
+                                                            activeSubCategory.description
                                                         }
                                                     </p>
                                                 )}
@@ -216,9 +292,9 @@ export default function PortfolioCategoryShow({
                                                     <span className="h-1.5 w-1.5 rounded-full bg-primary drop-shadow-[0_0_2px_rgba(139,92,246,0.8)]" />
                                                 </div>
                                                 {
-                                                    selectedSubCategory.portfolios_count
+                                                    activeSubCategory.portfolios_count
                                                 }{' '}
-                                                {selectedSubCategory.portfolios_count ===
+                                                {activeSubCategory.portfolios_count ===
                                                 1
                                                     ? 'Exhibit'
                                                     : 'Exhibits'}
@@ -230,12 +306,11 @@ export default function PortfolioCategoryShow({
                                 <PortfolioGallery
                                     portfolios={portfolios}
                                     label={
-                                        selectedSubCategory?.name ??
+                                        activeSubCategory?.name ??
                                         category.label
                                     }
                                     galleryKey={
-                                        selectedSubCategory?.slug ??
-                                        category.slug
+                                        activeSubCategory?.slug ?? category.slug
                                     }
                                 />
                             </>

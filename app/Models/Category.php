@@ -69,7 +69,7 @@ class Category extends Model
      * config('portfolio.categories') array. `icon`/`color` are additive —
      * consumers that only destructure `label`/`description` are unaffected.
      *
-     * @return array<string, array{label: string, description: string|null, icon: string|null, color: string|null}>
+     * @return array<string, array{label: string, description: string|null, meta_title: string|null, meta_description: string|null, og_title: string|null, og_description: string|null, icon: string|null, color: string|null, is_active: bool}>
      */
     public static function configShape(): array
     {
@@ -264,7 +264,7 @@ class Category extends Model
     public static function servicePageLinks(): array
     {
         return collect(self::configShape())
-            ->filter(fn (array $cat) => $cat['is_active'] ?? false)
+            ->filter(fn (array $cat) => $cat['is_active'])
             ->map(fn (array $cat, string $slug) => [
                 'slug' => $slug,
                 'name' => $cat['label'],

@@ -107,7 +107,7 @@ it('renders a portfolio sub-category page with its portfolios', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Portfolio/CategoryShow')
             ->where('selectedSubCategory.slug', $subCategory->slug)
-            ->where('portfolios.0.id', $portfolio->id)
+            ->where("portfoliosBySubCategory.{$subCategory->slug}.0.id", $portfolio->id)
         );
 });
 

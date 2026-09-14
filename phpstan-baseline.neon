@@ -475,19 +475,7 @@ parameters:
 			path: app/Http/Controllers/PortfolioController.php
 
 		-
-			message: '#^Offset ''meta_description'' on array\{label\: string, description\: string\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/PortfolioController.php
-
-		-
 			message: '#^Offset ''meta_title'' on array\{id\: int, name\: string, slug\: string, description\: string\|null, portfolios_count\: int\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/PortfolioController.php
-
-		-
-			message: '#^Offset ''meta_title'' on array\{label\: string, description\: string\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Controllers/PortfolioController.php
@@ -499,19 +487,7 @@ parameters:
 			path: app/Http/Controllers/PortfolioController.php
 
 		-
-			message: '#^Offset ''og_description'' on array\{label\: string, description\: string\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/PortfolioController.php
-
-		-
 			message: '#^Offset ''og_title'' on array\{id\: int, name\: string, slug\: string, description\: string\|null, portfolios_count\: int\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Http/Controllers/PortfolioController.php
-
-		-
-			message: '#^Offset ''og_title'' on array\{label\: string, description\: string\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Http/Controllers/PortfolioController.php
@@ -660,11 +636,6 @@ parameters:
 			count: 1
 			path: app/Models/Admin.php
 
-		-
-			message: '#^Offset ''is_active'' on array\{label\: string, description\: string\|null, icon\: string\|null, color\: string\|null\} on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Category.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'

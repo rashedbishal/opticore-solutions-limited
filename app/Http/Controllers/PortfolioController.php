@@ -90,7 +90,7 @@ class PortfolioController extends Controller
     }
 
     /**
-     * @return array<string, array{label: string, description: string}>
+     * @return array<string, array{label: string, description: string|null, meta_title: string|null, meta_description: string|null, og_title: string|null, og_description: string|null, icon: string|null, color: string|null, is_active: bool}>
      */
     private function portfolioCategories(): array
     {
@@ -126,22 +126,16 @@ class PortfolioController extends Controller
     }
 
     /**
-     * @param  array{label: string, description: string}  $categoryData
-     * @param  array<int, array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}>  $subCategories
-     * @param  array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}|null  $selectedSubCategory
+     * @param  array<int, array{id: int, slug: string}>  $subCategories
+     * @return array<string, array<int, array{id: int, title: string, media_path: string|null, media_type: string, youtube_video_id: string|null, alt: string}>>
      */
-    private function renderCategoryPage(
-        string $category,
-        array $categoryData,
-        array $subCategories,
-        ?array $selectedSubCategory,
-        bool $isSubCategoryUrl = false,
-    ): Response {
-        $portfolios = collect();
+    private function portfoliosBySubCategory(array $subCategories): array
+    {
+        $bySlug = [];
 
-        if ($selectedSubCategory !== null) {
-            $portfolios = Portfolio::query()
-                ->where('sub_category_id', $selectedSubCategory['id'])
+        foreach ($subCategories as $subCategory) {
+            $bySlug[$subCategory['slug']] = Portfolio::query()
+                ->where('sub_category_id', $subCategory['id'])
                 ->latest()
                 ->take(50)
                 ->get()
@@ -152,18 +146,45 @@ class PortfolioController extends Controller
                     'media_type' => $portfolio->media_type ?? 'image',
                     'youtube_video_id' => $portfolio->youtube_video_id,
                     'alt' => $portfolio->alt ?? $portfolio->title,
-                ]);
+                ])
+                ->values()
+                ->toArray();
         }
+
+        return $bySlug;
+    }
+
+    /**
+     * @param  array{label: string, description: string|null, meta_title: string|null, meta_description: string|null, og_title: string|null, og_description: string|null, icon: string|null, color: string|null, is_active: bool}  $categoryData
+     * @param  array<int, array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}>  $subCategories
+     * @param  array{id: int, name: string, slug: string, description: string|null, portfolios_count: int}|null  $selectedSubCategory
+     */
+    private function renderCategoryPage(
+        string $category,
+        array $categoryData,
+        array $subCategories,
+        ?array $selectedSubCategory,
+        bool $isSubCategoryUrl = false,
+    ): Response {
+        // Sent for every sub-category up front (each already capped at 50,
+        // same as before) so the tabs on the frontend can switch between
+        // them entirely from already-loaded data — no request, no route
+        // change, no scroll/animation disturbance per click.
+        $portfoliosBySubCategory = $this->portfoliosBySubCategory($subCategories);
 
         return Inertia::render('Portfolio/CategoryShow', [
             'category' => [
                 'slug' => $category,
                 'label' => $categoryData['label'],
                 'description' => $categoryData['description'],
+                'meta_title' => $categoryData['meta_title'] ?? null,
+                'meta_description' => $categoryData['meta_description'] ?? null,
+                'og_title' => $categoryData['og_title'] ?? null,
+                'og_description' => $categoryData['og_description'] ?? null,
             ],
             'subCategories' => $subCategories,
             'selectedSubCategory' => $selectedSubCategory,
-            'portfolios' => $portfolios->values()->toArray(),
+            'portfoliosBySubCategory' => $portfoliosBySubCategory,
             'meta' => [
                 'title' => $isSubCategoryUrl && $selectedSubCategory !== null
                     ? ($selectedSubCategory['meta_title'] ?? $selectedSubCategory['name'])
