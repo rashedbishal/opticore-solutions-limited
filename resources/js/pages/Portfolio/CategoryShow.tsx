@@ -238,30 +238,28 @@ export default function PortfolioCategoryShow({
 
                         {subCategories.length > 0 ? (
                             <>
-                                <div className="mb-10 flex flex-wrap justify-center gap-4">
-                                    <div className="inline-flex flex-wrap items-center gap-6 rounded-[2rem] border border-slate-300 bg-linear-to-b from-slate-200 to-slate-100 p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,1)] backdrop-blur-md dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                                        {subCategories.map((sub) => {
-                                            const isActive =
-                                                sub.slug === activeSlug;
+                                <div className="mb-10 flex flex-wrap justify-center gap-x-6 gap-y-1 sm:gap-y-3">
+                                    {subCategories.map((sub) => {
+                                        const isActive =
+                                            sub.slug === activeSlug;
 
-                                            return (
-                                                <button
-                                                    key={sub.id}
-                                                    type="button"
-                                                    onClick={() =>
-                                                        selectSubCategory(sub)
-                                                    }
-                                                    className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
-                                                        isActive
-                                                            ? 'neo-btn-primary scale-[1.03]'
-                                                            : 'neo-btn-ghost hover:scale-[1.03]'
-                                                    }`}
-                                                >
-                                                    {sub.name}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                                        return (
+                                            <button
+                                                key={sub.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    selectSubCategory(sub)
+                                                }
+                                                className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
+                                                    isActive
+                                                        ? 'neo-btn-primary scale-[1.03]'
+                                                        : 'neo-btn-ghost hover:scale-[1.03]'
+                                                }`}
+                                            >
+                                                {sub.name}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
 
                                 {activeSubCategory && (
