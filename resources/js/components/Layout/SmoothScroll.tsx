@@ -104,12 +104,35 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
             return;
         }
 
+        // Visits that explicitly opt into Inertia's preserveScroll (e.g. the
+        // portfolio sub-category tabs) must keep the viewport exactly where
+        // it was — track that intent from `start` so the `navigate` handler
+        // below knows not to override it.
+        let preserveScrollForNextNavigation = false;
+
+        const removeStartListener = router.on('start', (event) => {
+            preserveScrollForNextNavigation = Boolean(
+                event.detail.visit.preserveScroll,
+            );
+        });
+
         // Inertia swaps page content in place, so the browser keeps the old
         // scroll position. If the new page is shorter, that leaves Lenis
         // stuck near the bottom (e.g. the footer) instead of the top.
-        return router.on('navigate', () => {
+        const removeNavigateListener = router.on('navigate', () => {
+            if (preserveScrollForNextNavigation) {
+                preserveScrollForNextNavigation = false;
+
+                return;
+            }
+
             lenis.scrollTo(0, { immediate: true });
         });
+
+        return () => {
+            removeStartListener();
+            removeNavigateListener();
+        };
     }, [lenis]);
 
     return (

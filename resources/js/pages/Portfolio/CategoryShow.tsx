@@ -1,5 +1,5 @@
 import type { Variants } from 'framer-motion';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { m as motion } from 'framer-motion';
 import { ArrowLeft, FolderOpen } from 'lucide-react';
 import PortfolioGallery from '@/components/Portfolio/PortfolioGallery';
@@ -153,14 +153,28 @@ export default function PortfolioCategoryShow({
                                                 selectedSubCategory?.slug;
 
                                             return (
-                                                <Link
+                                                <button
                                                     key={sub.id}
-                                                    href={portfolioSubCategory.url(
-                                                        [
-                                                            category.slug,
-                                                            sub.slug,
-                                                        ],
-                                                    )}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (isActive) {
+                                                            return;
+                                                        }
+
+                                                        router.get(
+                                                            portfolioSubCategory.url(
+                                                                [
+                                                                    category.slug,
+                                                                    sub.slug,
+                                                                ],
+                                                            ),
+                                                            {},
+                                                            {
+                                                                preserveState: true,
+                                                                preserveScroll: true,
+                                                            },
+                                                        );
+                                                    }}
                                                     className={`touch-target flex shrink-0 items-center rounded-full px-6 py-2.5 text-[13px] font-bold tracking-wide transition-all ${
                                                         isActive
                                                             ? 'neo-btn-primary scale-[1.03]'
@@ -168,7 +182,7 @@ export default function PortfolioCategoryShow({
                                                     }`}
                                                 >
                                                     {sub.name}
-                                                </Link>
+                                                </button>
                                             );
                                         })}
                                     </div>
