@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Leads;
 
 use App\Http\Controllers\Controller;
 use App\Leads\Models\AdminNotification;
+use App\Leads\Support\LeadNotificationPresenter;
 use App\Models\Admin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -13,14 +14,14 @@ use Illuminate\Support\Str;
 /**
  * The lead alerts tab of the CMS bell. Every query is scoped to the
  * signed-in admin's own notifications, so an id belonging to someone else
- * is simply "not found".
- *
- * Each lead notification stores `title`, `message` and `url` (a relative
- * /admin path) in its data payload.
+ * is simply "not found". Wording and links come from
+ * LeadNotificationPresenter.
  */
 class LeadNotificationController extends Controller
 {
     private const RECENT_LIMIT = 20;
+
+    public function __construct(private readonly LeadNotificationPresenter $presenter) {}
 
     public function index(): JsonResponse
     {
@@ -33,8 +34,7 @@ class LeadNotificationController extends Controller
                 ->get()
                 ->map(fn (AdminNotification $notification): array => [
                     'id' => $notification->id,
-                    'title' => (string) ($notification->data['title'] ?? ''),
-                    'message' => (string) ($notification->data['message'] ?? ''),
+                    ...collect($this->presenter->present($notification, $admin))->only(['title', 'message'])->all(),
                     'read' => $notification->read_at !== null,
                     'created_at' => $notification->created_at?->toIso8601String(),
                 ])
@@ -52,7 +52,7 @@ class LeadNotificationController extends Controller
 
         $record->markAsRead();
 
-        return redirect()->to($this->safeTarget($record->data['url'] ?? null));
+        return redirect()->to($this->safeTarget($this->presenter->present($record, $this->admin())['url']));
     }
 
     public function markRead(string $notification): JsonResponse

@@ -42,3 +42,9 @@ Broadcast::channel('admin.lead-notifications.{adminId}', function ($user, $admin
         && (int) $user->id === (int) $adminId
         && $user->canUseLeads();
 }, ['guards' => ['admin', 'web']]);
+
+// Live refresh for lead lists/boards — payload is only a lead id; each
+// viewer refetches through their own visibility rules.
+Broadcast::channel('admin.leads', function ($user) {
+    return $user instanceof Admin && $user->canUseLeads();
+}, ['guards' => ['admin', 'web']]);

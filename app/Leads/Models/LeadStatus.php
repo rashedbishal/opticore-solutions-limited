@@ -40,12 +40,24 @@ class LeadStatus extends Model
     }
 
     /**
-     * Whether anything references this status, which blocks deleting it.
-     * Nothing can reference a status until leads exist; the lead and
-     * status-history checks are added together with those tables.
+     * Whether anything references this status, which blocks deleting it: a
+     * lead currently in it, or any status-history entry (history has no
+     * cleanup path, so a status that ever appeared there stays forever).
      */
     public function isInUse(): bool
     {
-        return false;
+        return LeadStatusLog::query()
+            ->where('old_status_id', $this->id)
+            ->orWhere('new_status_id', $this->id)
+            ->exists()
+            || Lead::query()->where('status_id', $this->id)->exists();
+    }
+
+    /**
+     * The board's first column — where every new lead starts.
+     */
+    public static function initial(): ?self
+    {
+        return static::query()->orderBy('sort_order')->first();
     }
 }

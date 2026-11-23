@@ -13,8 +13,11 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
+use App\Http\Controllers\Admin\Leads\LeadController as AdminLeadController;
 use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
+use App\Http\Controllers\Admin\Leads\LeadSourceController as AdminLeadSourceController;
 use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
+use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\MealManagementController;
@@ -295,9 +298,27 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('notifications/{notification}/read', [AdminLeadNotificationController::class, 'markRead'])->name('notifications.read');
         Route::post('notifications/read-all', [AdminLeadNotificationController::class, 'markAllRead'])->name('notifications.read-all');
         Route::delete('notifications', [AdminLeadNotificationController::class, 'clearAll'])->name('notifications.clear');
+
+        Route::get('sources', [AdminLeadSourceController::class, 'index'])->name('sources.index');
+        Route::get('export', [AdminLeadController::class, 'export'])->name('export');
+
+        Route::get('/', [AdminLeadController::class, 'index'])->name('index');
+        Route::post('/', [AdminLeadController::class, 'store'])->name('store');
+        Route::get('{lead}', [AdminLeadController::class, 'show'])->name('show')->whereUlid('lead');
+        Route::delete('{lead}', [AdminLeadController::class, 'destroy'])->name('destroy')->whereUlid('lead');
+        Route::put('{lead}/status', [AdminLeadController::class, 'updateStatus'])->name('status')->whereUlid('lead');
+        Route::put('{lead}/contact', [AdminLeadController::class, 'updateContact'])->name('contact')->whereUlid('lead');
+        Route::put('{lead}/company', [AdminLeadController::class, 'updateCompany'])->name('company')->whereUlid('lead');
+        Route::put('{lead}/deal', [AdminLeadController::class, 'updateDeal'])->name('deal')->whereUlid('lead');
+        Route::put('{lead}/assign', [AdminLeadController::class, 'assign'])->name('assign')->whereUlid('lead');
+        Route::post('{lead}/dates', [AdminLeadController::class, 'resolveDate'])->name('dates')->whereUlid('lead');
+        Route::post('{lead}/notes', [AdminLeadController::class, 'addNote'])->name('notes')->whereUlid('lead');
     });
 
     Route::prefix('lead-settings')->name('lead-settings.')->group(function () {
+        Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
+        Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');
+
         Route::get('statuses', [AdminLeadStatusController::class, 'index'])->name('statuses.index');
         Route::post('statuses', [AdminLeadStatusController::class, 'store'])->name('statuses.store');
         Route::put('statuses/{status}', [AdminLeadStatusController::class, 'update'])->name('statuses.update');

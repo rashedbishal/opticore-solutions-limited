@@ -20,6 +20,8 @@ interface Props {
     };
     permissionOptions: { key: string; label: string }[];
     leadRoleOptions: { value: LeadRoleValue; label: string }[];
+    leadSourceOptions: { id: string; name: string }[];
+    unassignedLeadSourceIds: string[];
     canEditProfile: boolean;
     canEditPermissions: boolean;
     isEditingSelf: boolean;
@@ -29,6 +31,8 @@ export default function UserEdit({
     user,
     permissionOptions,
     leadRoleOptions,
+    leadSourceOptions,
+    unassignedLeadSourceIds,
     canEditProfile,
     canEditPermissions,
     isEditingSelf,
@@ -41,6 +45,7 @@ export default function UserEdit({
         full_access: user.full_access,
         permissions: user.permissions ?? ([] as string[]),
         lead_role: user.lead_role,
+        unassigned_lead_source_ids: unassignedLeadSourceIds,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -155,6 +160,13 @@ export default function UserEdit({
                                 value={data.lead_role}
                                 onChange={(value) =>
                                     setData('lead_role', value)
+                                }
+                                sourceOptions={leadSourceOptions}
+                                unassignedSourceIds={
+                                    data.unassigned_lead_source_ids
+                                }
+                                onUnassignedSourcesChange={(ids) =>
+                                    setData('unassigned_lead_source_ids', ids)
                                 }
                             />
                         </>

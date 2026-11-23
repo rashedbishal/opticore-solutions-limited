@@ -1,11 +1,22 @@
 import type { LucideIcon } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
-import { ChevronDown, Coins, ListOrdered, Target } from 'lucide-react';
+import {
+    ChevronDown,
+    Coins,
+    Inbox,
+    ListOrdered,
+    Radio,
+    SlidersHorizontal,
+    Target,
+} from 'lucide-react';
 import { useState } from 'react';
 import { canManageLeadSettings, canUseLeads } from '@/lib/leadAccess';
 import currencies from '@/routes/admin/lead-settings/currencies';
+import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
+import leads from '@/routes/admin/leads';
+import leadSources from '@/routes/admin/leads/sources';
 
 type LeadAdmin =
     | { is_super_admin?: boolean; lead_role?: string | null }
@@ -17,13 +28,36 @@ interface LeadNavLink {
     icon: LucideIcon;
     /** Lead Settings pages are mother-admin-only; the rest need any lead role. */
     section: 'leads' | 'settings';
+    /** Overrides the default "path starts with href" active check. */
+    isActive?: (path: string) => boolean;
 }
 
 /**
- * Every page of the lead system, in sidebar order. Later phases add the
- * agent/manager pages to the 'leads' section.
+ * Every page of the lead system, in sidebar order.
  */
 const LEAD_NAV_LINKS: LeadNavLink[] = [
+    {
+        name: 'All Leads',
+        href: leads.index.url(),
+        icon: Inbox,
+        section: 'leads',
+        // The list and each lead's own page, but not the other lead pages.
+        isActive: (path) =>
+            path === leads.index.url() ||
+            /^\/admin\/leads\/[0-9A-Za-z]{26}$/.test(path),
+    },
+    {
+        name: 'Lead Sources',
+        href: leadSources.index.url(),
+        icon: Radio,
+        section: 'leads',
+    },
+    {
+        name: 'General',
+        href: general.edit.url(),
+        icon: SlidersHorizontal,
+        section: 'settings',
+    },
     {
         name: 'Statuses',
         href: statuses.index.url(),
@@ -61,7 +95,11 @@ export default function LeadNavGroup({ admin, currentPath }: Props) {
     const links = visibleLeadNavLinks(admin);
     const leadLinks = links.filter((link) => link.section === 'leads');
     const settingsLinks = links.filter((link) => link.section === 'settings');
-    const groupActive = links.some((link) => currentPath.startsWith(link.href));
+    const isLinkActive = (link: LeadNavLink) =>
+        link.isActive
+            ? link.isActive(currentPath)
+            : currentPath.startsWith(link.href);
+    const groupActive = links.some(isLinkActive);
 
     const [open, setOpen] = useState<boolean>(() => {
         if (groupActive) {
@@ -91,7 +129,7 @@ export default function LeadNavGroup({ admin, currentPath }: Props) {
     };
 
     const renderLink = (link: LeadNavLink) => {
-        const active = currentPath.startsWith(link.href);
+        const active = isLinkActive(link);
 
         return (
             <Link

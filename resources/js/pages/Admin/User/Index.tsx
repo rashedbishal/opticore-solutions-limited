@@ -3,6 +3,7 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { Edit2, Plus, Search, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
+import LeadTransferDeleteDialog from '@/components/Admin/Leads/LeadTransferDeleteDialog';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
@@ -15,6 +16,7 @@ interface UserRecord {
     permissions: string[] | null;
     email_verified_at: string | null;
     created_at: string;
+    owned_leads_count: number;
 }
 
 interface PaginationLink {
@@ -34,6 +36,7 @@ interface Props {
         total: number;
     };
     filters: Filters;
+    leadReceivers: { id: number; name: string }[];
     auth: {
         user: {
             id: number;
@@ -82,7 +85,12 @@ function decodePaginationLabel(label: string): string {
     return label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»');
 }
 
-export default function UserIndex({ users, filters, auth }: Props) {
+export default function UserIndex({
+    users,
+    filters,
+    leadReceivers,
+    auth,
+}: Props) {
     const { delete: destroy } = useForm();
     const [deleteTarget, setDeleteTarget] = useState<(() => void) | null>(null);
     const requestDelete = (action: () => void) => setDeleteTarget(() => action);
@@ -92,9 +100,20 @@ export default function UserIndex({ users, filters, auth }: Props) {
     };
     const cancelDelete = () => setDeleteTarget(null);
 
-    const handleDelete = (id: number) => {
+    const [transferTarget, setTransferTarget] = useState<UserRecord | null>(
+        null,
+    );
+
+    const handleDelete = (user: UserRecord) => {
+        // Someone who still owns leads needs a receiver picked first.
+        if (user.owned_leads_count > 0) {
+            setTransferTarget(user);
+
+            return;
+        }
+
         requestDelete(() => {
-            destroy(adminRoutes.users.destroy.url(id));
+            destroy(adminRoutes.users.destroy.url(user.id));
         });
     };
 
@@ -133,6 +152,21 @@ export default function UserIndex({ users, filters, auth }: Props) {
 
     return (
         <div className="space-y-6">
+            <LeadTransferDeleteDialog
+                admin={transferTarget}
+                receivers={leadReceivers}
+                onConfirm={(receiverId) => {
+                    if (transferTarget) {
+                        router.delete(
+                            adminRoutes.users.destroy.url(transferTarget.id),
+                            { data: { transfer_to: receiverId } },
+                        );
+                    }
+
+                    setTransferTarget(null);
+                }}
+                onCancel={() => setTransferTarget(null)}
+            />
             <CmsDeleteDialog
                 open={deleteTarget !== null}
                 onConfirm={confirmDelete}
@@ -288,9 +322,7 @@ export default function UserIndex({ users, filters, auth }: Props) {
                                                 auth.user.id !== user.id && (
                                                     <button
                                                         onClick={() =>
-                                                            handleDelete(
-                                                                user.id,
-                                                            )
+                                                            handleDelete(user)
                                                         }
                                                         className="ml-3 inline-flex items-center gap-1.5 font-mono text-xs tracking-wide text-red-400/60 transition-colors hover:text-red-400"
                                                     >

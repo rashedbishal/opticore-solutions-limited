@@ -21,12 +21,14 @@ class Currency extends Model
     protected $fillable = ['code', 'name'];
 
     /**
-     * Whether anything references this currency, which blocks deleting it.
-     * Nothing can reference a currency until leads, deals and source costs
-     * exist; those checks are added together with those tables.
+     * Whether any lead money field uses this currency, which blocks
+     * deleting it. Deals and source costs add their own checks later.
      */
     public function isInUse(): bool
     {
-        return false;
+        return Lead::query()
+            ->where('estimated_budget_currency_id', $this->id)
+            ->orWhere('deal_value_currency_id', $this->id)
+            ->exists();
     }
 }

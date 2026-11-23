@@ -7,6 +7,8 @@ use App\Http\Middleware\EnsureAdminHasPermission;
 use App\Http\Middleware\EnsureAdminSessionIsCurrent;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
+use App\Leads\Console\Commands\SendLeadAlertNotifications;
+use App\Leads\Support\LeadClock;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -92,6 +94,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return $response;
         });
     })
+    // Lead Management commands live in app/Leads, outside the
+    // auto-discovered app/Console/Commands folder.
+    ->withCommands([SendLeadAlertNotifications::class])
     ->withSchedule(function (Schedule $schedule): void {
         // Re-prime all public-facing Redis caches every 50 minutes so the
         // 60-minute TTL never cold-misses in production (first request after
@@ -129,5 +134,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // this, latestResults() stays null forever and the dashboard shows
         // nothing.
         $schedule->command(RunHealthChecksCommand::class)->everyMinute()->withoutOverlapping();
+
+        // Lead Management: daily bell alerts for leads whose meeting or
+        // follow-up reminder is showing (no-op while reminders are off).
+        $schedule->command(SendLeadAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
     })
     ->create();

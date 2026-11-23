@@ -12,11 +12,13 @@ import adminRoutes from '@/routes/admin';
 interface Props {
     permissionOptions: { key: string; label: string }[];
     leadRoleOptions: { value: LeadRoleValue; label: string }[];
+    leadSourceOptions: { id: string; name: string }[];
 }
 
 export default function UserCreate({
     permissionOptions,
     leadRoleOptions,
+    leadSourceOptions,
 }: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, post, processing } = useForm({
@@ -26,6 +28,7 @@ export default function UserCreate({
         full_access: false as boolean,
         permissions: [] as string[],
         lead_role: null as LeadRoleValue | null,
+        unassigned_lead_source_ids: [] as string[],
     });
 
     const submit: FormEventHandler = (e) => {
@@ -125,6 +128,11 @@ export default function UserCreate({
                         options={leadRoleOptions}
                         value={data.lead_role}
                         onChange={(value) => setData('lead_role', value)}
+                        sourceOptions={leadSourceOptions}
+                        unassignedSourceIds={data.unassigned_lead_source_ids}
+                        onUnassignedSourcesChange={(ids) =>
+                            setData('unassigned_lead_source_ids', ids)
+                        }
                     />
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">
