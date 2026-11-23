@@ -3,6 +3,7 @@
 namespace App\Leads\Console\Commands;
 
 use App\Leads\Models\LeadAttachment;
+use App\Leads\Models\LeadMessage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,7 +30,10 @@ class CleanupOrphanedLeadAttachments extends Command
             return self::SUCCESS;
         }
 
-        $known = array_flip(LeadAttachment::query()->whereNotNull('path')->pluck('path')->all());
+        $known = array_flip([
+            ...LeadAttachment::query()->whereNotNull('path')->pluck('path')->all(),
+            ...LeadMessage::query()->whereNotNull('attachment_path')->pluck('attachment_path')->all(),
+        ]);
         $cutoff = now()->subMinutes(self::GRACE_PERIOD_MINUTES)->timestamp;
         $deleted = 0;
 

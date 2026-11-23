@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     ChevronDown,
-    FileCode2,
+    MessageSquareText,
     Coins,
     Inbox,
     ListOrdered,
@@ -12,13 +12,13 @@ import {
     Target,
 } from 'lucide-react';
 import { useState } from 'react';
-import { canManageLeadSettings, canUseLeads } from '@/lib/leadAccess';
+import { canManageLeadSettings, canUseLeads, leadRole } from '@/lib/leadAccess';
 import currencies from '@/routes/admin/lead-settings/currencies';
 import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
-import websiteForms from '@/routes/admin/lead-settings/website-forms';
 import leads from '@/routes/admin/leads';
 import leadSources from '@/routes/admin/leads/sources';
+import templates from '@/routes/admin/leads/templates';
 
 type LeadAdmin =
     | { is_super_admin?: boolean; lead_role?: string | null }
@@ -28,8 +28,8 @@ interface LeadNavLink {
     name: string;
     href: string;
     icon: LucideIcon;
-    /** Lead Settings pages are mother-admin-only; the rest need any lead role. */
-    section: 'leads' | 'settings';
+    /** 'settings' = mother admin, 'manager' = managers, 'leads' = any lead role. */
+    section: 'leads' | 'manager' | 'settings';
     /** Overrides the default "path starts with href" active check. */
     isActive?: (path: string) => boolean;
 }
@@ -55,15 +55,15 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         section: 'leads',
     },
     {
+        name: 'Templates',
+        href: templates.index.url(),
+        icon: MessageSquareText,
+        section: 'manager',
+    },
+    {
         name: 'General',
         href: general.edit.url(),
         icon: SlidersHorizontal,
-        section: 'settings',
-    },
-    {
-        name: 'Website Forms',
-        href: websiteForms.index.url(),
-        icon: FileCode2,
         section: 'settings',
     },
     {
@@ -86,7 +86,9 @@ export function visibleLeadNavLinks(admin: LeadAdmin): LeadNavLink[] {
     return LEAD_NAV_LINKS.filter((link) =>
         link.section === 'settings'
             ? canManageLeadSettings(admin)
-            : canUseLeads(admin),
+            : link.section === 'manager'
+              ? leadRole(admin) === 'manager'
+              : canUseLeads(admin),
     );
 }
 
@@ -101,7 +103,7 @@ interface Props {
  */
 export default function LeadNavGroup({ admin, currentPath }: Props) {
     const links = visibleLeadNavLinks(admin);
-    const leadLinks = links.filter((link) => link.section === 'leads');
+    const leadLinks = links.filter((link) => link.section !== 'settings');
     const settingsLinks = links.filter((link) => link.section === 'settings');
     const isLinkActive = (link: LeadNavLink) =>
         link.isActive

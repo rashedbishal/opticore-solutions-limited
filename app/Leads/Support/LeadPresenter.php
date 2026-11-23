@@ -2,11 +2,19 @@
 
 namespace App\Leads\Support;
 
+use App\Leads\Enums\ConsentType;
 use App\Leads\Enums\LeadSourceType;
+use App\Leads\Enums\MessageChannel;
+use App\Leads\Enums\MessageDirection;
 use App\Leads\Models\Lead;
+use App\Leads\Models\LeadConsentEvent;
+use App\Leads\Models\LeadMessage;
 use App\Leads\Models\LeadSetting;
+use App\Leads\Models\MessengerMessageTemplate;
+use App\Leads\Models\WhatsAppMessageTemplate;
 use App\Leads\Services\LeadAccess;
 use App\Leads\Services\LeadPeople;
+use App\Leads\Services\Messaging\OutboundEligibility;
 use App\Models\Admin;
 use Illuminate\Support\Collection;
 
@@ -122,8 +130,126 @@ class LeadPresenter
             'avatar_url' => $lead->source_data['facebook_profile_pic'] ?? $lead->source_data['instagram_profile_pic'] ?? null,
             'subject' => $lead->source_data['subject'] ?? null,
             'html_body' => $lead->html_body,
-            'website_form_name' => $lead->source_data['website_form_name'] ?? null,
             'conversation' => $this->conversation($lead),
+            'messaging' => $this->messaging($lead),
+            'sent_messages' => $this->sentMessages($lead),
+            'consents' => $this->consents($lead),
+            'can_delete_conversation' => $this->access->canDelete($viewer) && $lead->conversations()->exists(),
+        ];
+    }
+
+    /**
+     * Whether a reply / template can be sent right now, and the templates
+     * available for this lead's channel.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function messaging(Lead $lead): ?array
+    {
+        $channel = $lead->messagingChannel();
+
+        if ($channel === null) {
+            return null;
+        }
+
+        $conversation = $lead->activeConversation();
+        $eligibility = app(OutboundEligibility::class);
+        $reply = $conversation !== null ? $eligibility->forReply($conversation) : null;
+        $template = $conversation !== null && $channel->supportsTemplates() ? $eligibility->forTemplate($conversation) : null;
+        $canReply = $reply !== null && $reply->eligible;
+        $canTemplate = $template !== null && $template->eligible;
+
+        $templates = match ($channel) {
+            MessageChannel::Whatsapp => WhatsAppMessageTemplate::query()->where('lead_source_id', $lead->source_id)->where('is_active', true)->orderBy('name')->get(),
+            MessageChannel::Messenger => MessengerMessageTemplate::query()->where('lead_source_id', $lead->source_id)->where('is_active', true)->get(),
+            MessageChannel::Instagram => collect(),
+        };
+
+        return [
+            'channel' => $channel->value,
+            'channel_label' => $channel->label(),
+            'has_conversation' => $conversation !== null,
+            'can_reply' => $canReply,
+            'reply_blocked_reason' => $conversation === null ? 'There is no conversation with this lead yet.' : $reply?->reason,
+            'window_closes_at' => $conversation?->last_inbound_at?->copy()->addHours($channel->windowHours())->toIso8601String(),
+            'supports_templates' => $channel->supportsTemplates(),
+            'can_send_template' => $canTemplate,
+            'template_blocked_reason' => $template?->reason,
+            'caption_supported' => $channel->supportsMediaCaption(),
+            'image_types' => $channel->imageMimeTypes(),
+            'image_max_mb' => intdiv($channel->imageMaxBytes(), 1024 * 1024),
+            'document_max_mb' => intdiv($channel->documentMaxBytes(), 1024 * 1024),
+            'templates' => $templates->map(fn ($t): array => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'language' => $t->language,
+                'variable_count' => $t->variable_count,
+                'body_text' => $t instanceof MessengerMessageTemplate ? $t->body_text : null,
+            ])->values()->all(),
+        ];
+    }
+
+    /**
+     * Messages staff sent (not hidden), newest first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function sentMessages(Lead $lead): array
+    {
+        return $lead->messages()
+            ->where('direction', MessageDirection::Outbound)
+            ->whereNull('activity_log_hidden_at')
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(fn (LeadMessage $m): array => [
+                'id' => $m->id,
+                'type' => $m->message_type->value,
+                'body' => $m->body,
+                'template_name' => $m->template_name,
+                'template_variables' => $m->template_variables,
+                'attachment_name' => $m->attachment_name,
+                'attachment_url' => $m->attachment_path !== null ? route('admin.leads.messages.attachment', $m, absolute: false) : null,
+                'status' => $m->status?->value,
+                'failure_reason' => $m->failure_reason,
+                'resent' => $m->resend_message_id !== null,
+                'sent_by_name' => $m->sent_by_name,
+                'at' => $m->created_at?->toIso8601String(),
+            ])
+            ->all();
+    }
+
+    /**
+     * Current consent per type plus the full history.
+     *
+     * @return array{current: array<string, array<string, mixed>|null>, history: array<int, array<string, mixed>>}
+     */
+    private function consents(Lead $lead): array
+    {
+        $current = [];
+
+        foreach (ConsentType::cases() as $type) {
+            $consent = $lead->consents()->where('consent_type', $type)->first();
+            $current[$type->value] = $consent === null ? null : [
+                'status' => $consent->status->value,
+                'source' => $consent->source->label(),
+                'occurred_at' => $consent->occurred_at->toIso8601String(),
+            ];
+        }
+
+        return [
+            'current' => $current,
+            'history' => $lead->consentEvents()->latest('occurred_at')->latest('id')->get()->toBase()->map(fn (LeadConsentEvent $e): array => [
+                'type' => $e->consent_type->value,
+                'type_label' => $e->consent_type->label(),
+                'status' => $e->status->value,
+                'source' => $e->source->label(),
+                'by' => $e->changed_by_name,
+                'policy_version' => $e->policy_version,
+                'policy_url' => $e->policy_url,
+                'ip_address' => $e->ip_address,
+                'occurred_at' => $e->occurred_at->toIso8601String(),
+            ])->all(),
         ];
     }
 
@@ -145,7 +271,13 @@ class LeadPresenter
                 'direction' => $message->direction->value,
                 'body' => $message->body,
                 'sent_by_name' => $message->sent_by_name,
-                'status' => $message->status,
+                'status' => $message->status?->value,
+                'failure_reason' => $message->failure_reason,
+                'message_type' => $message->message_type->value,
+                'template_name' => $message->template_name,
+                'attachment_name' => $message->attachment_name,
+                'attachment_mime' => $message->attachment_mime,
+                'attachment_url' => $message->attachment_path !== null ? route('admin.leads.messages.attachment', $message, absolute: false) : null,
                 'at' => $message->created_at,
             ];
         }

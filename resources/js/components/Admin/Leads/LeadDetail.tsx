@@ -21,8 +21,10 @@ import {
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import ConsentCard from '@/components/Admin/Leads/ConsentCard';
 import ConversationCard from '@/components/Admin/Leads/ConversationCard';
 import LeadActivity from '@/components/Admin/Leads/LeadActivity';
+import SentMessagesCard from '@/components/Admin/Leads/SentMessagesCard';
 import {
     CARD,
     CARD_TITLE,
@@ -340,7 +342,24 @@ export default function LeadDetail({
 
             {(lead.message || lead.html_body) && <MessageCard lead={lead} />}
 
-            <ConversationCard items={lead.conversation} />
+            <ConversationCard
+                items={lead.conversation}
+                leadId={lead.id}
+                messaging={lead.messaging}
+                canReply={canUpdate}
+                canDelete={lead.can_delete_conversation}
+                onErrors={setErrors}
+            />
+
+            {lead.messaging && canUpdate && (
+                <SentMessagesCard
+                    leadId={lead.id}
+                    messaging={lead.messaging}
+                    messages={lead.sent_messages}
+                    canHide={lead.can.delete}
+                    onErrors={setErrors}
+                />
+            )}
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 <ContactCard
@@ -361,6 +380,8 @@ export default function LeadDetail({
                 canUpdate={canUpdate}
                 onErrors={setErrors}
             />
+
+            <ConsentCard lead={lead} />
 
             {canUpdate && <NoteForm leadId={lead.id} onErrors={setErrors} />}
 
@@ -1039,11 +1060,6 @@ function MessageCard({ lead }: { lead: LeadDetailData }) {
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <p className={`${CARD_TITLE} flex items-center gap-2`}>
                     <MessageSquareText className="h-3.5 w-3.5" /> Message
-                    {lead.website_form_name && (
-                        <span className="tracking-normal text-zinc-500 normal-case">
-                            · from {lead.website_form_name}
-                        </span>
-                    )}
                 </p>
                 {lead.html_body && (
                     <div className="flex rounded-lg border border-white/8 p-0.5 text-xs">

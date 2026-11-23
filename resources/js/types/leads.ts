@@ -80,8 +80,69 @@ export interface LeadDetail extends LeadRow {
     avatar_url: string | null;
     subject: string | null;
     html_body: string | null;
-    website_form_name: string | null;
     conversation: ConversationItem[];
+    messaging: LeadMessaging | null;
+    sent_messages: SentMessage[];
+    consents: {
+        current: Record<
+            string,
+            { status: string; source: string; occurred_at: string } | null
+        >;
+        history: ConsentEvent[];
+    };
+    can_delete_conversation: boolean;
+}
+
+export interface MessageTemplateOption {
+    id: string;
+    name: string;
+    language: string;
+    variable_count: number;
+    body_text: string | null;
+}
+
+export interface LeadMessaging {
+    channel: string;
+    channel_label: string;
+    has_conversation: boolean;
+    can_reply: boolean;
+    reply_blocked_reason: string | null;
+    window_closes_at: string | null;
+    supports_templates: boolean;
+    can_send_template: boolean;
+    template_blocked_reason: string | null;
+    caption_supported: boolean;
+    image_types: string[];
+    image_max_mb: number;
+    document_max_mb: number;
+    templates: MessageTemplateOption[];
+}
+
+export interface SentMessage {
+    id: string;
+    type: string;
+    body: string | null;
+    template_name: string | null;
+    template_variables: string[] | null;
+    attachment_name: string | null;
+    attachment_url: string | null;
+    status: string | null;
+    failure_reason: string | null;
+    resent: boolean;
+    sent_by_name: string | null;
+    at: string | null;
+}
+
+export interface ConsentEvent {
+    type: string;
+    type_label: string;
+    status: string;
+    source: string;
+    by: string | null;
+    policy_version: string | null;
+    policy_url: string | null;
+    ip_address: string | null;
+    occurred_at: string;
 }
 
 export type ConversationItem =
@@ -93,6 +154,12 @@ export type ConversationItem =
           body: string | null;
           sent_by_name: string | null;
           status: string | null;
+          failure_reason?: string | null;
+          message_type?: string;
+          template_name?: string | null;
+          attachment_name?: string | null;
+          attachment_mime?: string | null;
+          attachment_url?: string | null;
           at: string | null;
       }
     | {

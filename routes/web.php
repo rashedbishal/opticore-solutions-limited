@@ -15,14 +15,16 @@ use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationCo
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
 use App\Http\Controllers\Admin\Leads\LeadAdController as AdminLeadAdController;
 use App\Http\Controllers\Admin\Leads\LeadAttachmentController as AdminLeadAttachmentController;
+use App\Http\Controllers\Admin\Leads\LeadConsentController as AdminLeadConsentController;
 use App\Http\Controllers\Admin\Leads\LeadController as AdminLeadController;
+use App\Http\Controllers\Admin\Leads\LeadMessageController as AdminLeadMessageController;
 use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
 use App\Http\Controllers\Admin\Leads\LeadSourceController as AdminLeadSourceController;
+use App\Http\Controllers\Admin\Leads\TemplateController as AdminLeadTemplateController;
 use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
 use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
 use App\Http\Controllers\Admin\LeadSettings\SourceController as AdminLeadSourceSettingsController;
-use App\Http\Controllers\Admin\LeadSettings\WebsiteFormController as AdminWebsiteFormController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\MealManagementController;
 use App\Http\Controllers\Admin\MealReportController;
@@ -307,6 +309,14 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('ad-sources/{source}', [AdminLeadAdController::class, 'show'])->name('ad-sources.show')->whereUlid('source');
         Route::get('ad-sources/{source}/export', [AdminLeadAdController::class, 'export'])->name('ad-sources.export')->whereUlid('source');
         Route::get('attachments/{attachment}', [AdminLeadAttachmentController::class, 'show'])->name('attachments.show')->whereUlid('attachment');
+        Route::get('sent-files/{message}', [AdminLeadMessageController::class, 'attachment'])->name('messages.attachment')->whereUlid('message');
+        Route::get('templates', [AdminLeadTemplateController::class, 'index'])->name('templates.index');
+        Route::post('templates/whatsapp', [AdminLeadTemplateController::class, 'storeWhatsapp'])->name('templates.whatsapp.store');
+        Route::put('templates/whatsapp/{template}', [AdminLeadTemplateController::class, 'updateWhatsapp'])->name('templates.whatsapp.update');
+        Route::post('templates/whatsapp/{template}/toggle', [AdminLeadTemplateController::class, 'toggleWhatsapp'])->name('templates.whatsapp.toggle');
+        Route::delete('templates/whatsapp/{template}', [AdminLeadTemplateController::class, 'destroyWhatsapp'])->name('templates.whatsapp.destroy');
+        Route::post('templates/messenger', [AdminLeadTemplateController::class, 'storeMessenger'])->name('templates.messenger.store');
+        Route::delete('templates/messenger/{template}', [AdminLeadTemplateController::class, 'destroyMessenger'])->name('templates.messenger.destroy');
         Route::get('export', [AdminLeadController::class, 'export'])->name('export');
 
         Route::get('/', [AdminLeadController::class, 'index'])->name('index');
@@ -320,6 +330,12 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::put('{lead}/assign', [AdminLeadController::class, 'assign'])->name('assign')->whereUlid('lead');
         Route::post('{lead}/dates', [AdminLeadController::class, 'resolveDate'])->name('dates')->whereUlid('lead');
         Route::post('{lead}/notes', [AdminLeadController::class, 'addNote'])->name('notes')->whereUlid('lead');
+        Route::post('{lead}/messages', [AdminLeadMessageController::class, 'send'])->name('messages.send')->whereUlid('lead');
+        Route::post('{lead}/messages/template', [AdminLeadMessageController::class, 'sendTemplate'])->name('messages.template')->whereUlid('lead');
+        Route::post('{lead}/messages/{message}/resend', [AdminLeadMessageController::class, 'resend'])->name('messages.resend')->whereUlid(['lead', 'message']);
+        Route::post('{lead}/messages/{message}/hide', [AdminLeadMessageController::class, 'hide'])->name('messages.hide')->whereUlid(['lead', 'message']);
+        Route::delete('{lead}/conversation', [AdminLeadMessageController::class, 'destroyConversation'])->name('conversation.destroy')->whereUlid('lead');
+        Route::post('{lead}/consents/{type}/{status}', [AdminLeadConsentController::class, 'update'])->name('consents.update')->whereUlid('lead')->whereIn('type', ['privacy', 'marketing'])->whereIn('status', ['granted', 'withdrawn']);
     });
 
     Route::prefix('lead-settings')->name('lead-settings.')->group(function () {
@@ -329,13 +345,6 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('sources/{source}/test', [AdminLeadSourceSettingsController::class, 'test'])->name('sources.test');
         Route::get('sources/{source}/permissions', [AdminLeadSourceSettingsController::class, 'permissions'])->name('sources.permissions');
         Route::delete('sources/{source}', [AdminLeadSourceSettingsController::class, 'destroy'])->name('sources.destroy');
-
-        Route::get('website-forms', [AdminWebsiteFormController::class, 'index'])->name('website-forms.index');
-        Route::post('website-forms', [AdminWebsiteFormController::class, 'store'])->name('website-forms.store');
-        Route::put('website-forms/{form}', [AdminWebsiteFormController::class, 'update'])->name('website-forms.update');
-        Route::post('website-forms/{form}/toggle', [AdminWebsiteFormController::class, 'toggle'])->name('website-forms.toggle');
-        Route::post('website-forms/{form}/regenerate', [AdminWebsiteFormController::class, 'regenerate'])->name('website-forms.regenerate');
-        Route::delete('website-forms/{form}', [AdminWebsiteFormController::class, 'destroy'])->name('website-forms.destroy');
 
         Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');

@@ -4,6 +4,7 @@ namespace App\Leads\Models;
 
 use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
+use App\Leads\Enums\MessageChannel;
 use App\Leads\Support\LeadClock;
 use Carbon\CarbonInterface;
 use Database\Factories\Leads\LeadFactory;
@@ -165,6 +166,36 @@ class Lead extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(LeadAttachment::class);
+    }
+
+    /** The chat channel this lead can be replied on, if any. */
+    public function messagingChannel(): ?MessageChannel
+    {
+        return MessageChannel::fromSourceType($this->source->type);
+    }
+
+    /** The lead's conversation on its channel (latest the person wrote in). */
+    public function activeConversation(): ?LeadConversation
+    {
+        $channel = $this->messagingChannel();
+
+        return $channel === null ? null : $this->conversations()->where('channel', $channel)->orderByDesc('last_inbound_at')->first();
+    }
+
+    /**
+     * @return HasMany<LeadConsent, $this>
+     */
+    public function consents(): HasMany
+    {
+        return $this->hasMany(LeadConsent::class);
+    }
+
+    /**
+     * @return HasMany<LeadConsentEvent, $this>
+     */
+    public function consentEvents(): HasMany
+    {
+        return $this->hasMany(LeadConsentEvent::class);
     }
 
     public function isFacebookLeadAd(): bool

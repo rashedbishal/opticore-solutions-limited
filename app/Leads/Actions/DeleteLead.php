@@ -41,6 +41,11 @@ class DeleteLead
                 ],
             ]);
 
+            // Consent records outlive the lead (GDPR proof): keep who it was.
+            foreach (['lead_consents', 'lead_consent_events'] as $table) {
+                DB::table($table)->where('lead_id', $locked->id)->update(['lead_identifier' => $locked->identifier, 'lead_name' => $locked->name]);
+            }
+
             $locked->delete();
         });
 

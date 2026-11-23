@@ -121,10 +121,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // Lead webhooks from Meta: generous per IP (Meta batches and retries),
         // but bounded so a flood can't tie up the app.
-        // Website form submissions: per form per visitor, and per visitor overall.
-        RateLimiter::for('website-form-per-form', fn (Request $request) => Limit::perMinute(20)->by('website-form:'.$request->route('token').'|'.$request->ip()));
-        RateLimiter::for('website-form-per-ip', fn (Request $request) => Limit::perMinute(60)->by('website-form-ip:'.$request->ip()));
-
         RateLimiter::for('lead-webhooks', fn (Request $request) => Limit::perMinute(600)->by($request->ip()));
 
         RateLimiter::for('login', function (Request $request) {

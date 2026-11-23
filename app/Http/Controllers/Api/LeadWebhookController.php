@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Leads\Enums\LeadSourceType;
+use App\Leads\Enums\MessageChannel;
+use App\Leads\Enums\MessageStatus;
+use App\Leads\Jobs\ReconcileOutboundMessageStatus;
 use App\Leads\Models\LeadSource;
 use App\Leads\Services\Meta\InboundChannels;
 use Illuminate\Contracts\Cache\LockTimeoutException;
@@ -18,8 +21,8 @@ use Throwable;
  * Instagram and WhatsApp. Always answers 200 so Meta never disables the
  * subscription because of one bad item — except a lock timeout, which
  * returns 503 so Meta retries that delivery. One failing item never stops
- * the rest of the delivery. Delivery/read receipts are for sent messages
- * and are handled with replies (Phase 3).
+ * the rest of the delivery. Delivery/read receipts for messages staff sent
+ * update those messages' ticks in the background.
  */
 class LeadWebhookController extends Controller
 {
@@ -54,11 +57,13 @@ class LeadWebhookController extends Controller
             $pageId = (string) ($entry['id'] ?? '');
 
             foreach (($entry['messaging'] ?? []) as $messaging) {
+                $source = $this->source(LeadSourceType::FacebookMessenger, 'page_id', $pageId);
+
                 if (isset($messaging['delivery']) || isset($messaging['read'])) {
+                    $this->receipt($source, MessageChannel::Messenger, $messaging);
+
                     continue;
                 }
-
-                $source = $this->source(LeadSourceType::FacebookMessenger, 'page_id', $pageId);
 
                 if ($source !== null) {
                     $this->safely('Facebook Messenger', fn () => $this->channels->messengerItem($source, $messaging));
@@ -103,6 +108,8 @@ class LeadWebhookController extends Controller
 
             foreach (($entry['messaging'] ?? []) as $messaging) {
                 if (isset($messaging['delivery']) || isset($messaging['read'])) {
+                    $this->receipt($source, MessageChannel::Instagram, $messaging);
+
                     continue;
                 }
 
@@ -137,6 +144,10 @@ class LeadWebhookController extends Controller
                     continue;
                 }
 
+                foreach (($change['value']['statuses'] ?? []) as $status) {
+                    $this->whatsappStatus($status);
+                }
+
                 foreach (($change['value']['messages'] ?? []) as $message) {
                     $this->safely('WhatsApp', fn () => $this->channels->whatsappMessage($source, $change, $message));
                 }
@@ -144,6 +155,58 @@ class LeadWebhookController extends Controller
         }
 
         return $this->ok();
+    }
+
+    /**
+     * A Messenger/Instagram delivery or read receipt for messages staff sent.
+     *
+     * @param  array<string, mixed>  $messaging
+     */
+    private function receipt(?LeadSource $source, MessageChannel $channel, array $messaging): void
+    {
+        $event = $messaging['delivery'] ?? $messaging['read'] ?? null;
+        $customerId = (string) ($messaging['sender']['id'] ?? '');
+
+        if ($source === null || ! is_array($event) || $customerId === '') {
+            return;
+        }
+
+        $mids = is_array($event['mids'] ?? null) ? array_values(array_filter($event['mids'], 'is_string')) : [];
+        $watermark = $event['watermark'] ?? null;
+
+        if ($mids === [] && $watermark === null) {
+            return;
+        }
+
+        ReconcileOutboundMessageStatus::dispatch(
+            $channel,
+            isset($messaging['delivery']) ? MessageStatus::Delivered : MessageStatus::Read,
+            externalMessageIds: $mids,
+            leadSourceId: $source->id,
+            threadId: $customerId,
+            watermarkTimestamp: is_numeric($watermark) ? (int) ((float) $watermark / 1000) : null,
+        );
+    }
+
+    /**
+     * A WhatsApp sent/delivered/read/failed update for a message staff sent.
+     *
+     * @param  array<string, mixed>  $status
+     */
+    private function whatsappStatus(array $status): void
+    {
+        $wamid = $status['id'] ?? null;
+        $value = is_string($status['status'] ?? null) ? MessageStatus::tryFrom($status['status']) : null;
+
+        if (! is_string($wamid) || $wamid === '' || $value === null) {
+            return;
+        }
+
+        $reason = $value === MessageStatus::Failed
+            ? ($status['errors'][0]['title'] ?? $status['errors'][0]['message'] ?? 'WhatsApp reported a delivery failure.')
+            : null;
+
+        ReconcileOutboundMessageStatus::dispatch(MessageChannel::Whatsapp, $value, externalMessageId: $wamid, failureReason: is_string($reason) ? $reason : null);
     }
 
     /**
