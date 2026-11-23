@@ -120,6 +120,9 @@ class LeadPresenter
             ],
             'activity' => $this->activity($lead),
             'avatar_url' => $lead->source_data['facebook_profile_pic'] ?? $lead->source_data['instagram_profile_pic'] ?? null,
+            'subject' => $lead->source_data['subject'] ?? null,
+            'html_body' => $lead->html_body,
+            'website_form_name' => $lead->source_data['website_form_name'] ?? null,
             'conversation' => $this->conversation($lead),
         ];
     }

@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/react';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import {
     ChevronDown,
+    FileCode2,
     Coins,
     Inbox,
     ListOrdered,
@@ -15,6 +16,7 @@ import { canManageLeadSettings, canUseLeads } from '@/lib/leadAccess';
 import currencies from '@/routes/admin/lead-settings/currencies';
 import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
+import websiteForms from '@/routes/admin/lead-settings/website-forms';
 import leads from '@/routes/admin/leads';
 import leadSources from '@/routes/admin/leads/sources';
 
@@ -56,6 +58,12 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'General',
         href: general.edit.url(),
         icon: SlidersHorizontal,
+        section: 'settings',
+    },
+    {
+        name: 'Website Forms',
+        href: websiteForms.index.url(),
+        icon: FileCode2,
         section: 'settings',
     },
     {

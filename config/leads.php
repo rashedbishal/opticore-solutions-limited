@@ -15,4 +15,11 @@ return [
         'instagram' => 25 * 1024 * 1024,
         'whatsapp' => 100 * 1024 * 1024,
     ],
+
+    /*
+    | Email inbox health: after this many failed connections in a row (within
+    | the window), the mother admin is alerted once (same as OptiFin).
+    */
+    'imap_failure_threshold' => env('LEADS_IMAP_FAILURE_THRESHOLD', 5),
+    'imap_failure_window_minutes' => env('LEADS_IMAP_FAILURE_WINDOW_MINUTES', 1440),
 ];

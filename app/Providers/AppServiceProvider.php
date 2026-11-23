@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Leads\Listeners\BroadcastAdminNotification;
+use App\Leads\Mail\ImapClient;
+use App\Leads\Mail\NativeImapClient;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Email lead inboxes read through PHP's imap extension.
+        $this->app->bind(ImapClient::class, NativeImapClient::class);
         //
     }
 
@@ -117,6 +121,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Lead webhooks from Meta: generous per IP (Meta batches and retries),
         // but bounded so a flood can't tie up the app.
+        // Website form submissions: per form per visitor, and per visitor overall.
+        RateLimiter::for('website-form-per-form', fn (Request $request) => Limit::perMinute(20)->by('website-form:'.$request->route('token').'|'.$request->ip()));
+        RateLimiter::for('website-form-per-ip', fn (Request $request) => Limit::perMinute(60)->by('website-form-ip:'.$request->ip()));
+
         RateLimiter::for('lead-webhooks', fn (Request $request) => Limit::perMinute(600)->by($request->ip()));
 
         RateLimiter::for('login', function (Request $request) {

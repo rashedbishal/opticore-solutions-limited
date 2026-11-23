@@ -9,7 +9,10 @@ use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\VerifyMetaWebhookSignature;
 use App\Leads\Console\Commands\CheckMetaTokens;
+use App\Leads\Console\Commands\CleanupOrphanedLeadAttachments;
+use App\Leads\Console\Commands\FetchEmailLeads;
 use App\Leads\Console\Commands\FetchFacebookLeadTest;
+use App\Leads\Console\Commands\RetryFailedEmailMessages;
 use App\Leads\Console\Commands\SendLeadAlertNotifications;
 use App\Leads\Console\Commands\SubscribeLeadgenWebhook;
 use App\Leads\Support\LeadClock;
@@ -107,6 +110,9 @@ return Application::configure(basePath: dirname(__DIR__))
         CheckMetaTokens::class,
         SubscribeLeadgenWebhook::class,
         FetchFacebookLeadTest::class,
+        FetchEmailLeads::class,
+        RetryFailedEmailMessages::class,
+        CleanupOrphanedLeadAttachments::class,
     ])
     ->withSchedule(function (Schedule $schedule): void {
         // Re-prime all public-facing Redis caches every 50 minutes so the
@@ -152,5 +158,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Daily read-only check of every Meta channel key (health warnings).
         $schedule->command(CheckMetaTokens::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
+
+        // Email lead inboxes: queue due inbox checks, retry failed emails,
+        // and remove attachment files whose lead was deleted.
+        $schedule->command(FetchEmailLeads::class)->everyMinute()->withoutOverlapping();
+        $schedule->command(RetryFailedEmailMessages::class)->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->command(CleanupOrphanedLeadAttachments::class)->dailyAt('04:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
     })
     ->create();

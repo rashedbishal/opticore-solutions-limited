@@ -78,6 +78,9 @@ export interface LeadDetail extends LeadRow {
     can: { update: boolean; assign: boolean; delete: boolean };
     activity: LeadActivityEvent[];
     avatar_url: string | null;
+    subject: string | null;
+    html_body: string | null;
+    website_form_name: string | null;
     conversation: ConversationItem[];
 }
 

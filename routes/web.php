@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurre
 use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
 use App\Http\Controllers\Admin\LeadSettings\SourceController as AdminLeadSourceSettingsController;
+use App\Http\Controllers\Admin\LeadSettings\WebsiteFormController as AdminWebsiteFormController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\MealManagementController;
 use App\Http\Controllers\Admin\MealReportController;
@@ -328,6 +329,13 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('sources/{source}/test', [AdminLeadSourceSettingsController::class, 'test'])->name('sources.test');
         Route::get('sources/{source}/permissions', [AdminLeadSourceSettingsController::class, 'permissions'])->name('sources.permissions');
         Route::delete('sources/{source}', [AdminLeadSourceSettingsController::class, 'destroy'])->name('sources.destroy');
+
+        Route::get('website-forms', [AdminWebsiteFormController::class, 'index'])->name('website-forms.index');
+        Route::post('website-forms', [AdminWebsiteFormController::class, 'store'])->name('website-forms.store');
+        Route::put('website-forms/{form}', [AdminWebsiteFormController::class, 'update'])->name('website-forms.update');
+        Route::post('website-forms/{form}/toggle', [AdminWebsiteFormController::class, 'toggle'])->name('website-forms.toggle');
+        Route::post('website-forms/{form}/regenerate', [AdminWebsiteFormController::class, 'regenerate'])->name('website-forms.regenerate');
+        Route::delete('website-forms/{form}', [AdminWebsiteFormController::class, 'destroy'])->name('website-forms.destroy');
 
         Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');

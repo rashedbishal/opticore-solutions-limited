@@ -3,6 +3,8 @@
 namespace App\Leads\Services\Meta;
 
 use App\Leads\Enums\LeadSourceType;
+use App\Leads\Jobs\ProcessEmailLeadSource;
+use App\Leads\Mail\ImapClient;
 use App\Leads\Models\LeadSource;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +16,10 @@ use Illuminate\Support\Facades\Http;
  */
 class SourceConnectionTester
 {
-    public function __construct(private readonly MetaGraph $graph) {}
+    public function __construct(
+        private readonly MetaGraph $graph,
+        private readonly ImapClient $imap,
+    ) {}
 
     /**
      * @return array{success: bool, message: string}
@@ -29,7 +34,8 @@ class SourceConnectionTester
             LeadSourceType::Whatsapp => $this->whatsapp($config),
             LeadSourceType::Instagram => $this->instagram($config),
             LeadSourceType::LinkedInLeadGen => $this->linkedIn($config),
-            LeadSourceType::Manual, LeadSourceType::ContactForm => ['success' => true, 'message' => 'This source has nothing external to test.'],
+            LeadSourceType::Email => $this->email($config),
+            LeadSourceType::Manual, LeadSourceType::ContactForm, LeadSourceType::WebsiteForm => ['success' => true, 'message' => 'This source has nothing external to test.'],
         };
     }
 
@@ -147,5 +153,26 @@ class SourceConnectionTester
         return $response->successful()
             ? ['success' => true, 'message' => 'Connected to LinkedIn successfully.']
             : ['success' => false, 'message' => 'LinkedIn rejected the request: '.($response->json('message') ?? 'unknown error')];
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array{success: bool, message: string}
+     */
+    private function email(array $config): array
+    {
+        if (! extension_loaded('imap')) {
+            return ['success' => false, 'message' => 'The IMAP extension is not available on this server.'];
+        }
+
+        $connection = $this->imap->open(ProcessEmailLeadSource::mailboxString($config), (string) ($config['imap_username'] ?? ''), (string) ($config['imap_password'] ?? ''), halfOpen: true);
+
+        if ($connection === null) {
+            return ['success' => false, 'message' => 'Unable to connect: '.$this->imap->lastError()];
+        }
+
+        $this->imap->close($connection);
+
+        return ['success' => true, 'message' => 'Connection successful.'];
     }
 }

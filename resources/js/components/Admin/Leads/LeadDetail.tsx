@@ -338,16 +338,7 @@ export default function LeadDetail({
                 </div>
             )}
 
-            {lead.message && (
-                <div className={CARD}>
-                    <p className={`${CARD_TITLE} mb-2 flex items-center gap-2`}>
-                        <MessageSquareText className="h-3.5 w-3.5" /> Message
-                    </p>
-                    <p className="text-sm whitespace-pre-wrap text-zinc-300">
-                        {lead.message}
-                    </p>
-                </div>
-            )}
+            {(lead.message || lead.html_body) && <MessageCard lead={lead} />}
 
             <ConversationCard items={lead.conversation} />
 
@@ -1031,6 +1022,72 @@ export function MoneyInput({
                     aria-label={label}
                 />
             </div>
+        </div>
+    );
+}
+
+/**
+ * The lead's original message. For emails, a switch shows the formatted
+ * (HTML) version inside a locked-down frame: no scripts, no forms, no
+ * access to the CMS.
+ */
+function MessageCard({ lead }: { lead: LeadDetailData }) {
+    const [formatted, setFormatted] = useState(false);
+
+    return (
+        <div className={CARD}>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <p className={`${CARD_TITLE} flex items-center gap-2`}>
+                    <MessageSquareText className="h-3.5 w-3.5" /> Message
+                    {lead.website_form_name && (
+                        <span className="tracking-normal text-zinc-500 normal-case">
+                            · from {lead.website_form_name}
+                        </span>
+                    )}
+                </p>
+                {lead.html_body && (
+                    <div className="flex rounded-lg border border-white/8 p-0.5 text-xs">
+                        {(['Text', 'Formatted'] as const).map((label) => {
+                            const active =
+                                (label === 'Formatted') === formatted;
+
+                            return (
+                                <button
+                                    key={label}
+                                    type="button"
+                                    onClick={() =>
+                                        setFormatted(label === 'Formatted')
+                                    }
+                                    className={`rounded-md px-2.5 py-1 transition-colors ${
+                                        active
+                                            ? 'bg-violet-500/20 text-violet-100'
+                                            : 'text-zinc-500 hover:text-zinc-200'
+                                    }`}
+                                >
+                                    {label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+            {lead.subject && (
+                <p className="mb-2 text-sm font-semibold text-white">
+                    {lead.subject}
+                </p>
+            )}
+            {formatted && lead.html_body ? (
+                <iframe
+                    title="Formatted email"
+                    sandbox=""
+                    srcDoc={lead.html_body}
+                    className="h-96 w-full rounded-lg border border-white/8 bg-white"
+                />
+            ) : (
+                <p className="text-sm whitespace-pre-wrap text-zinc-300">
+                    {lead.message}
+                </p>
+            )}
         </div>
     );
 }

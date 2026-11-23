@@ -6,6 +6,7 @@ use App\Leads\Models\Lead;
 use App\Leads\Notifications\FollowUpAlertNotification;
 use App\Leads\Notifications\FollowUpCancelledNotification;
 use App\Leads\Notifications\FollowUpUpdatedNotification;
+use App\Leads\Notifications\InboxCannotConnectNotification;
 use App\Leads\Notifications\LeadAssignedNotification;
 use App\Leads\Notifications\MeetingAlertNotification;
 use App\Leads\Notifications\MeetingCancelledNotification;
@@ -61,6 +62,10 @@ class LeadNotificationPresenter
                 ($data['rescheduled'] ?? false) ? 'Follow-up rescheduled' : 'Follow-up scheduled',
                 $this->dateChange($data, 'next_follow_up_at'),
             ],
+            InboxCannotConnectNotification::class => [
+                'Email inbox can\'t connect',
+                sprintf('%s failed to connect %d times in a row', $data['source_name'] ?? 'An inbox', (int) ($data['failures'] ?? 0)),
+            ],
             default => [(string) ($data['title'] ?? 'Notification'), (string) ($data['message'] ?? '')],
         };
 
@@ -72,6 +77,10 @@ class LeadNotificationPresenter
      */
     private function url(array $data, Admin $viewer): ?string
     {
+        if (isset($data['lead_source_id'])) {
+            return route('admin.leads.sources.index', absolute: false);
+        }
+
         if (isset($data['lead_id'])) {
             $lead = Lead::query()->find($data['lead_id']);
 

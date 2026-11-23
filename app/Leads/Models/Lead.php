@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $phone
  * @property string|null $message
  * @property array<string, mixed>|null $source_data
+ * @property string|null $html_body
  * @property string $status_id
  * @property LeadPriority $priority
  * @property string|null $lead_source
@@ -56,7 +57,7 @@ class Lead extends Model
         'status_id', 'priority', 'company', 'website', 'industry', 'location', 'service_interest',
         'lead_source', 'estimated_budget', 'estimated_budget_currency_id', 'deal_value',
         'deal_value_currency_id', 'win_probability', 'next_follow_up_at', 'meeting_date',
-        'meeting_time', 'first_contacted_at', 'closed_at',
+        'meeting_time', 'first_contacted_at', 'closed_at', 'html_body',
     ];
 
     protected function casts(): array

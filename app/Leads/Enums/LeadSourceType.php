@@ -15,6 +15,8 @@ enum LeadSourceType: string
     case Whatsapp = 'whatsapp';
     case Instagram = 'instagram';
     case LinkedInLeadGen = 'linkedin_lead_gen';
+    case Email = 'email';
+    case WebsiteForm = 'website_form';
 
     public function label(): string
     {
@@ -26,13 +28,18 @@ enum LeadSourceType: string
             self::Whatsapp => 'WhatsApp',
             self::Instagram => 'Instagram',
             self::LinkedInLeadGen => 'LinkedIn Lead Gen Forms',
+            self::Email => 'Email Inbox',
+            self::WebsiteForm => 'Website Forms',
         };
     }
 
-    /** One-per-system sources the CMS creates itself; never added by hand. */
+    /**
+     * One-per-system sources the CMS creates itself; never added by hand
+     * (the Website Forms source appears with the first form).
+     */
     public function isBuiltIn(): bool
     {
-        return in_array($this, [self::Manual, self::ContactForm], true);
+        return in_array($this, [self::Manual, self::ContactForm, self::WebsiteForm], true);
     }
 
     public function isMeta(): bool
@@ -93,7 +100,15 @@ enum LeadSourceType: string
                 ['key' => 'access_token', 'label' => 'Access Token', 'type' => 'password', 'sensitive' => true],
                 ['key' => 'refresh_token', 'label' => 'Refresh Token', 'type' => 'password', 'sensitive' => true],
             ],
-            self::Manual, self::ContactForm => [],
+            self::Email => [
+                ['key' => 'email_address', 'label' => 'Email Address', 'type' => 'text', 'sensitive' => false],
+                ['key' => 'imap_host', 'label' => 'IMAP Host', 'type' => 'text', 'sensitive' => false],
+                ['key' => 'imap_port', 'label' => 'IMAP Port', 'type' => 'text', 'sensitive' => false],
+                ['key' => 'imap_username', 'label' => 'IMAP Username', 'type' => 'text', 'sensitive' => false],
+                ['key' => 'imap_password', 'label' => 'IMAP Password', 'type' => 'password', 'sensitive' => true],
+                ['key' => 'fetch_interval_minutes', 'label' => 'Check every (minutes)', 'type' => 'text', 'sensitive' => false],
+            ],
+            self::Manual, self::ContactForm, self::WebsiteForm => [],
         };
     }
 
@@ -134,7 +149,15 @@ enum LeadSourceType: string
                 'config.access_token' => ['nullable', 'string'],
                 'config.refresh_token' => ['nullable', 'string'],
             ],
-            self::Manual, self::ContactForm => [],
+            self::Email => [
+                'config.email_address' => ['required', 'email', 'max:255'],
+                'config.imap_host' => ['required', 'string', 'max:255'],
+                'config.imap_port' => ['required', 'integer', 'min:1', 'max:65535'],
+                'config.imap_username' => ['required', 'string', 'max:255'],
+                'config.imap_password' => [$secret, 'string'],
+                'config.fetch_interval_minutes' => ['nullable', 'integer', 'min:1'],
+            ],
+            self::Manual, self::ContactForm, self::WebsiteForm => [],
         };
     }
 

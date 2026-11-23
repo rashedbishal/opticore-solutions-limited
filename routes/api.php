@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\LeadWebhookController;
+use App\Http\Controllers\Api\WebsiteFormController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,12 @@ Route::prefix('webhook')->name('api.webhook.')->middleware('throttle:lead-webhoo
     Route::post('whatsapp', [LeadWebhookController::class, 'whatsapp'])->name('whatsapp')
         ->middleware('verify.meta.signature:whatsapp');
 });
+
+/*
+| Website Form Builder submissions (forms placed on other websites). Rate
+| limited per form and per visitor, same limits as OptiFin.
+*/
+Route::post('forms/{token}', [WebsiteFormController::class, 'submit'])
+    ->name('api.website-form.submit')
+    ->where('token', '[A-Za-z0-9]{40}')
+    ->middleware(['throttle:website-form-per-form', 'throttle:website-form-per-ip']);

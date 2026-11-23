@@ -2,8 +2,11 @@
 
 namespace App\Leads\Services;
 
+use App\Leads\Enums\FailedEmailMessageStatus;
 use App\Leads\Enums\IntegrationProblem;
+use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\TokenCheckStatus;
+use App\Leads\Models\FailedEmailMessage;
 use App\Leads\Models\LeadSource;
 use Carbon\CarbonInterface;
 
@@ -14,6 +17,8 @@ use Carbon\CarbonInterface;
  */
 class SourceHealth
 {
+    public function __construct(private readonly InboxHealth $inbox) {}
+
     public const QUIET_AFTER_DAYS = 7;
 
     public const TOKEN_EXPIRY_WARNING_DAYS = 7;
@@ -45,6 +50,24 @@ class SourceHealth
 
         if ($source->last_signature_rejection_at !== null && $source->last_signature_rejection_at->gte(now()->subDays(self::RECENT_DAYS))) {
             $problems[] = $this->problem(IntegrationProblem::WebhookRejected, ($source->last_signature_rejection_reason ?? 'A webhook signature was rejected.').' ('.$source->last_signature_rejection_at->diffForHumans().')');
+        }
+
+        if ($source->type === LeadSourceType::Email) {
+            $failures = $this->inbox->consecutiveFailures($source);
+
+            if ($failures >= (int) config('leads.imap_failure_threshold')) {
+                $problems[] = $this->problem(IntegrationProblem::InboxCannotConnect, "Failed to connect {$failures} times in a row.");
+            }
+
+            $failedEmails = FailedEmailMessage::query()
+                ->where('lead_source_id', $source->id)
+                ->whereIn('status', [FailedEmailMessageStatus::Failed, FailedEmailMessageStatus::Exhausted])
+                ->where('first_failed_at', '>=', now()->subDays(self::RECENT_DAYS))
+                ->count();
+
+            if ($failedEmails > 0) {
+                $problems[] = $this->problem(IntegrationProblem::EmailsFailed, "{$failedEmails} ".($failedEmails === 1 ? 'email' : 'emails').' failed to import in the last 7 days.');
+            }
         }
 
         if ($source->type->isMeta()) {
