@@ -119,7 +119,53 @@ class LeadPresenter
                 'delete' => $this->access->canDelete($viewer),
             ],
             'activity' => $this->activity($lead),
+            'avatar_url' => $lead->source_data['facebook_profile_pic'] ?? $lead->source_data['instagram_profile_pic'] ?? null,
+            'conversation' => $this->conversation($lead),
         ];
+    }
+
+    /**
+     * The chat with this lead across Messenger / Instagram / WhatsApp:
+     * messages and attachments in time order, oldest first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function conversation(Lead $lead): array
+    {
+        $items = [];
+
+        foreach ($lead->messages()->get() as $message) {
+            $items[] = [
+                'kind' => 'message',
+                'id' => $message->id,
+                'channel' => $message->channel->value,
+                'direction' => $message->direction->value,
+                'body' => $message->body,
+                'sent_by_name' => $message->sent_by_name,
+                'status' => $message->status,
+                'at' => $message->created_at,
+            ];
+        }
+
+        foreach ($lead->attachments()->get() as $attachment) {
+            $items[] = [
+                'kind' => 'attachment',
+                'id' => $attachment->id,
+                'type' => $attachment->type,
+                'status' => $attachment->status->value,
+                'mime' => $attachment->mime,
+                'url' => $attachment->status->value === 'downloaded' ? route('admin.leads.attachments.show', $attachment, absolute: false) : null,
+                'at' => $attachment->sent_at ?? $attachment->created_at,
+            ];
+        }
+
+        usort($items, fn (array $a, array $b): int => $a['at'] <=> $b['at']);
+
+        return array_map(function (array $item): array {
+            $item['at'] = $item['at']?->toIso8601String();
+
+            return $item;
+        }, $items);
     }
 
     /**

@@ -21,6 +21,7 @@ import {
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import ConversationCard from '@/components/Admin/Leads/ConversationCard';
 import LeadActivity from '@/components/Admin/Leads/LeadActivity';
 import {
     CARD,
@@ -122,33 +123,46 @@ export default function LeadDetail({
             {/* Header */}
             <div className={CARD}>
                 <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                        <p className="font-mono text-[11px] tracking-[0.18em] text-violet-400/70 uppercase">
-                            {lead.identifier}
-                        </p>
-                        <h2 className="mt-1 truncate text-xl font-bold text-white sm:text-2xl">
-                            {lead.name}
-                        </h2>
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                            <span
-                                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 ${badgeClass(status?.color)}`}
-                            >
+                    <div className="flex min-w-0 items-start gap-3">
+                        {lead.avatar_url && (
+                            <img
+                                src={lead.avatar_url}
+                                alt=""
+                                referrerPolicy="no-referrer"
+                                className="h-12 w-12 shrink-0 rounded-full border border-white/10 object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                }}
+                            />
+                        )}
+                        <div className="min-w-0">
+                            <p className="font-mono text-[11px] tracking-[0.18em] text-violet-400/70 uppercase">
+                                {lead.identifier}
+                            </p>
+                            <h2 className="mt-1 truncate text-xl font-bold text-white sm:text-2xl">
+                                {lead.name}
+                            </h2>
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                 <span
-                                    className={`h-1.5 w-1.5 rounded-full ${dotClass(status?.color)}`}
-                                />
-                                {status?.name ?? 'Unknown'}
-                            </span>
-                            <span
-                                className={`rounded-full border px-2 py-0.5 ${badgeClass(priority?.color)}`}
-                            >
-                                {priority?.label ?? lead.priority}
-                            </span>
-                            <span className="rounded-full border border-white/10 px-2 py-0.5 text-zinc-400">
-                                {lead.source.name}
-                            </span>
-                            <span className="text-zinc-500">
-                                Added {formatDate(lead.created_at)}
-                            </span>
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 ${badgeClass(status?.color)}`}
+                                >
+                                    <span
+                                        className={`h-1.5 w-1.5 rounded-full ${dotClass(status?.color)}`}
+                                    />
+                                    {status?.name ?? 'Unknown'}
+                                </span>
+                                <span
+                                    className={`rounded-full border px-2 py-0.5 ${badgeClass(priority?.color)}`}
+                                >
+                                    {priority?.label ?? lead.priority}
+                                </span>
+                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-zinc-400">
+                                    {lead.source.name}
+                                </span>
+                                <span className="text-zinc-500">
+                                    Added {formatDate(lead.created_at)}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
@@ -334,6 +348,8 @@ export default function LeadDetail({
                     </p>
                 </div>
             )}
+
+            <ConversationCard items={lead.conversation} />
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 <ContactCard

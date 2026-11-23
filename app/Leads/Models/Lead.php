@@ -3,6 +3,7 @@
 namespace App\Leads\Models;
 
 use App\Leads\Enums\LeadPriority;
+use App\Leads\Enums\LeadSourceType;
 use App\Leads\Support\LeadClock;
 use Carbon\CarbonInterface;
 use Database\Factories\Leads\LeadFactory;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $email
  * @property string|null $phone
  * @property string|null $message
+ * @property array<string, mixed>|null $source_data
  * @property string $status_id
  * @property LeadPriority $priority
  * @property string|null $lead_source
@@ -138,6 +140,62 @@ class Lead extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(LeadAssignment::class);
+    }
+
+    /**
+     * @return HasMany<LeadConversation, $this>
+     */
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(LeadConversation::class);
+    }
+
+    /**
+     * @return HasMany<LeadMessage, $this>
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(LeadMessage::class);
+    }
+
+    /**
+     * @return HasMany<LeadAttachment, $this>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(LeadAttachment::class);
+    }
+
+    public function isFacebookLeadAd(): bool
+    {
+        return $this->source->type === LeadSourceType::FacebookLeadAds;
+    }
+
+    /**
+     * A Facebook Lead Ad's answers as question name => answer.
+     *
+     * @return array<string, string>
+     */
+    public function leadAdFieldValues(): array
+    {
+        $fieldData = $this->source_data['field_data'] ?? null;
+
+        if (! is_array($fieldData)) {
+            return [];
+        }
+
+        $values = [];
+
+        foreach ($fieldData as $field) {
+            $name = $field['name'] ?? null;
+            $value = $field['values'][0] ?? null;
+
+            if (is_string($name) && $name !== '' && is_string($value)) {
+                $values[$name] = $value;
+            }
+        }
+
+        return $values;
     }
 
     /**

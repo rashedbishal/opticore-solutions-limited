@@ -56,4 +56,10 @@ return [
         'key' => env('EXCHANGE_RATE_API_KEY'),
     ],
 
+    // Lead Management → LinkedIn Lead Gen source. LinkedIn retires API
+    // versions monthly, so there's deliberately no default version.
+    'linkedin' => [
+        'api_version' => env('LINKEDIN_API_VERSION'),
+    ],
+
 ];

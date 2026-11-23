@@ -21,6 +21,7 @@ import { PRIMARY_BUTTON, SECONDARY_BUTTON } from '@/components/Admin/Leads/ui';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { badgeClass, dotClass, formatDate } from '@/lib/leadColors';
 import leadRoutes from '@/routes/admin/leads';
+import adSourceRoutes from '@/routes/admin/leads/ad-sources';
 
 interface Props {
     leads: {
@@ -35,6 +36,12 @@ interface Props {
     assignableUsers: AssignableUser[];
     can: { create: boolean; assign: boolean; export: boolean };
     selectedLead: LeadDetail | null;
+    adSources: {
+        id: string;
+        name: string;
+        leads_count: number;
+        latest_at: string | null;
+    }[];
 }
 
 const TH =
@@ -53,6 +60,7 @@ export default function LeadsIndex({
     assignableUsers,
     can,
     selectedLead,
+    adSources,
 }: Props) {
     const [creating, setCreating] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
@@ -69,7 +77,7 @@ export default function LeadsIndex({
 
     return (
         <div className="relative space-y-5">
-            <LeadsLiveRefresh />
+            <LeadsLiveRefresh only={['leads', 'selectedLead', 'adSources']} />
             <CmsErrorDialog messages={errors} onClose={() => setErrors([])} />
 
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -130,7 +138,42 @@ export default function LeadsIndex({
                         </tr>
                     </thead>
                     <tbody>
-                        {leads.data.length === 0 ? (
+                        {adSources.map((adSource) => (
+                            <tr
+                                key={`ads-${adSource.id}`}
+                                className="border-b border-white/4 bg-cyan-500/[0.03]"
+                            >
+                                <td colSpan={7} className="px-4 py-3">
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <p className="text-sm font-medium text-white">
+                                                {adSource.name}
+                                            </p>
+                                            <p className="text-xs text-zinc-500">
+                                                Facebook Lead Ads ·{' '}
+                                                {adSource.leads_count}{' '}
+                                                {adSource.leads_count === 1
+                                                    ? 'lead'
+                                                    : 'leads'}
+                                                {adSource.latest_at &&
+                                                    ` · latest ${formatDate(adSource.latest_at)}`}
+                                            </p>
+                                        </div>
+                                        <Link
+                                            href={adSourceRoutes.show.url(
+                                                adSource.id,
+                                            )}
+                                            className={SECONDARY_BUTTON}
+                                        >
+                                            View all
+                                        </Link>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        {leads.data.length === 0 &&
+                        adSources.length > 0 ? null : leads.data.length ===
+                          0 ? (
                             <tr>
                                 <td
                                     colSpan={7}

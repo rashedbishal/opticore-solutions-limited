@@ -77,7 +77,30 @@ export interface LeadDetail extends LeadRow {
     is_manual: boolean;
     can: { update: boolean; assign: boolean; delete: boolean };
     activity: LeadActivityEvent[];
+    avatar_url: string | null;
+    conversation: ConversationItem[];
 }
+
+export type ConversationItem =
+    | {
+          kind: 'message';
+          id: string;
+          channel: string;
+          direction: 'inbound' | 'outbound';
+          body: string | null;
+          sent_by_name: string | null;
+          status: string | null;
+          at: string | null;
+      }
+    | {
+          kind: 'attachment';
+          id: string;
+          type: string;
+          status: 'downloading' | 'downloaded' | 'failed';
+          mime: string | null;
+          url: string | null;
+          at: string | null;
+      };
 
 export interface LeadFilterValues {
     search: string;

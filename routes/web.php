@@ -13,12 +13,15 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
+use App\Http\Controllers\Admin\Leads\LeadAdController as AdminLeadAdController;
+use App\Http\Controllers\Admin\Leads\LeadAttachmentController as AdminLeadAttachmentController;
 use App\Http\Controllers\Admin\Leads\LeadController as AdminLeadController;
 use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
 use App\Http\Controllers\Admin\Leads\LeadSourceController as AdminLeadSourceController;
 use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
 use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
+use App\Http\Controllers\Admin\LeadSettings\SourceController as AdminLeadSourceSettingsController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\MealManagementController;
 use App\Http\Controllers\Admin\MealReportController;
@@ -300,6 +303,9 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::delete('notifications', [AdminLeadNotificationController::class, 'clearAll'])->name('notifications.clear');
 
         Route::get('sources', [AdminLeadSourceController::class, 'index'])->name('sources.index');
+        Route::get('ad-sources/{source}', [AdminLeadAdController::class, 'show'])->name('ad-sources.show')->whereUlid('source');
+        Route::get('ad-sources/{source}/export', [AdminLeadAdController::class, 'export'])->name('ad-sources.export')->whereUlid('source');
+        Route::get('attachments/{attachment}', [AdminLeadAttachmentController::class, 'show'])->name('attachments.show')->whereUlid('attachment');
         Route::get('export', [AdminLeadController::class, 'export'])->name('export');
 
         Route::get('/', [AdminLeadController::class, 'index'])->name('index');
@@ -316,6 +322,13 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     });
 
     Route::prefix('lead-settings')->name('lead-settings.')->group(function () {
+        Route::post('sources', [AdminLeadSourceSettingsController::class, 'store'])->name('sources.store');
+        Route::put('sources/{source}', [AdminLeadSourceSettingsController::class, 'update'])->name('sources.update');
+        Route::post('sources/{source}/toggle', [AdminLeadSourceSettingsController::class, 'toggle'])->name('sources.toggle');
+        Route::post('sources/{source}/test', [AdminLeadSourceSettingsController::class, 'test'])->name('sources.test');
+        Route::get('sources/{source}/permissions', [AdminLeadSourceSettingsController::class, 'permissions'])->name('sources.permissions');
+        Route::delete('sources/{source}', [AdminLeadSourceSettingsController::class, 'destroy'])->name('sources.destroy');
+
         Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');
 

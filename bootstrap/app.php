@@ -7,7 +7,11 @@ use App\Http\Middleware\EnsureAdminHasPermission;
 use App\Http\Middleware\EnsureAdminSessionIsCurrent;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\VerifyMetaWebhookSignature;
+use App\Leads\Console\Commands\CheckMetaTokens;
+use App\Leads\Console\Commands\FetchFacebookLeadTest;
 use App\Leads\Console\Commands\SendLeadAlertNotifications;
+use App\Leads\Console\Commands\SubscribeLeadgenWebhook;
 use App\Leads\Support\LeadClock;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
@@ -25,6 +29,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         channels: __DIR__.'/../routes/channels.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
@@ -70,6 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin.permission' => EnsureAdminHasPermission::class,
+            'verify.meta.signature' => VerifyMetaWebhookSignature::class,
             'admin.session' => EnsureAdminSessionIsCurrent::class,
         ]);
 
@@ -96,7 +102,12 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     // Lead Management commands live in app/Leads, outside the
     // auto-discovered app/Console/Commands folder.
-    ->withCommands([SendLeadAlertNotifications::class])
+    ->withCommands([
+        SendLeadAlertNotifications::class,
+        CheckMetaTokens::class,
+        SubscribeLeadgenWebhook::class,
+        FetchFacebookLeadTest::class,
+    ])
     ->withSchedule(function (Schedule $schedule): void {
         // Re-prime all public-facing Redis caches every 50 minutes so the
         // 60-minute TTL never cold-misses in production (first request after
@@ -138,5 +149,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Lead Management: daily bell alerts for leads whose meeting or
         // follow-up reminder is showing (no-op while reminders are off).
         $schedule->command(SendLeadAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
+
+        // Daily read-only check of every Meta channel key (health warnings).
+        $schedule->command(CheckMetaTokens::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
     })
     ->create();

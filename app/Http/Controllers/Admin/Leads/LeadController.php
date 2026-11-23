@@ -14,6 +14,7 @@ use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Models\Currency;
 use App\Leads\Models\Lead;
+use App\Leads\Models\LeadSource;
 use App\Leads\Models\LeadStatus;
 use App\Leads\Services\LeadAccess;
 use App\Leads\Services\LeadPeople;
@@ -63,7 +64,27 @@ class LeadController extends Controller
         ];
 
         if ($isManager) {
-            $page = $query->latest()->paginate(self::PER_PAGE)->withQueryString();
+            // Lead Ads leads are grouped into one "View all" row per Lead Ads
+            // source, which opens that source's spreadsheet page.
+            $adSources = LeadSource::query()
+                ->where('type', LeadSourceType::FacebookLeadAds)
+                ->withCount('leads')
+                ->withMax('leads', 'created_at')
+                ->orderBy('name')
+                ->get()
+                ->toBase()
+                ->map(fn (LeadSource $source): array => [
+                    'id' => $source->id,
+                    'name' => $source->name,
+                    'leads_count' => (int) $source->getAttribute('leads_count'),
+                    'latest_at' => $source->getAttribute('leads_max_created_at'),
+                ]);
+
+            $page = $query
+                ->whereHas('source', fn ($q) => $q->where('type', '!=', LeadSourceType::FacebookLeadAds))
+                ->latest()
+                ->paginate(self::PER_PAGE)
+                ->withQueryString();
 
             return Inertia::render('Admin/Leads/Index', [
                 ...$shared,
@@ -72,6 +93,7 @@ class LeadController extends Controller
                     'links' => $page->linkCollection(),
                     'total' => $page->total(),
                 ],
+                'adSources' => $adSources,
             ]);
         }
 
