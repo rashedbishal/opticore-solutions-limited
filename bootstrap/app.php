@@ -3,6 +3,7 @@
 use App\Console\Commands\AutoDeclineMealSelections;
 use App\Console\Commands\PruneOrphanedCheckoutUploads;
 use App\Console\Commands\WarmCache;
+use App\Http\Middleware\AuthenticateCallingAppDevice;
 use App\Http\Middleware\EnsureAdminHasPermission;
 use App\Http\Middleware\EnsureAdminSessionIsCurrent;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -84,6 +85,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.permission' => EnsureAdminHasPermission::class,
             'verify.meta.signature' => VerifyMetaWebhookSignature::class,
+            'calling-app.device' => AuthenticateCallingAppDevice::class,
             'admin.session' => EnsureAdminSessionIsCurrent::class,
         ]);
 

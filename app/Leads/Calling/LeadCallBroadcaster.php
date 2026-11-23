@@ -6,6 +6,7 @@ use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Events\LeadCallUpdated;
 use App\Leads\Events\LeadUpdated;
+use App\Leads\Jobs\SendCallingAppCallPush;
 use App\Leads\Jobs\SendCallPush;
 use App\Leads\Jobs\SendMissedCallNotification;
 use App\Leads\Models\LeadCall;
@@ -48,6 +49,7 @@ final class LeadCallBroadcaster
 
         try {
             SendCallPush::dispatch($call->id, $status !== CallStatus::Ringing);
+            SendCallingAppCallPush::dispatch($call->id, $status !== CallStatus::Ringing);
         } catch (Throwable $e) {
             report($e);
         }

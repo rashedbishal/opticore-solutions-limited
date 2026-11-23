@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Leads\CallingApp\CallingAppFirebase;
+use App\Leads\CallingApp\CallingAppToken;
 use App\Leads\Listeners\BroadcastAdminNotification;
 use App\Leads\Mail\ImapClient;
 use App\Leads\Mail\NativeImapClient;
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Kreait\Firebase\Contract\Messaging;
+use Laravel\Sanctum\Sanctum;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
@@ -35,7 +39,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Email lead inboxes read through PHP's imap extension.
         $this->app->bind(ImapClient::class, NativeImapClient::class);
-        //
+
+        // The calling app's Firebase key lives encrypted in Lead Settings,
+        // read fresh for every push (not from .env).
+        $this->app->bind(Messaging::class, fn (): Messaging => app(CallingAppFirebase::class)->messaging());
     }
 
     /**
@@ -43,6 +50,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Sanctum::usePersonalAccessTokenModel(CallingAppToken::class);
+
         $this->configureDefaults();
         $this->configureRateLimiters();
 
@@ -122,6 +131,7 @@ class AppServiceProvider extends ServiceProvider
         // Lead webhooks from Meta: generous per IP (Meta batches and retries),
         // but bounded so a flood can't tie up the app.
         RateLimiter::for('lead-call-actions', fn (Request $request) => Limit::perMinute(60)->by('lead-call:'.($request->user('admin')?->getAuthIdentifier() ?? $request->ip())));
+        RateLimiter::for('calling-app-pair', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('lead-webhooks', fn (Request $request) => Limit::perMinute(600)->by($request->ip()));
 
         RateLimiter::for('login', function (Request $request) {

@@ -5,6 +5,7 @@ namespace App\Leads\Models;
 use App\Leads\Enums\AutoDistributionMethod;
 use App\Leads\Enums\LeadDistributionMode;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * The single row of Lead Management settings (mother admin → Lead Settings
@@ -28,6 +29,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $vapid_private_key
  * @property string|null $ringtone_path
  * @property string|null $ringtone_name
+ * @property array<string, mixed>|null $firebase_service_account
+ * @property string|null $apk_path
+ * @property string|null $apk_version
+ * @property int|null $apk_version_code
+ * @property int|null $apk_size
+ * @property string|null $apk_notes
+ * @property Carbon|null $apk_uploaded_at
  */
 class LeadSetting extends Model
 {
@@ -48,6 +56,13 @@ class LeadSetting extends Model
         'vapid_private_key',
         'ringtone_path',
         'ringtone_name',
+        'firebase_service_account',
+        'apk_path',
+        'apk_version',
+        'apk_version_code',
+        'apk_size',
+        'apk_notes',
+        'apk_uploaded_at',
     ];
 
     protected function casts(): array
@@ -66,6 +81,10 @@ class LeadSetting extends Model
             'nurturing_task_enabled' => 'boolean',
             'nurturing_inactive_days' => 'integer',
             'vapid_private_key' => 'encrypted',
+            'firebase_service_account' => 'encrypted:array',
+            'apk_version_code' => 'integer',
+            'apk_size' => 'integer',
+            'apk_uploaded_at' => 'datetime',
         ];
     }
 

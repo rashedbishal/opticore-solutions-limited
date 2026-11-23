@@ -2,6 +2,8 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\CallingApp\CallingAppDevice;
+use App\Leads\CallingApp\CallingAppFirebase;
 use App\Models\Admin;
 use Illuminate\Support\Carbon;
 use Throwable;
@@ -14,6 +16,14 @@ class SoftphonePresence
 {
     public function isAvailable(Admin $admin): bool
     {
+        // A connected phone app rings through Firebase even when no CMS tab
+        // is open (approved trade-off, as OptiFin: a switched-off phone
+        // can't be detected, so the call ends Missed rather than moving on).
+        if (app(CallingAppFirebase::class)->isConfigured()
+            && CallingAppDevice::query()->where('admin_id', $admin->id)->whereNotNull('fcm_token')->exists()) {
+            return true;
+        }
+
         $seen = $admin->softphone_last_seen_at;
 
         return $seen !== null && $seen->greaterThan(Carbon::now()->subSeconds((int) config('calling.softphone_presence_stale_seconds')));

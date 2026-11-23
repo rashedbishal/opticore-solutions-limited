@@ -1,3 +1,4 @@
+import type { CallingAppInfo } from './appHandoff';
 import type { OutputDevices } from './audioOutput';
 import type { ActiveCall } from './callApi';
 import { Link } from '@inertiajs/react';
@@ -16,6 +17,7 @@ import {
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import leadRoutes from '@/routes/admin/leads';
 import { AnswerSession } from './AnswerSession';
+import { callInApp, isAppPhone } from './appHandoff';
 import { findOutputDevices, setOutput } from './audioOutput';
 import { callApi, CallError } from './callApi';
 import { OutboundSession } from './OutboundSession';
@@ -64,6 +66,9 @@ export default function Softphone({
         earpieceId: null,
     });
     const [speakerOn, setSpeakerOn] = useState(false);
+    // On the phone connected to the calling app, the app rings and dials.
+    const [appPhone, setAppPhone] = useState(false);
+    const appInfo = useRef<CallingAppInfo | null>(null);
     const [, rerender] = useReducer((n: number) => n + 1, 0);
     // Mirrors `session` for callbacks (timers, live updates).
     const sessionRef = useRef<Session | null>(null);
@@ -85,6 +90,8 @@ export default function Softphone({
             const data = await callApi.active();
             setCalls(data.calls);
             ringtone.current?.setCustom(data.ringtone_url);
+            appInfo.current = data.calling_app;
+            setAppPhone(await isAppPhone(data.calling_app));
             setIntervals({
                 heartbeat: data.heartbeat_seconds,
                 poll: data.poll_seconds,
@@ -168,9 +175,11 @@ export default function Softphone({
         };
     }, []);
 
-    const ringing = calls.filter(
-        (c) => c.direction === 'inbound' && c.status === 'ringing',
-    );
+    const ringing = appPhone
+        ? []
+        : calls.filter(
+              (c) => c.direction === 'inbound' && c.status === 'ringing',
+          );
     const shouldRing = ringing.length > 0 && session === null;
     const ringback =
         session instanceof OutboundSession &&
@@ -201,6 +210,14 @@ export default function Softphone({
     }, [calls.length, session]);
 
     const startCall = async (leadId: string, leadName: string) => {
+        const info = appInfo.current;
+
+        if (info && (await isAppPhone(info))) {
+            callInApp(info, adminId, leadId, leadName);
+
+            return;
+        }
+
         if (sessionRef.current) {
             setNotice('Finish the current call first.');
 

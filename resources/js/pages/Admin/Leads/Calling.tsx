@@ -11,6 +11,7 @@ interface Person {
     is_backup: boolean;
     online: boolean;
     on_call: boolean;
+    phone: string | null;
 }
 
 /**
@@ -186,6 +187,25 @@ export default function Calling({
                                     </p>
                                 </div>
                             </div>
+                            {person.phone && (
+                                <span className="flex items-center gap-2 text-xs text-zinc-400">
+                                    App: {person.phone}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.delete(
+                                                calling.phones.disconnect.url(
+                                                    person.id,
+                                                ),
+                                                { preserveScroll: true },
+                                            )
+                                        }
+                                        className="text-red-300 hover:underline"
+                                    >
+                                        Disconnect
+                                    </button>
+                                </span>
+                            )}
                             <label className="flex items-center gap-2 text-sm text-zinc-300">
                                 <input
                                     type="checkbox"

@@ -14,11 +14,13 @@ import {
     BarChart3,
     Gauge,
     PhoneCall,
+    Smartphone,
     ListPlus,
     Target,
 } from 'lucide-react';
 import { useState } from 'react';
 import { canManageLeadSettings, canUseLeads, leadRole } from '@/lib/leadAccess';
+import callingAppSettings from '@/routes/admin/lead-settings/calling-app';
 import currencies from '@/routes/admin/lead-settings/currencies';
 import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
@@ -99,6 +101,12 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         section: 'manager',
     },
     {
+        name: 'Calling app',
+        href: leads.callingApp.index.url(),
+        icon: Smartphone,
+        section: 'leads',
+    },
+    {
         name: 'Templates',
         href: templates.index.url(),
         icon: MessageSquareText,
@@ -114,6 +122,12 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'Statuses',
         href: statuses.index.url(),
         icon: ListOrdered,
+        section: 'settings',
+    },
+    {
+        name: 'Calling app settings',
+        href: callingAppSettings.edit.url(),
+        icon: Smartphone,
         section: 'settings',
     },
     {

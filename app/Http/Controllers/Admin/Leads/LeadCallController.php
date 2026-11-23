@@ -10,6 +10,7 @@ use App\Leads\Calling\LeadCallActions;
 use App\Leads\Calling\ListActiveLeadCalls;
 use App\Leads\Calling\OutboundCalls;
 use App\Leads\Calling\SoftphonePresence;
+use App\Leads\CallingApp\CallingAppDevice;
 use App\Leads\Events\LeadUpdated;
 use App\Leads\Models\Lead;
 use App\Leads\Models\LeadSetting;
@@ -36,6 +37,7 @@ class LeadCallController extends Controller
         return response()->json(['data' => [
             'calls' => $list->handle($admin),
             'push_public_key' => $push->publicKey(),
+            'calling_app' => $this->callingApp($admin),
             'ringtone_url' => $settings->ringtone_path !== null
                 ? route('admin.leads.calling.ringtone.show', ['v' => substr(md5($settings->ringtone_path), 0, 8)])
                 : null,
@@ -43,6 +45,33 @@ class LeadCallController extends Controller
             'poll_seconds' => (int) config('calling.softphone_poll_seconds'),
             'staleness_seconds' => (int) config('calling.softphone_staleness_seconds'),
         ]])->header('Cache-Control', 'no-store, private');
+    }
+
+    /**
+     * The phone app's poll. Unlike the browser's, it doesn't mark the
+     * person online (a connected phone already counts as reachable).
+     */
+    public function activeForApp(ListActiveLeadCalls $list): JsonResponse
+    {
+        return response()->json(['data' => ['calls' => $list->handle($this->admin())]])->header('Cache-Control', 'no-store, private');
+    }
+
+    /**
+     * Whether this admin has a connected phone, and the hash that lets the
+     * browser on that phone recognise itself (it hands calls to the app and
+     * keeps quiet when calls ring).
+     *
+     * @return array{paired: bool, browser_marker_hash: string|null, deep_link_scheme: string}
+     */
+    private function callingApp(Admin $admin): array
+    {
+        $device = CallingAppDevice::query()->where('admin_id', $admin->id)->first();
+
+        return [
+            'paired' => $device !== null,
+            'browser_marker_hash' => $device?->browser_marker_hash,
+            'deep_link_scheme' => (string) config('calling.calling_app.deep_link_scheme'),
+        ];
     }
 
     public function claim(string $call, LeadCallActions $actions): JsonResponse

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
 /**
@@ -18,7 +19,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
  */
 class Admin extends Authenticatable
 {
-    use HasFactory, HasPushSubscriptions, Notifiable;
+    use HasApiTokens, HasFactory, HasPushSubscriptions, Notifiable;
 
     /**
      * The connection name for the model.

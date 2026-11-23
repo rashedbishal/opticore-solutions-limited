@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
+use App\Http\Controllers\Admin\Leads\CallingAppPageController as AdminCallingAppPageController;
 use App\Http\Controllers\Admin\Leads\CallingController as AdminLeadCallingController;
 use App\Http\Controllers\Admin\Leads\CatalogController as AdminLeadCatalogController;
 use App\Http\Controllers\Admin\Leads\LeadAdController as AdminLeadAdController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Admin\Leads\LeadSourceController as AdminLeadSourceCont
 use App\Http\Controllers\Admin\Leads\ReportController as AdminLeadReportController;
 use App\Http\Controllers\Admin\Leads\ScoringRuleController as AdminLeadScoringRuleController;
 use App\Http\Controllers\Admin\Leads\TemplateController as AdminLeadTemplateController;
+use App\Http\Controllers\Admin\LeadSettings\CallingAppSettingsController as AdminCallingAppSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
 use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
 use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
@@ -322,6 +324,11 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('bulk', AdminLeadBulkController::class)->name('bulk');
         Route::get('calling', [AdminLeadCallingController::class, 'index'])->name('calling.index');
         Route::post('calling/backups/{admin}', [AdminLeadCallingController::class, 'toggleBackup'])->name('calling.backups.toggle')->whereNumber('admin');
+        Route::delete('calling/phones/{admin}', [AdminLeadCallingController::class, 'disconnectPhone'])->name('calling.phones.disconnect')->whereNumber('admin');
+        Route::get('calling-app', [AdminCallingAppPageController::class, 'index'])->name('calling-app.index');
+        Route::post('calling-app/connect', [AdminCallingAppPageController::class, 'connect'])->name('calling-app.connect');
+        Route::delete('calling-app/device', [AdminCallingAppPageController::class, 'disconnect'])->name('calling-app.disconnect');
+        Route::get('calling-app/download', [AdminCallingAppPageController::class, 'download'])->name('calling-app.download');
         Route::post('calling/numbers/{source}/permission-template', [AdminLeadCallingController::class, 'createTemplate'])->name('calling.template')->whereUlid('source');
         Route::post('{lead}/call', [AdminLeadCallController::class, 'call'])->middleware('throttle:lead-call-actions')->name('call')->whereUlid('lead');
         Route::post('{lead}/call-permission/check', [AdminLeadCallController::class, 'checkPermission'])->middleware('throttle:lead-call-actions')->name('call-permission.check')->whereUlid('lead');
@@ -420,6 +427,14 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');
         Route::post('general/push-keys', [AdminLeadGeneralSettingsController::class, 'generatePushKeys'])->name('general.push-keys');
 
+        Route::get('calling-app', [AdminCallingAppSettingsController::class, 'edit'])->name('calling-app.edit');
+        Route::post('calling-app/firebase', [AdminCallingAppSettingsController::class, 'storeFirebase'])->name('calling-app.firebase.store');
+        Route::delete('calling-app/firebase', [AdminCallingAppSettingsController::class, 'destroyFirebase'])->name('calling-app.firebase.destroy');
+        Route::post('calling-app/apk', [AdminCallingAppSettingsController::class, 'startApk'])->name('calling-app.apk.start');
+        Route::put('calling-app/apk/{upload}/{index}', [AdminCallingAppSettingsController::class, 'chunkApk'])->name('calling-app.apk.chunk')->where('upload', '[0-9a-z]{26}')->whereNumber('index');
+        Route::post('calling-app/apk/{upload}/complete', [AdminCallingAppSettingsController::class, 'completeApk'])->name('calling-app.apk.complete')->where('upload', '[0-9a-z]{26}');
+        Route::delete('calling-app/apk', [AdminCallingAppSettingsController::class, 'destroyApk'])->name('calling-app.apk.destroy');
+
         Route::get('statuses', [AdminLeadStatusController::class, 'index'])->name('statuses.index');
         Route::post('statuses', [AdminLeadStatusController::class, 'store'])->name('statuses.store');
         Route::put('statuses/{status}', [AdminLeadStatusController::class, 'update'])->name('statuses.update');
@@ -490,3 +505,15 @@ Route::middleware(RedirectAdminToPanel::class)
     ->get('/{slug}', [ServiceController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('services.show');
+
+// Android Digital Asset Links for the calling app (lets Chrome on a phone
+// see that the app is installed).
+Route::get('.well-known/assetlinks.json', function () {
+    $package = (string) config('calling.calling_app.android_package');
+    $fingerprints = (array) config('calling.calling_app.android_sha256_fingerprints');
+
+    return response()->json($package === '' || $fingerprints === [] ? [] : [[
+        'relation' => ['delegate_permission/common.handle_all_urls'],
+        'target' => ['namespace' => 'android_app', 'package_name' => $package, 'sha256_cert_fingerprints' => array_values($fingerprints)],
+    ]], 200, [], JSON_UNESCAPED_SLASHES)->header('Cache-Control', 'public, max-age=3600');
+})->name('calling-app.asset-links');

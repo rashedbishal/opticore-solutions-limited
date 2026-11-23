@@ -1,3 +1,4 @@
+import type { CallingAppInfo } from './appHandoff';
 import { api } from '@/lib/apiFetch';
 import leadRoutes from '@/routes/admin/leads';
 import callRoutes from '@/routes/admin/leads/calls';
@@ -22,6 +23,7 @@ export interface ActiveCall {
 export interface ActiveCallsResponse {
     calls: ActiveCall[];
     push_public_key: string | null;
+    calling_app: CallingAppInfo;
     ringtone_url: string | null;
     heartbeat_seconds: number;
     poll_seconds: number;

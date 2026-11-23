@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Leads;
 use App\Http\Controllers\Controller;
 use App\Leads\Calling\CreateCallPermissionTemplate;
 use App\Leads\Calling\SoftphonePresence;
+use App\Leads\CallingApp\CallingAppDevice;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Models\LeadCall;
@@ -30,6 +31,7 @@ class CallingController extends Controller
     public function index(LeadPeople $people, SoftphonePresence $presence): Response
     {
         $this->manager();
+        $devices = CallingAppDevice::query()->get()->keyBy('admin_id');
         $busy = LeadCall::query()->whereIn('status', [CallStatus::Answering, CallStatus::Connected])->pluck('claimed_by')->map(fn ($id): int => (int) $id)->all();
 
         return Inertia::render('Admin/Leads/Calling', [
@@ -40,6 +42,7 @@ class CallingController extends Controller
                 'is_backup' => $a->is_whatsapp_backup_receiver,
                 'online' => $presence->isAvailable($a),
                 'on_call' => in_array((int) $a->id, $busy, true),
+                'phone' => $devices->has((int) $a->id) ? ($devices[(int) $a->id]->device_name ?? 'Phone') : null,
             ])->values(),
             'numbers' => LeadSource::query()->where('type', LeadSourceType::Whatsapp->value)->orderBy('name')->get()->toBase()->map(fn (LeadSource $s): array => [
                 'id' => $s->id,
@@ -64,6 +67,15 @@ class CallingController extends Controller
         return back()->with('success', $person->is_whatsapp_backup_receiver
             ? "{$person->name} is now a backup call receiver."
             : "{$person->name} is no longer a backup call receiver.");
+    }
+
+    /** Managers: disconnect someone's phone app. */
+    public function disconnectPhone(int $admin): RedirectResponse
+    {
+        $this->manager();
+        CallingAppDevice::query()->where('admin_id', $admin)->get()->each->disconnect();
+
+        return back()->with('success', 'Phone disconnected.');
     }
 
     public function createTemplate(LeadSource $source, CreateCallPermissionTemplate $create): RedirectResponse
