@@ -121,6 +121,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Lead webhooks from Meta: generous per IP (Meta batches and retries),
         // but bounded so a flood can't tie up the app.
+        RateLimiter::for('lead-call-actions', fn (Request $request) => Limit::perMinute(60)->by('lead-call:'.($request->user('admin')?->getAuthIdentifier() ?? $request->ip())));
         RateLimiter::for('lead-webhooks', fn (Request $request) => Limit::perMinute(600)->by($request->ip()));
 
         RateLimiter::for('login', function (Request $request) {

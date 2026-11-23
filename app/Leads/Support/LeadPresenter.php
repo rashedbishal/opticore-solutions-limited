@@ -9,6 +9,7 @@ use App\Leads\Enums\MessageDirection;
 use App\Leads\Models\Deal;
 use App\Leads\Models\DealStatusLog;
 use App\Leads\Models\Lead;
+use App\Leads\Models\LeadCall;
 use App\Leads\Models\LeadConsentEvent;
 use App\Leads\Models\LeadCustomFieldDefinition;
 use App\Leads\Models\LeadMessage;
@@ -149,6 +150,7 @@ class LeadPresenter
             'can_delete_conversation' => $this->access->canDelete($viewer) && $lead->conversations()->exists(),
             'pipeline' => $this->pipeline($lead, $viewer, $settings),
             'duplicates' => $this->duplicates($lead, $viewer),
+            'calls' => $this->calls($lead),
             'score' => [
                 'value' => $lead->lead_score,
                 'raw_total' => $lead->lead_score_breakdown['raw_total'] ?? null,
@@ -156,6 +158,28 @@ class LeadPresenter
                 'can_manage' => $viewer->isLeadManager(),
             ],
         ];
+    }
+
+    /**
+     * WhatsApp call history, newest first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function calls(Lead $lead): array
+    {
+        $calls = $lead->calls()->latest()->limit(50)->get();
+
+        return $calls->toBase()->map(fn (LeadCall $call): array => [
+            'id' => $call->id,
+            'status' => $call->status->value,
+            'status_label' => $call->status->label(),
+            'status_color' => $call->status->color(),
+            'end_reason' => $call->end_reason?->label(),
+            'answered_by' => $call->claimed_by_name,
+            'rang' => $call->routing_mode->label(),
+            'duration_seconds' => $call->duration_seconds,
+            'created_at' => $call->created_at?->toIso8601String(),
+        ])->values()->all();
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Leads\Models;
 
+use App\Leads\Enums\CallStatus;
 use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
@@ -256,6 +257,20 @@ class Lead extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(LeadTask::class);
+    }
+
+    /**
+     * @return HasMany<LeadCall, $this>
+     */
+    public function calls(): HasMany
+    {
+        return $this->hasMany(LeadCall::class);
+    }
+
+    /** A ringing, answering or connected call blocks deleting the lead. */
+    public function hasActiveCall(): bool
+    {
+        return $this->calls()->whereIn('status', CallStatus::activeValues())->exists();
     }
 
     /**

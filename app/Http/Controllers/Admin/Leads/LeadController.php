@@ -12,6 +12,7 @@ use App\Leads\Actions\ResolveLeadDate;
 use App\Leads\Actions\UpdateLeadDetails;
 use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
+use App\Leads\Exceptions\LeadHasActiveCallException;
 use App\Leads\Models\Currency;
 use App\Leads\Models\Lead;
 use App\Leads\Models\LeadSource;
@@ -274,7 +275,11 @@ class LeadController extends Controller
         $admin = $this->admin();
         abort_unless($this->access->canDelete($admin), 403);
 
-        $deleteLead->handle($lead, $admin);
+        try {
+            $deleteLead->handle($lead, $admin);
+        } catch (LeadHasActiveCallException $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('admin.leads.index')->with('success', 'Lead deleted.');
     }

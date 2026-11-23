@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
  * @property LeadSourceType $type
  * @property array<string, mixed>|null $config
  * @property bool $is_active
+ * @property bool $calling_enabled
+ * @property string|null $calling_meta_status
+ * @property Carbon|null $calling_meta_checked_at
  * @property Carbon|null $last_synced_at
  * @property Carbon|null $last_signature_rejection_at
  * @property string|null $last_signature_rejection_reason
@@ -29,7 +32,7 @@ class LeadSource extends Model
     use HasFactory, HasUlids;
 
     protected $fillable = [
-        'type', 'name', 'config', 'is_active', 'singleton_type',
+        'type', 'name', 'config', 'is_active', 'singleton_type', 'calling_enabled', 'calling_meta_status', 'calling_meta_checked_at',
         'last_synced_at', 'last_signature_rejection_at', 'last_signature_rejection_reason',
     ];
 
@@ -41,6 +44,8 @@ class LeadSource extends Model
             'type' => LeadSourceType::class,
             'config' => 'encrypted:array',
             'is_active' => 'boolean',
+            'calling_enabled' => 'boolean',
+            'calling_meta_checked_at' => 'datetime',
             'last_synced_at' => 'datetime',
             'last_signature_rejection_at' => 'datetime',
         ];

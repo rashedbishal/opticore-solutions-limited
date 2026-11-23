@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import AdminNotificationBell from '@/components/Admin/AdminNotificationBell';
+import Softphone from '@/components/Admin/Calling/Softphone';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
 import LeadNavGroup, {
     visibleLeadNavLinks,
@@ -418,6 +419,11 @@ export default function AdminLayout({
                     <PaymentNotificationListener
                         onNewPayment={handleNewPayment}
                     />
+                )}
+
+                {/* ── WhatsApp call box (anyone with a lead role) ── */}
+                {canUseLeads(auth.user) && (
+                    <Softphone adminId={auth.user.id} echoReady={echoReady} />
                 )}
 
                 {/* ── Toast notifications ── */}

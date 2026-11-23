@@ -21,6 +21,7 @@ import {
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import CallsCard from '@/components/Admin/Leads/CallsCard';
 import ConsentCard from '@/components/Admin/Leads/ConsentCard';
 import ConversationCard from '@/components/Admin/Leads/ConversationCard';
 import DuplicatesCard from '@/components/Admin/Leads/DuplicatesCard';
@@ -362,6 +363,8 @@ export default function LeadDetail({
                 canDelete={lead.can_delete_conversation}
                 onErrors={setErrors}
             />
+
+            <CallsCard lead={lead} />
 
             {lead.messaging && canUpdate && (
                 <SentMessagesCard

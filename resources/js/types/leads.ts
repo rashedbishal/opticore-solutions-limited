@@ -151,6 +151,7 @@ export interface LeadDetail extends LeadRow {
     can_delete_conversation: boolean;
     pipeline: LeadPipeline;
     duplicates: LeadDuplicate[];
+    calls: LeadCallRow[];
     score: {
         value: number | null;
         raw_total: number | null;
@@ -277,4 +278,16 @@ export interface LeadDuplicate {
     conflicts_keep_this: Record<string, MergeConflict>;
     conflicts_keep_other: Record<string, MergeConflict>;
     can_merge: boolean;
+}
+
+export interface LeadCallRow {
+    id: string;
+    status: string;
+    status_label: string;
+    status_color: string;
+    end_reason: string | null;
+    answered_by: string | null;
+    rang: string;
+    duration_seconds: number | null;
+    created_at: string | null;
 }

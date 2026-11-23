@@ -57,6 +57,12 @@ interface Source {
     webhook_url?: string | null;
     config?: Record<string, string | null | { saved: boolean }>;
     missing_app_secret?: boolean;
+    calling?: {
+        enabled: boolean;
+        meta_status: string | null;
+        checked_at: string | null;
+        blocked_reason: string | null;
+    };
 }
 
 interface Props {
@@ -214,6 +220,12 @@ export default function LeadSources({ sources, canManage, types }: Props) {
                                             signatures aren&apos;t being
                                             checked.
                                         </p>
+                                    )}
+                                    {canManage && source.calling && (
+                                        <CallingControls
+                                            sourceId={source.id}
+                                            calling={source.calling}
+                                        />
                                     )}
                                     <div className="mt-2 sm:hidden">
                                         <HealthBadges
@@ -737,6 +749,91 @@ function PermissionsDialog({
                 </motion.div>
             )}
         </AnimatePresence>
+    );
+}
+
+function CallingControls({
+    sourceId,
+    calling,
+}: {
+    sourceId: string;
+    calling: NonNullable<Source['calling']>;
+}) {
+    const [busy, setBusy] = useState(false);
+    const post = (url: string) => {
+        setBusy(true);
+        router.post(
+            url,
+            {},
+            { preserveScroll: true, onFinish: () => setBusy(false) },
+        );
+    };
+    const meta =
+        calling.meta_status === 'ENABLED'
+            ? 'on'
+            : calling.meta_status === 'DISABLED'
+              ? 'off'
+              : 'not checked yet';
+
+    return (
+        <div className="mt-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2">
+            <p className="text-xs text-zinc-300">
+                Calling:{' '}
+                <span
+                    className={
+                        calling.enabled ? 'text-emerald-300' : 'text-zinc-400'
+                    }
+                >
+                    {calling.enabled ? 'On' : 'Off'}
+                </span>
+                <span className="text-zinc-500">
+                    {' '}
+                    · WhatsApp says {meta}
+                    {calling.checked_at &&
+                        ` (${formatDateTime(calling.checked_at)})`}
+                </span>
+            </p>
+            {!calling.enabled && calling.blocked_reason && (
+                <p className="mt-1 text-[11px] text-amber-300">
+                    {calling.blocked_reason}
+                </p>
+            )}
+            <div className="mt-1.5 flex flex-wrap gap-3 text-xs">
+                {calling.enabled ? (
+                    <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() =>
+                            post(sourceSettings.calling.disable.url(sourceId))
+                        }
+                        className="text-red-300 hover:underline disabled:opacity-50"
+                    >
+                        Turn off
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        disabled={busy || calling.blocked_reason !== null}
+                        onClick={() =>
+                            post(sourceSettings.calling.enable.url(sourceId))
+                        }
+                        className="text-emerald-300 hover:underline disabled:opacity-50"
+                    >
+                        Turn on
+                    </button>
+                )}
+                <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                        post(sourceSettings.calling.check.url(sourceId))
+                    }
+                    className="text-cyan-300 hover:underline disabled:opacity-50"
+                >
+                    Check with Meta
+                </button>
+            </div>
+        </div>
     );
 }
 

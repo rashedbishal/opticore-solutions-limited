@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
  * @property LeadRole|null $lead_role Lead Management role chosen by the mother admin.
+ * @property bool $is_whatsapp_backup_receiver Rings for calls the lead's own person can't take.
+ * @property Carbon|null $softphone_last_seen_at Last check-in from an open call box.
  */
 class Admin extends Authenticatable
 {
@@ -35,6 +38,7 @@ class Admin extends Authenticatable
         'full_access',
         'permissions',
         'lead_role',
+        'is_whatsapp_backup_receiver',
     ];
 
     /**
@@ -61,6 +65,8 @@ class Admin extends Authenticatable
             'full_access' => 'boolean',
             'permissions' => 'array',
             'lead_role' => LeadRole::class,
+            'is_whatsapp_backup_receiver' => 'boolean',
+            'softphone_last_seen_at' => 'datetime',
         ];
     }
 

@@ -48,3 +48,11 @@ Broadcast::channel('admin.lead-notifications.{adminId}', function ($user, $admin
 Broadcast::channel('admin.leads', function ($user) {
     return $user instanceof Admin && $user->canUseLeads();
 }, ['guards' => ['admin', 'web']]);
+
+// WhatsApp call box — one private channel per admin, only while they hold a
+// lead role. Carries only a call id and status.
+Broadcast::channel('admin.lead-calls.{adminId}', function ($user, $adminId) {
+    return $user instanceof Admin
+        && (int) $user->id === (int) $adminId
+        && $user->canUseLeads();
+}, ['guards' => ['admin', 'web']]);

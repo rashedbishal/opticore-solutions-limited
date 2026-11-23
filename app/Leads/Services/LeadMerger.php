@@ -55,7 +55,7 @@ class LeadMerger
      */
     private const array CHILD_TABLES = [
         'lead_notes', 'lead_attachments', 'lead_status_logs', 'lead_assignments', 'lead_detail_update_logs',
-        'lead_tasks', 'deals', 'lead_consent_events', 'lead_conversations', 'lead_messages', 'lead_conversation_deletions',
+        'lead_tasks', 'deals', 'lead_consent_events', 'lead_conversations', 'lead_messages', 'lead_conversation_deletions', 'lead_calls',
     ];
 
     /**

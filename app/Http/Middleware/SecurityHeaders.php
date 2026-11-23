@@ -15,7 +15,7 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(self)');
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(self)');
 
         // HSTS and a strict CSP are only safe to force once the app is
         // actually served over HTTPS with a known set of build assets —

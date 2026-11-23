@@ -13,10 +13,12 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
+use App\Http\Controllers\Admin\Leads\CallingController as AdminLeadCallingController;
 use App\Http\Controllers\Admin\Leads\CatalogController as AdminLeadCatalogController;
 use App\Http\Controllers\Admin\Leads\LeadAdController as AdminLeadAdController;
 use App\Http\Controllers\Admin\Leads\LeadAttachmentController as AdminLeadAttachmentController;
 use App\Http\Controllers\Admin\Leads\LeadBulkController as AdminLeadBulkController;
+use App\Http\Controllers\Admin\Leads\LeadCallController as AdminLeadCallController;
 use App\Http\Controllers\Admin\Leads\LeadConsentController as AdminLeadConsentController;
 use App\Http\Controllers\Admin\Leads\LeadController as AdminLeadController;
 use App\Http\Controllers\Admin\Leads\LeadDuplicateController as AdminLeadDuplicateController;
@@ -318,6 +320,16 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('attachments/{attachment}', [AdminLeadAttachmentController::class, 'show'])->name('attachments.show')->whereUlid('attachment');
         Route::get('sent-files/{message}', [AdminLeadMessageController::class, 'attachment'])->name('messages.attachment')->whereUlid('message');
         Route::post('bulk', AdminLeadBulkController::class)->name('bulk');
+        Route::get('calling', [AdminLeadCallingController::class, 'index'])->name('calling.index');
+        Route::post('calling/backups/{admin}', [AdminLeadCallingController::class, 'toggleBackup'])->name('calling.backups.toggle')->whereNumber('admin');
+        Route::get('calls/active', [AdminLeadCallController::class, 'active'])->name('calls.active');
+        Route::middleware('throttle:lead-call-actions')->prefix('calls/{call}')->name('calls.')->whereUlid('call')->group(function () {
+            Route::post('claim', [AdminLeadCallController::class, 'claim'])->name('claim');
+            Route::post('answer', [AdminLeadCallController::class, 'answer'])->name('answer');
+            Route::post('accept', [AdminLeadCallController::class, 'accept'])->name('accept');
+            Route::post('reject', [AdminLeadCallController::class, 'reject'])->name('reject');
+            Route::post('hangup', [AdminLeadCallController::class, 'hangup'])->name('hangup');
+        });
         Route::get('reports', [AdminLeadReportController::class, 'index'])->name('reports.index');
         Route::post('reports/spend', [AdminLeadReportController::class, 'storeCost'])->name('reports.spend.store');
         Route::delete('reports/spend/{cost}', [AdminLeadReportController::class, 'destroyCost'])->name('reports.spend.destroy')->whereUlid('cost');
@@ -388,6 +400,9 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('sources/{source}/test', [AdminLeadSourceSettingsController::class, 'test'])->name('sources.test');
         Route::get('sources/{source}/permissions', [AdminLeadSourceSettingsController::class, 'permissions'])->name('sources.permissions');
         Route::delete('sources/{source}', [AdminLeadSourceSettingsController::class, 'destroy'])->name('sources.destroy');
+        Route::post('sources/{source}/calling/enable', [AdminLeadSourceSettingsController::class, 'callingEnable'])->name('sources.calling.enable');
+        Route::post('sources/{source}/calling/disable', [AdminLeadSourceSettingsController::class, 'callingDisable'])->name('sources.calling.disable');
+        Route::post('sources/{source}/calling/check', [AdminLeadSourceSettingsController::class, 'callingCheck'])->name('sources.calling.check');
 
         Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');

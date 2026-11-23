@@ -3,6 +3,7 @@
 namespace App\Leads\Actions;
 
 use App\Leads\Events\LeadUpdated;
+use App\Leads\Exceptions\LeadHasActiveCallException;
 use App\Leads\Models\Lead;
 use App\Leads\Models\LeadDeletionAudit;
 use App\Models\Admin;
@@ -21,6 +22,10 @@ class DeleteLead
 
             if ($locked === null) {
                 return;
+            }
+
+            if ($locked->hasActiveCall()) {
+                throw new LeadHasActiveCallException('This lead is on a WhatsApp call right now. Try again when the call ends.');
             }
 
             LeadDeletionAudit::create([

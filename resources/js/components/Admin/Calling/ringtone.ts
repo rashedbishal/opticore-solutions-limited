@@ -1,0 +1,69 @@
+/**
+ * A synthesized two-tone ring (no audio file). Browsers only allow sound
+ * after the person has clicked something on the page, so the first click
+ * anywhere "unlocks" it; until then `blocked` is true and the call box asks
+ * for a click.
+ */
+export class Ringtone {
+    private ctx: AudioContext | null = null;
+    private timer: ReturnType<typeof setInterval> | null = null;
+    blocked = true;
+
+    unlock(): void {
+        try {
+            this.ctx ??= new AudioContext();
+            void this.ctx.resume().then(() => {
+                this.blocked = this.ctx?.state !== 'running';
+            });
+        } catch {
+            this.blocked = true;
+        }
+    }
+
+    start(): void {
+        if (this.timer !== null) {
+            return;
+        }
+
+        this.ring();
+        this.timer = setInterval(() => this.ring(), 3000);
+    }
+
+    stop(): void {
+        if (this.timer !== null) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+    }
+
+    private ring(): void {
+        const ctx = this.ctx;
+
+        if (!ctx || ctx.state !== 'running') {
+            this.blocked = true;
+
+            return;
+        }
+
+        this.blocked = false;
+        const now = ctx.currentTime;
+
+        for (const [offset, freq] of [
+            [0, 440],
+            [0, 480],
+            [0.45, 440],
+            [0.45, 480],
+        ] as const) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, now + offset);
+            gain.gain.linearRampToValueAtTime(0.08, now + offset + 0.02);
+            gain.gain.setValueAtTime(0.08, now + offset + 0.35);
+            gain.gain.linearRampToValueAtTime(0, now + offset + 0.4);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.42);
+        }
+    }
+}

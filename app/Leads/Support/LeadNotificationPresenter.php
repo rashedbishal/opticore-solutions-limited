@@ -12,6 +12,7 @@ use App\Leads\Notifications\LeadInactivityAlertNotification;
 use App\Leads\Notifications\MeetingAlertNotification;
 use App\Leads\Notifications\MeetingCancelledNotification;
 use App\Leads\Notifications\MeetingUpdatedNotification;
+use App\Leads\Notifications\MissedCallNotification;
 use App\Leads\Notifications\NewLeadNotification;
 use App\Leads\Notifications\TaskAlertNotification;
 use App\Leads\Notifications\TaskAssignedNotification;
@@ -70,6 +71,10 @@ class LeadNotificationPresenter
                     ? sprintf('%s assigned you a task', $data['assigned_by'])
                     : 'A task was assigned to you',
                 (string) ($data['name'] ?? ''),
+            ],
+            MissedCallNotification::class => [
+                'Missed WhatsApp call',
+                trim(sprintf('%s %s', (string) ($data['name'] ?? ''), isset($data['reason']) ? '— '.$data['reason'] : '')),
             ],
             LeadInactivityAlertNotification::class => [
                 'Lead needs attention',

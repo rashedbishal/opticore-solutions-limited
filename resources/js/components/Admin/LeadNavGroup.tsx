@@ -13,6 +13,7 @@ import {
     Upload,
     BarChart3,
     Gauge,
+    PhoneCall,
     ListPlus,
     Target,
 } from 'lucide-react';
@@ -71,6 +72,12 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'Scoring Rules',
         href: leads.scoring.index.url(),
         icon: Gauge,
+        section: 'manager',
+    },
+    {
+        name: 'Calling',
+        href: leads.calling.index.url(),
+        icon: PhoneCall,
         section: 'manager',
     },
     {

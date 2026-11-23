@@ -3,6 +3,8 @@
 namespace App\Leads\Services\Meta;
 
 use App\Leads\Actions\RecordInboundMessage;
+use App\Leads\Calling\RecordInboundCall;
+use App\Leads\Calling\WhatsAppCallEvent;
 use App\Leads\Enums\LeadAttachmentStatus;
 use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\MessageChannel;
@@ -35,6 +37,7 @@ class InboundChannels
     public function __construct(
         private readonly MetaGraph $graph,
         private readonly LeadIntake $intake,
+        private readonly RecordInboundCall $recordCall,
         private readonly RecordInboundMessage $recordMessage,
     ) {}
 
@@ -98,6 +101,43 @@ class InboundChannels
         };
 
         $phone !== null ? $this->withLock($source->id, $phone, $handle) : $handle();
+    }
+
+    /**
+     * One WhatsApp call event (connect or terminate). A caller with no lead
+     * yet gets one, just like a first WhatsApp message. Calls are ignored
+     * unless the number has an App Secret (so the webhook is signed).
+     *
+     * @param  array<string, mixed>  $change
+     */
+    public function whatsappCall(LeadSource $source, array $change, mixed $call): string
+    {
+        $config = is_array($source->config) ? $source->config : [];
+
+        if (! is_string($config['app_secret'] ?? null) || $config['app_secret'] === '') {
+            return 'ignored_no_app_secret';
+        }
+
+        $event = WhatsAppCallEvent::fromWebhook($change, $call);
+
+        if (is_string($event)) {
+            return 'ignored_'.$event;
+        }
+
+        if (! $event->matchesPhoneNumberId($config['phone_number_id'] ?? null)) {
+            return 'ignored_phone_number_mismatch';
+        }
+
+        return $this->recordCall->handle(
+            $event,
+            $source,
+            fn (): Lead => $this->createLead($source, [
+                'name' => $event->callerName ?? 'WhatsApp User '.$event->callerPhone,
+                'phone' => $event->callerPhone,
+                'message' => null,
+            ]),
+            fn (Lead $lead) => $this->intake->received($lead),
+        );
     }
 
     /**

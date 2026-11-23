@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\LeadSettings;
 
 use App\Http\Controllers\Controller;
+use App\Leads\Calling\ManageWhatsAppCalling;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Models\LeadSource;
 use App\Leads\Services\Meta\SourceConnectionTester;
@@ -166,5 +167,33 @@ class SourceController extends Controller
         }
 
         return $config;
+    }
+
+    /** Mother admin: turn Meta's calling on for a WhatsApp number. */
+    public function callingEnable(LeadSource $source, ManageWhatsAppCalling $calling): RedirectResponse
+    {
+        return $this->callingOutcome($calling->enable($source));
+    }
+
+    public function callingDisable(LeadSource $source, ManageWhatsAppCalling $calling): RedirectResponse
+    {
+        abort_unless($source->type === LeadSourceType::Whatsapp, 404);
+
+        return $this->callingOutcome($calling->disable($source));
+    }
+
+    public function callingCheck(LeadSource $source, ManageWhatsAppCalling $calling): RedirectResponse
+    {
+        abort_unless($source->type === LeadSourceType::Whatsapp, 404);
+
+        return $this->callingOutcome($calling->check($source));
+    }
+
+    /**
+     * @param  array{level: string, message: string}  $outcome
+     */
+    private function callingOutcome(array $outcome): RedirectResponse
+    {
+        return back()->with($outcome['level'] === 'danger' ? 'error' : 'success', $outcome['message']);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Leads;
 
 use App\Http\Controllers\Controller;
+use App\Leads\Calling\ManageWhatsAppCalling;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Models\LeadSource;
 use App\Leads\Services\SourceHealth;
@@ -46,6 +47,15 @@ class LeadSourceController extends Controller
                     $row['webhook_url'] = $source->webhookUrl();
                     $row['config'] = $this->publicConfig($source);
                     $row['missing_app_secret'] = $source->type->isMeta() && empty($source->config['app_secret'] ?? null);
+
+                    if ($source->type === LeadSourceType::Whatsapp) {
+                        $row['calling'] = [
+                            'enabled' => $source->calling_enabled,
+                            'meta_status' => $source->calling_meta_status,
+                            'checked_at' => $source->calling_meta_checked_at?->toIso8601String(),
+                            'blocked_reason' => app(ManageWhatsAppCalling::class)->blockedReason($source),
+                        ];
+                    }
                 }
 
                 return $row;

@@ -127,7 +127,7 @@ class LeadWebhookController extends Controller
 
         foreach ($entries as $entry) {
             foreach (($entry['changes'] ?? []) as $change) {
-                $count += count($change['value']['messages'] ?? []);
+                $count += count($change['value']['messages'] ?? []) + count($change['value']['calls'] ?? []);
             }
         }
 
@@ -146,6 +146,13 @@ class LeadWebhookController extends Controller
 
                 foreach (($change['value']['statuses'] ?? []) as $status) {
                     $this->whatsappStatus($status);
+                }
+
+                foreach (($change['value']['calls'] ?? []) as $call) {
+                    $this->safely('WhatsApp call', function () use ($source, $change, $call): void {
+                        $outcome = $this->channels->whatsappCall($source, $change, $call);
+                        Log::info('WA CALL', ['call_id' => is_array($call) && is_string($call['id'] ?? null) ? substr($call['id'], 0, 191) : null, 'outcome' => $outcome]);
+                    });
                 }
 
                 foreach (($change['value']['messages'] ?? []) as $message) {
