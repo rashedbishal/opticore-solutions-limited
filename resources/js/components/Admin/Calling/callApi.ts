@@ -21,6 +21,8 @@ export interface ActiveCall {
 
 export interface ActiveCallsResponse {
     calls: ActiveCall[];
+    push_public_key: string | null;
+    ringtone_url: string | null;
     heartbeat_seconds: number;
     poll_seconds: number;
     staleness_seconds: number;

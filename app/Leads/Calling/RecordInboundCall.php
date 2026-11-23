@@ -285,6 +285,7 @@ class RecordInboundCall
 
                 $routing = $this->router->route($lead, $created);
                 $attributes = [
+                    'direction' => CallDirection::Inbound,
                     'lead_id' => $lead->id,
                     'lead_source_id' => $source->id,
                     'conversation_id' => $conversation->id,

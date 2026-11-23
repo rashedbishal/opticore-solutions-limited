@@ -7,7 +7,26 @@
 export class Ringtone {
     private ctx: AudioContext | null = null;
     private timer: ReturnType<typeof setInterval> | null = null;
+    private custom: HTMLAudioElement | null = null;
+    private customUrl: string | null = null;
     blocked = true;
+
+    /** Use the uploaded MP3 (null = the built-in tone). */
+    setCustom(url: string | null): void {
+        if (url === this.customUrl) {
+            return;
+        }
+
+        this.custom?.pause();
+        this.customUrl = url;
+        this.custom = null;
+
+        if (url) {
+            this.custom = new Audio(url);
+            this.custom.loop = true;
+            this.custom.preload = 'auto';
+        }
+    }
 
     unlock(): void {
         try {
@@ -21,6 +40,18 @@ export class Ringtone {
     }
 
     start(): void {
+        if (this.custom) {
+            if (this.custom.paused) {
+                this.custom.currentTime = 0;
+                this.custom
+                    .play()
+                    .then(() => (this.blocked = false))
+                    .catch(() => (this.blocked = true));
+            }
+
+            return;
+        }
+
         if (this.timer !== null) {
             return;
         }
@@ -60,6 +91,8 @@ export class Ringtone {
     }
 
     stop(): void {
+        this.custom?.pause();
+
         if (this.timer !== null) {
             clearInterval(this.timer);
             this.timer = null;

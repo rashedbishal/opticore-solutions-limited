@@ -28,9 +28,11 @@ interface WhatsAppNumber {
 export default function Calling({
     people,
     numbers,
+    ringtone,
 }: {
     people: Person[];
     numbers: WhatsAppNumber[];
+    ringtone: string | null;
 }) {
     return (
         <div className="relative space-y-6">
@@ -45,6 +47,54 @@ export default function Calling({
                     New or unowned leads ring the managers directly.
                 </p>
             </div>
+            <section className={CARD}>
+                <p className="mb-1 text-sm font-semibold text-white">
+                    Ringtone
+                </p>
+                <p className="mb-3 text-xs text-zinc-500">
+                    {ringtone
+                        ? `Everyone’s call box rings with “${ringtone}”.`
+                        : 'Everyone’s call box uses the built-in ring. Upload an MP3 (up to 1 MB) to change it.'}
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                    <label className="cursor-pointer rounded-lg border border-white/10 px-3 py-1.5 text-xs text-zinc-200 hover:bg-white/5">
+                        {ringtone ? 'Replace MP3' : 'Upload MP3'}
+                        <input
+                            type="file"
+                            accept=".mp3,audio/mpeg"
+                            className="sr-only"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+
+                                if (file) {
+                                    router.post(
+                                        calling.ringtone.upload.url(),
+                                        { ringtone: file },
+                                        {
+                                            forceFormData: true,
+                                            preserveScroll: true,
+                                        },
+                                    );
+                                }
+                            }}
+                        />
+                    </label>
+                    {ringtone && (
+                        <button
+                            type="button"
+                            onClick={() =>
+                                router.delete(calling.ringtone.remove.url(), {
+                                    preserveScroll: true,
+                                })
+                            }
+                            className="text-xs text-red-300 hover:underline"
+                        >
+                            Use the built-in ring
+                        </button>
+                    )}
+                </div>
+            </section>
+
             {numbers.length > 0 && (
                 <section className={CARD}>
                     <p className="mb-1 text-sm font-semibold text-white">

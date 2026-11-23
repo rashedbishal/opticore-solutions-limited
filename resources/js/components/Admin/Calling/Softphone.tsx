@@ -1,3 +1,4 @@
+import type { OutputDevices } from './audioOutput';
 import type { ActiveCall } from './callApi';
 import { Link } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
@@ -15,6 +16,7 @@ import {
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import leadRoutes from '@/routes/admin/leads';
 import { AnswerSession } from './AnswerSession';
+import { findOutputDevices, setOutput } from './audioOutput';
 import { callApi, CallError } from './callApi';
 import { OutboundSession } from './OutboundSession';
 import { Ringtone } from './ringtone';
@@ -57,6 +59,11 @@ export default function Softphone({
     const [notice, setNotice] = useState<string | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [soundBlocked, setSoundBlocked] = useState(true);
+    const [outputs, setOutputs] = useState<OutputDevices>({
+        speakerId: null,
+        earpieceId: null,
+    });
+    const [speakerOn, setSpeakerOn] = useState(false);
     const [, rerender] = useReducer((n: number) => n + 1, 0);
     // Mirrors `session` for callbacks (timers, live updates).
     const sessionRef = useRef<Session | null>(null);
@@ -77,6 +84,7 @@ export default function Softphone({
         try {
             const data = await callApi.active();
             setCalls(data.calls);
+            ringtone.current?.setCustom(data.ringtone_url);
             setIntervals({
                 heartbeat: data.heartbeat_seconds,
                 poll: data.poll_seconds,
@@ -348,6 +356,44 @@ export default function Softphone({
     };
 
     const active = session;
+    const isLive = active?.phase === 'connected';
+
+    // Earpiece / loudspeaker (Android Chrome & Edge only).
+    useEffect(() => {
+        if (!isLive) {
+            return;
+        }
+
+        let cancelled = false;
+
+        void findOutputDevices().then((devices) => {
+            if (!cancelled) {
+                setOutputs(devices);
+                setSpeakerOn(false);
+
+                if (devices.earpieceId) {
+                    void setOutput(audio.current, devices.earpieceId);
+                }
+            }
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isLive]);
+
+    const toggleSpeaker = async () => {
+        const next = !speakerOn;
+        const ok = await setOutput(
+            audio.current,
+            next ? outputs.speakerId : outputs.earpieceId,
+        );
+
+        if (ok) {
+            setSpeakerOn(next);
+        }
+    };
+
     const activeCall = active
         ? (calls.find((c) => c.id === active.callId) ?? null)
         : null;
@@ -442,6 +488,24 @@ export default function Softphone({
                                                     ? 'Unmute'
                                                     : 'Mute'}
                                             </button>
+                                            {outputs.speakerId && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        void toggleSpeaker()
+                                                    }
+                                                    className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm ${
+                                                        speakerOn
+                                                            ? 'border-cyan-400/40 bg-cyan-500/15 text-cyan-200'
+                                                            : 'border-white/10 text-zinc-200 hover:bg-white/5'
+                                                    }`}
+                                                >
+                                                    <Volume2 className="h-4 w-4" />
+                                                    {speakerOn
+                                                        ? 'Speaker'
+                                                        : 'Earpiece'}
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => void hangup()}

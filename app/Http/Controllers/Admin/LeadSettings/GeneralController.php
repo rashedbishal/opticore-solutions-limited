@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin\LeadSettings;
 
 use App\Http\Controllers\Controller;
+use App\Leads\Calling\CallPush;
 use App\Leads\Enums\AutoDistributionMethod;
 use App\Leads\Enums\LeadDistributionMode;
 use App\Leads\Models\LeadSetting;
+use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,6 +26,7 @@ class GeneralController extends Controller
         $settings = LeadSetting::current();
 
         return Inertia::render('Admin/LeadSettings/General', [
+            'pushConfigured' => $settings->vapid_public_key !== null,
             'settings' => [
                 'distribution_mode' => $settings->distribution_mode->value,
                 'auto_distribution_method' => $settings->auto_distribution_method?->value,
@@ -74,5 +78,19 @@ class GeneralController extends Controller
         ]);
 
         return back()->with('success', 'Lead settings saved.');
+    }
+
+    /** Mother admin: create the keys for phone & computer call alerts. */
+    public function generatePushKeys(CallPush $push): RedirectResponse
+    {
+        /** @var Admin $admin */
+        $admin = Auth::guard('admin')->user();
+        abort_unless($admin->isMotherAdmin(), 403);
+        $replaced = $push->configured();
+        $push->generate();
+
+        return back()->with('success', $replaced
+            ? 'New keys created. Everyone needs to switch call alerts on again on their devices.'
+            : 'Keys created. Everyone can now switch on call alerts on their devices.');
     }
 }

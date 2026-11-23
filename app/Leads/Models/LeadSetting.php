@@ -24,6 +24,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $nurturing_notify_enabled
  * @property bool $nurturing_task_enabled
  * @property int $nurturing_inactive_days
+ * @property string|null $vapid_public_key
+ * @property string|null $vapid_private_key
+ * @property string|null $ringtone_path
+ * @property string|null $ringtone_name
  */
 class LeadSetting extends Model
 {
@@ -40,6 +44,10 @@ class LeadSetting extends Model
         'nurturing_notify_enabled',
         'nurturing_task_enabled',
         'nurturing_inactive_days',
+        'vapid_public_key',
+        'vapid_private_key',
+        'ringtone_path',
+        'ringtone_name',
     ];
 
     protected function casts(): array
@@ -57,6 +65,7 @@ class LeadSetting extends Model
             'nurturing_notify_enabled' => 'boolean',
             'nurturing_task_enabled' => 'boolean',
             'nurturing_inactive_days' => 'integer',
+            'vapid_private_key' => 'encrypted',
         ];
     }
 

@@ -2,9 +2,11 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Events\LeadCallUpdated;
 use App\Leads\Events\LeadUpdated;
+use App\Leads\Jobs\SendCallPush;
 use App\Leads\Jobs\SendMissedCallNotification;
 use App\Leads\Models\LeadCall;
 use Throwable;
@@ -32,6 +34,22 @@ final class LeadCallBroadcaster
 
         if ($status === CallStatus::Missed) {
             self::missed($call);
+        }
+
+        self::push($call, $status);
+    }
+
+    /** Ring (or stop ringing) the devices of people who turned on call alerts. */
+    private static function push(LeadCall $call, CallStatus $status): void
+    {
+        if ($call->direction !== CallDirection::Inbound || ! in_array($status, [CallStatus::Ringing, CallStatus::Answering, CallStatus::Completed, CallStatus::Missed, CallStatus::Rejected, CallStatus::Failed], true)) {
+            return;
+        }
+
+        try {
+            SendCallPush::dispatch($call->id, $status !== CallStatus::Ringing);
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 

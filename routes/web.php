@@ -327,6 +327,11 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('{lead}/call-permission/check', [AdminLeadCallController::class, 'checkPermission'])->middleware('throttle:lead-call-actions')->name('call-permission.check')->whereUlid('lead');
         Route::post('{lead}/call-permission/request', [AdminLeadCallController::class, 'requestPermission'])->middleware('throttle:lead-call-actions')->name('call-permission.request')->whereUlid('lead');
         Route::get('calls/active', [AdminLeadCallController::class, 'active'])->name('calls.active');
+        Route::post('push-subscription', [AdminLeadCallController::class, 'subscribe'])->name('push.subscribe');
+        Route::delete('push-subscription', [AdminLeadCallController::class, 'unsubscribe'])->name('push.unsubscribe');
+        Route::get('calling/ringtone', [AdminLeadCallingController::class, 'ringtone'])->name('calling.ringtone.show');
+        Route::post('calling/ringtone', [AdminLeadCallingController::class, 'uploadRingtone'])->name('calling.ringtone.upload');
+        Route::delete('calling/ringtone', [AdminLeadCallingController::class, 'removeRingtone'])->name('calling.ringtone.remove');
         Route::middleware('throttle:lead-call-actions')->prefix('calls/{call}')->name('calls.')->whereUlid('call')->group(function () {
             Route::post('claim', [AdminLeadCallController::class, 'claim'])->name('claim');
             Route::post('answer', [AdminLeadCallController::class, 'answer'])->name('answer');
@@ -413,6 +418,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
 
         Route::get('general', [AdminLeadGeneralSettingsController::class, 'edit'])->name('general.edit');
         Route::put('general', [AdminLeadGeneralSettingsController::class, 'update'])->name('general.update');
+        Route::post('general/push-keys', [AdminLeadGeneralSettingsController::class, 'generatePushKeys'])->name('general.push-keys');
 
         Route::get('statuses', [AdminLeadStatusController::class, 'index'])->name('statuses.index');
         Route::post('statuses', [AdminLeadStatusController::class, 'store'])->name('statuses.store');

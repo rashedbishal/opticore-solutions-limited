@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import AdminNotificationBell from '@/components/Admin/AdminNotificationBell';
+import CallAlertsButton from '@/components/Admin/Calling/CallAlertsButton';
 import Softphone from '@/components/Admin/Calling/Softphone';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
 import LeadNavGroup, {
@@ -876,6 +877,7 @@ export default function AdminLayout({
                         </div>
 
                         <div className="flex flex-1 items-center justify-end gap-4">
+                            {canUseLeads(auth.user) && <CallAlertsButton />}
                             <AdminNotificationBell
                                 adminId={auth.user.id}
                                 echoReady={echoReady}

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 
 /**
  * @property LeadRole|null $lead_role Lead Management role chosen by the mother admin.
@@ -17,7 +18,7 @@ use Illuminate\Support\Carbon;
  */
 class Admin extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasPushSubscriptions, Notifiable;
 
     /**
      * The connection name for the model.

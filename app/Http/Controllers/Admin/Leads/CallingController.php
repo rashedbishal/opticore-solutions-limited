@@ -8,13 +8,18 @@ use App\Leads\Calling\SoftphonePresence;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Models\LeadCall;
+use App\Leads\Models\LeadSetting;
 use App\Leads\Models\LeadSource;
 use App\Leads\Services\LeadPeople;
 use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Leads → Calling (managers and the mother admin): who is a backup call
@@ -44,6 +49,7 @@ class CallingController extends Controller
                 'template_status' => is_array($s->config) ? ($s->config[CreateCallPermissionTemplate::CREATED_KEY] ?? null) : null,
                 'has_waba' => is_array($s->config) && ! empty($s->config['whatsapp_business_account_id']),
             ])->values(),
+            'ringtone' => LeadSetting::current()->ringtone_name,
         ]);
     }
 
@@ -66,6 +72,61 @@ class CallingController extends Controller
         $result = $create->handle($source);
 
         return back()->with($result['ok'] ? 'success' : 'error', $result['message']);
+    }
+
+    /** A shared MP3 that rings instead of the built-in tone. */
+    public function uploadRingtone(Request $request): RedirectResponse
+    {
+        $this->manager();
+        $request->validate(['ringtone' => ['required', 'file', 'mimes:mp3,mpga', 'max:1024']], [
+            'ringtone.mimes' => 'Please upload an MP3 file.',
+            'ringtone.max' => 'The ringtone must be 1 MB or smaller.',
+        ]);
+
+        $file = $request->file('ringtone');
+        abort_if($file === null || is_array($file), 422);
+
+        $settings = LeadSetting::current();
+        $old = $settings->ringtone_path;
+        $path = $file->storeAs('leads/ringtone', Str::ulid().'.mp3', 'local');
+
+        if ($path === false) {
+            return back()->with('error', 'The ringtone could not be saved.');
+        }
+
+        $settings->update(['ringtone_path' => $path, 'ringtone_name' => mb_substr($file->getClientOriginalName(), 0, 255)]);
+
+        if ($old !== null) {
+            Storage::disk('local')->delete($old);
+        }
+
+        return back()->with('success', 'Ringtone uploaded. Call boxes pick it up within a few seconds.');
+    }
+
+    public function removeRingtone(): RedirectResponse
+    {
+        $this->manager();
+        $settings = LeadSetting::current();
+
+        if ($settings->ringtone_path !== null) {
+            Storage::disk('local')->delete($settings->ringtone_path);
+        }
+
+        $settings->update(['ringtone_path' => null, 'ringtone_name' => null]);
+
+        return back()->with('success', 'Back to the built-in ringtone.');
+    }
+
+    /** Streamed to anyone with a lead role (the file is private). */
+    public function ringtone(): StreamedResponse
+    {
+        /** @var Admin $admin */
+        $admin = Auth::guard('admin')->user();
+        abort_unless($admin->canUseLeads(), 403);
+        $path = LeadSetting::current()->ringtone_path;
+        abort_if($path === null || ! Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path, 'ringtone.mp3', ['Content-Type' => 'audio/mpeg', 'Cache-Control' => 'private, max-age=86400']);
     }
 
     private function manager(): Admin

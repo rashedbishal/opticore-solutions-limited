@@ -9,6 +9,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="canonical" href="{{ url()->current() }}">
         <link rel="icon" href="/favicon.ico" sizes="any">
+        @if (request()->is('admin', 'admin/*'))
+            {{-- Admin only: lets admins "Add to Home Screen" for call alerts. --}}
+            <link rel="manifest" href="/admin.webmanifest">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-mobile-web-app-title" content="Opticore CMS">
+        @endif
 
         {{-- Organization/WebSite JSON-LD so Google can understand the brand's
              identity and social profiles (a contributing signal toward rich

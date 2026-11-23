@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Leads;
 
 use App\Http\Controllers\Controller;
 use App\Leads\Calling\CallPermissions;
+use App\Leads\Calling\CallPush;
 use App\Leads\Calling\LeadCallActionResult;
 use App\Leads\Calling\LeadCallActions;
 use App\Leads\Calling\ListActiveLeadCalls;
@@ -11,6 +12,7 @@ use App\Leads\Calling\OutboundCalls;
 use App\Leads\Calling\SoftphonePresence;
 use App\Leads\Events\LeadUpdated;
 use App\Leads\Models\Lead;
+use App\Leads\Models\LeadSetting;
 use App\Leads\Models\LeadSource;
 use App\Models\Admin;
 use Closure;
@@ -25,13 +27,18 @@ use Illuminate\Support\Facades\Auth;
  */
 class LeadCallController extends Controller
 {
-    public function active(ListActiveLeadCalls $list, SoftphonePresence $presence): JsonResponse
+    public function active(ListActiveLeadCalls $list, SoftphonePresence $presence, CallPush $push): JsonResponse
     {
         $admin = $this->admin();
         $presence->touch($admin);
+        $settings = LeadSetting::current();
 
         return response()->json(['data' => [
             'calls' => $list->handle($admin),
+            'push_public_key' => $push->publicKey(),
+            'ringtone_url' => $settings->ringtone_path !== null
+                ? route('admin.leads.calling.ringtone.show', ['v' => substr(md5($settings->ringtone_path), 0, 8)])
+                : null,
             'heartbeat_seconds' => (int) config('calling.softphone_heartbeat_seconds'),
             'poll_seconds' => (int) config('calling.softphone_poll_seconds'),
             'staleness_seconds' => (int) config('calling.softphone_staleness_seconds'),
@@ -81,6 +88,30 @@ class LeadCallController extends Controller
     public function cancel(string $call, OutboundCalls $outbound): JsonResponse
     {
         return $this->respond(fn (Admin $admin) => $outbound->cancel($admin, $call));
+    }
+
+    /** This device wants call alerts (browser push). */
+    public function subscribe(Request $request): JsonResponse
+    {
+        $admin = $this->admin();
+        $validated = $request->validate([
+            'endpoint' => ['required', 'url', 'max:500'],
+            'keys.p256dh' => ['required', 'string', 'max:255'],
+            'keys.auth' => ['required', 'string', 'max:255'],
+            'content_encoding' => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $admin->updatePushSubscription($validated['endpoint'], $validated['keys']['p256dh'], $validated['keys']['auth'], $validated['content_encoding'] ?? 'aes128gcm');
+
+        return response()->json(['data' => ['ok' => true]]);
+    }
+
+    public function unsubscribe(Request $request): JsonResponse
+    {
+        $admin = $this->admin();
+        $admin->deletePushSubscription((string) $request->input('endpoint'));
+
+        return response()->json(['data' => ['ok' => true]]);
     }
 
     /** Check the lead's call permission with Meta now. */

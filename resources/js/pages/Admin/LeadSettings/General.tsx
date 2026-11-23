@@ -1,5 +1,5 @@
 import type { FormEvent, ReactNode } from 'react';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
@@ -33,12 +33,14 @@ interface Settings {
 interface Props {
     settings: Settings;
     methodOptions: { value: string; label: string }[];
+    pushConfigured: boolean;
 }
 
 /** Lead Settings → General (mother admin only). */
 export default function LeadGeneralSettings({
     settings,
     methodOptions,
+    pushConfigured,
 }: Props) {
     const [errors, setErrors] = useState<string[]>([]);
     const form = useForm({
@@ -266,6 +268,39 @@ export default function LeadGeneralSettings({
                         />
                         Create a “Follow up” task
                     </label>
+                </div>
+            </section>
+
+            <section className={CARD}>
+                <p className={`${CARD_TITLE} mb-1`}>
+                    Phone &amp; computer call alerts
+                </p>
+                <p className="mb-4 text-sm text-zinc-500">
+                    Lets people get a notification for incoming WhatsApp calls
+                    even when no CMS tab is open. Each person then switches it
+                    on with the phone icon next to the bell.
+                    {pushConfigured &&
+                        ' Creating new keys switches everyone’s alerts off until they turn them on again.'}
+                </p>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span
+                        className={`text-sm ${pushConfigured ? 'text-emerald-300' : 'text-zinc-400'}`}
+                    >
+                        {pushConfigured ? 'Set up' : 'Not set up yet'}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            router.post(
+                                generalRoutes.pushKeys.url(),
+                                {},
+                                { preserveScroll: true },
+                            )
+                        }
+                        className="rounded-lg border border-white/10 px-3 py-2 text-sm text-zinc-200 hover:bg-white/5"
+                    >
+                        {pushConfigured ? 'Create new keys' : 'Generate keys'}
+                    </button>
                 </div>
             </section>
 
