@@ -21,6 +21,7 @@ import {
 import { useState } from 'react';
 import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import CallLeadCard from '@/components/Admin/Leads/CallLeadCard';
 import CallsCard from '@/components/Admin/Leads/CallsCard';
 import ConsentCard from '@/components/Admin/Leads/ConsentCard';
 import ConversationCard from '@/components/Admin/Leads/ConversationCard';
@@ -318,6 +319,8 @@ export default function LeadDetail({
                     </div>
                 </div>
             </div>
+
+            <CallLeadCard lead={lead} />
 
             {/* Reminders */}
             {(lead.meeting_date || lead.next_follow_up_at) && (

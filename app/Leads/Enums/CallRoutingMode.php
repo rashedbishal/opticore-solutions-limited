@@ -9,6 +9,7 @@ enum CallRoutingMode: string
     case BackupFallback = 'backup_fallback';
     case ManagerFallback = 'manager_fallback';
     case None = 'none';
+    case AgentInitiated = 'agent_initiated';
 
     public function label(): string
     {
@@ -17,6 +18,7 @@ enum CallRoutingMode: string
             self::BackupFallback => 'backup receivers',
             self::ManagerFallback => 'managers',
             self::None => 'nobody',
+            self::AgentInitiated => 'the caller',
         };
     }
 }

@@ -16,7 +16,22 @@ interface Person {
 /**
  * Leads → Calling (managers): backup call receivers and who's reachable.
  */
-export default function Calling({ people }: { people: Person[] }) {
+interface WhatsAppNumber {
+    id: string;
+    name: string;
+    calling_enabled: boolean;
+    template_name: string;
+    template_status: string | null;
+    has_waba: boolean;
+}
+
+export default function Calling({
+    people,
+    numbers,
+}: {
+    people: Person[];
+    numbers: WhatsAppNumber[];
+}) {
     return (
         <div className="relative space-y-6">
             <div>
@@ -30,6 +45,59 @@ export default function Calling({ people }: { people: Person[] }) {
                     New or unowned leads ring the managers directly.
                 </p>
             </div>
+            {numbers.length > 0 && (
+                <section className={CARD}>
+                    <p className="mb-1 text-sm font-semibold text-white">
+                        Permission message
+                    </p>
+                    <p className="mb-3 text-xs text-zinc-500">
+                        Before calling a lead, Meta requires sending them an
+                        approved message with an “Allow calls” button. Create it
+                        once per WhatsApp number; Meta approves it, usually
+                        within a few hours.
+                    </p>
+                    <ul className="divide-y divide-white/5">
+                        {numbers.map((number) => (
+                            <li
+                                key={number.id}
+                                className="flex flex-wrap items-center justify-between gap-3 py-2.5"
+                            >
+                                <div className="min-w-0">
+                                    <p className="text-sm text-white">
+                                        {number.name}
+                                    </p>
+                                    <p className="text-xs text-zinc-500">
+                                        {number.template_status
+                                            ? `“${number.template_name}” sent to Meta (${number.template_status})`
+                                            : 'Not created yet'}
+                                        {!number.calling_enabled &&
+                                            ' · calling is off'}
+                                        {!number.has_waba &&
+                                            ' · needs the WhatsApp Business Account ID'}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    disabled={!number.has_waba}
+                                    onClick={() =>
+                                        router.post(
+                                            calling.template.url(number.id),
+                                            {},
+                                            { preserveScroll: true },
+                                        )
+                                    }
+                                    className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-zinc-200 hover:bg-white/5 disabled:opacity-40"
+                                >
+                                    {number.template_status
+                                        ? 'Create again'
+                                        : 'Create permission message'}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
+
             <section className={CARD}>
                 <ul className="divide-y divide-white/5">
                     {people.map((person) => (

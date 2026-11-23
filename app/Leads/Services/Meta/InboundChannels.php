@@ -3,7 +3,9 @@
 namespace App\Leads\Services\Meta;
 
 use App\Leads\Actions\RecordInboundMessage;
+use App\Leads\Calling\CallPermissions;
 use App\Leads\Calling\RecordInboundCall;
+use App\Leads\Calling\RecordOutboundCallEvent;
 use App\Leads\Calling\WhatsAppCallEvent;
 use App\Leads\Enums\LeadAttachmentStatus;
 use App\Leads\Enums\LeadPriority;
@@ -15,6 +17,7 @@ use App\Leads\Models\LeadConversation;
 use App\Leads\Models\LeadMessage;
 use App\Leads\Models\LeadSource;
 use App\Leads\Models\LeadStatus;
+use App\Leads\Services\LeadDuplicateDetector;
 use App\Leads\Services\LeadIntake;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -38,6 +41,8 @@ class InboundChannels
         private readonly MetaGraph $graph,
         private readonly LeadIntake $intake,
         private readonly RecordInboundCall $recordCall,
+        private readonly RecordOutboundCallEvent $outboundCall,
+        private readonly CallPermissions $permissions,
         private readonly RecordInboundMessage $recordMessage,
     ) {}
 
@@ -118,6 +123,10 @@ class InboundChannels
             return 'ignored_no_app_secret';
         }
 
+        if (is_array($call) && ($call['direction'] ?? null) === 'BUSINESS_INITIATED') {
+            return 'outbound_'.$this->outboundCall->handle($source, $call);
+        }
+
         $event = WhatsAppCallEvent::fromWebhook($change, $call);
 
         if (is_string($event)) {
@@ -138,6 +147,52 @@ class InboundChannels
             ]),
             fn (Lead $lead) => $this->intake->received($lead),
         );
+    }
+
+    /**
+     * Meta's ringing/accepted/declined update for a call we dialled.
+     *
+     * @param  array<string, mixed>  $status
+     */
+    public function whatsappCallStatus(LeadSource $source, array $status): string
+    {
+        return $this->outboundCall->status($source, $status);
+    }
+
+    /**
+     * The lead tapped "Allow calls" / "Don't allow" in WhatsApp.
+     *
+     * @param  array<string, mixed>  $message
+     */
+    public function whatsappCallPermissionReply(LeadSource $source, array $message): string
+    {
+        $phone = $message['from'] ?? null;
+        $reply = $message['interactive']['call_permission_reply'] ?? null;
+        $response = is_array($reply) ? ($reply['response'] ?? null) : null;
+
+        if (! is_string($phone) || $phone === '' || ! in_array($response, ['accept', 'reject'], true)) {
+            return 'malformed';
+        }
+
+        $lead = $this->leadForThread($source, MessageChannel::Whatsapp, $phone)
+            ?? Lead::query()->withMerged()->where('source_id', $source->id)->where('phone_normalized', LeadDuplicateDetector::normalizePhone($phone))->first()?->latestVersion();
+
+        if ($lead === null) {
+            return 'unknown_lead';
+        }
+
+        $expiration = $reply['expiration_timestamp'] ?? null;
+        $this->permissions->recordReply(
+            $lead,
+            $source,
+            $response,
+            ($reply['is_permanent'] ?? false) === true,
+            is_numeric($expiration) ? (int) $expiration : null,
+            isset($message['timestamp']) && is_numeric($message['timestamp']) ? Carbon::createFromTimestamp((int) $message['timestamp']) : Carbon::now(),
+        );
+        LeadUpdated::dispatch($lead->id);
+
+        return $response;
     }
 
     /**

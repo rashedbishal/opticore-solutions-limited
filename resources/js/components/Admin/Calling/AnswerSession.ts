@@ -23,6 +23,7 @@ const isUp = (state: string | undefined) =>
  * retried from where it stopped.
  */
 export class AnswerSession {
+    readonly kind = 'inbound';
     phase: Phase = 'claiming';
     error: CallError | null = null;
     muted = false;

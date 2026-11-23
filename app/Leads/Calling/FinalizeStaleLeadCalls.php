@@ -2,6 +2,7 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallEndReason;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Models\LeadCall;
@@ -28,24 +29,26 @@ class FinalizeStaleLeadCalls
         $limit = max(1, (int) config('calling.reconcile_batch_limit'));
         $summary = ['ended' => 0, 'lost_race' => 0];
 
+        $initiate = $now->copy()->subSeconds(max(0, (int) config('calling.outbound_initiate_grace_seconds')));
         $rules = [
-            [CallStatus::Ringing, CallStatus::Missed, CallEndReason::RingTimeout],
-            [CallStatus::Answering, CallStatus::Missed, CallEndReason::AnswerTimeout],
-            [CallStatus::Connected, CallStatus::Completed, CallEndReason::StaleNoTerminate],
+            [CallStatus::Ringing, CallDirection::Inbound, CallStatus::Missed, CallEndReason::RingTimeout],
+            [CallStatus::Ringing, CallDirection::Outbound, CallStatus::Failed, CallEndReason::ConsumerNoAnswerOutbound],
+            [CallStatus::Answering, CallDirection::Inbound, CallStatus::Missed, CallEndReason::AnswerTimeout],
+            [CallStatus::Answering, CallDirection::Outbound, CallStatus::Failed, CallEndReason::OutboundConnectFailed],
+            [CallStatus::Connected, null, CallStatus::Completed, CallEndReason::StaleNoTerminate],
+            [CallStatus::Initiated, null, CallStatus::Failed, CallEndReason::OutboundConnectFailed],
         ];
 
-        foreach ($rules as [$from, $to, $reason]) {
-            $calls = $this->stale(LeadCall::query(), $from, $grace, $connected)->limit($limit)->get();
+        foreach ($rules as [$from, $direction, $to, $reason]) {
+            $calls = $this->stale(LeadCall::query(), $from, $direction, $grace, $connected, $initiate)->limit($limit)->get();
 
             foreach ($calls as $call) {
                 try {
                     $values = ['status' => $to->value, 'end_reason' => $reason->value, 'updated_at' => Carbon::now()];
 
-                    if ($from !== CallStatus::Connected) {
-                        $values['ended_at'] = $call->ringing_expires_at;
-                    }
+                    $values['ended_at'] = in_array($from, [CallStatus::Ringing, CallStatus::Answering], true) ? $call->ringing_expires_at : Carbon::now();
 
-                    $won = $this->stale(LeadCall::query()->whereKey($call->id), $from, $grace, $connected)->update($values) === 1;
+                    $won = $this->stale(LeadCall::query()->whereKey($call->id), $from, $direction, $grace, $connected, $initiate)->update($values) === 1;
                 } catch (Throwable $e) {
                     report($e);
 
@@ -60,7 +63,9 @@ class FinalizeStaleLeadCalls
 
                 $summary['ended']++;
                 $call->forceFill(['status' => $to, 'end_reason' => $reason]);
-                LeadCallSdp::forget($call->lead_source_id, $call->external_call_id);
+                if ($call->external_call_id !== null) {
+                    LeadCallSdp::forget($call->lead_source_id, $call->external_call_id);
+                }
                 LeadCallBroadcaster::updated($call, $to);
             }
         }
@@ -72,13 +77,18 @@ class FinalizeStaleLeadCalls
      * @param  Builder<LeadCall>  $query
      * @return Builder<LeadCall>
      */
-    private function stale(Builder $query, CallStatus $from, Carbon $grace, Carbon $connected): Builder
+    private function stale(Builder $query, CallStatus $from, ?CallDirection $direction, Carbon $grace, Carbon $connected, Carbon $initiate): Builder
     {
         $query->where('status', $from->value);
 
+        if ($direction !== null) {
+            $query->where('direction', $direction->value);
+        }
+
         return match ($from) {
-            CallStatus::Ringing => $query->whereNull('claimed_by')->where('ringing_expires_at', '<', $grace),
+            CallStatus::Ringing => ($direction === CallDirection::Inbound ? $query->whereNull('claimed_by') : $query)->where('ringing_expires_at', '<', $grace),
             CallStatus::Connected => $query->where('connected_at', '<', $connected),
+            CallStatus::Initiated => $query->where('created_at', '<', $initiate),
             default => $query->where('ringing_expires_at', '<', $grace),
         };
     }

@@ -38,6 +38,49 @@ class WhatsAppCallingClient
         return $this->request('POST', 'settings', ['calling' => ['status' => $enabled ? 'ENABLED' : 'DISABLED']], false, fn (array $body): ?array => $this->successFlag($body));
     }
 
+    /**
+     * The lead's call permission and what we may do now (start_call,
+     * send_call_permission_request).
+     */
+    public function checkCallPermission(string $waId): CallingApiResult
+    {
+        return $this->request('GET', 'call_permissions', ['user_wa_id' => $waId], true, function (array $body): array {
+            $permission = is_array($body['permission'] ?? null) ? $body['permission'] : [];
+            $actions = [];
+
+            foreach ((is_array($body['actions'] ?? null) ? $body['actions'] : []) as $action) {
+                if (is_array($action) && is_string($action['action_name'] ?? null)) {
+                    $actions[$action['action_name']] = ($action['can_perform_action'] ?? false) === true;
+                }
+            }
+
+            $expiration = $permission['expiration_time'] ?? null;
+
+            return [
+                'status' => is_string($permission['status'] ?? null) ? $permission['status'] : null,
+                'expiration_time' => is_numeric($expiration) ? (int) $expiration : null,
+                'actions' => $actions,
+            ];
+        });
+    }
+
+    /** Dial a lead: Meta returns the new call's id. */
+    public function connect(string $to, string $sdpOffer, ?string $bizOpaque = null): CallingApiResult
+    {
+        $body = ['messaging_product' => 'whatsapp', 'to' => $to, 'action' => 'connect', 'session' => ['sdp_type' => 'offer', 'sdp' => $sdpOffer]];
+
+        if ($bizOpaque !== null) {
+            $body['biz_opaque_callback_data'] = $bizOpaque;
+        }
+
+        return $this->request('POST', 'calls', $body, false, function (array $response): ?array {
+            $first = is_array($response['calls'][0] ?? null) ? $response['calls'][0] : [];
+            $id = $first['id'] ?? null;
+
+            return is_string($id) && $id !== '' ? ['wacid' => $id] : null;
+        }, (string) config('calling.outbound_graph_version'));
+    }
+
     public function preAccept(string $callId, string $sdpAnswer): CallingApiResult
     {
         return $this->action('pre_accept', $callId, $sdpAnswer);
@@ -72,7 +115,7 @@ class WhatsAppCallingClient
     /**
      * @param  array<string, mixed>|null  $body
      */
-    private function request(string $method, string $path, ?array $body, bool $retryOnce, callable $parse): CallingApiResult
+    private function request(string $method, string $path, ?array $body, bool $retryOnce, callable $parse, ?string $graphVersion = null): CallingApiResult
     {
         $config = is_array($this->source->config) ? $this->source->config : [];
         $phoneNumberId = $config['phone_number_id'] ?? null;
@@ -82,7 +125,7 @@ class WhatsAppCallingClient
             return CallingApiResult::failure(CallingApiError::Validation, null, null);
         }
 
-        $url = sprintf('https://graph.facebook.com/%s/%s/%s', config('calling.graph_version'), rawurlencode($phoneNumberId), $path);
+        $url = sprintf('https://graph.facebook.com/%s/%s/%s', $graphVersion ?? config('calling.graph_version'), rawurlencode($phoneNumberId), $path);
         $attempts = $retryOnce ? 2 : 1;
 
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {

@@ -2,6 +2,7 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Models\LeadCall;
 use App\Leads\Services\LeadPeople;
@@ -31,7 +32,8 @@ class ListActiveLeadCalls
 
         $calls = LeadCall::query()
             ->where(function ($q) use ($id, $now, $cutoff): void {
-                $q->where(fn ($r) => $r->where('status', CallStatus::Ringing->value)->where('ringing_expires_at', '>', $now)->whereJsonContains('routed_user_ids', $id))
+                $q->where(fn ($r) => $r->where('direction', CallDirection::Inbound->value)->where('status', CallStatus::Ringing->value)->where('ringing_expires_at', '>', $now)->whereJsonContains('routed_user_ids', $id))
+                    ->orWhere(fn ($o) => $o->where('direction', CallDirection::Outbound->value)->whereIn('status', [CallStatus::Initiated->value, CallStatus::Ringing->value])->where('claimed_by', $id)->where('created_at', '>=', $cutoff))
                     ->orWhere(fn ($a) => $a->where('status', CallStatus::Answering->value)->where('claimed_by', $id)->where('claimed_at', '>=', $cutoff))
                     ->orWhere(fn ($c) => $c->where('status', CallStatus::Connected->value)->where('claimed_by', $id)->where('connected_at', '>=', $cutoff));
             })
@@ -45,6 +47,7 @@ class ListActiveLeadCalls
         return $calls->filter(fn (LeadCall $call): bool => $call->lead !== null)->map(fn (LeadCall $call): array => [
             'id' => $call->id,
             'status' => $call->status->value,
+            'direction' => $call->direction->value,
             'claimed_by_me' => $call->claimed_by === $id,
             'lead' => ['id' => $call->lead_id, 'name' => $call->lead?->name, 'phone' => $call->lead?->phone, 'identifier' => $call->lead?->identifier],
             'assignee_name' => $call->assignee_id_at_arrival !== null ? ($names[$call->assignee_id_at_arrival] ?? null) : null,

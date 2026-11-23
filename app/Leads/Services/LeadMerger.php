@@ -9,6 +9,7 @@ use App\Leads\Enums\LeadDuplicateLinkStatus;
 use App\Leads\Exceptions\LeadMergeException;
 use App\Leads\Models\Currency;
 use App\Leads\Models\Lead;
+use App\Leads\Models\LeadCallPermission;
 use App\Leads\Models\LeadConsent;
 use App\Leads\Models\LeadConsentEvent;
 use App\Leads\Models\LeadCustomFieldDefinition;
@@ -16,6 +17,7 @@ use App\Leads\Models\LeadCustomFieldValue;
 use App\Leads\Models\LeadDetailUpdateLog;
 use App\Leads\Models\LeadDuplicateLink;
 use App\Models\Admin;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -165,6 +167,7 @@ class LeadMerger
             $this->mergeTags($survivor, $loser);
             $this->mergeCustomFields($survivor, $loser, $conflicts, $choices);
             $this->mergeConsents($survivor, $loser, $by);
+            $this->mergeCallPermissions($survivor, $loser);
 
             if ($updates !== []) {
                 $survivor->fill($updates)->save();
@@ -199,6 +202,44 @@ class LeadMerger
 
             return $survivor->fresh() ?? $survivor;
         });
+    }
+
+    /**
+     * One permission per lead: keep the most recently confirmed one, and
+     * the latest "asked" time (as OptiFin).
+     */
+    private function mergeCallPermissions(Lead $survivor, Lead $loser): void
+    {
+        $mine = LeadCallPermission::query()->where('lead_id', $survivor->id)->first();
+        $theirs = LeadCallPermission::query()->where('lead_id', $loser->id)->first();
+
+        if ($theirs === null) {
+            return;
+        }
+
+        if ($mine === null) {
+            $theirs->update(['lead_id' => $survivor->id]);
+
+            return;
+        }
+
+        $winner = match (true) {
+            $mine->last_synced_at === null && $theirs->last_synced_at === null => $mine->updated_at >= $theirs->updated_at ? $mine : $theirs,
+            $mine->last_synced_at === null => $theirs,
+            $theirs->last_synced_at === null => $mine,
+            default => $mine->last_synced_at->gte($theirs->last_synced_at) ? $mine : $theirs,
+        };
+        $asked = max($mine->last_requested_at?->getTimestamp() ?? 0, $theirs->last_requested_at?->getTimestamp() ?? 0);
+
+        $mine->update([
+            'lead_source_id' => $winner->getAttribute('lead_source_id'),
+            'status' => $winner->status,
+            'meta_raw_status' => $winner->getAttribute('meta_raw_status'),
+            'expires_at' => $winner->expires_at,
+            'last_synced_at' => $winner->last_synced_at,
+            'last_requested_at' => $asked > 0 ? Carbon::createFromTimestamp($asked) : null,
+        ]);
+        $theirs->delete();
     }
 
     private function mergeTags(Lead $survivor, Lead $loser): void

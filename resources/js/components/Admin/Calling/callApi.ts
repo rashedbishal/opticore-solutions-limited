@@ -1,9 +1,11 @@
 import { api } from '@/lib/apiFetch';
+import leadRoutes from '@/routes/admin/leads';
 import callRoutes from '@/routes/admin/leads/calls';
 
 export interface ActiveCall {
     id: string;
-    status: 'ringing' | 'answering' | 'connected';
+    status: 'initiated' | 'ringing' | 'answering' | 'connected';
+    direction: 'inbound' | 'outbound';
     claimed_by_me: boolean;
     lead: {
         id: string;
@@ -40,7 +42,7 @@ export class CallError extends Error {
 interface ActionResponse {
     data: {
         call: { id: string; status: string; claimed_by_me: boolean };
-        session?: { sdp_type: 'offer'; sdp: string };
+        session?: { sdp_type: 'offer' | 'answer'; sdp: string };
     };
 }
 
@@ -92,6 +94,12 @@ export const callApi = {
     accept: (id: string) => action(callRoutes.accept.url(id)),
     reject: (id: string) => action(callRoutes.reject.url(id)),
     hangup: (id: string) => action(callRoutes.hangup.url(id)),
+    call: (leadId: string, sdp: string) =>
+        action(leadRoutes.call.url(leadId), { sdp }),
+    outboundAnswer: (id: string) => action(callRoutes.outboundAnswer.url(id)),
+    outboundConnected: (id: string) =>
+        action(callRoutes.outboundConnected.url(id)),
+    cancel: (id: string) => action(callRoutes.cancel.url(id)),
 };
 
 export type CallApi = typeof callApi;

@@ -152,6 +152,14 @@ export interface LeadDetail extends LeadRow {
     pipeline: LeadPipeline;
     duplicates: LeadDuplicate[];
     calls: LeadCallRow[];
+    calling: {
+        can_call: boolean;
+        status: string;
+        status_label: string;
+        expires_at: string | null;
+        last_requested_at: string | null;
+        checked_at: string | null;
+    } | null;
     score: {
         value: number | null;
         raw_total: number | null;
@@ -282,6 +290,7 @@ export interface LeadDuplicate {
 
 export interface LeadCallRow {
     id: string;
+    direction: 'inbound' | 'outbound';
     status: string;
     status_label: string;
     status_color: string;

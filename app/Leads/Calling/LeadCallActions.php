@@ -2,6 +2,7 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallEndReason;
 use App\Leads\Enums\CallMetaStage;
 use App\Leads\Enums\CallStatus;
@@ -34,7 +35,7 @@ class LeadCallActions
 {
     public function claim(Admin $admin, string $callId): LeadCallActionResult
     {
-        [$call, $source, $refusal] = $this->load($admin, $callId);
+        [$call, $source, $refusal] = $this->load($admin, $callId, inboundOnly: true);
 
         if ($refusal !== null) {
             return $refusal;
@@ -95,7 +96,7 @@ class LeadCallActions
 
     public function answer(Admin $admin, string $callId, mixed $sdpType, mixed $sdp): LeadCallActionResult
     {
-        [$call, $source, $refusal] = $this->load($admin, $callId);
+        [$call, $source, $refusal] = $this->load($admin, $callId, inboundOnly: true);
 
         if ($refusal !== null) {
             return $refusal;
@@ -164,7 +165,7 @@ class LeadCallActions
 
     public function accept(Admin $admin, string $callId): LeadCallActionResult
     {
-        [$call, $source, $refusal] = $this->load($admin, $callId);
+        [$call, $source, $refusal] = $this->load($admin, $callId, inboundOnly: true);
 
         if ($refusal !== null) {
             return $refusal;
@@ -240,7 +241,7 @@ class LeadCallActions
 
     public function reject(Admin $admin, string $callId): LeadCallActionResult
     {
-        [$call, $source, $refusal] = $this->load($admin, $callId);
+        [$call, $source, $refusal] = $this->load($admin, $callId, inboundOnly: true);
 
         if ($refusal !== null) {
             return $refusal;
@@ -328,7 +329,7 @@ class LeadCallActions
 
         LeadCallBroadcaster::updated($call, CallStatus::Completed);
         // One attempt only: never retry ending a call.
-        $api = (new WhatsAppCallingClient($source))->terminate($call->external_call_id);
+        $api = (new WhatsAppCallingClient($source))->terminate((string) $call->external_call_id);
         $this->log('hangup', $admin, $call, $api->successful ? 'hung_up' : 'hung_up_meta_unconfirmed');
 
         return LeadCallActionResult::success($this->fresh($call) ?? $call);
@@ -337,11 +338,11 @@ class LeadCallActions
     /**
      * @return array{0: LeadCall, 1: LeadSource, 2: null}|array{0: null, 1: null, 2: LeadCallActionResult}
      */
-    private function load(Admin $admin, string $callId): array
+    private function load(Admin $admin, string $callId, bool $inboundOnly = false): array
     {
         $call = LeadCall::query()->find($callId);
 
-        if ($call === null) {
+        if ($call === null || ($inboundOnly && $call->direction !== CallDirection::Inbound)) {
             return [null, null, LeadCallActionResult::notFound()];
         }
 

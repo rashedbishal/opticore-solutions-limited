@@ -2,6 +2,7 @@
 
 namespace App\Leads\Models;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallEndReason;
 use App\Leads\Enums\CallMetaStage;
 use App\Leads\Enums\CallRoutingMode;
@@ -18,7 +19,10 @@ use Illuminate\Support\Carbon;
  * @property string $lead_id
  * @property string $lead_source_id
  * @property string|null $conversation_id
- * @property string $external_call_id
+ * @property string|null $external_call_id
+ * @property CallDirection $direction
+ * @property string|null $biz_opaque_callback_data
+ * @property Carbon|null $consumer_accepted_at
  * @property CallStatus $status
  * @property CallEndReason|null $end_reason
  * @property CallMetaStage|null $meta_stage
@@ -43,12 +47,15 @@ class LeadCall extends Model
         'lead_id', 'lead_source_id', 'conversation_id', 'external_call_id', 'direction', 'status', 'end_reason',
         'meta_stage', 'meta_status', 'meta_terminated_at', 'assignee_id_at_arrival', 'routing_mode', 'routed_user_ids',
         'claimed_by', 'claimed_by_name', 'claimed_at', 'connected_at', 'ended_at', 'duration_seconds', 'ringing_expires_at',
+        'biz_opaque_callback_data', 'consumer_accepted_at',
     ];
 
     protected function casts(): array
     {
         return [
             'status' => CallStatus::class,
+            'direction' => CallDirection::class,
+            'consumer_accepted_at' => 'datetime',
             'end_reason' => CallEndReason::class,
             'meta_stage' => CallMetaStage::class,
             'routing_mode' => CallRoutingMode::class,

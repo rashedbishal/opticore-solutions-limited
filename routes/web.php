@@ -322,6 +322,10 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('bulk', AdminLeadBulkController::class)->name('bulk');
         Route::get('calling', [AdminLeadCallingController::class, 'index'])->name('calling.index');
         Route::post('calling/backups/{admin}', [AdminLeadCallingController::class, 'toggleBackup'])->name('calling.backups.toggle')->whereNumber('admin');
+        Route::post('calling/numbers/{source}/permission-template', [AdminLeadCallingController::class, 'createTemplate'])->name('calling.template')->whereUlid('source');
+        Route::post('{lead}/call', [AdminLeadCallController::class, 'call'])->middleware('throttle:lead-call-actions')->name('call')->whereUlid('lead');
+        Route::post('{lead}/call-permission/check', [AdminLeadCallController::class, 'checkPermission'])->middleware('throttle:lead-call-actions')->name('call-permission.check')->whereUlid('lead');
+        Route::post('{lead}/call-permission/request', [AdminLeadCallController::class, 'requestPermission'])->middleware('throttle:lead-call-actions')->name('call-permission.request')->whereUlid('lead');
         Route::get('calls/active', [AdminLeadCallController::class, 'active'])->name('calls.active');
         Route::middleware('throttle:lead-call-actions')->prefix('calls/{call}')->name('calls.')->whereUlid('call')->group(function () {
             Route::post('claim', [AdminLeadCallController::class, 'claim'])->name('claim');
@@ -329,6 +333,9 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
             Route::post('accept', [AdminLeadCallController::class, 'accept'])->name('accept');
             Route::post('reject', [AdminLeadCallController::class, 'reject'])->name('reject');
             Route::post('hangup', [AdminLeadCallController::class, 'hangup'])->name('hangup');
+            Route::post('outbound-answer', [AdminLeadCallController::class, 'outboundAnswer'])->name('outbound-answer');
+            Route::post('outbound-connected', [AdminLeadCallController::class, 'outboundConnected'])->name('outbound-connected');
+            Route::post('cancel', [AdminLeadCallController::class, 'cancel'])->name('cancel');
         });
         Route::get('reports', [AdminLeadReportController::class, 'index'])->name('reports.index');
         Route::post('reports/spend', [AdminLeadReportController::class, 'storeCost'])->name('reports.spend.store');

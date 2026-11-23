@@ -145,6 +145,12 @@ class LeadWebhookController extends Controller
                 }
 
                 foreach (($change['value']['statuses'] ?? []) as $status) {
+                    if (is_array($status) && ($status['type'] ?? null) === 'call') {
+                        $this->safely('WhatsApp call status', fn () => $this->channels->whatsappCallStatus($source, $status));
+
+                        continue;
+                    }
+
                     $this->whatsappStatus($status);
                 }
 
@@ -156,6 +162,12 @@ class LeadWebhookController extends Controller
                 }
 
                 foreach (($change['value']['messages'] ?? []) as $message) {
+                    if (is_array($message) && ($message['interactive']['type'] ?? null) === 'call_permission_reply') {
+                        $this->safely('WhatsApp call permission', fn () => $this->channels->whatsappCallPermissionReply($source, $message));
+
+                        continue;
+                    }
+
                     $this->safely('WhatsApp', fn () => $this->channels->whatsappMessage($source, $change, $message));
                 }
             }

@@ -21,6 +21,10 @@ enum CallEndReason: string
     case MetaFailedAfterConnect = 'meta_failed_after_connect';
     case MetaError = 'meta_error';
     case SdpCacheFailure = 'sdp_cache_failure';
+    case AgentCancelledOutbound = 'agent_cancelled_outbound';
+    case OutboundConnectFailed = 'outbound_connect_failed';
+    case ConsumerDeclinedOutbound = 'consumer_declined_outbound';
+    case ConsumerNoAnswerOutbound = 'consumer_no_answer_outbound';
 
     public function label(): string
     {
@@ -37,6 +41,10 @@ enum CallEndReason: string
             self::PreAcceptFailed, self::AcceptFailed, self::AnswerTimeout, self::SdpCacheFailure => 'Could not be answered',
             self::MetaFailedAfterConnect => 'Connection lost',
             self::MetaError => 'WhatsApp reported a problem',
+            self::AgentCancelledOutbound => 'Cancelled before they answered',
+            self::OutboundConnectFailed => 'Could not connect',
+            self::ConsumerDeclinedOutbound => 'They declined',
+            self::ConsumerNoAnswerOutbound => 'Not answered',
         };
     }
 }

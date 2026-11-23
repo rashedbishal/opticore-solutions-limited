@@ -2,7 +2,9 @@
 
 namespace App\Leads\Support;
 
+use App\Leads\Calling\CallPermissions;
 use App\Leads\Enums\ConsentType;
+use App\Leads\Enums\LeadCallPermissionStatus;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
 use App\Leads\Enums\MessageDirection;
@@ -151,12 +153,41 @@ class LeadPresenter
             'pipeline' => $this->pipeline($lead, $viewer, $settings),
             'duplicates' => $this->duplicates($lead, $viewer),
             'calls' => $this->calls($lead),
+            'calling' => $this->calling($lead, $viewer),
             'score' => [
                 'value' => $lead->lead_score,
                 'raw_total' => $lead->lead_score_breakdown['raw_total'] ?? null,
                 'matched' => $lead->lead_score_breakdown['matched'] ?? [],
                 'can_manage' => $viewer->isLeadManager(),
             ],
+        ];
+    }
+
+    /**
+     * Whether this viewer can call the lead, and its call permission.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function calling(Lead $lead, Admin $viewer): ?array
+    {
+        $permissions = app(CallPermissions::class);
+        $source = $permissions->sourceFor($lead);
+
+        if ($source === null || ! $source->calling_enabled || $permissions->waId($lead) === null) {
+            return null;
+        }
+
+        $permission = $lead->callPermission()->first();
+        $status = $permission?->status;
+        $expired = $permission !== null && $status === LeadCallPermissionStatus::Temporary && $permission->expires_at !== null && $permission->expires_at->isPast();
+
+        return [
+            'can_call' => $permissions->canCall($viewer, $lead),
+            'status' => $expired ? LeadCallPermissionStatus::NoPermission->value : ($status !== null ? $status->value : LeadCallPermissionStatus::NoPermission->value),
+            'status_label' => $expired ? 'Permission expired' : ($status !== null ? $status->label() : 'Not asked yet'),
+            'expires_at' => $expired ? null : $permission?->expires_at?->toIso8601String(),
+            'last_requested_at' => $permission?->last_requested_at?->toIso8601String(),
+            'checked_at' => $permission?->last_synced_at?->toIso8601String(),
         ];
     }
 
@@ -175,6 +206,7 @@ class LeadPresenter
             'status_label' => $call->status->label(),
             'status_color' => $call->status->color(),
             'end_reason' => $call->end_reason?->label(),
+            'direction' => $call->direction->value,
             'answered_by' => $call->claimed_by_name,
             'rang' => $call->routing_mode->label(),
             'duration_seconds' => $call->duration_seconds,

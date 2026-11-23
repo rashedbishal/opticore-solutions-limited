@@ -2,6 +2,7 @@
 
 namespace App\Leads\Calling;
 
+use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallEndReason;
 use App\Leads\Enums\CallStatus;
 use App\Leads\Enums\MessageChannel;
@@ -9,6 +10,7 @@ use App\Leads\Models\Lead;
 use App\Leads\Models\LeadCall;
 use App\Leads\Models\LeadConversation;
 use App\Leads\Models\LeadSource;
+use App\Leads\Services\LeadDuplicateDetector;
 use Closure;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
@@ -323,7 +325,7 @@ class RecordInboundCall
 
     private function find(LeadSource $source, string $callId): ?LeadCall
     {
-        return LeadCall::query()->where('lead_source_id', $source->id)->where('external_call_id', $callId)->first();
+        return LeadCall::query()->where('lead_source_id', $source->id)->where('direction', CallDirection::Inbound->value)->where('external_call_id', $callId)->first();
     }
 
     private function existingLead(LeadSource $source, string $phone): ?Lead
@@ -334,7 +336,7 @@ class RecordInboundCall
             ->where('external_thread_id', $phone)
             ->first()?->lead;
 
-        return $lead ?? Lead::query()->withMerged()->where('source_id', $source->id)->where('phone', $phone)->first()?->latestVersion();
+        return $lead ?? Lead::query()->withMerged()->where('source_id', $source->id)->where('phone_normalized', LeadDuplicateDetector::normalizePhone($phone))->first()?->latestVersion();
     }
 
     private function withPhoneLock(LeadSource $source, string $phone, Closure $callback): string

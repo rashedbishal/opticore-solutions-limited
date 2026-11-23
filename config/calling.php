@@ -43,4 +43,20 @@ return [
     'softphone_poll_seconds' => (int) env('CALLING_SOFTPHONE_POLL_SECONDS', 5),
     'softphone_staleness_seconds' => (int) env('CALLING_SOFTPHONE_STALENESS_SECONDS', 20),
     'softphone_presence_stale_seconds' => (int) env('CALLING_SOFTPHONE_PRESENCE_STALE_SECONDS', 45),
+
+    // Outgoing calls ("connect") use a newer Graph version than the rest,
+    // as in OptiFin; kept separate so one never moves the other.
+    'outbound_graph_version' => env('CALLING_OUTBOUND_GRAPH_VERSION', 'v26.0'),
+
+    // An outgoing call still "starting" (Meta never answered the dial)
+    // after this long is ended by the cleanup.
+    'outbound_initiate_grace_seconds' => (int) env('CALLING_OUTBOUND_INITIATE_GRACE_SECONDS', 120),
+
+    // The approved message with the "Allow calls" button (OptiFin wording).
+    'call_permission_request_template' => [
+        'name' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_NAME', 'call_permission_request_v2'),
+        'language' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_LANGUAGE', 'en'),
+        'body' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_BODY', 'We would like to call you to discuss your inquiry. Do you give us permission to call you on WhatsApp?'),
+        'footer' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_FOOTER', 'You can change call permissions anytime in your profile.'),
+    ],
 ];

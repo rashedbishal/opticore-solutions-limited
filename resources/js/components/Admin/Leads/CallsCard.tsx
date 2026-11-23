@@ -36,10 +36,14 @@ export default function CallsCard({ lead }: { lead: LeadDetail }) {
                             </p>
                             <p className="text-xs text-zinc-500">
                                 {[
-                                    call.answered_by &&
-                                        `answered by ${call.answered_by}`,
+                                    call.direction === 'outbound'
+                                        ? `called by ${call.answered_by ?? 'someone'}`
+                                        : call.answered_by &&
+                                          `answered by ${call.answered_by}`,
                                     duration(call.duration_seconds),
-                                    !call.answered_by && `rang ${call.rang}`,
+                                    call.direction === 'inbound' &&
+                                        !call.answered_by &&
+                                        `rang ${call.rang}`,
                                     call.end_reason,
                                 ]
                                     .filter(Boolean)

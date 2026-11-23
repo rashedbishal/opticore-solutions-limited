@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -265,6 +266,14 @@ class Lead extends Model
     public function calls(): HasMany
     {
         return $this->hasMany(LeadCall::class);
+    }
+
+    /**
+     * @return HasOne<LeadCallPermission, $this>
+     */
+    public function callPermission(): HasOne
+    {
+        return $this->hasOne(LeadCallPermission::class);
     }
 
     /** A ringing, answering or connected call blocks deleting the lead. */

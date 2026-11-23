@@ -29,6 +29,36 @@ export class Ringtone {
         this.timer = setInterval(() => this.ring(), 3000);
     }
 
+    /** The "it's ringing on their side" tone while we call someone. */
+    startRingback(): void {
+        if (this.timer !== null) {
+            return;
+        }
+
+        this.ringback();
+        this.timer = setInterval(() => this.ringback(), 4000);
+    }
+
+    private ringback(): void {
+        const ctx = this.ctx;
+
+        if (!ctx || ctx.state !== 'running') {
+            return;
+        }
+
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = 425;
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.05, now + 0.03);
+        gain.gain.setValueAtTime(0.05, now + 1);
+        gain.gain.linearRampToValueAtTime(0, now + 1.05);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 1.1);
+    }
+
     stop(): void {
         if (this.timer !== null) {
             clearInterval(this.timer);

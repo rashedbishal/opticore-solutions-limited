@@ -16,6 +16,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import leadRoutes from '@/routes/admin/leads';
 import { AnswerSession } from './AnswerSession';
 import { callApi, CallError } from './callApi';
+import { OutboundSession } from './OutboundSession';
 import { Ringtone } from './ringtone';
 
 const RECEIVING_AS: Record<string, string> = {
@@ -25,7 +26,12 @@ const RECEIVING_AS: Record<string, string> = {
     none: '',
 };
 
+type Session = AnswerSession | OutboundSession;
+
+const ENDED = ['completed', 'missed', 'rejected', 'failed'];
+
 const PHASE_TEXT: Record<string, string> = {
+    starting: 'Starting the call…',
     claiming: 'Picking up…',
     answering: 'Answering…',
     connecting: 'Connecting audio…',
@@ -49,11 +55,11 @@ export default function Softphone({
     const [calls, setCalls] = useState<ActiveCall[]>([]);
     const [intervals, setIntervals] = useState({ heartbeat: 15, poll: 5 });
     const [notice, setNotice] = useState<string | null>(null);
-    const [session, setSession] = useState<AnswerSession | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [soundBlocked, setSoundBlocked] = useState(true);
     const [, rerender] = useReducer((n: number) => n + 1, 0);
     // Mirrors `session` for callbacks (timers, live updates).
-    const sessionRef = useRef<AnswerSession | null>(null);
+    const sessionRef = useRef<Session | null>(null);
     const audio = useRef<HTMLAudioElement | null>(null);
     const ringtone = useRef<Ringtone | null>(null);
 
@@ -77,13 +83,20 @@ export default function Softphone({
             });
 
             const current = sessionRef.current;
+            const listed = current?.callId
+                ? data.calls.find((c) => c.id === current.callId)
+                : undefined;
+
+            if (current instanceof OutboundSession && current.callId) {
+                if (listed?.status === 'answering') {
+                    void current.applyAnswer();
+                } else if (!listed && current.phase === 'ringing') {
+                    endSession('No answer — the call has ended.');
+                }
+            }
 
             // The live call ended on the other side (or by the cleanup).
-            if (
-                current &&
-                current.phase === 'connected' &&
-                !data.calls.some((c) => c.id === current.callId)
-            ) {
+            if (current && current.phase === 'connected' && !listed) {
                 endSession('The call has ended.');
             }
         } catch {
@@ -95,14 +108,23 @@ export default function Softphone({
         (id: string, status: string) => {
             const current = sessionRef.current;
 
-            if (
-                current?.callId === id &&
-                ['completed', 'missed', 'rejected', 'failed'].includes(
-                    status,
-                ) &&
-                current.phase !== 'failed'
-            ) {
-                endSession('The call has ended.');
+            if (current?.callId === id) {
+                if (
+                    current instanceof OutboundSession &&
+                    status === 'answering'
+                ) {
+                    void current.applyAnswer();
+                } else if (
+                    ENDED.includes(status) &&
+                    current.phase !== 'failed'
+                ) {
+                    endSession(
+                        current instanceof OutboundSession &&
+                            current.phase !== 'connected'
+                            ? 'They didn’t pick up, or declined.'
+                            : 'The call has ended.',
+                    );
+                }
             }
 
             void refresh();
@@ -138,16 +160,23 @@ export default function Softphone({
         };
     }, []);
 
-    const ringing = calls.filter((c) => c.status === 'ringing');
+    const ringing = calls.filter(
+        (c) => c.direction === 'inbound' && c.status === 'ringing',
+    );
     const shouldRing = ringing.length > 0 && session === null;
+    const ringback =
+        session instanceof OutboundSession &&
+        ['starting', 'ringing'].includes(session.phase);
 
     useEffect(() => {
         if (shouldRing) {
             ringtone.current?.start();
+        } else if (ringback) {
+            ringtone.current?.startRingback();
         } else {
             ringtone.current?.stop();
         }
-    }, [shouldRing]);
+    }, [shouldRing, ringback]);
 
     // A ticking clock for countdowns and the call timer.
     useEffect(() => {
@@ -162,6 +191,78 @@ export default function Softphone({
 
         return () => clearInterval(timer);
     }, [calls.length, session]);
+
+    const startCall = async (leadId: string, leadName: string) => {
+        if (sessionRef.current) {
+            setNotice('Finish the current call first.');
+
+            return;
+        }
+
+        setNotice(null);
+        ringtone.current?.unlock();
+        let stream: MediaStream;
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+            });
+        } catch {
+            setNotice(
+                'The microphone is blocked. Allow it for this site in your browser, then try again.',
+            );
+
+            return;
+        }
+
+        const s = new OutboundSession(
+            leadId,
+            leadName,
+            callApi,
+            stream,
+            audio.current,
+            rerender,
+        );
+        sessionRef.current = s;
+        setSession(s);
+        await s.start();
+        void refresh();
+    };
+
+    const startCallRef = useRef(startCall);
+
+    useEffect(() => {
+        startCallRef.current = startCall;
+    });
+
+    // "Call" buttons on lead pages ask the call box to dial.
+    useEffect(() => {
+        const onStart = (event: Event) => {
+            const { leadId, leadName } = (
+                event as CustomEvent<{ leadId: string; leadName: string }>
+            ).detail;
+            void startCallRef.current(leadId, leadName);
+        };
+
+        window.addEventListener('cms:start-call', onStart);
+
+        return () => window.removeEventListener('cms:start-call', onStart);
+    }, []);
+
+    const cancelOutgoing = async () => {
+        const s = sessionRef.current;
+
+        if (s?.callId) {
+            try {
+                await callApi.cancel(s.callId);
+            } catch {
+                // Already ended.
+            }
+        }
+
+        endSession(null);
+        void refresh();
+    };
 
     const answer = async (call: ActiveCall) => {
         setNotice(null);
@@ -213,7 +314,9 @@ export default function Softphone({
         }
 
         try {
-            await callApi.hangup(s.callId);
+            if (s.callId) {
+                await callApi.hangup(s.callId);
+            }
         } catch {
             // The call may already have ended; close locally either way.
         }
@@ -231,7 +334,11 @@ export default function Softphone({
 
         // Release a call stuck half-answered so it doesn't stay "yours".
         try {
-            await callApi.reject(s.callId);
+            if (s.callId) {
+                await (s instanceof OutboundSession
+                    ? callApi.cancel(s.callId)
+                    : callApi.reject(s.callId));
+            }
         } catch {
             // Already ended.
         }
@@ -276,9 +383,19 @@ export default function Softphone({
 
                         {active && (
                             <div className="rounded-2xl border border-emerald-400/30 bg-[#06121a]/95 p-4 shadow-2xl backdrop-blur">
+                                {active instanceof OutboundSession &&
+                                    active.phase !== 'connected' && (
+                                        <p className="font-mono text-[10px] tracking-[0.2em] text-emerald-300 uppercase">
+                                            Calling on WhatsApp
+                                        </p>
+                                    )}
                                 <CallerLine
                                     call={activeCall}
-                                    fallback="WhatsApp call"
+                                    fallback={
+                                        active instanceof OutboundSession
+                                            ? active.leadName
+                                            : 'WhatsApp call'
+                                    }
                                 />
                                 {active.phase === 'connected' ? (
                                     <>
@@ -366,11 +483,29 @@ export default function Softphone({
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="mt-2 flex items-center gap-2 text-sm text-zinc-300">
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                        {PHASE_TEXT[active.phase] ??
-                                            'Connecting…'}
-                                    </p>
+                                    <>
+                                        <p className="mt-2 flex items-center gap-2 text-sm text-zinc-300">
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            {active instanceof
+                                                OutboundSession &&
+                                            active.phase === 'ringing'
+                                                ? 'Ringing…'
+                                                : (PHASE_TEXT[active.phase] ??
+                                                  'Connecting…')}
+                                        </p>
+                                        {active instanceof OutboundSession && (
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    void cancelOutgoing()
+                                                }
+                                                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500"
+                                            >
+                                                <PhoneOff className="h-4 w-4" />
+                                                Cancel
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}
