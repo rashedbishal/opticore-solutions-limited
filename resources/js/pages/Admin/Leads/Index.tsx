@@ -20,6 +20,7 @@ import LeadPanel from '@/components/Admin/Leads/LeadPanel';
 import LeadsLiveRefresh from '@/components/Admin/Leads/LeadsLiveRefresh';
 import { setPanelLead } from '@/components/Admin/Leads/panel';
 import { TagChips } from '@/components/Admin/Leads/PipelineCards';
+import { ScoreBadge } from '@/components/Admin/Leads/ScoreCard';
 import { PRIMARY_BUTTON, SECONDARY_BUTTON } from '@/components/Admin/Leads/ui';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { badgeClass, dotClass, formatDate } from '@/lib/leadColors';
@@ -278,9 +279,16 @@ export default function LeadsIndex({
                                                     <p className="font-mono text-[11px] text-zinc-500">
                                                         {lead.identifier}
                                                     </p>
-                                                    <TagChips
-                                                        tags={lead.tags}
-                                                    />
+                                                    <span className="mt-0.5 flex flex-wrap items-center gap-1">
+                                                        <ScoreBadge
+                                                            score={
+                                                                lead.lead_score
+                                                            }
+                                                        />
+                                                        <TagChips
+                                                            tags={lead.tags}
+                                                        />
+                                                    </span>
                                                 </div>
                                                 {lead.meeting_alert && (
                                                     <CalendarClock

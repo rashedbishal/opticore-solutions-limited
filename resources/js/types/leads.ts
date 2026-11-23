@@ -37,6 +37,7 @@ export interface LeadRow {
     meeting_alert: boolean;
     follow_up_alert: boolean;
     has_unseen_update: boolean;
+    lead_score: number | null;
     tags: LeadTagOption[];
     created_at: string | null;
 }
@@ -150,6 +151,12 @@ export interface LeadDetail extends LeadRow {
     can_delete_conversation: boolean;
     pipeline: LeadPipeline;
     duplicates: LeadDuplicate[];
+    score: {
+        value: number | null;
+        raw_total: number | null;
+        matched: { rule: string; points: number }[];
+        can_manage: boolean;
+    };
 }
 
 export interface MessageTemplateOption {

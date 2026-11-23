@@ -94,6 +94,7 @@ class LeadPresenter
             'meeting_alert' => $lead->meetingAlertActive($settings->meeting_alert_enabled, $settings->meeting_alert_days_before),
             'follow_up_alert' => $lead->followUpAlertActive($settings->followup_alert_enabled, $settings->followup_alert_days_before),
             'has_unseen_update' => $lead->hasUnseenUpdate(),
+            'lead_score' => $lead->lead_score,
             'tags' => $lead->tags->toBase()->map(fn (LeadTag $t): array => ['id' => $t->id, 'name' => $t->name, 'color' => $t->color])->values()->all(),
             'created_at' => $lead->created_at?->toIso8601String(),
         ];
@@ -148,6 +149,12 @@ class LeadPresenter
             'can_delete_conversation' => $this->access->canDelete($viewer) && $lead->conversations()->exists(),
             'pipeline' => $this->pipeline($lead, $viewer, $settings),
             'duplicates' => $this->duplicates($lead, $viewer),
+            'score' => [
+                'value' => $lead->lead_score,
+                'raw_total' => $lead->lead_score_breakdown['raw_total'] ?? null,
+                'matched' => $lead->lead_score_breakdown['matched'] ?? [],
+                'can_manage' => $viewer->isLeadManager(),
+            ],
         ];
     }
 

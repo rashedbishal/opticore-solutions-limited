@@ -30,6 +30,7 @@ class Currency extends Model
             ->where('estimated_budget_currency_id', $this->id)
             ->orWhere('deal_value_currency_id', $this->id)
             ->exists()
-            || Deal::query()->where('currency_id', $this->id)->exists();
+            || Deal::query()->where('currency_id', $this->id)->exists()
+            || LeadSourceCost::query()->where('currency_id', $this->id)->exists();
     }
 }

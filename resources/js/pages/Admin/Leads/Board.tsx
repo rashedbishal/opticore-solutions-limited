@@ -30,6 +30,7 @@ import LeadPanel from '@/components/Admin/Leads/LeadPanel';
 import LeadsLiveRefresh from '@/components/Admin/Leads/LeadsLiveRefresh';
 import { setPanelLead } from '@/components/Admin/Leads/panel';
 import { TagChips } from '@/components/Admin/Leads/PipelineCards';
+import { ScoreBadge } from '@/components/Admin/Leads/ScoreCard';
 import { PRIMARY_BUTTON } from '@/components/Admin/Leads/ui';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { badgeClass, columnClass, dotClass } from '@/lib/leadColors';
@@ -326,8 +327,9 @@ function Card({
                     {lead.company}
                 </p>
             )}
-            {lead.tags.length > 0 && (
-                <div className="mt-1.5">
+            {(lead.tags.length > 0 || lead.lead_score !== null) && (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                    <ScoreBadge score={lead.lead_score} />
                     <TagChips tags={lead.tags} />
                 </div>
             )}

@@ -11,6 +11,8 @@ import {
     SlidersHorizontal,
     Tags,
     Upload,
+    BarChart3,
+    Gauge,
     ListPlus,
     Target,
 } from 'lucide-react';
@@ -58,6 +60,18 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         href: leadSources.index.url(),
         icon: Radio,
         section: 'leads',
+    },
+    {
+        name: 'Reports',
+        href: leads.reports.index.url(),
+        icon: BarChart3,
+        section: 'manager',
+    },
+    {
+        name: 'Scoring Rules',
+        href: leads.scoring.index.url(),
+        icon: Gauge,
+        section: 'manager',
     },
     {
         name: 'Import',

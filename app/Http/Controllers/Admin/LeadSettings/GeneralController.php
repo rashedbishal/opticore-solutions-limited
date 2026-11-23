@@ -34,6 +34,9 @@ class GeneralController extends Controller
                 'followup_alert_days_before' => $settings->followup_alert_days_before,
                 'task_alert_enabled' => $settings->task_alert_enabled,
                 'task_alert_days_before' => $settings->task_alert_days_before,
+                'nurturing_notify_enabled' => $settings->nurturing_notify_enabled,
+                'nurturing_task_enabled' => $settings->nurturing_task_enabled,
+                'nurturing_inactive_days' => $settings->nurturing_inactive_days,
             ],
             'methodOptions' => array_map(
                 fn (AutoDistributionMethod $method): array => ['value' => $method->value, 'label' => $method->label()],
@@ -54,6 +57,9 @@ class GeneralController extends Controller
             'followup_alert_days_before' => ['required', 'integer', 'min:0', 'max:365'],
             'task_alert_enabled' => ['required', 'boolean'],
             'task_alert_days_before' => ['required', 'integer', 'min:0', 'max:365'],
+            'nurturing_notify_enabled' => ['required', 'boolean'],
+            'nurturing_task_enabled' => ['required', 'boolean'],
+            'nurturing_inactive_days' => ['required', 'integer', 'min:1', 'max:365'],
         ], [
             'auto_distribution_method.required_if' => 'Choose how leads are shared out automatically.',
             'lead_id_prefix.regex' => 'The prefix may only contain letters, numbers and hyphens.',

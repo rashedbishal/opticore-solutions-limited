@@ -31,6 +31,7 @@ import {
     TagsCard,
     TasksCard,
 } from '@/components/Admin/Leads/PipelineCards';
+import ScoreCard from '@/components/Admin/Leads/ScoreCard';
 import SentMessagesCard from '@/components/Admin/Leads/SentMessagesCard';
 import {
     CARD,
@@ -391,6 +392,8 @@ export default function LeadDetail({
                 canUpdate={canUpdate}
                 onErrors={setErrors}
             />
+
+            <ScoreCard lead={lead} />
 
             <CustomFieldsCard
                 lead={lead}

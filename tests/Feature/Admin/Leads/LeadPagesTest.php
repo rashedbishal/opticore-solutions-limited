@@ -34,6 +34,9 @@ it('lets the mother admin change the general lead settings', function () {
             'followup_alert_days_before' => 0,
             'task_alert_enabled' => true,
             'task_alert_days_before' => 2,
+            'nurturing_notify_enabled' => false,
+            'nurturing_task_enabled' => false,
+            'nurturing_inactive_days' => 7,
         ])
         ->assertSessionHasNoErrors();
 

@@ -13,6 +13,8 @@ use App\Leads\Console\Commands\CleanupOrphanedLeadAttachments;
 use App\Leads\Console\Commands\DetectLeadDuplicates;
 use App\Leads\Console\Commands\FetchEmailLeads;
 use App\Leads\Console\Commands\FetchFacebookLeadTest;
+use App\Leads\Console\Commands\NurtureInactiveLeads;
+use App\Leads\Console\Commands\RecalculateLeadScores;
 use App\Leads\Console\Commands\RetryFailedEmailMessages;
 use App\Leads\Console\Commands\SendLeadAlertNotifications;
 use App\Leads\Console\Commands\SendTaskAlertNotifications;
@@ -117,6 +119,8 @@ return Application::configure(basePath: dirname(__DIR__))
         CleanupOrphanedLeadAttachments::class,
         SendTaskAlertNotifications::class,
         DetectLeadDuplicates::class,
+        RecalculateLeadScores::class,
+        NurtureInactiveLeads::class,
     ])
     ->withSchedule(function (Schedule $schedule): void {
         // Re-prime all public-facing Redis caches every 50 minutes so the
@@ -161,6 +165,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(SendLeadAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
         $schedule->command(SendTaskAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
         $schedule->command(DetectLeadDuplicates::class)->dailyAt('02:30')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
+        $schedule->command(RecalculateLeadScores::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
+        $schedule->command(NurtureInactiveLeads::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
 
         // Daily read-only check of every Meta channel key (health warnings).
         $schedule->command(CheckMetaTokens::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();

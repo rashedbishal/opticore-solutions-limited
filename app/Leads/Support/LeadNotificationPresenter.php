@@ -8,6 +8,7 @@ use App\Leads\Notifications\FollowUpCancelledNotification;
 use App\Leads\Notifications\FollowUpUpdatedNotification;
 use App\Leads\Notifications\InboxCannotConnectNotification;
 use App\Leads\Notifications\LeadAssignedNotification;
+use App\Leads\Notifications\LeadInactivityAlertNotification;
 use App\Leads\Notifications\MeetingAlertNotification;
 use App\Leads\Notifications\MeetingCancelledNotification;
 use App\Leads\Notifications\MeetingUpdatedNotification;
@@ -69,6 +70,10 @@ class LeadNotificationPresenter
                     ? sprintf('%s assigned you a task', $data['assigned_by'])
                     : 'A task was assigned to you',
                 (string) ($data['name'] ?? ''),
+            ],
+            LeadInactivityAlertNotification::class => [
+                'Lead needs attention',
+                sprintf('%s — no status change for %d days', (string) ($data['name'] ?? ''), (int) ($data['days_inactive'] ?? 0)),
             ],
             TaskAlertNotification::class => ['Task reminder', $this->reminder($data, 'due_date')],
             InboxCannotConnectNotification::class => [

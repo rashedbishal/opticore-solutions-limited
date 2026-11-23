@@ -6,6 +6,7 @@ use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
 use App\Leads\Services\LeadDuplicateDetector;
+use App\Leads\Services\LeadScorer;
 use App\Leads\Support\LeadClock;
 use Carbon\CarbonInterface;
 use Database\Factories\Leads\LeadFactory;
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $phone_normalized
  * @property string|null $merged_into_lead_id
  * @property CarbonInterface|null $merged_at
+ * @property int|null $lead_score
+ * @property array{raw_total: int, matched: array<int, array{rule: string, points: int}>}|null $lead_score_breakdown
  * @property int|null $assigned_to
  * @property CarbonInterface|null $assigned_at
  * @property string $name
@@ -83,6 +86,9 @@ class Lead extends Model
             'first_contacted_at' => 'datetime',
             'closed_at' => 'datetime',
             'merged_at' => 'datetime',
+            'lead_score' => 'integer',
+            'lead_score_breakdown' => 'array',
+            'nurturing_task_created_at' => 'datetime',
             'update_seen_at' => 'datetime',
         ];
     }
@@ -102,6 +108,15 @@ class Lead extends Model
         static::saving(function (Lead $lead): void {
             $lead->email_normalized = LeadDuplicateDetector::normalizeEmail($lead->email);
             $lead->phone_normalized = LeadDuplicateDetector::normalizePhone($lead->phone);
+        });
+
+        // Re-score after any change that can affect the score (new lead,
+        // status, priority, money, contact details), once the change (and
+        // its status history row) is committed.
+        static::saved(function (Lead $lead): void {
+            if ($lead->wasRecentlyCreated || $lead->wasChanged(LeadScorer::RELEVANT_COLUMNS)) {
+                DB::afterCommit(fn () => app(LeadScorer::class)->score($lead));
+            }
         });
     }
 

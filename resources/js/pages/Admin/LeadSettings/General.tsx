@@ -25,6 +25,9 @@ interface Settings {
     followup_alert_days_before: number;
     task_alert_enabled: boolean;
     task_alert_days_before: number;
+    nurturing_notify_enabled: boolean;
+    nurturing_task_enabled: boolean;
+    nurturing_inactive_days: number;
 }
 
 interface Props {
@@ -51,6 +54,9 @@ export default function LeadGeneralSettings({
         followup_alert_days_before: settings.followup_alert_days_before,
         task_alert_enabled: settings.task_alert_enabled,
         task_alert_days_before: settings.task_alert_days_before,
+        nurturing_notify_enabled: settings.nurturing_notify_enabled,
+        nurturing_task_enabled: settings.nurturing_task_enabled,
+        nurturing_inactive_days: settings.nurturing_inactive_days,
     });
 
     const submit = (e: FormEvent) => {
@@ -205,6 +211,61 @@ export default function LeadGeneralSettings({
                             form.setData('task_alert_days_before', v)
                         }
                     />
+                </div>
+            </section>
+
+            <section className={CARD}>
+                <p className={`${CARD_TITLE} mb-1`}>Inactive leads</p>
+                <p className="mb-4 text-sm text-zinc-500">
+                    Every day at 8 AM (Bangladesh time), open leads whose status
+                    hasn&apos;t changed for this many days can get a bell alert
+                    (managers and the lead&apos;s person) and an automatic
+                    “Follow up” task for the lead&apos;s person.
+                </p>
+                <div className="space-y-3">
+                    <label className="flex items-center gap-3 text-sm text-zinc-300">
+                        No status change for
+                        <input
+                            type="number"
+                            min={1}
+                            max={365}
+                            className={`${INPUT} w-24`}
+                            value={form.data.nurturing_inactive_days}
+                            onChange={(e) =>
+                                form.setData(
+                                    'nurturing_inactive_days',
+                                    Number(e.target.value),
+                                )
+                            }
+                        />
+                        days
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-zinc-300">
+                        <input
+                            type="checkbox"
+                            checked={form.data.nurturing_notify_enabled}
+                            onChange={(e) =>
+                                form.setData(
+                                    'nurturing_notify_enabled',
+                                    e.target.checked,
+                                )
+                            }
+                        />
+                        Send a bell alert
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-zinc-300">
+                        <input
+                            type="checkbox"
+                            checked={form.data.nurturing_task_enabled}
+                            onChange={(e) =>
+                                form.setData(
+                                    'nurturing_task_enabled',
+                                    e.target.checked,
+                                )
+                            }
+                        />
+                        Create a “Follow up” task
+                    </label>
                 </div>
             </section>
 

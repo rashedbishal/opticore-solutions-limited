@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\Leads\LeadMessageController as AdminLeadMessageCo
 use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
 use App\Http\Controllers\Admin\Leads\LeadPipelineController as AdminLeadPipelineController;
 use App\Http\Controllers\Admin\Leads\LeadSourceController as AdminLeadSourceController;
+use App\Http\Controllers\Admin\Leads\ReportController as AdminLeadReportController;
+use App\Http\Controllers\Admin\Leads\ScoringRuleController as AdminLeadScoringRuleController;
 use App\Http\Controllers\Admin\Leads\TemplateController as AdminLeadTemplateController;
 use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
 use App\Http\Controllers\Admin\LeadSettings\GeneralController as AdminLeadGeneralSettingsController;
@@ -316,6 +318,14 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('attachments/{attachment}', [AdminLeadAttachmentController::class, 'show'])->name('attachments.show')->whereUlid('attachment');
         Route::get('sent-files/{message}', [AdminLeadMessageController::class, 'attachment'])->name('messages.attachment')->whereUlid('message');
         Route::post('bulk', AdminLeadBulkController::class)->name('bulk');
+        Route::get('reports', [AdminLeadReportController::class, 'index'])->name('reports.index');
+        Route::post('reports/spend', [AdminLeadReportController::class, 'storeCost'])->name('reports.spend.store');
+        Route::delete('reports/spend/{cost}', [AdminLeadReportController::class, 'destroyCost'])->name('reports.spend.destroy')->whereUlid('cost');
+        Route::get('scoring-rules', [AdminLeadScoringRuleController::class, 'index'])->name('scoring.index');
+        Route::post('scoring-rules', [AdminLeadScoringRuleController::class, 'store'])->name('scoring.store');
+        Route::put('scoring-rules/{rule}', [AdminLeadScoringRuleController::class, 'update'])->name('scoring.update')->whereUlid('rule');
+        Route::post('scoring-rules/{rule}/toggle', [AdminLeadScoringRuleController::class, 'toggle'])->name('scoring.toggle')->whereUlid('rule');
+        Route::delete('scoring-rules/{rule}', [AdminLeadScoringRuleController::class, 'destroy'])->name('scoring.destroy')->whereUlid('rule');
         Route::get('imports', [AdminLeadImportController::class, 'index'])->name('imports.index');
         Route::post('imports', [AdminLeadImportController::class, 'store'])->name('imports.store');
         Route::get('imports/sample', [AdminLeadImportController::class, 'sample'])->name('imports.sample');
@@ -366,6 +376,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::delete('{lead}/tasks/{task}', [AdminLeadPipelineController::class, 'destroyTask'])->name('tasks.destroy')->whereUlid(['lead', 'task']);
         Route::put('{lead}/custom-fields', [AdminLeadPipelineController::class, 'saveCustomFields'])->name('custom-fields.save')->whereUlid('lead');
         Route::post('{lead}/duplicates/{link}/merge', [AdminLeadDuplicateController::class, 'merge'])->name('duplicates.merge')->whereUlid(['lead', 'link']);
+        Route::post('{lead}/score', [AdminLeadScoringRuleController::class, 'rescoreLead'])->name('score.recalculate')->whereUlid('lead');
         Route::post('{lead}/duplicates/{link}/dismiss', [AdminLeadDuplicateController::class, 'dismiss'])->name('duplicates.dismiss')->whereUlid(['lead', 'link']);
         Route::post('{lead}/consents/{type}/{status}', [AdminLeadConsentController::class, 'update'])->name('consents.update')->whereUlid('lead')->whereIn('type', ['privacy', 'marketing'])->whereIn('status', ['granted', 'withdrawn']);
     });
