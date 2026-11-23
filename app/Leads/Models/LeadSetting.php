@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $meeting_alert_days_before
  * @property bool $followup_alert_enabled
  * @property int $followup_alert_days_before
+ * @property bool $task_alert_enabled
+ * @property int $task_alert_days_before
  */
 class LeadSetting extends Model
 {
@@ -30,6 +32,8 @@ class LeadSetting extends Model
         'meeting_alert_days_before',
         'followup_alert_enabled',
         'followup_alert_days_before',
+        'task_alert_enabled',
+        'task_alert_days_before',
     ];
 
     protected function casts(): array
@@ -42,6 +46,8 @@ class LeadSetting extends Model
             'meeting_alert_days_before' => 'integer',
             'followup_alert_enabled' => 'boolean',
             'followup_alert_days_before' => 'integer',
+            'task_alert_enabled' => 'boolean',
+            'task_alert_days_before' => 'integer',
         ];
     }
 

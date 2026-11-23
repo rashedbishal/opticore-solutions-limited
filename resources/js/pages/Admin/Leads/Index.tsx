@@ -17,6 +17,7 @@ import LeadFiltersBar from '@/components/Admin/Leads/LeadFiltersBar';
 import LeadPanel from '@/components/Admin/Leads/LeadPanel';
 import LeadsLiveRefresh from '@/components/Admin/Leads/LeadsLiveRefresh';
 import { setPanelLead } from '@/components/Admin/Leads/panel';
+import { TagChips } from '@/components/Admin/Leads/PipelineCards';
 import { PRIMARY_BUTTON, SECONDARY_BUTTON } from '@/components/Admin/Leads/ui';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { badgeClass, dotClass, formatDate } from '@/lib/leadColors';
@@ -214,6 +215,9 @@ export default function LeadsIndex({
                                                     <p className="font-mono text-[11px] text-zinc-500">
                                                         {lead.identifier}
                                                     </p>
+                                                    <TagChips
+                                                        tags={lead.tags}
+                                                    />
                                                 </div>
                                                 {lead.meeting_alert && (
                                                     <CalendarClock

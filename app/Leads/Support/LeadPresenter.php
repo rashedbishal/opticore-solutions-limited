@@ -6,10 +6,16 @@ use App\Leads\Enums\ConsentType;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
 use App\Leads\Enums\MessageDirection;
+use App\Leads\Models\Deal;
+use App\Leads\Models\DealStatusLog;
 use App\Leads\Models\Lead;
 use App\Leads\Models\LeadConsentEvent;
+use App\Leads\Models\LeadCustomFieldDefinition;
 use App\Leads\Models\LeadMessage;
 use App\Leads\Models\LeadSetting;
+use App\Leads\Models\LeadTag;
+use App\Leads\Models\LeadTask;
+use App\Leads\Models\LeadTaskStatusLog;
 use App\Leads\Models\MessengerMessageTemplate;
 use App\Leads\Models\WhatsAppMessageTemplate;
 use App\Leads\Services\LeadAccess;
@@ -84,6 +90,7 @@ class LeadPresenter
             'meeting_alert' => $lead->meetingAlertActive($settings->meeting_alert_enabled, $settings->meeting_alert_days_before),
             'follow_up_alert' => $lead->followUpAlertActive($settings->followup_alert_enabled, $settings->followup_alert_days_before),
             'has_unseen_update' => $lead->hasUnseenUpdate(),
+            'tags' => $lead->tags->toBase()->map(fn (LeadTag $t): array => ['id' => $t->id, 'name' => $t->name, 'color' => $t->color])->values()->all(),
             'created_at' => $lead->created_at?->toIso8601String(),
         ];
     }
@@ -93,7 +100,7 @@ class LeadPresenter
      */
     public function detail(Lead $lead, Admin $viewer): array
     {
-        $lead->loadMissing(['source', 'status', 'estimatedBudgetCurrency', 'dealValueCurrency']);
+        $lead->loadMissing(['source', 'status', 'estimatedBudgetCurrency', 'dealValueCurrency', 'tags']);
         $settings = LeadSetting::current();
         $names = $this->people->namesFor([$lead->assigned_to]);
 
@@ -135,6 +142,64 @@ class LeadPresenter
             'sent_messages' => $this->sentMessages($lead),
             'consents' => $this->consents($lead),
             'can_delete_conversation' => $this->access->canDelete($viewer) && $lead->conversations()->exists(),
+            'pipeline' => $this->pipeline($lead, $viewer, $settings),
+        ];
+    }
+
+    /**
+     * Tags, deals, tasks and custom fields for the lead page.
+     *
+     * @return array<string, mixed>
+     */
+    private function pipeline(Lead $lead, Admin $viewer, LeadSetting $settings): array
+    {
+        $deals = $lead->deals()->with('currency')->latest()->get();
+        $tasks = $lead->tasks()->with('deal')->orderByRaw("case when status = 'pending' then 0 else 1 end")->orderByRaw('due_date is null')->orderBy('due_date')->latest()->get();
+        $names = $this->people->namesFor($tasks->pluck('assigned_to'));
+        $isManager = $this->access->canDelete($viewer);
+        $values = $lead->customFieldValues()->pluck('value', 'lead_custom_field_definition_id');
+
+        return [
+            'all_tags' => LeadTag::query()->orderBy('name')->get(['id', 'name', 'color']),
+            'deals' => $deals->toBase()->map(fn (Deal $d): array => [
+                'id' => $d->id,
+                'name' => $d->name,
+                'value' => $d->value,
+                'currency_id' => $d->currency_id,
+                'currency' => $d->currency?->code,
+                'probability' => $d->probability,
+                'status' => $d->status->value,
+                'expected_close_date' => $d->expected_close_date?->toDateString(),
+                'actual_close_date' => $d->actual_close_date?->toDateString(),
+                'owner_id' => $d->owner_id,
+                'owner_name' => $d->owner_name,
+                'notes' => $d->notes,
+            ])->values()->all(),
+            'tasks' => $tasks->toBase()->map(fn (LeadTask $t): array => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'description' => $t->description,
+                'deal_id' => $t->deal_id,
+                'deal_name' => $t->deal?->name,
+                'due_date' => $t->due_date?->toDateString(),
+                'due_time' => $t->due_time !== null ? substr($t->due_time, 0, 5) : null,
+                'priority' => $t->priority->value,
+                'status' => $t->status->value,
+                'assigned_to' => $t->assigned_to,
+                'assigned_to_name' => $t->assigned_to !== null ? ($names[$t->assigned_to] ?? 'Deleted admin') : null,
+                'alert' => $t->alertActive($settings->task_alert_enabled, $settings->task_alert_days_before),
+                'can_delete' => $isManager || ($t->assigned_to !== null && $t->assigned_to === (int) $viewer->id),
+            ])->values()->all(),
+            'custom_fields' => LeadCustomFieldDefinition::query()->activeOrdered()->get()->toBase()->map(fn (LeadCustomFieldDefinition $d): array => [
+                'id' => $d->id,
+                'name' => $d->name,
+                'type' => $d->type->value,
+                'options' => $d->options ?? [],
+                'is_required' => $d->is_required,
+                'value' => $values[$d->id] ?? null,
+            ])->values()->all(),
+            'people' => $this->people->assignableOptions(),
+            'can_delete_deals' => $isManager,
         ];
     }
 
@@ -349,6 +414,32 @@ class LeadPresenter
                 'user' => $log->changed_by_name,
                 'action_date' => $log->action_date?->toDateString(),
                 'fields' => array_map(fn (string $key): string => array_key_exists($key, self::FIELD_LABELS) ? self::FIELD_LABELS[$key] : $key, $log->changed_fields ?? []),
+            ];
+        }
+
+        $dealIds = $lead->deals()->pluck('name', 'id');
+
+        foreach (DealStatusLog::query()->whereIn('deal_id', $dealIds->keys())->get() as $log) {
+            $events[] = [
+                'type' => 'deal_status',
+                'created_at' => $log->created_at,
+                'user' => $log->changed_by_name,
+                'name' => $dealIds[$log->deal_id] ?? '',
+                'old_status' => $log->old_status?->label(),
+                'new_status' => $log->new_status->label(),
+            ];
+        }
+
+        $taskIds = $lead->tasks()->pluck('title', 'id');
+
+        foreach (LeadTaskStatusLog::query()->whereIn('lead_task_id', $taskIds->keys())->get() as $log) {
+            $events[] = [
+                'type' => 'task_status',
+                'created_at' => $log->created_at,
+                'user' => $log->changed_by_name,
+                'name' => $taskIds[$log->lead_task_id] ?? '',
+                'old_status' => $log->old_status?->label(),
+                'new_status' => $log->new_status->label(),
             ];
         }
 

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -166,6 +167,38 @@ class Lead extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(LeadAttachment::class);
+    }
+
+    /**
+     * @return BelongsToMany<LeadTag, $this>
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(LeadTag::class, 'lead_lead_tag')->withPivot('tagged_by')->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Deal, $this>
+     */
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
+
+    /**
+     * @return HasMany<LeadTask, $this>
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(LeadTask::class);
+    }
+
+    /**
+     * @return HasMany<LeadCustomFieldValue, $this>
+     */
+    public function customFieldValues(): HasMany
+    {
+        return $this->hasMany(LeadCustomFieldValue::class);
     }
 
     /** The chat channel this lead can be replied on, if any. */

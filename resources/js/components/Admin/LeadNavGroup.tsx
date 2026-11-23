@@ -9,6 +9,8 @@ import {
     ListOrdered,
     Radio,
     SlidersHorizontal,
+    Tags,
+    ListPlus,
     Target,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -17,6 +19,7 @@ import currencies from '@/routes/admin/lead-settings/currencies';
 import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
 import leads from '@/routes/admin/leads';
+import catalog from '@/routes/admin/leads/catalog';
 import leadSources from '@/routes/admin/leads/sources';
 import templates from '@/routes/admin/leads/templates';
 
@@ -53,6 +56,18 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         href: leadSources.index.url(),
         icon: Radio,
         section: 'leads',
+    },
+    {
+        name: 'Tags',
+        href: catalog.tags.url(),
+        icon: Tags,
+        section: 'manager',
+    },
+    {
+        name: 'Custom Fields',
+        href: catalog.fields.url(),
+        icon: ListPlus,
+        section: 'manager',
     },
     {
         name: 'Templates',

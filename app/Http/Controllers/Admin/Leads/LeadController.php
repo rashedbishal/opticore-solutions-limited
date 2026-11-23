@@ -51,7 +51,7 @@ class LeadController extends Controller
         $admin = $this->admin();
         $isManager = $admin->isLeadManager();
         $filters = LeadFilters::fromRequest($request);
-        $query = LeadFilters::apply($this->access->visibleLeads($admin), $filters, $isManager)->with('source');
+        $query = LeadFilters::apply($this->access->visibleLeads($admin), $filters, $isManager)->with(['source', 'tags']);
 
         $shared = [
             'filters' => $filters,

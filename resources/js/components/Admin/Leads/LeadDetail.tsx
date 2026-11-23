@@ -24,6 +24,12 @@ import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import ConsentCard from '@/components/Admin/Leads/ConsentCard';
 import ConversationCard from '@/components/Admin/Leads/ConversationCard';
 import LeadActivity from '@/components/Admin/Leads/LeadActivity';
+import {
+    CustomFieldsCard,
+    DealsCard,
+    TagsCard,
+    TasksCard,
+} from '@/components/Admin/Leads/PipelineCards';
 import SentMessagesCard from '@/components/Admin/Leads/SentMessagesCard';
 import {
     CARD,
@@ -340,6 +346,8 @@ export default function LeadDetail({
                 </div>
             )}
 
+            <TagsCard lead={lead} canUpdate={canUpdate} onErrors={setErrors} />
+
             {(lead.message || lead.html_body) && <MessageCard lead={lead} />}
 
             <ConversationCard
@@ -375,6 +383,26 @@ export default function LeadDetail({
             </div>
 
             <DealCard
+                lead={lead}
+                currencies={currencies}
+                canUpdate={canUpdate}
+                onErrors={setErrors}
+            />
+
+            <CustomFieldsCard
+                lead={lead}
+                canUpdate={canUpdate}
+                onErrors={setErrors}
+            />
+
+            <TasksCard
+                lead={lead}
+                priorities={priorities}
+                canUpdate={canUpdate}
+                onErrors={setErrors}
+            />
+
+            <DealsCard
                 lead={lead}
                 currencies={currencies}
                 canUpdate={canUpdate}

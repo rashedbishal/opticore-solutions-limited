@@ -14,6 +14,7 @@ use App\Leads\Console\Commands\FetchEmailLeads;
 use App\Leads\Console\Commands\FetchFacebookLeadTest;
 use App\Leads\Console\Commands\RetryFailedEmailMessages;
 use App\Leads\Console\Commands\SendLeadAlertNotifications;
+use App\Leads\Console\Commands\SendTaskAlertNotifications;
 use App\Leads\Console\Commands\SubscribeLeadgenWebhook;
 use App\Leads\Support\LeadClock;
 use Illuminate\Console\Scheduling\Schedule;
@@ -113,6 +114,7 @@ return Application::configure(basePath: dirname(__DIR__))
         FetchEmailLeads::class,
         RetryFailedEmailMessages::class,
         CleanupOrphanedLeadAttachments::class,
+        SendTaskAlertNotifications::class,
     ])
     ->withSchedule(function (Schedule $schedule): void {
         // Re-prime all public-facing Redis caches every 50 minutes so the
@@ -155,6 +157,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Lead Management: daily bell alerts for leads whose meeting or
         // follow-up reminder is showing (no-op while reminders are off).
         $schedule->command(SendLeadAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
+        $schedule->command(SendTaskAlertNotifications::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE);
 
         // Daily read-only check of every Meta channel key (health warnings).
         $schedule->command(CheckMetaTokens::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();

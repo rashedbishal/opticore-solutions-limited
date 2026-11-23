@@ -29,6 +29,7 @@ import LeadFiltersBar from '@/components/Admin/Leads/LeadFiltersBar';
 import LeadPanel from '@/components/Admin/Leads/LeadPanel';
 import LeadsLiveRefresh from '@/components/Admin/Leads/LeadsLiveRefresh';
 import { setPanelLead } from '@/components/Admin/Leads/panel';
+import { TagChips } from '@/components/Admin/Leads/PipelineCards';
 import { PRIMARY_BUTTON } from '@/components/Admin/Leads/ui';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import { badgeClass, columnClass, dotClass } from '@/lib/leadColors';
@@ -324,6 +325,11 @@ function Card({
                 <p className="mt-1 truncate text-xs text-zinc-400">
                     {lead.company}
                 </p>
+            )}
+            {lead.tags.length > 0 && (
+                <div className="mt-1.5">
+                    <TagChips tags={lead.tags} />
+                </div>
             )}
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 <span

@@ -12,6 +12,8 @@ use App\Leads\Notifications\MeetingAlertNotification;
 use App\Leads\Notifications\MeetingCancelledNotification;
 use App\Leads\Notifications\MeetingUpdatedNotification;
 use App\Leads\Notifications\NewLeadNotification;
+use App\Leads\Notifications\TaskAlertNotification;
+use App\Leads\Notifications\TaskAssignedNotification;
 use App\Leads\Services\LeadAccess;
 use App\Models\Admin;
 use Illuminate\Notifications\DatabaseNotification;
@@ -62,6 +64,13 @@ class LeadNotificationPresenter
                 ($data['rescheduled'] ?? false) ? 'Follow-up rescheduled' : 'Follow-up scheduled',
                 $this->dateChange($data, 'next_follow_up_at'),
             ],
+            TaskAssignedNotification::class => [
+                ($data['assigned_by'] ?? null) !== null
+                    ? sprintf('%s assigned you a task', $data['assigned_by'])
+                    : 'A task was assigned to you',
+                (string) ($data['name'] ?? ''),
+            ],
+            TaskAlertNotification::class => ['Task reminder', $this->reminder($data, 'due_date')],
             InboxCannotConnectNotification::class => [
                 'Email inbox can\'t connect',
                 sprintf('%s failed to connect %d times in a row', $data['source_name'] ?? 'An inbox', (int) ($data['failures'] ?? 0)),

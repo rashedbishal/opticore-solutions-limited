@@ -37,7 +37,63 @@ export interface LeadRow {
     meeting_alert: boolean;
     follow_up_alert: boolean;
     has_unseen_update: boolean;
+    tags: LeadTagOption[];
     created_at: string | null;
+}
+
+export interface LeadTagOption {
+    id: string;
+    name: string;
+    color: string;
+}
+
+export interface LeadDeal {
+    id: string;
+    name: string;
+    value: string | null;
+    currency_id: string | null;
+    currency: string | null;
+    probability: number | null;
+    status: 'open' | 'won' | 'lost';
+    expected_close_date: string | null;
+    actual_close_date: string | null;
+    owner_id: number | null;
+    owner_name: string | null;
+    notes: string | null;
+}
+
+export interface LeadTask {
+    id: string;
+    title: string;
+    description: string | null;
+    deal_id: string | null;
+    deal_name: string | null;
+    due_date: string | null;
+    due_time: string | null;
+    priority: string;
+    status: 'pending' | 'completed' | 'cancelled';
+    assigned_to: number | null;
+    assigned_to_name: string | null;
+    alert: boolean;
+    can_delete: boolean;
+}
+
+export interface LeadCustomField {
+    id: string;
+    name: string;
+    type: 'text' | 'number' | 'date' | 'select';
+    options: string[];
+    is_required: boolean;
+    value: string | null;
+}
+
+export interface LeadPipeline {
+    all_tags: LeadTagOption[];
+    deals: LeadDeal[];
+    tasks: LeadTask[];
+    custom_fields: LeadCustomField[];
+    people: { id: number; name: string }[];
+    can_delete_deals: boolean;
 }
 
 export interface LeadActivityEvent {
@@ -50,6 +106,7 @@ export interface LeadActivityEvent {
     note?: string | null;
     action_date?: string | null;
     fields?: string[];
+    name?: string;
 }
 
 export interface LeadDetail extends LeadRow {
@@ -91,6 +148,7 @@ export interface LeadDetail extends LeadRow {
         history: ConsentEvent[];
     };
     can_delete_conversation: boolean;
+    pipeline: LeadPipeline;
 }
 
 export interface MessageTemplateOption {

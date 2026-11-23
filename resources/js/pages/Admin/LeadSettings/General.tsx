@@ -23,6 +23,8 @@ interface Settings {
     meeting_alert_days_before: number;
     followup_alert_enabled: boolean;
     followup_alert_days_before: number;
+    task_alert_enabled: boolean;
+    task_alert_days_before: number;
 }
 
 interface Props {
@@ -47,6 +49,8 @@ export default function LeadGeneralSettings({
         meeting_alert_days_before: settings.meeting_alert_days_before,
         followup_alert_enabled: settings.followup_alert_enabled,
         followup_alert_days_before: settings.followup_alert_days_before,
+        task_alert_enabled: settings.task_alert_enabled,
+        task_alert_days_before: settings.task_alert_days_before,
     });
 
     const submit = (e: FormEvent) => {
@@ -190,6 +194,15 @@ export default function LeadGeneralSettings({
                         }
                         onDays={(v) =>
                             form.setData('followup_alert_days_before', v)
+                        }
+                    />
+                    <ReminderRow
+                        label="Task reminders"
+                        enabled={form.data.task_alert_enabled}
+                        days={form.data.task_alert_days_before}
+                        onEnabled={(v) => form.setData('task_alert_enabled', v)}
+                        onDays={(v) =>
+                            form.setData('task_alert_days_before', v)
                         }
                     />
                 </div>

@@ -32,6 +32,8 @@ class GeneralController extends Controller
                 'meeting_alert_days_before' => $settings->meeting_alert_days_before,
                 'followup_alert_enabled' => $settings->followup_alert_enabled,
                 'followup_alert_days_before' => $settings->followup_alert_days_before,
+                'task_alert_enabled' => $settings->task_alert_enabled,
+                'task_alert_days_before' => $settings->task_alert_days_before,
             ],
             'methodOptions' => array_map(
                 fn (AutoDistributionMethod $method): array => ['value' => $method->value, 'label' => $method->label()],
@@ -50,6 +52,8 @@ class GeneralController extends Controller
             'meeting_alert_days_before' => ['required', 'integer', 'min:0', 'max:365'],
             'followup_alert_enabled' => ['required', 'boolean'],
             'followup_alert_days_before' => ['required', 'integer', 'min:0', 'max:365'],
+            'task_alert_enabled' => ['required', 'boolean'],
+            'task_alert_days_before' => ['required', 'integer', 'min:0', 'max:365'],
         ], [
             'auto_distribution_method.required_if' => 'Choose how leads are shared out automatically.',
             'lead_id_prefix.regex' => 'The prefix may only contain letters, numbers and hyphens.',

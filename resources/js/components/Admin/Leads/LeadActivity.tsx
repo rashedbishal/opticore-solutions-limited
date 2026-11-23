@@ -2,8 +2,10 @@ import type { LeadActivityEvent } from '@/types/leads';
 import type { LucideIcon } from 'lucide-react';
 import {
     ArrowRight,
+    Briefcase,
     CalendarCheck,
     CalendarX,
+    CheckSquare,
     Pencil,
     StickyNote,
     UserCheck,
@@ -76,6 +78,16 @@ function describe(event: LeadActivityEvent): {
             };
         case 'unassigned':
             return { icon: UserMinus, text: `${who} removed the assignee` };
+        case 'deal_status':
+            return {
+                icon: Briefcase,
+                text: `${who} moved deal "${event.name ?? ''}" from ${event.old_status ?? '—'} to ${event.new_status ?? '—'}`,
+            };
+        case 'task_status':
+            return {
+                icon: CheckSquare,
+                text: `${who} marked task "${event.name ?? ''}" as ${event.new_status ?? '—'}`,
+            };
         case 'note':
             return { icon: StickyNote, text: `${who} added a note` };
         case 'meeting_done':

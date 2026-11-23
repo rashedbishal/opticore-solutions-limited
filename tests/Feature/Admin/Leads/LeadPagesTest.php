@@ -32,6 +32,8 @@ it('lets the mother admin change the general lead settings', function () {
             'meeting_alert_days_before' => 1,
             'followup_alert_enabled' => false,
             'followup_alert_days_before' => 0,
+            'task_alert_enabled' => true,
+            'task_alert_days_before' => 2,
         ])
         ->assertSessionHasNoErrors();
 
