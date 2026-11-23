@@ -5,6 +5,7 @@ import type {
     LeadFilterValues,
     LeadRow,
     LeadStatusOption,
+    LeadTagOption,
     PriorityOption,
 } from '@/types/leads';
 import type { ReactNode } from 'react';
@@ -12,6 +13,7 @@ import { Link } from '@inertiajs/react';
 import { AlarmClock, CalendarClock, Download, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import BulkBar from '@/components/Admin/Leads/BulkBar';
 import CreateLeadModal from '@/components/Admin/Leads/CreateLeadModal';
 import LeadFiltersBar from '@/components/Admin/Leads/LeadFiltersBar';
 import LeadPanel from '@/components/Admin/Leads/LeadPanel';
@@ -43,6 +45,7 @@ interface Props {
         leads_count: number;
         latest_at: string | null;
     }[];
+    allTags: LeadTagOption[];
 }
 
 const TH =
@@ -62,8 +65,19 @@ export default function LeadsIndex({
     can,
     selectedLead,
     adSources,
+    allTags,
 }: Props) {
     const [creating, setCreating] = useState(false);
+    const [selected, setSelected] = useState<string[]>([]);
+    const pageIds = leads.data.map((l) => l.id);
+    const allOnPage =
+        pageIds.length > 0 && pageIds.every((id) => selected.includes(id));
+    const toggle = (id: string) =>
+        setSelected((current) =>
+            current.includes(id)
+                ? current.filter((x) => x !== id)
+                : [...current, id],
+        );
     const [errors, setErrors] = useState<string[]>([]);
     const statusById = Object.fromEntries(statuses.map((s) => [s.id, s]));
     const priorityByValue = Object.fromEntries(
@@ -114,11 +128,46 @@ export default function LeadsIndex({
                 showOwner
             />
 
+            {selected.length > 0 && (
+                <BulkBar
+                    selected={selected}
+                    statuses={statuses}
+                    priorities={priorities}
+                    assignableUsers={assignableUsers}
+                    tags={allTags}
+                    onClear={() => setSelected([])}
+                    onErrors={setErrors}
+                />
+            )}
+
             <div className="relative overflow-x-auto rounded-xl border border-violet-500/15 bg-[#060c1a]/80 backdrop-blur-sm">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                 <table className="min-w-full">
                     <thead>
                         <tr className="border-b border-violet-500/10 bg-violet-500/5">
+                            <th className="w-10 py-3 pl-4">
+                                <input
+                                    type="checkbox"
+                                    aria-label="Select all on this page"
+                                    checked={allOnPage}
+                                    onChange={() =>
+                                        setSelected((current) =>
+                                            allOnPage
+                                                ? current.filter(
+                                                      (id) =>
+                                                          !pageIds.includes(id),
+                                                  )
+                                                : [
+                                                      ...new Set([
+                                                          ...current,
+                                                          ...pageIds,
+                                                      ]),
+                                                  ],
+                                        )
+                                    }
+                                    className="accent-violet-500"
+                                />
+                            </th>
                             <th className={TH}>Lead</th>
                             <th className={`${TH} hidden md:table-cell`}>
                                 Contact
@@ -144,7 +193,7 @@ export default function LeadsIndex({
                                 key={`ads-${adSource.id}`}
                                 className="border-b border-white/4 bg-cyan-500/[0.03]"
                             >
-                                <td colSpan={7} className="px-4 py-3">
+                                <td colSpan={8} className="px-4 py-3">
                                     <div className="flex flex-wrap items-center justify-between gap-3">
                                         <div>
                                             <p className="text-sm font-medium text-white">
@@ -177,7 +226,7 @@ export default function LeadsIndex({
                           0 ? (
                             <tr>
                                 <td
-                                    colSpan={7}
+                                    colSpan={8}
                                     className="px-6 py-16 text-center font-mono text-xs tracking-[0.2em] text-violet-400/30 uppercase"
                                 >
                                     No leads found
@@ -198,6 +247,20 @@ export default function LeadsIndex({
                                                 : ''
                                         }`}
                                     >
+                                        <td
+                                            className="w-10 py-3 pl-4"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                aria-label={`Select ${lead.name}`}
+                                                checked={selected.includes(
+                                                    lead.id,
+                                                )}
+                                                onChange={() => toggle(lead.id)}
+                                                className="accent-violet-500"
+                                            />
+                                        </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 {lead.has_unseen_update && (

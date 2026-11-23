@@ -35,7 +35,7 @@ class SourceConnectionTester
             LeadSourceType::Instagram => $this->instagram($config),
             LeadSourceType::LinkedInLeadGen => $this->linkedIn($config),
             LeadSourceType::Email => $this->email($config),
-            LeadSourceType::Manual, LeadSourceType::ContactForm => ['success' => true, 'message' => 'This source has nothing external to test.'],
+            LeadSourceType::Manual, LeadSourceType::ContactForm, LeadSourceType::CsvImport => ['success' => true, 'message' => 'This source has nothing external to test.'],
         };
     }
 

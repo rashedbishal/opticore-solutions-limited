@@ -10,6 +10,7 @@ import {
     Radio,
     SlidersHorizontal,
     Tags,
+    Upload,
     ListPlus,
     Target,
 } from 'lucide-react';
@@ -20,6 +21,7 @@ import general from '@/routes/admin/lead-settings/general';
 import statuses from '@/routes/admin/lead-settings/statuses';
 import leads from '@/routes/admin/leads';
 import catalog from '@/routes/admin/leads/catalog';
+import imports from '@/routes/admin/leads/imports';
 import leadSources from '@/routes/admin/leads/sources';
 import templates from '@/routes/admin/leads/templates';
 
@@ -56,6 +58,12 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         href: leadSources.index.url(),
         icon: Radio,
         section: 'leads',
+    },
+    {
+        name: 'Import',
+        href: imports.index.url(),
+        icon: Upload,
+        section: 'manager',
     },
     {
         name: 'Tags',

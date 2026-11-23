@@ -5,10 +5,12 @@ namespace App\Leads\Models;
 use App\Leads\Enums\LeadPriority;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
+use App\Leads\Services\LeadDuplicateDetector;
 use App\Leads\Support\LeadClock;
 use Carbon\CarbonInterface;
 use Database\Factories\Leads\LeadFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +24,10 @@ use Illuminate\Support\Facades\DB;
  * @property string $id
  * @property string $identifier
  * @property string $source_id
+ * @property string|null $email_normalized
+ * @property string|null $phone_normalized
+ * @property string|null $merged_into_lead_id
+ * @property CarbonInterface|null $merged_at
  * @property int|null $assigned_to
  * @property CarbonInterface|null $assigned_at
  * @property string $name
@@ -76,17 +82,61 @@ class Lead extends Model
             'meeting_date' => 'date',
             'first_contacted_at' => 'datetime',
             'closed_at' => 'datetime',
+            'merged_at' => 'datetime',
             'update_seen_at' => 'datetime',
         ];
     }
 
     protected static function booted(): void
     {
+        // A lead merged into another is hidden everywhere; use withMerged()
+        // to reach it on purpose.
+        static::addGlobalScope('not_merged', fn (Builder $query) => $query->whereNull('leads.merged_into_lead_id'));
+
         static::creating(function (Lead $lead): void {
             if (! $lead->identifier) {
                 $lead->identifier = DB::transaction(fn (): string => LeadSetting::reserveNextIdentifier());
             }
         });
+
+        static::saving(function (Lead $lead): void {
+            $lead->email_normalized = LeadDuplicateDetector::normalizeEmail($lead->email);
+            $lead->phone_normalized = LeadDuplicateDetector::normalizePhone($lead->phone);
+        });
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeWithMerged(Builder $query): Builder
+    {
+        return $query->withoutGlobalScope('not_merged');
+    }
+
+    public function isMerged(): bool
+    {
+        return $this->merged_into_lead_id !== null;
+    }
+
+    /**
+     * The lead this one now lives in: itself, or the end of its merge chain.
+     */
+    public function latestVersion(): self
+    {
+        $lead = $this;
+
+        for ($i = 0; $i < 25 && $lead->merged_into_lead_id !== null; $i++) {
+            $next = self::query()->withMerged()->find($lead->merged_into_lead_id);
+
+            if ($next === null) {
+                break;
+            }
+
+            $lead = $next;
+        }
+
+        return $lead;
     }
 
     /**

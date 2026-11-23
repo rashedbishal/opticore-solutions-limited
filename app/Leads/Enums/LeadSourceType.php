@@ -16,6 +16,7 @@ enum LeadSourceType: string
     case Instagram = 'instagram';
     case LinkedInLeadGen = 'linkedin_lead_gen';
     case Email = 'email';
+    case CsvImport = 'csv_import';
 
     public function label(): string
     {
@@ -28,13 +29,14 @@ enum LeadSourceType: string
             self::Instagram => 'Instagram',
             self::LinkedInLeadGen => 'LinkedIn Lead Gen Forms',
             self::Email => 'Email Inbox',
+            self::CsvImport => 'Imported File',
         };
     }
 
     /** One-per-system sources the CMS creates itself; never added by hand. */
     public function isBuiltIn(): bool
     {
-        return in_array($this, [self::Manual, self::ContactForm], true);
+        return in_array($this, [self::Manual, self::ContactForm, self::CsvImport], true);
     }
 
     public function isMeta(): bool
@@ -103,7 +105,7 @@ enum LeadSourceType: string
                 ['key' => 'imap_password', 'label' => 'IMAP Password', 'type' => 'password', 'sensitive' => true],
                 ['key' => 'fetch_interval_minutes', 'label' => 'Check every (minutes)', 'type' => 'text', 'sensitive' => false],
             ],
-            self::Manual, self::ContactForm => [],
+            self::Manual, self::ContactForm, self::CsvImport => [],
         };
     }
 
@@ -152,7 +154,7 @@ enum LeadSourceType: string
                 'config.imap_password' => [$secret, 'string'],
                 'config.fetch_interval_minutes' => ['nullable', 'integer', 'min:1'],
             ],
-            self::Manual, self::ContactForm => [],
+            self::Manual, self::ContactForm, self::CsvImport => [],
         };
     }
 

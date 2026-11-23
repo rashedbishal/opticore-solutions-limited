@@ -19,6 +19,8 @@ use App\Leads\Models\LeadTaskStatusLog;
 use App\Leads\Models\MessengerMessageTemplate;
 use App\Leads\Models\WhatsAppMessageTemplate;
 use App\Leads\Services\LeadAccess;
+use App\Leads\Services\LeadDuplicateDetector;
+use App\Leads\Services\LeadMerger;
 use App\Leads\Services\LeadPeople;
 use App\Leads\Services\Messaging\OutboundEligibility;
 use App\Models\Admin;
@@ -55,6 +57,8 @@ class LeadPresenter
     public function __construct(
         private readonly LeadAccess $access,
         private readonly LeadPeople $people,
+        private readonly LeadDuplicateDetector $duplicates,
+        private readonly LeadMerger $merger,
     ) {}
 
     /**
@@ -143,7 +147,51 @@ class LeadPresenter
             'consents' => $this->consents($lead),
             'can_delete_conversation' => $this->access->canDelete($viewer) && $lead->conversations()->exists(),
             'pipeline' => $this->pipeline($lead, $viewer, $settings),
+            'duplicates' => $this->duplicates($lead, $viewer),
         ];
+    }
+
+    /**
+     * Possible duplicates (checked live). Managers also get what differs,
+     * for both "keep this" and "keep the other".
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function duplicates(Lead $lead, Admin $viewer): array
+    {
+        $isManager = $this->access->canDelete($viewer);
+
+        $rows = [];
+
+        foreach ($this->duplicates->detectFor($lead) as $link) {
+            $other = $link->lead_id === $lead->id ? $link->duplicateLead : $link->lead;
+
+            if ($other === null) {
+                continue;
+            }
+
+            $other->loadMissing('source');
+
+            $rows[] = [
+                'link_id' => $link->id,
+                'matched_fields' => $link->matched_fields,
+                'other' => [
+                    'id' => $other->id,
+                    'identifier' => $other->identifier,
+                    'name' => $other->name,
+                    'email' => $other->email,
+                    'phone' => $other->phone,
+                    'source' => $other->source->name,
+                    'created_at' => $other->created_at?->toIso8601String(),
+                    'can_view' => $this->access->canView($viewer, $other),
+                ],
+                'conflicts_keep_this' => $isManager ? $this->merger->conflicts($lead, $other) : [],
+                'conflicts_keep_other' => $isManager ? $this->merger->conflicts($other, $lead) : [],
+                'can_merge' => $isManager,
+            ];
+        }
+
+        return $rows;
     }
 
     /**

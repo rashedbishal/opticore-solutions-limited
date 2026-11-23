@@ -74,7 +74,7 @@ class InboundChannels
             }
 
             $lead = $this->leadForThread($source, MessageChannel::Whatsapp, $phone)
-                ?? ($phone !== null ? Lead::query()->where('source_id', $source->id)->where('phone', $phone)->first() : null);
+                ?? ($phone !== null ? Lead::query()->withMerged()->where('source_id', $source->id)->where('phone', $phone)->first()?->latestVersion() : null);
 
             if ($lead !== null) {
                 $this->appendText($lead, $text);
@@ -125,7 +125,7 @@ class InboundChannels
         }
 
         $this->withLock($source->id, $leadgenId, function () use ($source, $leadgenId, $value, $token): void {
-            if (Lead::query()->where('source_id', $source->id)->where('source_data->leadgen_id', $leadgenId)->exists()) {
+            if (Lead::query()->withMerged()->where('source_id', $source->id)->where('source_data->leadgen_id', $leadgenId)->exists()) {
                 return;
             }
 
@@ -170,7 +170,7 @@ class InboundChannels
             }
 
             $lead = $this->leadForThread($source, $channel, $senderId)
-                ?? Lead::query()->where('source_id', $source->id)->where("source_data->{$idKey}", $senderId)->first();
+                ?? Lead::query()->withMerged()->where('source_id', $source->id)->where("source_data->{$idKey}", $senderId)->first()?->latestVersion();
 
             if ($lead !== null) {
                 // A lead created while the profile lookup failed gets its

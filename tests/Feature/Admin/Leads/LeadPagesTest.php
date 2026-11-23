@@ -55,7 +55,7 @@ it('shows lead sources to anyone with a lead role, without credentials', functio
         ->get(route('admin.leads.sources.index'))
         ->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Leads/Sources')
-            ->has('sources', 2)
+            ->has('sources', 3)
             ->missing('sources.0.config')
         );
 });

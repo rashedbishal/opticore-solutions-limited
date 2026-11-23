@@ -16,6 +16,7 @@ use App\Leads\Models\Currency;
 use App\Leads\Models\Lead;
 use App\Leads\Models\LeadSource;
 use App\Leads\Models\LeadStatus;
+use App\Leads\Models\LeadTag;
 use App\Leads\Services\LeadAccess;
 use App\Leads\Services\LeadPeople;
 use App\Leads\Support\LeadFilters;
@@ -94,6 +95,7 @@ class LeadController extends Controller
                     'total' => $page->total(),
                 ],
                 'adSources' => $adSources,
+                'allTags' => LeadTag::query()->orderBy('name')->get(['id', 'name', 'color']),
             ]);
         }
 
@@ -103,8 +105,19 @@ class LeadController extends Controller
         ]);
     }
 
-    public function show(Lead $lead): Response
+    /**
+     * A merged-away lead's old link opens the lead it was merged into.
+     */
+    public function show(string $lead): Response|RedirectResponse
     {
+        $found = Lead::query()->withMerged()->findOrFail($lead);
+
+        if ($found->isMerged()) {
+            return redirect()->route('admin.leads.show', $found->latestVersion())
+                ->with('success', "{$found->identifier} was merged into this lead.");
+        }
+
+        $lead = $found;
         $admin = $this->admin();
         abort_unless($this->access->canView($admin, $lead), 403);
 
@@ -339,7 +352,7 @@ class LeadController extends Controller
             return null;
         }
 
-        $lead = Lead::query()->find($id);
+        $lead = Lead::query()->withMerged()->find($id)?->latestVersion();
 
         if ($lead === null || ! $this->access->canView($admin, $lead)) {
             return null;

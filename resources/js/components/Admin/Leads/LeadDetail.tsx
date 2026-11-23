@@ -23,6 +23,7 @@ import { CmsDeleteDialog } from '@/components/Admin/CmsDeleteDialog';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
 import ConsentCard from '@/components/Admin/Leads/ConsentCard';
 import ConversationCard from '@/components/Admin/Leads/ConversationCard';
+import DuplicatesCard from '@/components/Admin/Leads/DuplicatesCard';
 import LeadActivity from '@/components/Admin/Leads/LeadActivity';
 import {
     CustomFieldsCard,
@@ -345,6 +346,8 @@ export default function LeadDetail({
                     )}
                 </div>
             )}
+
+            <DuplicatesCard lead={lead} />
 
             <TagsCard lead={lead} canUpdate={canUpdate} onErrors={setErrors} />
 

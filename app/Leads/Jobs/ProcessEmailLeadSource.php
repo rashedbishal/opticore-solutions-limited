@@ -249,7 +249,7 @@ class ProcessEmailLeadSource implements ShouldQueue
 
         try {
             if ($record->partial_lead_id !== null) {
-                $lead = Lead::query()->findOrFail($record->partial_lead_id);
+                $lead = Lead::query()->withMerged()->findOrFail($record->partial_lead_id)->latestVersion();
                 $this->finishLead($lead, $record->partial_stage === EmailPartialFailureStage::Attachments, (bool) $record->is_new_lead, $inbox, $number, $this->imap->structure($inbox, $number), $this->sentAt($header));
             } else {
                 $lead = $this->createLeadFromEmail($inbox, $number, $header);
@@ -297,7 +297,7 @@ class ProcessEmailLeadSource implements ShouldQueue
         $subject = isset($header->subject) ? $this->decodeHeader((string) $header->subject) : null;
 
         $existing = $email !== null
-            ? Lead::query()->where('source_id', $this->source->id)->where('email', $email)->first()
+            ? Lead::query()->withMerged()->where('source_id', $this->source->id)->where('email', $email)->first()?->latestVersion()
             : null;
 
         if ($existing !== null) {

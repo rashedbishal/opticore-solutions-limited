@@ -149,6 +149,7 @@ export interface LeadDetail extends LeadRow {
     };
     can_delete_conversation: boolean;
     pipeline: LeadPipeline;
+    duplicates: LeadDuplicate[];
 }
 
 export interface MessageTemplateOption {
@@ -245,4 +246,28 @@ export interface LeadDetailOptions {
     priorities: PriorityOption[];
     currencies: CurrencyOption[];
     assignableUsers: AssignableUser[];
+}
+
+export interface MergeConflict {
+    label: string;
+    survivor: string;
+    loser: string;
+}
+
+export interface LeadDuplicate {
+    link_id: string;
+    matched_fields: string[];
+    other: {
+        id: string;
+        identifier: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        source: string;
+        created_at: string | null;
+        can_view: boolean;
+    };
+    conflicts_keep_this: Record<string, MergeConflict>;
+    conflicts_keep_other: Record<string, MergeConflict>;
+    can_merge: boolean;
 }

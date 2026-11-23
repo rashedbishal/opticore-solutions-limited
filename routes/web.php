@@ -16,8 +16,11 @@ use App\Http\Controllers\Admin\JobListingController as AdminJobListingController
 use App\Http\Controllers\Admin\Leads\CatalogController as AdminLeadCatalogController;
 use App\Http\Controllers\Admin\Leads\LeadAdController as AdminLeadAdController;
 use App\Http\Controllers\Admin\Leads\LeadAttachmentController as AdminLeadAttachmentController;
+use App\Http\Controllers\Admin\Leads\LeadBulkController as AdminLeadBulkController;
 use App\Http\Controllers\Admin\Leads\LeadConsentController as AdminLeadConsentController;
 use App\Http\Controllers\Admin\Leads\LeadController as AdminLeadController;
+use App\Http\Controllers\Admin\Leads\LeadDuplicateController as AdminLeadDuplicateController;
+use App\Http\Controllers\Admin\Leads\LeadImportController as AdminLeadImportController;
 use App\Http\Controllers\Admin\Leads\LeadMessageController as AdminLeadMessageController;
 use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
 use App\Http\Controllers\Admin\Leads\LeadPipelineController as AdminLeadPipelineController;
@@ -312,6 +315,11 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('ad-sources/{source}/export', [AdminLeadAdController::class, 'export'])->name('ad-sources.export')->whereUlid('source');
         Route::get('attachments/{attachment}', [AdminLeadAttachmentController::class, 'show'])->name('attachments.show')->whereUlid('attachment');
         Route::get('sent-files/{message}', [AdminLeadMessageController::class, 'attachment'])->name('messages.attachment')->whereUlid('message');
+        Route::post('bulk', AdminLeadBulkController::class)->name('bulk');
+        Route::get('imports', [AdminLeadImportController::class, 'index'])->name('imports.index');
+        Route::post('imports', [AdminLeadImportController::class, 'store'])->name('imports.store');
+        Route::get('imports/sample', [AdminLeadImportController::class, 'sample'])->name('imports.sample');
+        Route::get('imports/{import}', [AdminLeadImportController::class, 'show'])->name('imports.show')->whereUlid('import');
         Route::get('tags', [AdminLeadCatalogController::class, 'tags'])->name('catalog.tags');
         Route::post('tags', [AdminLeadCatalogController::class, 'storeTag'])->name('catalog.tags.store');
         Route::put('tags/{tag}', [AdminLeadCatalogController::class, 'updateTag'])->name('catalog.tags.update')->whereUlid('tag');
@@ -357,6 +365,8 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::post('{lead}/tasks/{task}/status', [AdminLeadPipelineController::class, 'taskStatus'])->name('tasks.status')->whereUlid(['lead', 'task']);
         Route::delete('{lead}/tasks/{task}', [AdminLeadPipelineController::class, 'destroyTask'])->name('tasks.destroy')->whereUlid(['lead', 'task']);
         Route::put('{lead}/custom-fields', [AdminLeadPipelineController::class, 'saveCustomFields'])->name('custom-fields.save')->whereUlid('lead');
+        Route::post('{lead}/duplicates/{link}/merge', [AdminLeadDuplicateController::class, 'merge'])->name('duplicates.merge')->whereUlid(['lead', 'link']);
+        Route::post('{lead}/duplicates/{link}/dismiss', [AdminLeadDuplicateController::class, 'dismiss'])->name('duplicates.dismiss')->whereUlid(['lead', 'link']);
         Route::post('{lead}/consents/{type}/{status}', [AdminLeadConsentController::class, 'update'])->name('consents.update')->whereUlid('lead')->whereIn('type', ['privacy', 'marketing'])->whereIn('status', ['granted', 'withdrawn']);
     });
 

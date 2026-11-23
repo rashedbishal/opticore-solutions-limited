@@ -6,6 +6,7 @@ import {
     CalendarCheck,
     CalendarX,
     CheckSquare,
+    GitMerge,
     Pencil,
     StickyNote,
     UserCheck,
@@ -78,6 +79,11 @@ function describe(event: LeadActivityEvent): {
             };
         case 'unassigned':
             return { icon: UserMinus, text: `${who} removed the assignee` };
+        case 'merged':
+            return {
+                icon: GitMerge,
+                text: `${who} merged ${(event.fields ?? []).join(', ')} into this lead`,
+            };
         case 'deal_status':
             return {
                 icon: Briefcase,
