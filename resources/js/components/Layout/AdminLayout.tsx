@@ -18,7 +18,6 @@ import {
     Menu,
     X,
     Mail,
-    Bell,
     Briefcase,
     FolderTree,
     Layers,
@@ -38,10 +37,15 @@ import {
     Waypoints,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import AdminNotificationBell from '@/components/Admin/AdminNotificationBell';
 import CmsLoadingOverlay from '@/components/Admin/CmsLoadingOverlay';
+import LeadNavGroup, {
+    visibleLeadNavLinks,
+} from '@/components/Admin/LeadNavGroup';
 import NotificationListener from '@/components/Admin/NotificationListener';
 import PaymentNotificationListener from '@/components/Admin/PaymentNotificationListener';
 import useEchoReady from '@/hooks/useEchoReady';
+import { canUseLeads } from '@/lib/leadAccess';
 import adminRoutes from '@/routes/admin';
 
 interface AdminLayoutProps {
@@ -52,6 +56,13 @@ interface AdminLayoutProps {
 
 const CHAT_PAGE_PATH = '/admin/customer-conversations';
 
+/**
+ * Placeholder NAV_ITEMS key for the "Leads" fold-out group. Not a real
+ * permission key: its visibility comes from the admin's lead role / mother
+ * admin status (see LeadNavGroup), never from `permissions`/`full_access`.
+ */
+const LEADS_GROUP_KEY = '__leads-group';
+
 const NAV_ITEMS = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, key: null },
     {
@@ -59,6 +70,12 @@ const NAV_ITEMS = [
         href: '/admin/customer-conversations',
         icon: MessageSquare,
         key: 'customer-conversations',
+    },
+    {
+        name: 'Leads',
+        href: '/admin/lead',
+        icon: MessageSquare,
+        key: LEADS_GROUP_KEY,
     },
     {
         name: 'Portfolios',
@@ -259,7 +276,9 @@ export default function AdminLayout({
     const { auth, flash } = page.props;
     const visibleNavItems = NAV_ITEMS.filter(
         (item) =>
-            canAccessNavItem(auth.user, item.key) &&
+            (item.key === LEADS_GROUP_KEY
+                ? visibleLeadNavLinks(auth.user).length > 0
+                : canAccessNavItem(auth.user, item.key)) &&
             !(item.key === null && isMealManagementOnly(auth.user)) &&
             (!MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(item.key ?? '') ||
                 isMotherAdmin(auth.user)),
@@ -683,6 +702,17 @@ export default function AdminLayout({
                         <nav className="space-y-0.5">
                             {visibleNavItems.map((item) => {
                                 const currentPath = page.url.split('?')[0];
+
+                                if (item.key === LEADS_GROUP_KEY) {
+                                    return (
+                                        <LeadNavGroup
+                                            key={item.key}
+                                            admin={auth.user}
+                                            currentPath={currentPath}
+                                        />
+                                    );
+                                }
+
                                 const active =
                                     currentPath.startsWith(item.href) &&
                                     (item.href !== '/admin' ||
@@ -840,38 +870,18 @@ export default function AdminLayout({
                         </div>
 
                         <div className="flex flex-1 items-center justify-end gap-4">
-                            <Link
-                                href={CHAT_PAGE_PATH}
-                                className={`relative -m-2 rounded-lg p-2 transition-colors ${
-                                    notificationCount > 0 && !isOnChatPage
-                                        ? 'text-violet-400 hover:text-violet-300'
-                                        : 'text-slate-500 hover:text-violet-400'
-                                }`}
-                            >
-                                <span className="sr-only">Notifications</span>
-                                <Bell className="h-5 w-5" />
-                                {notificationCount > 0 && !isOnChatPage && (
-                                    <span className="absolute -top-1 -right-1">
-                                        <span className="absolute inline-flex h-5 w-5 animate-ping rounded-full bg-rose-400 opacity-40" />
-                                        <motion.span
-                                            animate={{ scale: [1, 1.1, 1] }}
-                                            transition={{
-                                                duration: 1.0,
-                                                repeat: Infinity,
-                                            }}
-                                            className="relative flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-0.5 font-mono text-[9px] font-bold text-white"
-                                            style={{
-                                                boxShadow:
-                                                    '0 0 10px rgba(244,63,94,0.9), 0 0 20px rgba(244,63,94,0.4)',
-                                            }}
-                                        >
-                                            {notificationCount > 99
-                                                ? '99+'
-                                                : notificationCount}
-                                        </motion.span>
-                                    </span>
+                            <AdminNotificationBell
+                                adminId={auth.user.id}
+                                echoReady={echoReady}
+                                showSupport={canAccessNavItem(
+                                    auth.user,
+                                    'customer-conversations',
                                 )}
-                            </Link>
+                                showLeads={canUseLeads(auth.user)}
+                                chatCount={notificationCount}
+                                isOnChatPage={isOnChatPage}
+                                chatPagePath={CHAT_PAGE_PATH}
+                            />
                         </div>
                     </header>
 

@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Leads\Listeners\BroadcastAdminNotification;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -66,6 +69,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewHealth', fn ($user = null): bool => (bool) auth('admin')->user()?->isMotherAdmin());
 
         $this->configureHealthChecks();
+
+        // Lead alerts bell: listeners under app/Leads aren't auto-discovered
+        // (discovery only scans app/Listeners), so register it explicitly.
+        Event::listen(NotificationSent::class, BroadcastAdminNotification::class);
     }
 
     /**

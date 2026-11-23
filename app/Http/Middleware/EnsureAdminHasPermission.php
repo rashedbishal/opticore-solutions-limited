@@ -32,6 +32,23 @@ class EnsureAdminHasPermission
 
         $key = explode('.', substr($routeName, strlen('admin.')))[0];
 
+        // Lead Management is gated by the admin's lead role, never by the
+        // section-permission list (so `full_access` can't grant it), and its
+        // settings are mother-admin-only. Both keys are deliberately absent
+        // from AdminPermissions, so they must be handled before the
+        // "unregistered key = allowed" fallback below.
+        if ($key === 'leads') {
+            abort_unless($admin->canUseLeads(), 403);
+
+            return $next($request);
+        }
+
+        if ($key === 'lead-settings') {
+            abort_unless($admin->isMotherAdmin(), 403);
+
+            return $next($request);
+        }
+
         if ($key === 'dashboard' || ! AdminPermissions::isValidKey($key)) {
             return $next($request);
         }

@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobListingController as AdminJobListingController;
+use App\Http\Controllers\Admin\Leads\LeadNotificationController as AdminLeadNotificationController;
+use App\Http\Controllers\Admin\LeadSettings\CurrencyController as AdminLeadCurrencyController;
+use App\Http\Controllers\Admin\LeadSettings\LeadStatusController as AdminLeadStatusController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\MealManagementController;
 use App\Http\Controllers\Admin\MealReportController;
@@ -282,6 +285,30 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('configuration.index');
     Route::put('/configuration', [AdminConfigurationController::class, 'update'])->name('configuration.update');
     Route::get('/configuration/backup', [AdminConfigurationController::class, 'downloadBackup'])->name('configuration.backup');
+
+    // Lead Management. Route-name keys `leads` (any lead role) and
+    // `lead-settings` (mother admin only) are enforced by
+    // EnsureAdminHasPermission, never by the AdminPermissions list.
+    Route::prefix('leads')->name('leads.')->group(function () {
+        Route::get('notifications', [AdminLeadNotificationController::class, 'index'])->name('notifications.index');
+        Route::get('notifications/{notification}/open', [AdminLeadNotificationController::class, 'open'])->name('notifications.open');
+        Route::post('notifications/{notification}/read', [AdminLeadNotificationController::class, 'markRead'])->name('notifications.read');
+        Route::post('notifications/read-all', [AdminLeadNotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::delete('notifications', [AdminLeadNotificationController::class, 'clearAll'])->name('notifications.clear');
+    });
+
+    Route::prefix('lead-settings')->name('lead-settings.')->group(function () {
+        Route::get('statuses', [AdminLeadStatusController::class, 'index'])->name('statuses.index');
+        Route::post('statuses', [AdminLeadStatusController::class, 'store'])->name('statuses.store');
+        Route::put('statuses/{status}', [AdminLeadStatusController::class, 'update'])->name('statuses.update');
+        Route::post('statuses/reorder', [AdminLeadStatusController::class, 'reorder'])->name('statuses.reorder');
+        Route::delete('statuses/{status}', [AdminLeadStatusController::class, 'destroy'])->name('statuses.destroy');
+
+        Route::get('currencies', [AdminLeadCurrencyController::class, 'index'])->name('currencies.index');
+        Route::post('currencies', [AdminLeadCurrencyController::class, 'store'])->name('currencies.store');
+        Route::put('currencies/{currency}', [AdminLeadCurrencyController::class, 'update'])->name('currencies.update');
+        Route::delete('currencies/{currency}', [AdminLeadCurrencyController::class, 'destroy'])->name('currencies.destroy');
+    });
 
     // Subscriptions
     Route::get('subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');

@@ -6,6 +6,7 @@
 
 namespace Database\Factories;
 
+use App\Leads\Enums\LeadRole;
 use App\Models\Admin;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -81,5 +82,31 @@ class AdminFactory extends Factory
             'full_access' => false,
             'permissions' => $keys,
         ]);
+    }
+
+    /**
+     * Give this admin a Lead Management role. Chain after regular(),
+     * fullAccess() or withPermissions(), since the default state is the
+     * mother admin (who is always a lead Manager regardless).
+     */
+    public function withLeadRole(LeadRole $role): static
+    {
+        return $this->state(fn () => ['lead_role' => $role]);
+    }
+
+    /**
+     * A regular admin whose only access is Lead Management as an Agent.
+     */
+    public function leadAgent(): static
+    {
+        return $this->regular()->withLeadRole(LeadRole::Agent);
+    }
+
+    /**
+     * A regular admin whose only access is Lead Management as a Manager.
+     */
+    public function leadManager(): static
+    {
+        return $this->regular()->withLeadRole(LeadRole::Manager);
     }
 }

@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use App\Leads\Enums\LeadRole;
+use App\Leads\Models\AdminNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property LeadRole|null $lead_role Lead Management role chosen by the mother admin.
+ */
 class Admin extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -28,6 +34,7 @@ class Admin extends Authenticatable
         'password',
         'full_access',
         'permissions',
+        'lead_role',
     ];
 
     /**
@@ -53,6 +60,7 @@ class Admin extends Authenticatable
             'is_super_admin' => 'boolean',
             'full_access' => 'boolean',
             'permissions' => 'array',
+            'lead_role' => LeadRole::class,
         ];
     }
 
@@ -98,7 +106,7 @@ class Admin extends Authenticatable
      */
     public function isMealManagementOnly(): bool
     {
-        if ($this->is_super_admin || $this->full_access) {
+        if ($this->is_super_admin || $this->full_access || $this->lead_role !== null) {
             return false;
         }
 
@@ -115,11 +123,55 @@ class Admin extends Authenticatable
      */
     public function securityStamp(): string
     {
-        return hash('sha256', implode('|', [
+        $parts = [
             $this->password,
             $this->is_super_admin ? '1' : '0',
             $this->full_access ? '1' : '0',
             json_encode($this->permissions ?? []),
-        ]));
+        ];
+
+        // Appended only when set, so admins without a lead role keep the
+        // exact stamp they had before lead roles existed (no mass logout).
+        if ($this->lead_role !== null) {
+            $parts[] = 'lead:'.$this->lead_role->value;
+        }
+
+        return hash('sha256', implode('|', $parts));
+    }
+
+    /**
+     * The admin's effective Lead Management role. The mother admin is always
+     * a Manager; everyone else has exactly the role the mother admin gave
+     * them. `full_access` deliberately grants nothing here.
+     */
+    public function leadRole(): ?LeadRole
+    {
+        return $this->isMotherAdmin() ? LeadRole::Manager : $this->lead_role;
+    }
+
+    public function canUseLeads(): bool
+    {
+        return $this->leadRole() !== null;
+    }
+
+    public function isLeadManager(): bool
+    {
+        return $this->leadRole() === LeadRole::Manager;
+    }
+
+    public function isLeadAgent(): bool
+    {
+        return $this->leadRole() === LeadRole::Agent;
+    }
+
+    /**
+     * Lead alerts live in the main database (see AdminNotification), not on
+     * this model's `admin` connection.
+     *
+     * @return MorphMany<AdminNotification, $this>
+     */
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(AdminNotification::class, 'notifiable')->latest();
     }
 }

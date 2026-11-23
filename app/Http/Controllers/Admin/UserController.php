@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Leads\Enums\LeadRole;
 use App\Models\Admin;
 use App\Support\AdminPermissions;
 use Illuminate\Http\RedirectResponse;
@@ -42,6 +43,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/User/Create', [
             'permissionOptions' => AdminPermissions::all(),
+            'leadRoleOptions' => $this->leadRoleOptions(),
         ]);
     }
 
@@ -56,6 +58,7 @@ class UserController extends Controller
             'full_access' => 'sometimes|boolean',
             'permissions' => 'sometimes|array',
             'permissions.*' => ['string', Rule::in(AdminPermissions::keys())],
+            'lead_role' => ['nullable', Rule::enum(LeadRole::class)],
         ]);
 
         $fullAccess = (bool) ($validated['full_access'] ?? false);
@@ -66,6 +69,9 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'full_access' => $fullAccess,
             'permissions' => $fullAccess ? [] : array_values($validated['permissions'] ?? []),
+            // Independent of full_access: the mother admin always picks the
+            // lead role explicitly.
+            'lead_role' => $validated['lead_role'] ?? null,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Admin created.');
@@ -84,6 +90,7 @@ class UserController extends Controller
         return Inertia::render('Admin/User/Edit', [
             'user' => $user,
             'permissionOptions' => AdminPermissions::all(),
+            'leadRoleOptions' => $this->leadRoleOptions(),
             'canEditProfile' => $actor->isMotherAdmin() || $editingSelf,
             'canEditPermissions' => $actor->isMotherAdmin() && ! $editingSelf,
             'isEditingSelf' => $editingSelf,
@@ -114,6 +121,7 @@ class UserController extends Controller
             $rules['full_access'] = 'sometimes|boolean';
             $rules['permissions'] = 'sometimes|array';
             $rules['permissions.*'] = ['string', Rule::in(AdminPermissions::keys())];
+            $rules['lead_role'] = ['nullable', Rule::enum(LeadRole::class)];
         }
 
         $validated = $request->validate($rules);
@@ -137,6 +145,7 @@ class UserController extends Controller
             $fullAccess = (bool) ($validated['full_access'] ?? false);
             $payload['full_access'] = $fullAccess;
             $payload['permissions'] = $fullAccess ? [] : array_values($validated['permissions'] ?? []);
+            $payload['lead_role'] = $validated['lead_role'] ?? null;
         }
 
         $user->update($payload);
@@ -170,5 +179,16 @@ class UserController extends Controller
     private function authorizeMotherAdminOnly(): void
     {
         abort_unless($this->actor()->isMotherAdmin(), 403);
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    private function leadRoleOptions(): array
+    {
+        return array_map(
+            fn (LeadRole $role): array => ['value' => $role->value, 'label' => $role->label()],
+            LeadRole::cases(),
+        );
     }
 }

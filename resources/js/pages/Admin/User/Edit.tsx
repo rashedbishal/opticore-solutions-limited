@@ -1,8 +1,10 @@
+import type { LeadRoleValue } from '@/components/Admin/LeadRoleCheckboxGroup';
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import { LeadRoleCheckboxGroup } from '@/components/Admin/LeadRoleCheckboxGroup';
 import { PermissionCheckboxGroup } from '@/components/Admin/PermissionCheckboxGroup';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
@@ -14,8 +16,10 @@ interface Props {
         email: string;
         full_access: boolean;
         permissions: string[] | null;
+        lead_role: LeadRoleValue | null;
     };
     permissionOptions: { key: string; label: string }[];
+    leadRoleOptions: { value: LeadRoleValue; label: string }[];
     canEditProfile: boolean;
     canEditPermissions: boolean;
     isEditingSelf: boolean;
@@ -24,6 +28,7 @@ interface Props {
 export default function UserEdit({
     user,
     permissionOptions,
+    leadRoleOptions,
     canEditProfile,
     canEditPermissions,
     isEditingSelf,
@@ -35,6 +40,7 @@ export default function UserEdit({
         password: '',
         full_access: user.full_access,
         permissions: user.permissions ?? ([] as string[]),
+        lead_role: user.lead_role,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -132,17 +138,26 @@ export default function UserEdit({
                     )}
 
                     {canEditPermissions ? (
-                        <PermissionCheckboxGroup
-                            options={permissionOptions}
-                            fullAccess={data.full_access}
-                            permissions={data.permissions}
-                            onFullAccessChange={(value) =>
-                                setData('full_access', value)
-                            }
-                            onPermissionsChange={(permissions) =>
-                                setData('permissions', permissions)
-                            }
-                        />
+                        <>
+                            <PermissionCheckboxGroup
+                                options={permissionOptions}
+                                fullAccess={data.full_access}
+                                permissions={data.permissions}
+                                onFullAccessChange={(value) =>
+                                    setData('full_access', value)
+                                }
+                                onPermissionsChange={(permissions) =>
+                                    setData('permissions', permissions)
+                                }
+                            />
+                            <LeadRoleCheckboxGroup
+                                options={leadRoleOptions}
+                                value={data.lead_role}
+                                onChange={(value) =>
+                                    setData('lead_role', value)
+                                }
+                            />
+                        </>
                     ) : (
                         <p className="border-t border-violet-500/10 pt-5 text-sm text-zinc-500">
                             {isEditingSelf

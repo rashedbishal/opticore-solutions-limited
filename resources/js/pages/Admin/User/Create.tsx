@@ -1,17 +1,23 @@
+import type { LeadRoleValue } from '@/components/Admin/LeadRoleCheckboxGroup';
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { CmsErrorDialog } from '@/components/Admin/CmsErrorDialog';
+import { LeadRoleCheckboxGroup } from '@/components/Admin/LeadRoleCheckboxGroup';
 import { PermissionCheckboxGroup } from '@/components/Admin/PermissionCheckboxGroup';
 import AdminLayout from '@/components/Layout/AdminLayout';
 import adminRoutes from '@/routes/admin';
 
 interface Props {
     permissionOptions: { key: string; label: string }[];
+    leadRoleOptions: { value: LeadRoleValue; label: string }[];
 }
 
-export default function UserCreate({ permissionOptions }: Props) {
+export default function UserCreate({
+    permissionOptions,
+    leadRoleOptions,
+}: Props) {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const { data, setData, post, processing } = useForm({
         name: '',
@@ -19,6 +25,7 @@ export default function UserCreate({ permissionOptions }: Props) {
         password: '',
         full_access: false as boolean,
         permissions: [] as string[],
+        lead_role: null as LeadRoleValue | null,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -112,6 +119,12 @@ export default function UserCreate({ permissionOptions }: Props) {
                         onPermissionsChange={(permissions) =>
                             setData('permissions', permissions)
                         }
+                    />
+
+                    <LeadRoleCheckboxGroup
+                        options={leadRoleOptions}
+                        value={data.lead_role}
+                        onChange={(value) => setData('lead_role', value)}
                     />
 
                     <div className="flex gap-4 border-t border-violet-500/10 pt-4">

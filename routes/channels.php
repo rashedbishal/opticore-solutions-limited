@@ -34,3 +34,11 @@ Broadcast::channel('admin.tasks', function ($user) {
 Broadcast::channel('admin.meal-management', function ($user) {
     return $user instanceof Admin && $user->canAccess('meal-management');
 }, ['guards' => ['admin', 'web']]);
+
+// Lead alerts bell — one private channel per admin, only while they still
+// hold a lead role (the mother admin always does).
+Broadcast::channel('admin.lead-notifications.{adminId}', function ($user, $adminId) {
+    return $user instanceof Admin
+        && (int) $user->id === (int) $adminId
+        && $user->canUseLeads();
+}, ['guards' => ['admin', 'web']]);
