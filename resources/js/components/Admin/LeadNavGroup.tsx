@@ -68,13 +68,13 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'Scoring Rules',
         href: leads.scoring.index.url(),
         icon: Gauge,
-        section: 'manager',
+        section: 'manager-settings',
     },
     {
         name: 'Calling',
         href: leads.calling.index.url(),
         icon: PhoneCall,
-        section: 'manager',
+        section: 'manager-settings',
     },
     {
         name: 'Import',
@@ -86,13 +86,13 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'Tags',
         href: catalog.tags.url(),
         icon: Tags,
-        section: 'manager',
+        section: 'manager-settings',
     },
     {
         name: 'Custom Fields',
         href: catalog.fields.url(),
         icon: ListPlus,
-        section: 'manager',
+        section: 'manager-settings',
     },
     {
         name: 'Calling app',
@@ -104,7 +104,7 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         name: 'Templates',
         href: templates.index.url(),
         icon: MessageSquareText,
-        section: 'manager',
+        section: 'manager-settings',
     },
     {
         name: 'Lead Sources',
