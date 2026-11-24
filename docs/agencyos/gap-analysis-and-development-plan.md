@@ -261,7 +261,7 @@ Seven decisions shape everything else and must be settled before Phase 1 coding.
 
 ## 5. Phased roadmap
 
-This follows the PDF's nine phases (§21) with two deliberate changes: the company-tenancy core of M1 moves into Phase 1, because every later table needs `company_id`, and the client ordering screens ship with Phase 3 so quotes can be tested by real clients early. Phase 6 then completes the portal instead of starting it. Each phase ends with the PDF's definition of done: server-side permissions, audit, notifications, tests for normal, edge and unauthorized cases, and owner acceptance. Phases are not dated until Q7 is answered.
+This follows the PDF's nine phases (§21) with two deliberate changes: the company-tenancy core of M1 moves into Phase 1, because every later table needs `company_id`, and the client ordering screens ship with Phase 3 so quotes can be tested by real clients early. Phase 6 then completes the portal instead of starting it. Each phase ends with the PDF's definition of done: server-side permissions, audit, notifications, tests for normal, edge and unauthorized cases, and owner acceptance. Q7 is answered (4 developers, no target launch date), so phases are sequenced but not dated. With 4 developers, work can run in parallel streams after Phase 1, for example one pair on Phases 2 and 3 while another pair starts Phase 4 once the Phase 1 foundations are merged.
 
 Foundation first: audit, approvals and tenancy gate every later phase (Phase 1 is the critical one).
 
@@ -281,44 +281,93 @@ Foundation first: audit, approvals and tenancy gate every later phase (Phase 1 i
 
 ## 6. Questions for you and risks
 
-Nine answers block Phase 0; the rest can wait. Tick a box once answered and write the answer under it.
+Nine questions blocked Phase 0. Eight are now answered; Q6 is waiting on a team discussion. Record each new answer in the tables below.
 
 ### Blocking (needed before Phase 1)
 
-- [ ] **Q1. Build inside the current Laravel app?** The PDF suggests Next.js + Prisma but calls it a proposal. Recommendation: Laravel (section 2).
-- [ ] **Q2. Employees (D1):** may staff identities live in the `admin` database, extended with HR data?
-- [ ] **Q3. Super Admins (D2):** several equal Super Admins plus a protected mother admin, as recommended?
-- [ ] **Q4. Existing checkout:** does the new quote-then-approve flow replace today's instant-pay checkout, or do both run side by side (for example fixed plans stay instant)?
-- [ ] **Q5. Existing clients:** is each current `User` converted into a one-person `Company`, and do old `Task` rows become master projects?
-- [ ] **Q6. Leads CRM and Meal Management** are not in the PDF. Keep both unchanged? Should a won lead flow into client registration and quotation?
-- [ ] **Q7. Team and timeline:** how many developers, and is there a target launch date? Without this the effort sizes cannot become dates.
-- [ ] **Q8. Departments today:** the real list of departments, designations and headcount, and whether the 7 service categories in the PDF match your current `Category` records.
-- [ ] **Q9. Providers:** SMS/OTP gateway for Bangladesh, object storage, video-call tool, voice transcription, and bKash/Nagad/bank payout route. The PDF lists none of these as chosen.
+Status: 8 of 9 answered, Q6 is waiting on a team discussion.
+
+| Q | Topic | Status | Answer | What it changes in the plan |
+| --- | --- | --- | --- | --- |
+| Q1 | Build inside the current Laravel app? | ✅ Answered | **Laravel** | No rewrite. Everything is built on the existing app, so all existing code, tests and deploy scripts stay in use. |
+| Q2 | Employees (D1) | ✅ Answered | **Option A:** staff identities live in the `admin` database, extended with HR data | D1 is confirmed. Salary and evaluation data stay isolated. Main-DB tables reference staff by id plus name snapshot. |
+| Q3 | Super Admins (D2) | ✅ Answered | **Several Super Admins plus one protected mother admin** (recommended) | D2 is confirmed. Add a `super_admin` role; keep `isMotherAdmin()` for the break-glass owner and the Horizon, Pulse, Health gates. |
+| Q4 | Existing checkout | ✅ Answered | **Option B:** run both side by side | Today's instant-pay checkout stays untouched (fixed plans). The quote-then-approve flow is added next to it. The SSLCommerz pipeline needs no rework. |
+| Q5 | Existing clients | ✅ Answered | **Existing data is all fake and is cancelled.** No migration needed | Big simplification: no conversion of `User` to `Company`, no backfill of old `Task` rows. Wipe or reseed test data. Removes the "regression for current customers" risk, but see the updated risks table. |
+| Q6 | Leads CRM and Meal Management | ⏳ Waiting on discussion | **Not yet answered.** The question is: keep both features as they are, and should the Leads CRM feed into client registration and quotations (B) or stay separate (A)? | Meal Management stays as is (isolated DB). The Leads link to registration and quotation is unscheduled until decided. Phase 3 can start without it. |
+| Q7 | Team and timeline | ✅ Answered | **4 developers, no target launch date** | Effort sizes can be turned into a sequence but not into calendar dates yet. With 4 developers, some phases can run in parallel streams (see section 5 note). |
+| Q8 | Departments, designations, categories | ✅ Answered | **Everything dynamic:** departments, designations, headcounts, categories, and which department controls which category | Nothing is hard-coded. All five are admin-managed tables. Seeders hold only sample data. |
+| Q9 | Providers | ✅ Answered | **SMS/OTP:** not needed. **Email OTP:** already set. **File storage:** local server. **Video calls:** none. **Audio calls:** via WhatsApp (internal calls via the internal WhatsApp channels). **Voice transcription:** not needed. **Payroll payout:** entered manually in the system | Drops SMS gateway, video, transcription and payout-API integrations from scope. Files use the `local` disk (backups must then include the file folder, see risks). Payroll records payouts by manual entry, with no bKash/Nagad API. |
+
+Original wording of each question, for reference:
+
+- **Q1:** The PDF suggests Next.js + Prisma but calls it a proposal. Recommendation was Laravel (section 2).
+- **Q2:** May staff identities live in the `admin` database, extended with HR data?
+- **Q3:** Several equal Super Admins plus a protected mother admin, as recommended?
+- **Q4:** Does the new quote-then-approve flow replace today's instant-pay checkout, or do both run side by side?
+- **Q5:** Is each current `User` converted into a one-person `Company`, and do old `Task` rows become master projects?
+- **Q6:** Leads CRM and Meal Management are not in the PDF. Keep both unchanged? Should a won lead flow into client registration and quotation?
+- **Q7:** How many developers, and is there a target launch date?
+- **Q8:** The real list of departments, designations and headcount, and whether the 7 PDF service categories match current `Category` records.
+- **Q9:** SMS/OTP gateway, object storage, video-call tool, voice transcription, and payout route.
 
 ### Owner decisions the PDF itself leaves open (§22)
 
-- [ ] Action after a task-extension request is rejected
-- [ ] Meaning of the "Remove Ads" client toggle
-- [ ] Super Admin concurrent edit when the previous editor is unavailable
-- [ ] Attendance edge cases: late arrival, overnight shifts, day-offs, missed logout
-- [ ] Stage-two performance formula (criteria weights)
-- [ ] Data retention schedule for files, messages, logs, financial and legal records
-- [ ] Project Manager delegation and substitute approvers
-- [ ] Rate card, tax and discount policy for the pricing engine
-- [ ] Native mobile app or web only (an Android calling app already exists for leads)
-- [ ] Visual design system and Bengali typography
+Status: 5 decided, 5 waiting on discussion.
+
+| # | Open item | Status | Decision | How it is built |
+| --- | --- | --- | --- | --- |
+| 1 | Rejected extension request | ⏳ Waiting | Up to the team to discuss | Configurable setting until decided |
+| 2 | "Remove Ads" toggle | ⏳ Waiting | Up to the team to discuss | Toggle is built, meaning is set later |
+| 3 | Super Admin concurrent edit | ✅ Decided | **Another Super Admin can approve in A's place, or the mother admin can override** | Approval request can be fulfilled by any other Super Admin or by the mother admin. Every override is audit-logged. |
+| 4 | Attendance edge cases | ⏳ Waiting | Up to the team to discuss | Lateness grace, auto-logout and correction rules are settings |
+| 5 | Stage-two performance formula | ✅ Decided | **Fully customized:** weights are set by the admin | Criteria and weights are admin-editable, not coded. The Team Leader 60% / Manager 40% split stays as the PDF fixed it. |
+| 6 | Data retention | ✅ Decided | **Customized schedule; an admin can also delete manually** | Retention rules are per data type, editable. Manual deletion is admin-only, goes through the recycle bin and is audit-logged. Legal and financial records still need advice before being made deletable. |
+| 7 | PM delegation and substitutes | ✅ Decided | **Whoever the Super Admin picks** | A Super Admin assigns a substitute approver per Project Manager, with start and end dates. All actions record "acting for". |
+| 8 | Rate card, tax, discount policy | ⏳ Waiting | Up to the team to discuss | Pricing engine reads prices, tax and discount limits from admin settings. Needed before Phase 3 testing. |
+| 9 | Native mobile app or web only | ✅ Decided | **A mobile app is planned** | Build the web app API-first so a later app can reuse it. Native push (FCM) is already in the stack. The app itself is not in the current phases. |
+| 10 | Visual design and Bengali typography | ⏳ Waiting | Up to the team to discuss | Extend the current Opticore look in the meantime; font choice is a theme setting |
 
 These must stay configurable in code until answered; the PDF forbids silently choosing.
 
+#### What each open decision means, with the options (for team discussion)
+
+Until the owner decides, each item is built as a setting that can be changed, not a fixed rule.
+
+| # | Open item | Plain meaning | Options to choose from |
+| --- | --- | --- | --- |
+| 1 | **Rejected extension request** | An employee asks for more time on a task and the Project Manager says no. What happens next? | The original deadline stays binding; the employee can resubmit with a better reason; the task is reassigned to someone else; or a mix. |
+| 2 | **"Remove Ads" toggle** | Clients get a switch called "Remove Ads". What does it remove? | It hides Opticore's own promotional banners and offers; it is a paid ad-free feature; or something else the owner has in mind. |
+| 3 | **Super Admin concurrent edit** | If Super Admin B wants to change something Super Admin A edited, A must approve first. What if A is unavailable, on leave, or has left? | B waits; another Super Admin can approve in A's place; the approval expires after a set time; or the mother admin can override. |
+| 4 | **Attendance edge cases** | Everyday messy cases: someone arrives late, works overnight, works on a day off, or forgets to log out. | Set rules for each. For example: a grace period for lateness, a maximum auto-logout time, a manager correction step. |
+| 5 | **Stage-two performance formula** | Employee scores combine attendance, quality, errors, deadlines, teamwork and more. How much does each count? | Percentages per criterion, such as quality 30%, deadlines 25%, attendance 15%. The Team Leader 60% and Manager 40% split is already fixed. |
+| 6 | **Data retention** | How long do we keep files, chat messages, logs, invoices and contracts before deleting them? | A schedule, for example chats 2 years, logs 1 year, financial and legal records 7+ years. An accountant or lawyer may need to advise. |
+| 7 | **PM delegation and substitutes** | When a Project Manager is absent, who approves things in their place? | A named backup per PM; the Department Manager; whoever the Super Admin picks; or automatic after a waiting time. |
+| 8 | **Rate card, tax, discount policy** | The price engine needs real prices. The PDF's ৳25 per second was only an example. | The actual price list per service, the VAT or tax rate, and rules for discounts, such as who can give them and the maximum. |
+| 9 | **Native mobile app or web only** | An installable phone app, or is a mobile-friendly website enough? | Web only (cheapest, fastest). Or a native app later, which affects phone push notifications. An Android app for lead calling already exists. |
+| 10 | **Visual design and Bengali typography** | How should the new portals look, and which Bengali font? | Keep the current Opticore look and extend it; or a new design system. Pick a Bengali font such as Hind Siliguri, Noto Sans Bengali or similar. |
+
+**How urgent each one is**
+
+- **Needed soon (before Phases 1–3):** #8 rate card, #10 design and fonts, #6 retention, because they affect early foundations.
+- **Needed later (Phases 4–5):** #1, #4, #5, #7, because they matter when projects, attendance and evaluations are built.
+- **Can wait or follow other answers:** #2 (owner's business call), #3 (matters once multiple Super Admins exist, see Q3), #9 (can stay web only for now).
+
 ### Risks
 
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| Scope: 21 modules, six of them XL | Plan slips for months | Ship by phase with a usable result each time; cut M10 and M12 detail first |
-| Tenant isolation retrofitted late | Client A sees client B | Do M1 company core and global scope in Phase 1; isolation tests gate every release |
-| Cross-database references (admin DB vs main DB) | Orphaned ids, no foreign keys | Name snapshots, nightly integrity check job, one service class owns staff lookups |
-| Three overlapping permission systems | Privilege gaps | One role + override model in Phase 1; extend existing authorization test pattern to every new route |
-| Touching the payment pipeline | Lost orders or double invoices | Leave SSLCommerz handlers unchanged; attach payments to `ServiceOrder` by foreign key only; keep existing race tests green |
-| Internal data leaking to clients | Trust and legal damage | Separate client-facing resources, never serialize raw models to portal pages, add per-field leak tests |
-| AI acting beyond its authority | Wrong commitments | Approval gate on every AI output that changes money, deadlines or assignments |
-| Production data on Opticore's live system | Regression for current customers | Feature flags per module; all new tables additive; staged rollout behind admin-only access first |
+How to read this table: **Likelihood** is how probable the problem is. **Severity** is how bad it is if it happens. "What it means" explains it in plain words, "Early warning" is how we would notice, and "Plan" is what we do about it.
+
+| # | Risk | What it means, in plain words | Likelihood | Severity | Early warning | Plan to prevent or reduce it |
+| --- | --- | --- | --- | --- | --- | --- |
+| R1 | **Scope is very large** | 21 modules, six of them extra-large. With 4 developers and no deadline, work can drag on and never reach a usable state. | High | High | A phase takes much longer than its estimate | Ship phase by phase so each one gives something usable. If time runs short, cut the detail of Performance (M10) and Finance (M12) first. Plan parallel work streams for the 4 developers. |
+| R2 | **One client sees another client's data** | Each client company must only see its own orders and files. If this is added late, it will have gaps. | Medium | Very high | An isolation test fails, or a client reports seeing unfamiliar data | Build company tenancy in Phase 1, before anything else. Every client table gets `company_id` and an automatic filter. Isolation tests must pass before every release. |
+| R3 | **Staff and project data live in different databases** | Staff are in the `admin` database, projects in the main one. A database cannot link across them, so a deleted employee could leave a project pointing at nothing. | Medium | Medium | The nightly integrity check reports unmatched ids | Store the staff id plus a copy of the name. One service class handles all staff lookups. A nightly job checks for mismatches. |
+| R4 | **Three overlapping permission systems** | Today access is controlled by permission keys, a lead role and a meal-only flag. Adding more roles on top could leave gaps where someone gets access they should not have. | Medium | High | An authorization test fails, or someone reaches a page they should not | Merge them into one role-plus-override model in Phase 1. Every new route gets an authorization test, following the existing test pattern. |
+| R5 | **Breaking the payment flow** | The SSLCommerz and Google Pay code is carefully protected against double processing. Changing it could lose an order or send an invoice twice. | Low | Very high | A payment test fails, or a double invoice appears | Do not change the SSLCommerz handlers. Link payments to the new `ServiceOrder` through a foreign key only. Keep the existing race tests passing. Because both checkouts run side by side (Q4), instant checkout continues to work unchanged. |
+| R6 | **Internal information leaking to clients** | Salaries, internal notes and staff chat must never show up on a client page. Returning raw database records to a page is the usual cause. | Medium | High | A leak test fails, or a client sees an internal field | Use separate client-facing resources that list each field explicitly. Never send raw models to client pages. Add field-level leak tests. |
+| R7 | **AI acting beyond its authority** | The AI could change a price, a deadline or an assignment without a human agreeing. | Medium | High | An AI action appears without an approval record | Anything the AI proposes that affects money, deadlines or assignments waits for human approval. Every AI action is logged. |
+| R8 | **Test data mixed with real data** | Existing data is all fake (Q5), so there is no migration risk today. The risk is that real customers start using the system while it still contains fake records, or that new tables are changed after real data exists. | Low | Medium | Fake accounts or orders still present at launch | Wipe or reseed the fake data before the first real customer. Add all new tables as new migrations, never edit old ones. Use feature flags and release admin-only first. |
+| R9 | **Files stored on the local server (Q9)** | Uploaded files sit on one machine. If the disk fails or a deploy replaces the folder, files are lost. They also grow without limit. | Medium | High | Disk space check warns, or a restore test is missing files | Keep the upload folder in shared storage that deploys do not replace. Include it in backups (today's backup covers databases only). Add a disk-space alert through the Health checks. Plan a move to object storage later. |
+| R10 | **Open decisions not yet made** | Five decisions are still waiting (extension rule, Remove Ads, attendance rules, rate card, design and fonts), plus Q6. Building on a guess means rework. | Medium | Medium | A developer asks "what should this do?" with no written answer | Each one is a setting, not hard-coded. Rate card (#8) and design (#10) are needed before Phase 3. Keep this document as the single place to record answers. |
+| R11 | **Deleting data that must be kept** | An admin can delete data manually (decision 6). Deleting invoices, contracts or audit records by mistake could cause legal or accounting trouble. | Low | High | A deletion with no recycle-bin entry or audit record | Manual deletes go through the recycle bin first and are logged. Financial and legal records are protected from deletion until a retention period is confirmed with an accountant or lawyer. |
+| R12 | **Super Admin approval and override misuse** | Any Super Admin can approve in another's place, and the mother admin can override (decision 3). Power concentrated this way could be misused or approved by mistake. | Low | Medium | Many overrides by one person, or an override with no reason | Every override and substitute approval is audit-logged with who, what and why. The mother admin receives a periodic summary. |
