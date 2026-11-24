@@ -2,7 +2,7 @@
 export const LABEL =
     'mb-1.5 block font-mono text-[10px] font-medium tracking-[0.18em] text-violet-400/70 uppercase';
 export const INPUT =
-    'block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5 [color-scheme:dark]';
+    'block w-full rounded-lg border border-white/8 bg-white/4 px-3 py-2 text-sm text-white placeholder-white/20 transition-all outline-none focus:border-violet-500/50 focus:bg-violet-500/5 [color-scheme:dark] [&_option]:bg-[#0b1024] [&_option]:text-zinc-100 [&_optgroup]:bg-[#0b1024]';
 export const SELECT = `${INPUT} pr-8`;
 export const PRIMARY_BUTTON =
     'relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg border border-violet-400/30 bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all hover:border-violet-400/50 hover:from-violet-500 hover:via-violet-400 hover:to-cyan-400 disabled:opacity-50';
