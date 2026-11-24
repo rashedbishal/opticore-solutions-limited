@@ -287,3 +287,33 @@ it('shows a customer picture once, without an extra "(no text)" message', functi
             ->where('lead.conversation', fn ($items) => collect($items)->pluck('kind')->sort()->values()->all() === ['attachment', 'message']
                 && collect($items)->firstWhere('kind', 'message')['body'] === 'Hello'));
 });
+
+it('marks the lead updated and moves it to the top when a customer sends only a picture', function () {
+    Http::fake();
+    [$lead, $conversation, $agent] = chatLead();
+    $other = Lead::factory()->fromSource($lead->source)->assignedTo($agent)->create();
+    Lead::whereKey($lead->id)->update(['created_at' => now()->subDay(), 'updated_at' => now()->subDay(), 'update_seen_at' => now()->subDay()]);
+    Lead::whereKey($other->id)->update(['created_at' => now()->subHour(), 'updated_at' => now()->subHour()]);
+
+    signedPost('/api/webhook/whatsapp', ['entry' => [['changes' => [['value' => [
+        'metadata' => ['phone_number_id' => 'PHONE1'],
+        'messages' => [['from' => '8801711000000', 'id' => 'wamid.PIC', 'timestamp' => (string) now()->timestamp, 'type' => 'image', 'image' => ['id' => 'MEDIA1', 'mime_type' => 'image/jpeg']]],
+    ]]]]]])->assertOk();
+
+    expect($lead->fresh()->hasUnseenUpdate())->toBeTrue();
+
+    $this->actingAs(Admin::factory()->leadManager()->create(), 'admin')->get(route('admin.leads.index'))
+        ->assertInertia(fn (Assert $page) => $page->where('leads.data.0.id', $lead->id));
+});
+
+it('moves a lead to the top when we send it a message', function () {
+    Http::fake();
+    [$lead, $conversation, $agent] = chatLead();
+    $other = Lead::factory()->fromSource($lead->source)->assignedTo($agent)->create();
+    Lead::whereKey($lead->id)->update(['created_at' => now()->subDay(), 'updated_at' => now()->subDay()]);
+    Lead::whereKey($other->id)->update(['created_at' => now()->subHour(), 'updated_at' => now()->subHour()]);
+
+    $this->actingAs($agent, 'admin')->post(route('admin.leads.messages.send', $lead), ['body' => 'Hi'])->assertSessionHas('success');
+
+    expect($lead->fresh()->updated_at->gt(now()->subMinute()))->toBeTrue();
+});

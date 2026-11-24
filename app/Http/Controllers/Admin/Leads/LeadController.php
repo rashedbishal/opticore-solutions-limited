@@ -84,7 +84,9 @@ class LeadController extends Controller
 
             $page = $query
                 ->whereHas('source', fn ($q) => $q->where('type', '!=', LeadSourceType::FacebookLeadAds))
-                ->latest()
+                // Most recently changed first (new message, edit…), as in
+                // OptiFin's table. The board keeps newest-created first.
+                ->latest('updated_at')
                 ->paginate(self::PER_PAGE)
                 ->withQueryString();
 
