@@ -36,6 +36,15 @@ return [
             'serve' => true,
             'throw' => false,
             'report' => false,
+            // The web server and the queue worker run as different users on
+            // the VPS (sharing a group), so private files and folders must be
+            // group read/write — the default (owner-only 0700/0600) made a
+            // file saved by the website invisible to the worker sending it.
+            // Not world-readable, and this disk is never served publicly.
+            'permissions' => [
+                'file' => ['public' => 0664, 'private' => 0660],
+                'dir' => ['public' => 0775, 'private' => 0770],
+            ],
         ],
 
         'public' => [
