@@ -41,6 +41,8 @@ class CallingAppRelease
             throw new RuntimeException('The file must be between 1 byte and 200 MB.');
         }
 
+        $this->sweepAbandonedUploads();
+
         $id = Str::lower((string) Str::ulid());
         Storage::disk('local')->put($this->dir($id).'/meta.json', (string) json_encode([
             'size' => $size,
@@ -186,6 +188,25 @@ class CallingAppRelease
         }
 
         return ['size' => (int) $meta['size'], 'notes' => is_string($meta['notes'] ?? null) ? $meta['notes'] : null, 'chunks' => (int) $meta['chunks']];
+    }
+
+    /**
+     * Uploads left unfinished (browser closed, connection lost) for over a
+     * day are deleted when a new upload starts, so their pieces don't keep
+     * using disk space.
+     */
+    private function sweepAbandonedUploads(): void
+    {
+        $disk = Storage::disk('local');
+        $cutoff = now()->subDay()->getTimestamp();
+
+        foreach ($disk->directories(self::DIR.'/uploads') as $dir) {
+            $meta = $dir.'/meta.json';
+
+            if (! $disk->exists($meta) || $disk->lastModified($meta) < $cutoff) {
+                $disk->deleteDirectory($dir);
+            }
+        }
     }
 
     private function dir(string $uploadId): string

@@ -5,6 +5,7 @@ require_once __DIR__.'/ChannelHelpers.php';
 use App\Leads\CallingApp\CallingAppCallPush;
 use App\Leads\CallingApp\CallingAppDevice;
 use App\Leads\CallingApp\CallingAppFirebase;
+use App\Leads\CallingApp\CallingAppRelease;
 use App\Leads\CallingApp\CallingAppToken as PersonalAccessToken;
 use App\Leads\Enums\CallRoutingMode;
 use App\Leads\Enums\LeadSourceType;
@@ -12,6 +13,7 @@ use App\Leads\Models\Lead;
 use App\Leads\Models\LeadCall;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 
 function firebaseKey(string $project = 'optifin-calling'): array
 {
@@ -120,6 +122,19 @@ it('rejects an APK that isn\'t the calling app', function () {
     $this->call('PUT', route('admin.lead-settings.calling-app.apk.chunk', [$id, 0]), [], [], [], ['CONTENT_TYPE' => 'application/octet-stream', 'HTTP_ACCEPT' => 'application/json'], 'hello')->assertOk();
     $this->postJson(route('admin.lead-settings.calling-app.apk.complete', $id))
         ->assertStatus(422)->assertJsonPath('error.message', 'This is not an Android app (.apk) file.');
+});
+
+it('clears unfinished APK uploads older than a day when a new one starts', function () {
+    Storage::fake('local');
+    $release = app(CallingAppRelease::class);
+    $old = $release->startUpload(10, null);
+    $recent = $release->startUpload(10, null);
+    touch(Storage::disk('local')->path("calling-app/uploads/{$old}/meta.json"), now()->subDays(2)->getTimestamp());
+
+    $release->startUpload(10, null);
+
+    expect(Storage::disk('local')->exists("calling-app/uploads/{$old}"))->toBeFalse()
+        ->and(Storage::disk('local')->exists("calling-app/uploads/{$recent}"))->toBeTrue();
 });
 
 it('publishes the Android asset links for the app', function () {
