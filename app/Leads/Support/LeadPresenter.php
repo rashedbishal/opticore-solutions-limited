@@ -440,6 +440,14 @@ class LeadPresenter
         $items = [];
 
         foreach ($lead->messages()->get() as $message) {
+            // A picture/file the customer sends is also recorded as an
+            // empty incoming message (for duplicate checks and the reply
+            // window); the picture itself is shown as an attachment, so the
+            // empty row would only show "(no text)".
+            if ($message->direction === MessageDirection::Inbound && trim((string) $message->body) === '' && $message->attachment_path === null) {
+                continue;
+            }
+
             $items[] = [
                 'kind' => 'message',
                 'id' => $message->id,

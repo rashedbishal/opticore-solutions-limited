@@ -6,6 +6,7 @@ use App\Leads\Actions\RecordLeadConsent;
 use App\Leads\Enums\ConsentSource;
 use App\Leads\Enums\ConsentStatus;
 use App\Leads\Enums\ConsentType;
+use App\Leads\Enums\LeadAttachmentStatus;
 use App\Leads\Enums\LeadSourceType;
 use App\Leads\Enums\MessageChannel;
 use App\Leads\Enums\MessageDirection;
@@ -21,6 +22,7 @@ use App\Models\Admin;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 
 /**
  * A lead on a channel, with a conversation whose last inbound message was
@@ -272,4 +274,16 @@ it('removes a Messenger template Meta rejects and shows why', function () {
 
     expect(MessengerMessageTemplate::count())->toBe(0);
     Http::assertSent(fn ($request) => $request->method() === 'DELETE');
+});
+
+it('shows a customer picture once, without an extra "(no text)" message', function () {
+    [$lead, $conversation, $agent] = chatLead();
+    LeadMessage::create(['conversation_id' => $conversation->id, 'lead_id' => $lead->id, 'channel' => 'whatsapp', 'direction' => MessageDirection::Inbound, 'message_type' => 'text', 'body' => null, 'external_message_id' => 'wamid.IMG']);
+    LeadMessage::create(['conversation_id' => $conversation->id, 'lead_id' => $lead->id, 'channel' => 'whatsapp', 'direction' => MessageDirection::Inbound, 'message_type' => 'text', 'body' => 'Hello', 'external_message_id' => 'wamid.TXT']);
+    $lead->attachments()->create(['type' => 'image', 'status' => LeadAttachmentStatus::Downloading, 'sent_at' => now()]);
+
+    $this->actingAs($agent, 'admin')->get(route('admin.leads.show', $lead))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('lead.conversation', fn ($items) => collect($items)->pluck('kind')->sort()->values()->all() === ['attachment', 'message']
+                && collect($items)->firstWhere('kind', 'message')['body'] === 'Hello'));
 });
