@@ -54,7 +54,7 @@ return [
 
     // The approved message with the "Allow calls" button (OptiFin wording).
     'call_permission_request_template' => [
-        'name' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_NAME', 'call_permission_request_v2'),
+        'name' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_NAME', 'call_permission_request_v3'),
         'language' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_LANGUAGE', 'en'),
         'body' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_BODY', 'We would like to call you to discuss your inquiry. Do you give us permission to call you on WhatsApp?'),
         'footer' => env('CALLING_PERMISSION_REQUEST_TEMPLATE_FOOTER', 'You can change call permissions anytime in your profile.'),

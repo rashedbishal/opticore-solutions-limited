@@ -19,6 +19,35 @@ class CreateCallPermissionTemplate
 
     public const string CREATED_KEY = 'call_permission_template_status';
 
+    /**
+     * The status Meta has for a template with this name: null when there
+     * is none, false when Meta couldn't be asked.
+     */
+    private function existingStatus(string $base, string $waba, string $token, string $name): string|false|null
+    {
+        try {
+            $response = Http::timeout(15)->get("{$base}/{$waba}/message_templates", [
+                'access_token' => $token,
+                'name' => $name,
+                'fields' => 'name,status',
+            ]);
+        } catch (Throwable) {
+            return false;
+        }
+
+        if (! $response->successful()) {
+            return false;
+        }
+
+        foreach ((array) $response->json('data') as $item) {
+            if (is_array($item) && ($item['name'] ?? null) === $name) {
+                return strtoupper((string) ($item['status'] ?? 'UNKNOWN'));
+            }
+        }
+
+        return null;
+    }
+
     public static function nameFor(LeadSource $source): string
     {
         $config = is_array($source->config) ? $source->config : [];
@@ -52,6 +81,20 @@ class CreateCallPermissionTemplate
         $template = (array) config('calling.call_permission_request_template');
         $name = self::nameFor($source);
         $base = 'https://graph.facebook.com/'.config('calling.graph_version');
+
+        // Never make a duplicate: if Meta already has this message (e.g.
+        // created from OptiFin on the same WhatsApp account), just use it.
+        $existing = $this->existingStatus($base, $waba, $token, $name);
+
+        if ($existing === false) {
+            return ['ok' => false, 'message' => 'Could not check with WhatsApp. Try again in a few minutes.'];
+        }
+
+        if ($existing !== null && $existing !== 'REJECTED') {
+            $source->update(['config' => [...$config, self::NAME_KEY => $name, self::CREATED_KEY => $existing]]);
+
+            return ['ok' => true, 'message' => "Ready — \"{$name}\" already exists at Meta ({$existing}). Nothing was created."];
+        }
 
         try {
             $response = Http::timeout(15)->post("{$base}/{$waba}/message_templates", [

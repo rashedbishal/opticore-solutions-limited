@@ -104,8 +104,9 @@ export default function Calling({
                     <p className="mb-3 text-xs text-zinc-500">
                         Before calling a lead, Meta requires sending them an
                         approved message with an “Allow calls” button. Create it
-                        once per WhatsApp number; Meta approves it, usually
-                        within a few hours.
+                        once per WhatsApp number. The button first checks Meta:
+                        if the message already exists (for example made from
+                        OptiFin), it is simply used; nothing is duplicated.
                     </p>
                     <ul className="divide-y divide-white/5">
                         {numbers.map((number) => (
@@ -119,7 +120,11 @@ export default function Calling({
                                     </p>
                                     <p className="text-xs text-zinc-500">
                                         {number.template_status
-                                            ? `“${number.template_name}” sent to Meta (${number.template_status})`
+                                            ? ['APPROVED', 'ACTIVE'].includes(
+                                                  number.template_status,
+                                              )
+                                                ? `Ready — “${number.template_name}” (approved)`
+                                                : `“${number.template_name}” at Meta: ${number.template_status.toLowerCase()}`
                                             : 'Not created yet'}
                                         {!number.calling_enabled &&
                                             ' · calling is off'}
@@ -140,8 +145,8 @@ export default function Calling({
                                     className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-zinc-200 hover:bg-white/5 disabled:opacity-40"
                                 >
                                     {number.template_status
-                                        ? 'Create again'
-                                        : 'Create permission message'}
+                                        ? 'Check again'
+                                        : 'Check / create permission message'}
                                 </button>
                             </li>
                         ))}

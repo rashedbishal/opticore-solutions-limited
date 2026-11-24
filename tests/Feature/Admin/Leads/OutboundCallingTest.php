@@ -65,7 +65,7 @@ it('asks permission only when Meta allows asking, and records the reply', functi
     expect(LeadCallPermission::sole()->status)->toBe(LeadCallPermissionStatus::Requested);
     Http::assertSent(fn ($r) => str_contains($r->url(), '/messages') && isset($r['template'])
         && $r['to'] === '8801711000000'
-        && $r['template']['name'] === 'call_permission_request_v2'
+        && $r['template']['name'] === 'call_permission_request_v3'
         && $r['template']['components'][0]['type'] === 'call_permission_request');
 
     signedPost('/api/webhook/whatsapp', ['entry' => [['changes' => [['value' => [
@@ -150,7 +150,10 @@ it('records "they declined" and lets the caller cancel while it rings', function
 
 it('lets managers create the permission message with Meta', function () {
     [$lead] = callableLead();
-    Http::fake(['graph.facebook.com/*/WABA1/message_templates' => Http::response(['id' => 'T1', 'status' => 'PENDING'])]);
+    Http::fake([
+        'graph.facebook.com/*/WABA1/message_templates?*' => Http::response(['data' => []]),
+        'graph.facebook.com/*/WABA1/message_templates' => Http::response(['id' => 'T1', 'status' => 'PENDING']),
+    ]);
 
     $this->actingAs(Admin::factory()->leadManager()->create(), 'admin')
         ->post(route('admin.leads.calling.template', $lead->source_id))
@@ -159,4 +162,15 @@ it('lets managers create the permission message with Meta', function () {
     Http::assertSent(fn ($r) => ($r['category'] ?? null) === 'UTILITY'
         && $r['components'][0]['text'] === 'We would like to call you to discuss your inquiry. Do you give us permission to call you on WhatsApp?'
         && $r['components'][2]['type'] === 'call_permission_request');
+});
+
+it('uses a permission message Meta already has instead of creating a duplicate', function () {
+    [$lead] = callableLead();
+    Http::fake(['graph.facebook.com/*/WABA1/message_templates*' => Http::response(['data' => [['name' => 'call_permission_request_v3', 'status' => 'APPROVED']]])]);
+
+    $this->actingAs(Admin::factory()->leadManager()->create(), 'admin')
+        ->post(route('admin.leads.calling.template', $lead->source_id))
+        ->assertSessionHas('success', 'Ready — "call_permission_request_v3" already exists at Meta (APPROVED). Nothing was created.');
+
+    Http::assertNotSent(fn ($r) => $r->method() === 'POST');
 });
