@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\AutoDeclineMealSelections;
+use App\Console\Commands\CleanStorage;
 use App\Console\Commands\PruneOrphanedCheckoutUploads;
 use App\Console\Commands\WarmCache;
 use App\Http\Middleware\AuthenticateCallingAppDevice;
@@ -171,6 +172,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(DetectLeadDuplicates::class)->dailyAt('02:30')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
         $schedule->command(RecalculateLeadScores::class)->dailyAt('03:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
         $schedule->command(ReconcileStaleLeadCalls::class)->everyMinute()->withoutOverlapping(10);
+        // Storage clean-up: certain leftovers + recycle-bin items over 7 days.
+        $schedule->command(CleanStorage::class)->dailyAt('04:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
         $schedule->command(NurtureInactiveLeads::class)->dailyAt('08:00')->timezone(LeadClock::TIMEZONE)->withoutOverlapping();
 
         // Daily read-only check of every Meta channel key (health warnings).

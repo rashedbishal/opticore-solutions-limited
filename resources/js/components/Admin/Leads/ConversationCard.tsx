@@ -171,12 +171,19 @@ function SentContent({
                         <FileText className="h-4 w-4" /> {item.attachment_name}
                     </a>
                 ))}
+            {!item.attachment_url && item.attachment_name && (
+                <p className="mb-1 flex items-center gap-2 text-zinc-500 italic">
+                    <FileText className="h-4 w-4" /> {item.attachment_name}{' '}
+                    (file removed)
+                </p>
+            )}
             {item.message_type === 'template' ? (
                 <p className="text-violet-200/90 italic">
                     Template: {item.template_name}
                 </p>
             ) : (
-                (item.body || !item.attachment_url) && (
+                (item.body ||
+                    (!item.attachment_url && !item.attachment_name)) && (
                     <p className="break-words whitespace-pre-wrap">
                         {item.body || (
                             <span className="text-zinc-500 italic">

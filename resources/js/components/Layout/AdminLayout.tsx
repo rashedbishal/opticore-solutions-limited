@@ -35,6 +35,7 @@ import {
     Activity,
     HeartPulse,
     Waypoints,
+    HardDrive,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import AdminNotificationBell from '@/components/Admin/AdminNotificationBell';
@@ -175,6 +176,14 @@ const NAV_ITEMS = [
         key: 'meal-management',
     },
     {
+        name: 'Storage clean-up',
+        href: '/admin/storage-cleanup',
+        icon: HardDrive,
+        // Mother-admin-only, like Pulse/Health/Horizon below (also enforced
+        // by EnsureAdminHasPermission and the controller).
+        key: 'storage-cleanup',
+    },
+    {
         name: 'Pulse',
         href: '/pulse',
         icon: Activity,
@@ -246,7 +255,12 @@ function isMotherAdmin(
  * AdminPermissions key, and (b) separate non-Inertia dashboards rendered as
  * plain <a> links below rather than Inertia <Link>s.
  */
-const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = ['pulse', 'health', 'horizon'];
+const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = [
+    'pulse',
+    'health',
+    'horizon',
+    'storage-cleanup',
+];
 
 function canAccessNavItem(
     admin:

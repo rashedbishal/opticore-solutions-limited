@@ -110,6 +110,12 @@ export default function SentMessagesCard({
                                         </a>
                                     ) : (
                                         <span className="whitespace-pre-wrap">
+                                            {m.attachment_name && (
+                                                <span className="block text-zinc-500 italic">
+                                                    {m.attachment_name} (file
+                                                    removed)
+                                                </span>
+                                            )}
                                             {m.body}
                                         </span>
                                     )}

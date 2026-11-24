@@ -44,6 +44,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PendingPaymentController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
+use App\Http\Controllers\Admin\StorageCleanupController as AdminStorageCleanupController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
@@ -305,6 +306,19 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
     Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('configuration.index');
     Route::put('/configuration', [AdminConfigurationController::class, 'update'])->name('configuration.update');
     Route::get('/configuration/backup', [AdminConfigurationController::class, 'downloadBackup'])->name('configuration.backup');
+
+    // Storage clean-up (mother admin only — also enforced by
+    // EnsureAdminHasPermission and the controller).
+    Route::prefix('storage-cleanup')->name('storage-cleanup.')->controller(AdminStorageCleanupController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('preview', 'preview')->name('preview');
+        Route::post('recycle', 'recycle')->name('recycle');
+        Route::post('run', 'runAutomatic')->name('run');
+        Route::delete('bin', 'empty')->name('empty');
+        Route::get('bin/{item}', 'previewRecycled')->name('bin.preview')->whereUlid('item');
+        Route::post('bin/{item}/restore', 'restore')->name('bin.restore')->whereUlid('item');
+        Route::delete('bin/{item}', 'destroy')->name('bin.destroy')->whereUlid('item');
+    });
 
     // Lead Management. Route-name keys `leads` (any lead role) and
     // `lead-settings` (mother admin only) are enforced by
