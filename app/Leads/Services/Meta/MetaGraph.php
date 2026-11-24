@@ -185,7 +185,13 @@ class MetaGraph
         }
 
         if (! $response->successful()) {
-            Log::warning("Meta profile lookup [{$cacheKey}] failed: HTTP {$response->status()}");
+            // Meta's own reason (code, subcode, message) — never the token.
+            Log::warning("Meta profile lookup [{$cacheKey}] failed: HTTP {$response->status()}", [
+                'code' => $response->json('error.code'),
+                'subcode' => $response->json('error.error_subcode'),
+                'type' => $response->json('error.type'),
+                'message' => $response->json('error.message'),
+            ]);
 
             return $empty;
         }
