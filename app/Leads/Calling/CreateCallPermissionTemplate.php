@@ -20,32 +20,50 @@ class CreateCallPermissionTemplate
     public const string CREATED_KEY = 'call_permission_template_status';
 
     /**
-     * The status Meta has for a template with this name: null when there
-     * is none, false when Meta couldn't be asked.
+     * Every template on the WhatsApp account (name, status, whether it has
+     * the "Allow calls" button), or null when Meta couldn't be asked.
+     *
+     * @return array<int, array{name: string, status: string, permission: bool}>|null
      */
-    private function existingStatus(string $base, string $waba, string $token, string $name): string|false|null
+    private function templates(string $base, string $waba, string $token): ?array
     {
-        try {
-            $response = Http::timeout(15)->get("{$base}/{$waba}/message_templates", [
-                'access_token' => $token,
-                'name' => $name,
-                'fields' => 'name,status',
-            ]);
-        } catch (Throwable) {
-            return false;
-        }
+        $found = [];
+        $url = "{$base}/{$waba}/message_templates";
+        $query = ['access_token' => $token, 'fields' => 'name,status,components', 'limit' => 100];
 
-        if (! $response->successful()) {
-            return false;
-        }
-
-        foreach ((array) $response->json('data') as $item) {
-            if (is_array($item) && ($item['name'] ?? null) === $name) {
-                return strtoupper((string) ($item['status'] ?? 'UNKNOWN'));
+        for ($page = 0; $page < 10 && $url !== null; $page++) {
+            try {
+                $response = Http::timeout(15)->get($url, $query);
+            } catch (Throwable) {
+                return null;
             }
+
+            if (! $response->successful()) {
+                return null;
+            }
+
+            foreach ((array) $response->json('data') as $item) {
+                if (! is_array($item) || ! is_string($item['name'] ?? null)) {
+                    continue;
+                }
+
+                $permission = false;
+
+                foreach ((array) ($item['components'] ?? []) as $component) {
+                    if (is_array($component) && strtolower((string) ($component['type'] ?? '')) === 'call_permission_request') {
+                        $permission = true;
+                    }
+                }
+
+                $found[] = ['name' => $item['name'], 'status' => strtoupper((string) ($item['status'] ?? 'UNKNOWN')), 'permission' => $permission];
+            }
+
+            $next = $response->json('paging.next');
+            $url = is_string($next) && $next !== '' ? $next : null;
+            $query = [];
         }
 
-        return null;
+        return $found;
     }
 
     public static function nameFor(LeadSource $source): string
@@ -82,18 +100,33 @@ class CreateCallPermissionTemplate
         $name = self::nameFor($source);
         $base = 'https://graph.facebook.com/'.config('calling.graph_version');
 
-        // Never make a duplicate: if Meta already has this message (e.g.
-        // created from OptiFin on the same WhatsApp account), just use it.
-        $existing = $this->existingStatus($base, $waba, $token, $name);
+        // Never make a duplicate: any usable "Allow calls" message already on
+        // this WhatsApp account (e.g. made from OptiFin) is simply used —
+        // whatever its name — and nothing is created.
+        $all = $this->templates($base, $waba, $token);
 
-        if ($existing === false) {
+        if ($all === null) {
             return ['ok' => false, 'message' => 'Could not check with WhatsApp. Try again in a few minutes.'];
         }
 
-        if ($existing !== null && $existing !== 'REJECTED') {
-            $source->update(['config' => [...$config, self::NAME_KEY => $name, self::CREATED_KEY => $existing]]);
+        $usable = array_values(array_filter($all, fn (array $t): bool => $t['permission']
+            && ! in_array($t['status'], ['REJECTED', 'DELETED', 'PENDING_DELETION', 'DISABLED', 'PAUSED'], true)));
+        usort($usable, fn (array $a, array $b): int => ($b['status'] === 'APPROVED') <=> ($a['status'] === 'APPROVED'));
 
-            return ['ok' => true, 'message' => "Ready — \"{$name}\" already exists at Meta ({$existing}). Nothing was created."];
+        if ($usable !== []) {
+            $chosen = $usable[0];
+            $source->update(['config' => [...$config, self::NAME_KEY => $chosen['name'], self::CREATED_KEY => $chosen['status']]]);
+
+            return ['ok' => true, 'message' => $chosen['status'] === 'APPROVED'
+                ? "Ready — \"{$chosen['name']}\" is approved at Meta and will be used. Nothing was created."
+                : "\"{$chosen['name']}\" already exists at Meta and is waiting for approval ({$chosen['status']}). Nothing was created."];
+        }
+
+        // None at all: create one, with a name Meta isn't using (or deleting).
+        $taken = array_column($all, 'name');
+
+        while (in_array($name, $taken, true)) {
+            $name = self::nextName($name);
         }
 
         try {

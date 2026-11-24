@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/ChannelHelpers.php';
 
+use App\Leads\Calling\CreateCallPermissionTemplate;
 use App\Leads\Calling\LeadCallSdp;
 use App\Leads\Enums\CallDirection;
 use App\Leads\Enums\CallEndReason;
@@ -166,11 +167,18 @@ it('lets managers create the permission message with Meta', function () {
 
 it('uses a permission message Meta already has instead of creating a duplicate', function () {
     [$lead] = callableLead();
-    Http::fake(['graph.facebook.com/*/WABA1/message_templates*' => Http::response(['data' => [['name' => 'call_permission_request_v3', 'status' => 'APPROVED']]])]);
+    // An old press saved another name; the approved one is found anyway.
+    $lead->source->update(['config' => [...$lead->source->config, 'call_permission_template_name' => 'call_permission_request_v2']]);
+    Http::fake(['graph.facebook.com/*/WABA1/message_templates*' => Http::response(['data' => [
+        ['name' => 'call_permission_request_v2', 'status' => 'PENDING_DELETION', 'components' => [['type' => 'CALL_PERMISSION_REQUEST']]],
+        ['name' => 'call_permission_request_v3', 'status' => 'APPROVED', 'components' => [['type' => 'BODY', 'text' => 'x'], ['type' => 'CALL_PERMISSION_REQUEST']]],
+        ['name' => 'hello_world', 'status' => 'APPROVED', 'components' => [['type' => 'BODY', 'text' => 'hi']]],
+    ]])]);
 
     $this->actingAs(Admin::factory()->leadManager()->create(), 'admin')
         ->post(route('admin.leads.calling.template', $lead->source_id))
-        ->assertSessionHas('success', 'Ready — "call_permission_request_v3" already exists at Meta (APPROVED). Nothing was created.');
+        ->assertSessionHas('success', 'Ready — "call_permission_request_v3" is approved at Meta and will be used. Nothing was created.');
 
     Http::assertNotSent(fn ($r) => $r->method() === 'POST');
+    expect(CreateCallPermissionTemplate::nameFor($lead->source->fresh()))->toBe('call_permission_request_v3');
 });
