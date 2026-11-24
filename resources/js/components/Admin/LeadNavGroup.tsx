@@ -39,7 +39,7 @@ interface LeadNavLink {
     href: string;
     icon: LucideIcon;
     /** 'settings' = mother admin, 'manager' = managers, 'leads' = any lead role. */
-    section: 'leads' | 'manager' | 'settings';
+    section: 'leads' | 'manager' | 'settings' | 'manager-settings';
     /** Overrides the default "path starts with href" active check. */
     isActive?: (path: string) => boolean;
 }
@@ -57,12 +57,6 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         isActive: (path) =>
             path === leads.index.url() ||
             /^\/admin\/leads\/[0-9A-Za-z]{26}$/.test(path),
-    },
-    {
-        name: 'Lead Sources',
-        href: leadSources.index.url(),
-        icon: Radio,
-        section: 'leads',
     },
     {
         name: 'Reports',
@@ -113,6 +107,13 @@ const LEAD_NAV_LINKS: LeadNavLink[] = [
         section: 'manager',
     },
     {
+        name: 'Lead Sources',
+        href: leadSources.index.url(),
+        icon: Radio,
+        // Under Settings, but managers see it too (read-only).
+        section: 'manager-settings',
+    },
+    {
         name: 'General',
         href: general.edit.url(),
         icon: SlidersHorizontal,
@@ -144,7 +145,7 @@ export function visibleLeadNavLinks(admin: LeadAdmin): LeadNavLink[] {
     return LEAD_NAV_LINKS.filter((link) =>
         link.section === 'settings'
             ? canManageLeadSettings(admin)
-            : link.section === 'manager'
+            : link.section === 'manager' || link.section === 'manager-settings'
               ? leadRole(admin) === 'manager'
               : canUseLeads(admin),
     );
@@ -161,8 +162,10 @@ interface Props {
  */
 export default function LeadNavGroup({ admin, currentPath }: Props) {
     const links = visibleLeadNavLinks(admin);
-    const leadLinks = links.filter((link) => link.section !== 'settings');
-    const settingsLinks = links.filter((link) => link.section === 'settings');
+    const isSettings = (link: LeadNavLink) =>
+        link.section === 'settings' || link.section === 'manager-settings';
+    const leadLinks = links.filter((link) => !isSettings(link));
+    const settingsLinks = links.filter(isSettings);
     const isLinkActive = (link: LeadNavLink) =>
         link.isActive
             ? link.isActive(currentPath)

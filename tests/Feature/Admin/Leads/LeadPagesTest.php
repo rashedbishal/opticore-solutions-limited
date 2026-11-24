@@ -53,14 +53,19 @@ it('keeps general lead settings mother-admin-only', function () {
         ->assertForbidden();
 });
 
-it('shows lead sources to anyone with a lead role, without credentials', function () {
+it('shows lead sources to managers only, without credentials', function () {
     $this->actingAs(Admin::factory()->leadAgent()->create(), 'admin')
+        ->get(route('admin.leads.sources.index'))
+        ->assertForbidden();
+
+    $this->flushSession();
+
+    $this->actingAs(Admin::factory()->leadManager()->create(), 'admin')
         ->get(route('admin.leads.sources.index'))
         ->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Leads/Sources')
             ->has('sources', 3)
-            ->missing('sources.0.config')
-        );
+            ->missing('sources.0.config'));
 });
 
 it('words lead alerts like OptiFin and only links to leads the viewer can open', function () {

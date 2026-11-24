@@ -23,6 +23,8 @@ class LeadSourceController extends Controller
     {
         /** @var Admin $admin */
         $admin = Auth::guard('admin')->user();
+        // Managers see it read-only; only the mother admin changes it.
+        abort_unless($admin->isLeadManager(), 403);
         $canManage = $admin->isMotherAdmin();
 
         $sources = LeadSource::query()
