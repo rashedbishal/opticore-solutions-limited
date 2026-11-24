@@ -25,7 +25,8 @@ const CORNER_BRACKETS = [
 
 // Mirrors AdminLayout's sidebar NAV_ITEMS so the loader names the section being entered.
 const CMS_NAV_SECTIONS: { name: string; href: string }[] = [
-    { name: 'Dashboard', href: '/admin' },
+    { name: 'Sections', href: '/admin' },
+    { name: 'Dashboard', href: '/admin/dashboard' },
     { name: 'Customer Support', href: '/admin/customer-conversations' },
     { name: 'Portfolios', href: '/admin/portfolios' },
     { name: 'Sub Categories', href: '/admin/sub-categories' },

@@ -1,4 +1,5 @@
 import type { LeadRoleValue } from '@/components/Admin/LeadRoleCheckboxGroup';
+import type { SectionOption } from '@/components/Admin/PermissionCheckboxGroup';
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
@@ -19,6 +20,8 @@ interface Props {
         lead_role: LeadRoleValue | null;
     };
     permissionOptions: { key: string; label: string }[];
+    sectionOptions: SectionOption[];
+    sectionRoles: string[];
     leadRoleOptions: { value: LeadRoleValue; label: string }[];
     leadSourceOptions: { id: string; name: string }[];
     unassignedLeadSourceIds: string[];
@@ -30,6 +33,8 @@ interface Props {
 export default function UserEdit({
     user,
     permissionOptions,
+    sectionOptions,
+    sectionRoles,
     leadRoleOptions,
     leadSourceOptions,
     unassignedLeadSourceIds,
@@ -44,6 +49,7 @@ export default function UserEdit({
         password: '',
         full_access: user.full_access,
         permissions: user.permissions ?? ([] as string[]),
+        section_roles: sectionRoles,
         lead_role: user.lead_role,
         unassigned_lead_source_ids: unassignedLeadSourceIds,
     });
@@ -146,6 +152,11 @@ export default function UserEdit({
                         <>
                             <PermissionCheckboxGroup
                                 options={permissionOptions}
+                                sections={sectionOptions}
+                                sectionRoles={data.section_roles}
+                                onSectionRolesChange={(roles) =>
+                                    setData('section_roles', roles)
+                                }
                                 fullAccess={data.full_access}
                                 permissions={data.permissions}
                                 onFullAccessChange={(value) =>

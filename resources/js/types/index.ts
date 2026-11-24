@@ -53,6 +53,22 @@ export interface FooterServiceLink {
     href: string;
 }
 
+export interface AdminSectionModule {
+    key: string;
+    label: string;
+    href: string;
+    external: boolean;
+}
+
+export interface AdminSection {
+    key: string;
+    label: string;
+    role: string;
+    description: string;
+    modules: AdminSectionModule[];
+    planned: { code: string; label: string }[];
+}
+
 export interface SharedPageProps {
     name: string;
     auth: Auth;
@@ -61,6 +77,7 @@ export interface SharedPageProps {
     categories: Record<string, CategoryConfig>;
     footerServices: FooterServiceLink[];
     siteSettings: SiteSettings;
+    adminSections?: AdminSection[] | null;
     [key: string]: unknown;
 }
 

@@ -9,6 +9,7 @@ import {
 } from 'framer-motion';
 import {
     LayoutDashboard,
+    LayoutGrid,
     Image,
     FileText,
     MessageSquare,
@@ -55,6 +56,8 @@ interface AdminLayoutProps {
     children: React.ReactNode;
     title?: string;
     fullWidth?: boolean;
+    /** Hides the sidebar entirely (used by the three-card home). */
+    hideSidebar?: boolean;
 }
 
 const CHAT_PAGE_PATH = '/admin/customer-conversations';
@@ -67,7 +70,12 @@ const CHAT_PAGE_PATH = '/admin/customer-conversations';
 const LEADS_GROUP_KEY = '__leads-group';
 
 const NAV_ITEMS = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, key: null },
+    {
+        name: 'Dashboard',
+        href: '/admin/dashboard',
+        icon: LayoutDashboard,
+        key: null,
+    },
     {
         name: 'Customer Support',
         href: '/admin/customer-conversations',
@@ -262,6 +270,19 @@ const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = [
     'storage-cleanup',
 ];
 
+/**
+ * The module key the server's AdminSections registry uses for a nav item:
+ * the Dashboard (null key) is 'dashboard' and the Leads group is 'leads';
+ * everything else uses its own key.
+ */
+function sectionModuleKey(key: string | null): string {
+    if (key === null) {
+        return 'dashboard';
+    }
+
+    return key === LEADS_GROUP_KEY ? 'leads' : key;
+}
+
 function canAccessNavItem(
     admin:
         | {
@@ -287,6 +308,7 @@ export default function AdminLayout({
     children,
     title,
     fullWidth,
+    hideSidebar = false,
 }: AdminLayoutProps) {
     const page = usePage<SharedPageProps>();
     const { auth, flash } = page.props;
@@ -299,6 +321,18 @@ export default function AdminLayout({
             (!MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(item.key ?? '') ||
                 isMotherAdmin(auth.user)),
     );
+    // Sidebar groups: one per section the admin holds a role for (shared by
+    // the server from AdminSections), listing only the items they can use.
+    const navGroups = (page.props.adminSections ?? [])
+        .map((section) => ({
+            section,
+            items: visibleNavItems.filter((item) =>
+                section.modules.some(
+                    (module) => module.key === sectionModuleKey(item.key),
+                ),
+            ),
+        }))
+        .filter((group) => group.items.length > 0);
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
             return false;
@@ -308,6 +342,8 @@ export default function AdminLayout({
 
         return stored === null ? true : stored === 'open';
     });
+
+    const sidebarVisible = sidebarOpen && !hideSidebar;
 
     const toggleSidebar = () => {
         setSidebarOpen((prev) => {
@@ -645,7 +681,7 @@ export default function AdminLayout({
 
                 {/* ── Mobile overlay ── */}
                 <AnimatePresence>
-                    {sidebarOpen && (
+                    {sidebarVisible && (
                         <motion.div
                             key="overlay"
                             initial={{ opacity: 0 }}
@@ -660,7 +696,7 @@ export default function AdminLayout({
                 {/* ── Sidebar ── */}
                 <div
                     className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r border-violet-500/10 bg-[#03050d]/98 backdrop-blur-xl transition-transform duration-300 ease-in-out ${
-                        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                        sidebarVisible ? 'translate-x-0' : '-translate-x-full'
                     }`}
                 >
                     {/* Sidebar inner grid */}
@@ -721,96 +757,130 @@ export default function AdminLayout({
                             Navigation
                         </p>
                         <nav className="space-y-0.5">
-                            {visibleNavItems.map((item) => {
-                                const currentPath = page.url.split('?')[0];
-
-                                if (item.key === LEADS_GROUP_KEY) {
-                                    return (
-                                        <LeadNavGroup
-                                            key={item.key}
-                                            admin={auth.user}
-                                            currentPath={currentPath}
-                                        />
-                                    );
-                                }
-
-                                const active =
-                                    currentPath.startsWith(item.href) &&
-                                    (item.href !== '/admin' ||
-                                        currentPath === '/admin');
-                                const linkClassName = `group relative flex items-center rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
-                                    active
-                                        ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
-                                        : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
-                                }`;
-                                const linkContent = (
-                                    <>
-                                        {active && (
-                                            <div className="absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
-                                        )}
-                                        <item.icon
-                                            className={`mr-3 h-4 w-4 shrink-0 transition-colors ${
-                                                active
-                                                    ? 'text-violet-400'
-                                                    : 'text-slate-600 group-hover:text-slate-400'
-                                            }`}
-                                        />
-                                        <span className="truncate font-mono text-xs tracking-[0.04em]">
-                                            {item.name}
-                                        </span>
-                                        {item.href === CHAT_PAGE_PATH &&
-                                            notificationCount > 0 &&
-                                            !isOnChatPage && (
-                                                <span className="relative ml-auto flex h-3 w-3 shrink-0 items-center justify-center">
-                                                    <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-rose-400 opacity-60" />
-                                                    <span
-                                                        className="relative inline-flex h-2 w-2 rounded-full bg-rose-500"
-                                                        style={{
-                                                            boxShadow:
-                                                                '0 0 8px rgba(244,63,94,1), 0 0 16px rgba(244,63,94,0.5)',
-                                                        }}
-                                                    />
-                                                </span>
-                                            )}
-                                    </>
-                                );
-
-                                // Pulse/Health/Horizon are separate
-                                // non-Inertia dashboards (Livewire, a plain
-                                // Blade view, and Horizon's own Vue SPA
-                                // respectively) — Inertia's <Link> expects
-                                // an X-Inertia JSON response and breaks on
-                                // them, so these get a plain browser
-                                // navigation (new tab, so CMS SPA state
-                                // isn't lost).
-                                if (
-                                    MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(
-                                        item.key ?? '',
-                                    )
-                                ) {
-                                    return (
-                                        <a
-                                            key={item.name}
-                                            href={item.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={linkClassName}
-                                        >
-                                            {linkContent}
-                                        </a>
-                                    );
-                                }
-
-                                return (
+                            <Link
+                                href="/admin"
+                                className={`group relative flex items-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
+                                    page.url.split('?')[0] === '/admin' ||
+                                    page.url.startsWith('/admin/sections')
+                                        ? 'border-violet-500/30 bg-violet-500/20 text-violet-100'
+                                        : 'border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
+                                }`}
+                            >
+                                <LayoutGrid className="mr-3 h-4 w-4 shrink-0 text-slate-600 group-hover:text-slate-400" />
+                                <span className="truncate font-mono text-xs tracking-[0.04em]">
+                                    All sections
+                                </span>
+                            </Link>
+                            {navGroups.map((group) => (
+                                <div key={group.section.key} className="pt-3">
                                     <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={linkClassName}
+                                        href={`/admin/sections/${group.section.key}`}
+                                        className="mb-1 block px-3 font-mono text-[9px] font-semibold tracking-[0.22em] text-violet-400/50 uppercase transition-colors hover:text-violet-300"
                                     >
-                                        {linkContent}
+                                        {group.section.label}
                                     </Link>
-                                );
-                            })}
+                                    <div className="space-y-0.5">
+                                        {group.items.map((item) => {
+                                            const currentPath =
+                                                page.url.split('?')[0];
+
+                                            if (item.key === LEADS_GROUP_KEY) {
+                                                return (
+                                                    <LeadNavGroup
+                                                        key={item.key}
+                                                        admin={auth.user}
+                                                        currentPath={
+                                                            currentPath
+                                                        }
+                                                    />
+                                                );
+                                            }
+
+                                            const active =
+                                                currentPath.startsWith(
+                                                    item.href,
+                                                ) &&
+                                                (item.href !== '/admin' ||
+                                                    currentPath === '/admin');
+                                            const linkClassName = `group relative flex items-center rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
+                                                active
+                                                    ? 'border border-violet-500/30 bg-violet-500/20 text-violet-100'
+                                                    : 'border border-transparent text-slate-500 hover:border-white/5 hover:bg-white/4 hover:text-slate-200'
+                                            }`;
+                                            const linkContent = (
+                                                <>
+                                                    {active && (
+                                                        <div className="absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-violet-400 to-cyan-400" />
+                                                    )}
+                                                    <item.icon
+                                                        className={`mr-3 h-4 w-4 shrink-0 transition-colors ${
+                                                            active
+                                                                ? 'text-violet-400'
+                                                                : 'text-slate-600 group-hover:text-slate-400'
+                                                        }`}
+                                                    />
+                                                    <span className="truncate font-mono text-xs tracking-[0.04em]">
+                                                        {item.name}
+                                                    </span>
+                                                    {item.href ===
+                                                        CHAT_PAGE_PATH &&
+                                                        notificationCount > 0 &&
+                                                        !isOnChatPage && (
+                                                            <span className="relative ml-auto flex h-3 w-3 shrink-0 items-center justify-center">
+                                                                <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-rose-400 opacity-60" />
+                                                                <span
+                                                                    className="relative inline-flex h-2 w-2 rounded-full bg-rose-500"
+                                                                    style={{
+                                                                        boxShadow:
+                                                                            '0 0 8px rgba(244,63,94,1), 0 0 16px rgba(244,63,94,0.5)',
+                                                                    }}
+                                                                />
+                                                            </span>
+                                                        )}
+                                                </>
+                                            );
+
+                                            // Pulse/Health/Horizon are separate
+                                            // non-Inertia dashboards (Livewire, a plain
+                                            // Blade view, and Horizon's own Vue SPA
+                                            // respectively) — Inertia's <Link> expects
+                                            // an X-Inertia JSON response and breaks on
+                                            // them, so these get a plain browser
+                                            // navigation (new tab, so CMS SPA state
+                                            // isn't lost).
+                                            if (
+                                                MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(
+                                                    item.key ?? '',
+                                                )
+                                            ) {
+                                                return (
+                                                    <a
+                                                        key={item.name}
+                                                        href={item.href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={
+                                                            linkClassName
+                                                        }
+                                                    >
+                                                        {linkContent}
+                                                    </a>
+                                                );
+                                            }
+
+                                            return (
+                                                <Link
+                                                    key={item.name}
+                                                    href={item.href}
+                                                    className={linkClassName}
+                                                >
+                                                    {linkContent}
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
                         </nav>
                     </div>
 
@@ -858,20 +928,22 @@ export default function AdminLayout({
 
                 {/* ── Main area ── */}
                 <div
-                    className={`relative z-10 flex min-h-screen flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'}`}
+                    className={`relative z-10 flex min-h-screen flex-col transition-all duration-300 ease-in-out ${sidebarVisible ? 'lg:pl-64' : 'lg:pl-0'}`}
                 >
                     {/* Header */}
                     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-violet-500/10 bg-[#03050d]/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
                         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
 
-                        <button
-                            type="button"
-                            className="-m-2 rounded-lg p-2 text-slate-500 transition-colors hover:text-slate-200"
-                            onClick={toggleSidebar}
-                        >
-                            <span className="sr-only">Toggle sidebar</span>
-                            <Menu className="h-5 w-5" />
-                        </button>
+                        {!hideSidebar && (
+                            <button
+                                type="button"
+                                className="-m-2 rounded-lg p-2 text-slate-500 transition-colors hover:text-slate-200"
+                                onClick={toggleSidebar}
+                            >
+                                <span className="sr-only">Toggle sidebar</span>
+                                <Menu className="h-5 w-5" />
+                            </button>
+                        )}
 
                         {/* Breadcrumb / page indicator */}
                         <div className="hidden items-center gap-2 lg:flex">
@@ -904,6 +976,19 @@ export default function AdminLayout({
                                 isOnChatPage={isOnChatPage}
                                 chatPagePath={CHAT_PAGE_PATH}
                             />
+                            {hideSidebar && (
+                                // The sign-out button normally lives in the
+                                // sidebar footer, which is hidden here.
+                                <Link
+                                    href={adminRoutes.logout.url()}
+                                    method="post"
+                                    as="button"
+                                    className="flex items-center gap-2 rounded-lg border border-red-500/10 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-400/70 transition-all hover:border-red-500/25 hover:bg-red-500/10 hover:text-red-400"
+                                >
+                                    <LogOut className="h-3.5 w-3.5" />
+                                    Sign Out
+                                </Link>
+                            )}
                         </div>
                     </header>
 

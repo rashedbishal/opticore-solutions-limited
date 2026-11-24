@@ -44,6 +44,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PendingPaymentController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PortfolioSubCategoryController;
+use App\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Http\Controllers\Admin\StorageCleanupController as AdminStorageCleanupController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\TaskController;
@@ -248,7 +249,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // CMS Admin Routes
 Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    // `/admin` is the section cards (home); the dashboard now lives under
+    // Management & Administration at /admin/dashboard.
+    Route::get('/', [AdminSectionController::class, 'home'])->name('home');
+    Route::get('sections/{section}', [AdminSectionController::class, 'show'])->name('sections.show');
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('portfolios', AdminPortfolioController::class)->except(['show']);
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::post('categories/{category}/gallery', [AdminCategoryController::class, 'galleryStore'])->name('categories.gallery.store');

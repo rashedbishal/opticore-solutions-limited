@@ -12,6 +12,7 @@ export type User = {
     is_super_admin?: boolean;
     full_access?: boolean;
     permissions?: string[] | null;
+    section_roles?: string[] | null;
     lead_role?: 'agent' | 'manager' | null;
     [key: string]: unknown; // This allows for additional properties...
 };

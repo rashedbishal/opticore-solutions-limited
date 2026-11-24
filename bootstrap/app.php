@@ -92,7 +92,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectTo(
             guests: fn (Request $request) => $request->is('admin*') ? route('admin.login') : '/login',
-            users: fn (Request $request) => $request->is('admin*') ? route('admin.dashboard') : route('home'),
+            users: fn (Request $request) => $request->is('admin*') ? route('admin.home') : route('home'),
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {

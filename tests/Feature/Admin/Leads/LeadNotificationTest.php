@@ -61,7 +61,7 @@ it('never redirects outside the CMS', function () {
 
     $this->actingAs($agent, 'admin')
         ->get(route('admin.leads.notifications.open', $agent->notifications()->firstOrFail()->id))
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.home'));
 });
 
 it('cannot touch another admin\'s alert', function () {

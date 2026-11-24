@@ -31,7 +31,7 @@ it('redirects an admin-authenticated visitor away from user login page', functio
 
     $this->actingAs($admin, 'admin')
         ->get(route('login'))
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.home'));
 });
 
 it('rejects login with missing credentials', function () {

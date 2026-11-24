@@ -10,6 +10,7 @@ use App\Leads\Models\LeadSource;
 use App\Leads\Services\LeadPeople;
 use App\Models\Admin;
 use App\Support\AdminPermissions;
+use App\Support\AdminSections;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/User/Create', [
             'permissionOptions' => AdminPermissions::all(),
+            'sectionOptions' => AdminSections::grantableOptions(),
             'leadRoleOptions' => $this->leadRoleOptions(),
             'leadSourceOptions' => $this->leadSourceOptions(),
         ]);
@@ -78,19 +80,23 @@ class UserController extends Controller
             'full_access' => 'sometimes|boolean',
             'permissions' => 'sometimes|array',
             'permissions.*' => ['string', Rule::in(AdminPermissions::keys())],
+            'section_roles' => ['sometimes', 'array'],
+            'section_roles.*' => ['string', Rule::in(AdminSections::keys())],
             'lead_role' => ['nullable', Rule::enum(LeadRole::class)],
             'unassigned_lead_source_ids' => ['sometimes', 'array'],
             'unassigned_lead_source_ids.*' => ['string', Rule::exists('lead_sources', 'id')],
         ]);
 
         $fullAccess = (bool) ($validated['full_access'] ?? false);
+        [$sectionRoles, $permissions] = $this->normalizeAccess($fullAccess, $validated);
 
         $admin = Admin::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'full_access' => $fullAccess,
-            'permissions' => $fullAccess ? [] : array_values($validated['permissions'] ?? []),
+            'permissions' => $permissions,
+            'section_roles' => $sectionRoles,
             // Independent of full_access: the mother admin always picks the
             // lead role explicitly.
             'lead_role' => $validated['lead_role'] ?? null,
@@ -114,6 +120,10 @@ class UserController extends Controller
         return Inertia::render('Admin/User/Edit', [
             'user' => $user,
             'permissionOptions' => AdminPermissions::all(),
+            'sectionOptions' => AdminSections::grantableOptions(),
+            // Roles as the form should show them (stored roles plus those
+            // implied by modules the admin already holds).
+            'sectionRoles' => $user->isMotherAdmin() ? [] : AdminSections::rolesFor($user),
             'leadRoleOptions' => $this->leadRoleOptions(),
             'leadSourceOptions' => $this->leadSourceOptions(),
             'unassignedLeadSourceIds' => DB::table('lead_source_unassigned_viewers')->where('admin_id', $user->id)->pluck('lead_source_id')->all(),
@@ -147,6 +157,8 @@ class UserController extends Controller
             $rules['full_access'] = 'sometimes|boolean';
             $rules['permissions'] = 'sometimes|array';
             $rules['permissions.*'] = ['string', Rule::in(AdminPermissions::keys())];
+            $rules['section_roles'] = ['sometimes', 'array'];
+            $rules['section_roles.*'] = ['string', Rule::in(AdminSections::keys())];
             $rules['lead_role'] = ['nullable', Rule::enum(LeadRole::class)];
             $rules['unassigned_lead_source_ids'] = ['sometimes', 'array'];
             $rules['unassigned_lead_source_ids.*'] = ['string', Rule::exists('lead_sources', 'id')];
@@ -171,8 +183,10 @@ class UserController extends Controller
 
         if ($canEditPermissions && ! $user->isMotherAdmin()) {
             $fullAccess = (bool) ($validated['full_access'] ?? false);
+            [$sectionRoles, $permissions] = $this->normalizeAccess($fullAccess, $validated);
             $payload['full_access'] = $fullAccess;
-            $payload['permissions'] = $fullAccess ? [] : array_values($validated['permissions'] ?? []);
+            $payload['permissions'] = $permissions;
+            $payload['section_roles'] = $sectionRoles;
             $payload['lead_role'] = $validated['lead_role'] ?? null;
         }
 
@@ -210,6 +224,36 @@ class UserController extends Controller
         $user->delete();
 
         return back()->with('success', 'Admin deleted.');
+    }
+
+    /**
+     * Section roles and module permissions as they get stored. Full access
+     * clears both (it already grants every section and module). Otherwise
+     * every granted module also adds its section's role, so a module can never
+     * be granted without the section it lives in.
+     *
+     * @param  array<string, mixed>  $validated
+     * @return array{0: array<int, string>, 1: array<int, string>}
+     */
+    private function normalizeAccess(bool $fullAccess, array $validated): array
+    {
+        if ($fullAccess) {
+            return [[], []];
+        }
+
+        $permissions = array_values(array_unique($validated['permissions'] ?? []));
+        $sectionRoles = $validated['section_roles'] ?? [];
+
+        foreach ($permissions as $key) {
+            $sectionRoles[] = AdminSections::sectionOf($key);
+        }
+
+        $sectionRoles = array_values(array_filter(
+            AdminSections::keys(),
+            fn (string $key): bool => in_array($key, $sectionRoles, true),
+        ));
+
+        return [$sectionRoles, $permissions];
     }
 
     private function actor(): Admin

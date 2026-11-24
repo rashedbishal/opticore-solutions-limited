@@ -38,10 +38,14 @@ it('protects the admin dashboard route from unauthenticated users', function () 
     $this->get('/admin')->assertRedirect(route('admin.login'));
 });
 
-it('allows authenticated admins to access the admin dashboard', function () {
+it('allows authenticated admins to access the admin home and dashboard', function () {
     $admin = Admin::factory()->create();
 
     $this->actingAs($admin, 'admin')
         ->get('/admin')
+        ->assertSuccessful();
+
+    $this->actingAs($admin, 'admin')
+        ->get('/admin/dashboard')
         ->assertSuccessful();
 });

@@ -86,7 +86,7 @@ class LeadNotificationController extends Controller
             return $url;
         }
 
-        return route('admin.dashboard');
+        return route('admin.home');
     }
 
     private function admin(): Admin

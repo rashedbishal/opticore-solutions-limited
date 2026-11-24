@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Leads\Enums\LeadRole;
 use App\Leads\Models\AdminNotification;
+use App\Support\AdminSections;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,8 @@ use Laravel\Sanctum\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
 /**
+ * @property array<int, string>|null $permissions Module permission keys (see AdminPermissions).
+ * @property array<int, string>|null $section_roles Section roles (see AdminSections) granted by the mother admin.
  * @property LeadRole|null $lead_role Lead Management role chosen by the mother admin.
  * @property bool $is_whatsapp_backup_receiver Rings for calls the lead's own person can't take.
  * @property Carbon|null $softphone_last_seen_at Last check-in from an open call box.
@@ -39,6 +42,7 @@ class Admin extends Authenticatable
         'password',
         'full_access',
         'permissions',
+        'section_roles',
         'lead_role',
         'is_whatsapp_backup_receiver',
     ];
@@ -66,6 +70,7 @@ class Admin extends Authenticatable
             'is_super_admin' => 'boolean',
             'full_access' => 'boolean',
             'permissions' => 'array',
+            'section_roles' => 'array',
             'lead_role' => LeadRole::class,
             'is_whatsapp_backup_receiver' => 'boolean',
             'softphone_last_seen_at' => 'datetime',
@@ -96,6 +101,15 @@ class Admin extends Authenticatable
      * by the given permission key. Dashboard is intentionally not gated
      * here — callers treat it as always-allowed.
      */
+    /**
+     * Whether this admin holds the role for the given CMS section
+     * (see AdminSections for how roles are derived).
+     */
+    public function canAccessSection(string $sectionKey): bool
+    {
+        return in_array($sectionKey, AdminSections::rolesFor($this), true);
+    }
+
     public function canAccess(string $key): bool
     {
         if ($this->is_super_admin || $this->full_access) {
@@ -142,6 +156,11 @@ class Admin extends Authenticatable
         // exact stamp they had before lead roles existed (no mass logout).
         if ($this->lead_role !== null) {
             $parts[] = 'lead:'.$this->lead_role->value;
+        }
+
+        // Same pattern for section roles: only present once granted.
+        if (! empty($this->section_roles)) {
+            $parts[] = 'sections:'.json_encode($this->section_roles);
         }
 
         return hash('sha256', implode('|', $parts));

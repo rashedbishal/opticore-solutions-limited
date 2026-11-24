@@ -371,3 +371,100 @@ How to read this table: **Likelihood** is how probable the problem is. **Severit
 | R10 | **Open decisions not yet made** | Five decisions are still waiting (extension rule, Remove Ads, attendance rules, rate card, design and fonts), plus Q6. Building on a guess means rework. | Medium | Medium | A developer asks "what should this do?" with no written answer | Each one is a setting, not hard-coded. Rate card (#8) and design (#10) are needed before Phase 3. Keep this document as the single place to record answers. |
 | R11 | **Deleting data that must be kept** | An admin can delete data manually (decision 6). Deleting invoices, contracts or audit records by mistake could cause legal or accounting trouble. | Low | High | A deletion with no recycle-bin entry or audit record | Manual deletes go through the recycle bin first and are logged. Financial and legal records are protected from deletion until a retention period is confirmed with an accountant or lawyer. |
 | R12 | **Super Admin approval and override misuse** | Any Super Admin can approve in another's place, and the mother admin can override (decision 3). Power concentrated this way could be misused or approved by mistake. | Low | Medium | Many overrides by one person, or an override with no reason | Every override and substitute approval is audit-logged with who, what and why. The mother admin receives a periodic summary. |
+
+---
+
+## 7. CMS scaffolding: three sections for the mother admin
+
+**Status: IMPLEMENTED (structure only).** This step organizes the CMS into three sections and adds section roles. No planned module (Projects, Payroll, etc.) is built. Placement and behaviour below were agreed with the owner.
+
+### 7.1 What was asked
+
+- When an admin logs in, `/admin` shows **only three cards**, one per planned section (nothing else on the page).
+- Clicking a card opens a **section page** listing that section's modules. The sidebar is also grouped by section.
+- Each section has **its own role**. When the mother admin creates a Super Admin, they tick the section roles and can also pick individual modules.
+- Existing modules were distributed into the sections (7.2). New modules go where this plan placed them (7.3).
+
+| Card | Section | Plan modules |
+| --- | --- | --- |
+| 1 | **Client-facing** | M1–M5, M17 |
+| 2 | **Agency Operations** | M6–M10, M18 |
+| 3 | **Management & Administration** | M11–M16, M19–M21 |
+
+### 7.2 Placement of existing modules (agreed)
+
+| Existing item | Permission key | Plan module | Section |
+| --- | --- | --- | --- |
+| Customer Support | `customer-conversations` | M3 | 1 Client-facing |
+| Leads (fold-out group) | lead role, not a key | Not in PDF (Q6) | 1 Client-facing |
+| Clients | `clients` | M1 | 1 Client-facing |
+| Orders | `orders` | M5 | 1 Client-facing |
+| Portfolios | `portfolios` | M2 / M17 | 1 Client-facing |
+| Categories | `categories` | M4 / M17 | 1 Client-facing |
+| Sub Categories | `sub-categories` | M4 / M17 | 1 Client-facing |
+| Blogs, FAQs, Brands, Testimonials | `blogs`, `faqs`, `brands`, `testimonials` | M17 | 1 Client-facing |
+| Review Control | `client-reviews` | M17 | 1 Client-facing |
+| Contacts, Subscriptions | `contacts`, `subscriptions` | M17 | 1 Client-facing |
+| Chat Archive | `chats` | M3 | 1 Client-facing |
+| Client Workflow | `tasks` | M6 | 2 Agency Operations |
+| Job Listings, Job Applications | `job-listings`, `job-applications` | M8 | 2 Agency Operations |
+| Meal Management | `meal-management` | M9 (neighbour) | 2 Agency Operations |
+| **Dashboard** | none (every admin) | n/a | **3 Management & Administration** (changed from the proposal: it moves into Section 3; dashboards for Sections 1 and 2 will be designed later) |
+| Transactions | `transactions` | M20 | 3 Management & Administration |
+| Admins | `users` | M8 / M11 | 3 Management & Administration |
+| Configuration | `configuration` | M11 | 3 Management & Administration |
+| Storage clean-up, Pulse, Health, Horizon | mother admin only | M15 | 3 Management & Administration |
+
+### 7.3 Placement of new modules (already decided in this plan)
+
+Shown greyed out ("Planned, not built yet") on each section page until built.
+
+| Section | New modules |
+| --- | --- |
+| 1 Client-facing | M1 registration and company, M3 project room, M4 service catalogue and forms, M5 quotations and ServiceOrder |
+| 2 Agency Operations | M6 projects, M7 templates and assignment, M8 employees and departments, M9 attendance, M10 performance, M18 internal chat |
+| 3 Management & Administration | M11 control center, M12 finance, M13 meetings and notifications, M14 AI and rules, M15 audit and recycle bin, M19 payroll, M20 billing, M21 approvals |
+
+### 7.4 Decisions recorded
+
+| # | Question | Decision |
+| --- | --- | --- |
+| S1 | Placement table | Approved, except the Dashboard moves into Section 3 |
+| S2 | Section role vs individual modules | **Both:** the mother admin ticks a section role and can also pick individual modules inside it |
+| S3 | Create Super Admins now? | **Yes.** The mother admin creates Super Admins and assigns section roles to them |
+| S4 | Home and navigation | `/admin` shows only the three cards. Clicking a card opens a page listing its modules. The sidebar is grouped by section |
+| S5 | Unbuilt modules | Shown greyed out (on the section page) |
+| S6 | Other admins | See their allowed modules grouped by section too, filtered to what they hold |
+
+### 7.5 How it behaves now
+
+- **No sidebar on the cards page:** `/admin` shows the three cards with no sidebar (a Sign Out button sits in the header instead). The sidebar appears on every page after a card is opened.
+- **Section roles:** three, one per section (Client-facing role, Agency Operations role, Management & Administration role), stored per admin in a new `section_roles` column on the `admin` database.
+- **Role plus modules:** a role opens the section (card, page, sidebar group). Modules inside it are still gated by the existing permission keys, so nothing about module access changed. On the create/edit form, ticking a role ticks all its modules to start; any can be unticked. Granting a module automatically adds its section's role, so a module is never granted without its section.
+- **Mother admin and "Allow full access" admins** get all three sections automatically.
+- **Existing admins keep working with no data change:** the sections they can enter are their stored roles plus the section of every module (or Leads role) they already hold.
+- **Security stamp:** changing an admin's section roles logs them out, like changing permissions already does (only added to the stamp when roles are set, so no one is logged out by this release).
+- **Dashboard** is still allowed for every admin on the server (unchanged). It is listed under Section 3, so an admin without that section does not see the link.
+- **Meal-only admins** are still sent straight to Meal Management from `/admin`.
+- **Mother-admin-only tools** (Storage clean-up, Pulse, Health, Horizon) appear only for the mother admin, as before.
+- **Super Admin interpretation:** every non-mother admin account the mother admin creates is a Super Admin whose reach is defined by the section roles and modules given. No new privileges were added; the Admins module (`users`) still controls managing other admins, and everything gated to the mother admin stays that way.
+- **Single source of truth:** `app/Support/AdminSections.php` holds the section-to-module map and is shared to the sidebar. A test checks every `AdminPermissions` key sits in exactly one section. The three-places rule for permission keys is unchanged.
+
+### 7.6 Implementation log
+
+| Area | Change |
+| --- | --- |
+| Database (`admin`) | Migration `2026_11_24_100000_add_section_roles_to_admins_table` adds nullable JSON `section_roles` |
+| Registry | New `app/Support/AdminSections.php` (sections, modules, planned modules, role derivation) |
+| Model | `Admin`: `section_roles` fillable and cast, `canAccessSection()`, security stamp includes roles when set |
+| Routes | `/admin` is now `admin.home` (cards), new `admin/sections/{section}` (`admin.sections.show`), the existing dashboard moved to `/admin/dashboard` (route name `admin.dashboard` unchanged). Login, guest redirect and notification fallbacks now point to `admin.home` |
+| Controller | New `Admin\SectionController` (`home`, `show`) |
+| Admin form | `UserController` validates `section_roles`, passes section options, and stores roles |
+| Shared props | `HandleInertiaRequests` shares `adminSections` (admin pages only) |
+| Frontend | New pages `Admin/Home.tsx`, `Admin/Section.tsx`; `AdminLayout` sidebar grouped by section with an "All sections" link, and a `hideSidebar` option used by the cards page; `PermissionCheckboxGroup` grouped by section role; Create/Edit admin pages pass section data; loading overlay labels updated |
+| Tests | New `tests/Feature/Admin/AdminSectionsTest.php`; `AuthTest` updated for the new `/admin` and `/admin/dashboard` |
+
+### 7.7 Open items from this step
+
+- [ ] Whether the Create/Edit Admin pages should be renamed "Super Admin" in the UI (left as "Admin" so far to avoid renaming beyond what was asked).
+- [ ] Section dashboards for Client-facing and Agency Operations (to be designed later, per the owner).

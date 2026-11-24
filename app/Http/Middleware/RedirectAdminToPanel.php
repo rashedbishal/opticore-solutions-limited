@@ -12,7 +12,7 @@ class RedirectAdminToPanel
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.home');
         }
 
         return $next($request);

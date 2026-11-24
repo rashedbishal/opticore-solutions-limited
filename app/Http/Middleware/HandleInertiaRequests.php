@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Admin;
 use App\Models\Category;
 use App\Models\SiteSetting;
+use App\Support\AdminSections;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -74,6 +76,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Sections (and their usable modules) for the logged-in admin; drives
+            // the grouped CMS sidebar. Null everywhere else.
+            'adminSections' => function () {
+                $admin = auth('admin')->user();
+
+                return $admin instanceof Admin ? AdminSections::forAdmin($admin) : null;
+            },
             'categories' => fn () => Category::configShape(),
             'footerServices' => fn () => Category::servicePageLinks(),
             'siteSettings' => fn () => SiteSetting::current()->toPublicArray(),

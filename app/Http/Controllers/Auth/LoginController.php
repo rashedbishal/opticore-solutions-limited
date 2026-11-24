@@ -20,7 +20,7 @@ class LoginController extends Controller
     public function create(): Response|RedirectResponse
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.home');
         }
 
         return Inertia::render('Auth/Login');
@@ -29,7 +29,7 @@ class LoginController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.home');
         }
 
         $credentials = $request->validate([

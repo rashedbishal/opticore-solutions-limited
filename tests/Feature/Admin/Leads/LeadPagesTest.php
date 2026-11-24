@@ -80,10 +80,10 @@ it('words lead alerts like OptiFin and only links to leads the viewer can open',
         ->assertJsonPath('notifications.0.title', 'Rahim assigned you a lead')
         ->assertJsonPath('notifications.0.message', 'Jane Doe');
 
-    // The lead isn't the agent's (still unowned), so opening goes to the dashboard.
+    // The lead isn't the agent's (still unowned), so opening goes to the admin home.
     $this->actingAs($agent, 'admin')
         ->get(route('admin.leads.notifications.open', $agent->notifications()->first()->id))
-        ->assertRedirect(route('admin.dashboard'));
+        ->assertRedirect(route('admin.home'));
 });
 
 it('lets only admins with a lead role join the live leads channel', function () {

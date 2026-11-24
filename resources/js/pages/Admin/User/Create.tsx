@@ -1,4 +1,5 @@
 import type { LeadRoleValue } from '@/components/Admin/LeadRoleCheckboxGroup';
+import type { SectionOption } from '@/components/Admin/PermissionCheckboxGroup';
 import type { FormEventHandler, ReactNode } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
@@ -11,12 +12,14 @@ import adminRoutes from '@/routes/admin';
 
 interface Props {
     permissionOptions: { key: string; label: string }[];
+    sectionOptions: SectionOption[];
     leadRoleOptions: { value: LeadRoleValue; label: string }[];
     leadSourceOptions: { id: string; name: string }[];
 }
 
 export default function UserCreate({
     permissionOptions,
+    sectionOptions,
     leadRoleOptions,
     leadSourceOptions,
 }: Props) {
@@ -27,6 +30,7 @@ export default function UserCreate({
         password: '',
         full_access: false as boolean,
         permissions: [] as string[],
+        section_roles: [] as string[],
         lead_role: null as LeadRoleValue | null,
         unassigned_lead_source_ids: [] as string[],
     });
@@ -114,6 +118,11 @@ export default function UserCreate({
 
                     <PermissionCheckboxGroup
                         options={permissionOptions}
+                        sections={sectionOptions}
+                        sectionRoles={data.section_roles}
+                        onSectionRolesChange={(roles) =>
+                            setData('section_roles', roles)
+                        }
                         fullAccess={data.full_access}
                         permissions={data.permissions}
                         onFullAccessChange={(value) =>
