@@ -37,6 +37,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // The web server (www-data) and the queue worker run as different
+        // users that share a group: new files/folders must be group
+        // writable, or one can't use what the other saved. (See the
+        // 'local' disk permissions in config/filesystems.php.)
+        umask(0002);
+
         // Email lead inboxes read through PHP's imap extension.
         $this->app->bind(ImapClient::class, NativeImapClient::class);
 
