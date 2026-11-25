@@ -468,3 +468,37 @@ Shown greyed out ("Planned, not built yet") on each section page until built.
 
 - [ ] Whether the Create/Edit Admin pages should be renamed "Super Admin" in the UI (left as "Admin" so far to avoid renaming beyond what was asked).
 - [ ] Section dashboards for Client-facing and Agency Operations (to be designed later, per the owner).
+
+---
+
+## 8. Section-separated sidebar
+
+**Status: IMPLEMENTED.** Follows section 7. Requested and approved by the owner.
+
+### 8.1 What was asked
+
+Flow: admin signs in → sees 3 cards → picks one → lands on that section's page, and the sidebar shows **only that section's modules** → goes back to the cards → picks another section → sees only that section's sidebar. Purpose: less clutter. Before this, the sidebar listed all sections' groups at once.
+
+### 8.2 Decisions recorded
+
+| # | Question | Decision |
+| --- | --- | --- |
+| N1 | How does a module page know its section? | **Derived from the page** (route name → module → section). Stateless, safe on refresh, bookmarks and direct links. URLs unchanged. |
+| N2 | Back link and section page | **"Back to sections"** link at the top of the sidebar (to `/admin`). The section page (module list plus greyed-out planned modules) is kept; the sidebar section heading still links to it. |
+
+### 8.3 How it behaves now
+
+- Sidebar shows one group: the section of the page being viewed. The cards page (`/admin`) still has no sidebar.
+- Section is derived from the route name `admin.<module>.*` via `AdminSections::sectionForRoute()`. `admin.sections.show` uses its `{section}` parameter. `lead-settings.*` counts as the `leads` module (Client-facing). `admin.home` and non-module routes give no active section.
+- Access is unchanged: modules are still gated by the existing permission middleware. This only controls what the sidebar shows. A direct URL to a module shows that module's section sidebar; an admin without the role still gets the existing 403.
+- Meal-only admins still redirect to Meal Management (Agency Operations). Mother-only tools (Pulse, Health, Horizon, Storage clean-up) stay in Management & Administration.
+- **Rule for new modules:** a new admin route group must be named `admin.<module-key>.*` where the key is registered in `AdminSections::all()`. If the route segment differs from the module key (as with `lead-settings`), add a mapping in `sectionForRoute()`; otherwise the sidebar will be empty on that page.
+
+### 8.4 Implementation log
+
+| Area | Change |
+| --- | --- |
+| Registry | `AdminSections::sectionForRoute()` added in `app/Support/AdminSections.php` |
+| Shared props | `HandleInertiaRequests` shares `activeSection` (admin pages only); typed in `resources/js/types/index.ts` |
+| Frontend | `AdminLayout.tsx`: sidebar groups filtered to `activeSection`; "All sections" renamed "Back to sections" |
+| Tests | `AdminSectionsTest.php`: route → section mapping (dataset) and shared `activeSection` per section |

@@ -78,6 +78,7 @@ export interface SharedPageProps {
     footerServices: FooterServiceLink[];
     siteSettings: SiteSettings;
     adminSections?: AdminSection[] | null;
+    activeSection?: string | null;
     [key: string]: unknown;
 }
 

@@ -137,3 +137,39 @@ it('sends a meal-management-only admin from /admin straight to their section', f
         ->get('/admin')
         ->assertRedirect(route('admin.meal-management.index'));
 });
+
+it('maps admin route names to the section whose sidebar is shown', function (?string $route, ?string $param, ?string $expected) {
+    expect(AdminSections::sectionForRoute($route, $param))->toBe($expected);
+})->with([
+    'client module' => ['admin.orders.index', null, 'client-facing'],
+    'leads module' => ['admin.leads.index', null, 'client-facing'],
+    'lead set-up pages' => ['admin.lead-settings.index', null, 'client-facing'],
+    'operations module' => ['admin.tasks.index', null, 'agency-operations'],
+    'meal module' => ['admin.meal-management.index', null, 'agency-operations'],
+    'dashboard' => ['admin.dashboard', null, 'management-administration'],
+    'storage clean-up' => ['admin.storage-cleanup.index', null, 'management-administration'],
+    'section page' => ['admin.sections.show', 'agency-operations', 'agency-operations'],
+    'bad section param' => ['admin.sections.show', 'nope', null],
+    'cards page' => ['admin.home', null, null],
+    'non-admin route' => ['home', null, null],
+    'no route' => [null, null, null],
+]);
+
+it('shares the active section so the sidebar shows one section only', function () {
+    $mother = Admin::factory()->create();
+
+    $this->actingAs($mother, 'admin')->get('/admin/orders')
+        ->assertInertia(fn (Assert $page) => $page->where('activeSection', 'client-facing'));
+
+    $this->actingAs($mother, 'admin')->get('/admin/tasks')
+        ->assertInertia(fn (Assert $page) => $page->where('activeSection', 'agency-operations'));
+
+    $this->actingAs($mother, 'admin')->get('/admin/dashboard')
+        ->assertInertia(fn (Assert $page) => $page->where('activeSection', 'management-administration'));
+
+    $this->actingAs($mother, 'admin')->get('/admin/sections/agency-operations')
+        ->assertInertia(fn (Assert $page) => $page->where('activeSection', 'agency-operations'));
+
+    $this->actingAs($mother, 'admin')->get('/admin')
+        ->assertInertia(fn (Assert $page) => $page->where('activeSection', null));
+});

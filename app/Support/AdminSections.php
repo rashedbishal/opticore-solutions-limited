@@ -148,6 +148,33 @@ class AdminSections
     }
 
     /**
+     * Section the current admin route belongs to, used to show only that
+     * section's modules in the sidebar. Derived from the route name
+     * (`admin.<module>.*`), so it is stateless and survives refresh and direct
+     * links. `admin.sections.show` uses its own `{section}` parameter; the
+     * landing cards (`admin.home`) and non-module routes return null.
+     */
+    public static function sectionForRoute(?string $routeName, ?string $sectionParam = null): ?string
+    {
+        if ($routeName === null || ! str_starts_with($routeName, 'admin.')) {
+            return null;
+        }
+
+        $segment = explode('.', $routeName)[1] ?? '';
+
+        if ($segment === 'sections') {
+            return $sectionParam !== null && self::isValidKey($sectionParam) ? $sectionParam : null;
+        }
+
+        // Lead set-up pages belong to the Leads module.
+        if ($segment === 'lead-settings') {
+            $segment = 'leads';
+        }
+
+        return self::sectionOf($segment);
+    }
+
+    /**
      * Whether this admin may use the given module right now. Mirrors the
      * existing gates: dashboard for everyone, leads by lead role,
      * mother-only items by mother admin, everything else by permission key.

@@ -83,6 +83,14 @@ class HandleInertiaRequests extends Middleware
 
                 return $admin instanceof Admin ? AdminSections::forAdmin($admin) : null;
             },
+            // Section whose modules the CMS sidebar shows (null on the cards page
+            // and non-admin pages).
+            'activeSection' => fn () => auth('admin')->user() instanceof Admin
+                ? AdminSections::sectionForRoute(
+                    $request->route()?->getName(),
+                    $request->route('section'),
+                )
+                : null,
             'categories' => fn () => Category::configShape(),
             'footerServices' => fn () => Category::servicePageLinks(),
             'siteSettings' => fn () => SiteSetting::current()->toPublicArray(),

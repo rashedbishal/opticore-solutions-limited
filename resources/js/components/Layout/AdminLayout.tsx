@@ -332,7 +332,11 @@ export default function AdminLayout({
                 ),
             ),
         }))
-        .filter((group) => group.items.length > 0);
+        .filter(
+            (group) =>
+                group.items.length > 0 &&
+                group.section.key === page.props.activeSection,
+        );
     const [sidebarOpen, setSidebarOpen] = useState(() => {
         if (window.innerWidth < 1024) {
             return false;
@@ -768,7 +772,7 @@ export default function AdminLayout({
                             >
                                 <LayoutGrid className="mr-3 h-4 w-4 shrink-0 text-slate-600 group-hover:text-slate-400" />
                                 <span className="truncate font-mono text-xs tracking-[0.04em]">
-                                    All sections
+                                    Back to sections
                                 </span>
                             </Link>
                             {navGroups.map((group) => (
