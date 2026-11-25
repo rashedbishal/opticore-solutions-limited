@@ -332,6 +332,7 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('/', 'index')->name('index');
         Route::delete('entries', 'destroy')->name('destroy');
         Route::delete('/', 'clear')->name('clear');
+        Route::delete('files', 'destroyFile')->name('files.destroy');
     });
 
     // Lead Management. Route-name keys `leads` (any lead role) and
