@@ -37,6 +37,7 @@ import {
     HeartPulse,
     Waypoints,
     HardDrive,
+    ScrollText,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import AdminNotificationBell from '@/components/Admin/AdminNotificationBell';
@@ -192,6 +193,14 @@ const NAV_ITEMS = [
         key: 'storage-cleanup',
     },
     {
+        name: 'Application Log',
+        href: '/admin/application-log',
+        icon: ScrollText,
+        // Mother-admin-only (also enforced by EnsureAdminHasPermission and
+        // the controller), but a normal Inertia page, so it opens in place.
+        key: 'application-log',
+    },
+    {
         name: 'Pulse',
         href: '/pulse',
         icon: Activity,
@@ -271,6 +280,12 @@ const MOTHER_ADMIN_ONLY_EXTERNAL_KEYS = [
 ];
 
 /**
+ * Mother-admin-only nav keys that are normal Inertia pages (opened in place,
+ * unlike MOTHER_ADMIN_ONLY_EXTERNAL_KEYS above).
+ */
+const MOTHER_ADMIN_ONLY_KEYS = ['application-log'];
+
+/**
  * The module key the server's AdminSections registry uses for a nav item:
  * the Dashboard (null key) is 'dashboard' and the Leads group is 'leads';
  * everything else uses its own key.
@@ -318,7 +333,10 @@ export default function AdminLayout({
                 ? visibleLeadNavLinks(auth.user).length > 0
                 : canAccessNavItem(auth.user, item.key)) &&
             !(item.key === null && isMealManagementOnly(auth.user)) &&
-            (!MOTHER_ADMIN_ONLY_EXTERNAL_KEYS.includes(item.key ?? '') ||
+            (![
+                ...MOTHER_ADMIN_ONLY_EXTERNAL_KEYS,
+                ...MOTHER_ADMIN_ONLY_KEYS,
+            ].includes(item.key ?? '') ||
                 isMotherAdmin(auth.user)),
     );
     // Sidebar groups: one per section the admin holds a role for (shared by

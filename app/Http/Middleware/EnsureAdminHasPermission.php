@@ -43,7 +43,7 @@ class EnsureAdminHasPermission
             return $next($request);
         }
 
-        if ($key === 'lead-settings' || $key === 'storage-cleanup') {
+        if (in_array($key, ['lead-settings', 'storage-cleanup', 'application-log'], true)) {
             abort_unless($admin->isMotherAdmin(), 403);
 
             return $next($request);

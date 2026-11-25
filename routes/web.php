@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationLogController as AdminApplicationLogController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
@@ -323,6 +324,14 @@ Route::middleware(['auth:admin', 'admin.session', 'admin.permission'])->prefix('
         Route::get('bin/{item}', 'previewRecycled')->name('bin.preview')->whereUlid('item');
         Route::post('bin/{item}/restore', 'restore')->name('bin.restore')->whereUlid('item');
         Route::delete('bin/{item}', 'destroy')->name('bin.destroy')->whereUlid('item');
+    });
+
+    // Application Log (mother admin only — also enforced by
+    // EnsureAdminHasPermission and the controller).
+    Route::prefix('application-log')->name('application-log.')->controller(AdminApplicationLogController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::delete('entries', 'destroy')->name('destroy');
+        Route::delete('/', 'clear')->name('clear');
     });
 
     // Lead Management. Route-name keys `leads` (any lead role) and

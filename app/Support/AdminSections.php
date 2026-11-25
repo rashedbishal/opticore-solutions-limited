@@ -15,7 +15,7 @@ use App\Models\Admin;
  *   - an AdminPermissions key (must stay in sync with AdminPermissions::all())
  *   - 'dashboard'  always allowed for every admin
  *   - 'leads'      allowed by lead role, never by a permission key
- *   - a mother-admin-only item ('storage-cleanup', 'pulse', 'health', 'horizon')
+ *   - a mother-admin-only item ('storage-cleanup', 'application-log', 'pulse', 'health', 'horizon')
  *
  * `planned` lists modules from the plan that are not built yet; they are
  * only displayed (greyed out) and grant nothing.
@@ -29,7 +29,7 @@ class AdminSections
     public const MANAGEMENT = 'management-administration';
 
     /** Module keys that only the mother admin may see, whatever their permissions. */
-    public const MOTHER_ONLY_KEYS = ['storage-cleanup', 'pulse', 'health', 'horizon'];
+    public const MOTHER_ONLY_KEYS = ['storage-cleanup', 'application-log', 'pulse', 'health', 'horizon'];
 
     /** Mother-admin-only modules that are separate non-Inertia pages. */
     public const EXTERNAL_KEYS = ['pulse', 'health', 'horizon'];
@@ -100,6 +100,7 @@ class AdminSections
                     ['key' => 'users', 'label' => 'Admins', 'href' => '/admin/users'],
                     ['key' => 'configuration', 'label' => 'Configuration', 'href' => '/admin/configuration'],
                     ['key' => 'storage-cleanup', 'label' => 'Storage clean-up', 'href' => '/admin/storage-cleanup'],
+                    ['key' => 'application-log', 'label' => 'Application Log', 'href' => '/admin/application-log'],
                     ['key' => 'pulse', 'label' => 'Pulse', 'href' => '/pulse'],
                     ['key' => 'health', 'label' => 'Health', 'href' => '/health'],
                     ['key' => 'horizon', 'label' => 'Horizon', 'href' => '/horizon'],

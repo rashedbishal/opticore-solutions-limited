@@ -8,6 +8,7 @@ use App\Leads\Listeners\BroadcastAdminNotification;
 use App\Leads\Mail\ImapClient;
 use App\Leads\Mail\NativeImapClient;
 use App\Models\User;
+use App\Support\ApplicationLog;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -45,6 +46,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Email lead inboxes read through PHP's imap extension.
         $this->app->bind(ImapClient::class, NativeImapClient::class);
+
+        // The Application Log page reads/trims the file the `single` log
+        // channel writes to.
+        $this->app->bind(ApplicationLog::class, fn (): ApplicationLog => new ApplicationLog(
+            (string) config('logging.channels.single.path', storage_path('logs/laravel.log')),
+        ));
 
         // The calling app's Firebase key lives encrypted in Lead Settings,
         // read fresh for every push (not from .env).
